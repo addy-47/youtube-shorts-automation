@@ -1,0 +1,24 @@
+# Credentials
+client_secret.json
+google_credentials.json
+token.pickle
+
+# Environment variables
+.env
+
+# Virtual environment
+venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Output directories
+ai_shorts_output/
+
+# Large binary files
+ffmpeg/
+
+# IDE files
+.vscode/
