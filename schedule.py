@@ -1,3 +1,6 @@
+# NOT USING SCHEDULE.PY AS IT IS LESS RELIABLE COMPARED TO TASK SCHEDULER AND WOULD REQUIRE THE
+# SCRIPT TO BE RUNNING ALL THE TIME
+
 # import schedule  # for scheduling tasks
 # import time  # for time related tasks like sleep
 # import subprocess  # for running other Python scripts

@@ -1,22 +1,22 @@
-import os
-import time
-import random
-import textwrap
-import requests
-import numpy as np
-import logging
-import re
-from PIL import Image, ImageFilter
-from moviepy.editor import (
+import os # for file operations
+import time # for timing events and creating filenames like timestamps
+import random # for randomizing elements
+import textwrap # for wrapping text but is being handled by textclip class in moviepy
+import requests # for making HTTP requests
+import numpy as np # for numerical operations here used for rounding off
+import logging # for logging events
+import re # for regular expressions
+from PIL import Image, ImageFilter # for image processing
+from moviepy.editor import ( # for video editing
     VideoFileClip, VideoClip, TextClip, CompositeVideoClip,
     AudioFileClip, concatenate_videoclips, ColorClip, CompositeAudioClip
 )
 from moviepy.config import change_settings
-change_settings({"IMAGEMAGICK_BINARY": "magick"})
+change_settings({"IMAGEMAGICK_BINARY": "magick"}) # for windows users
 from gtts import gTTS
 from dotenv import load_dotenv
-import shutil
-import tempfile
+import shutil # for file operations like moving and deleting files
+import tempfile # for creating temporary files
 
 # Configure logging for easier debugging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

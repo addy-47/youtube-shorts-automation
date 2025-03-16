@@ -1,7 +1,7 @@
-import os
-import azure.cognitiveservices.speech as speechsdk
-import logging
-import re
+import os # for interacting with the operating system
+import azure.cognitiveservices.speech as speechsdk # for interacting with Azure Speech API
+import logging # for logging messages
+import re # for regular expressions
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ class AzureVoiceover:
         if not self.subscription_key or not self.region:
             raise ValueError("Azure Speech API credentials not found. Set AZURE_SPEECH_KEY and AZURE_SPEECH_REGION environment variables.")
 
-        self.speech_config = speechsdk.SpeechConfig(
+        self.speech_config = speechsdk.SpeechConfig(  # Set up the speech configuration
             subscription=self.subscription_key,
             region=self.region
         )
@@ -57,19 +57,20 @@ class AzureVoiceover:
         Returns:
             str: Path to the generated audio file.
         """
-        if not output_filename:
+        if not output_filename: # If no output filename is provided, generate one
             output_filename = os.path.join(self.output_dir, f"azure_tts_{hash(text)}.mp3")
 
         # Create an audio configuration pointing to the output file
         audio_config = speechsdk.audio.AudioOutputConfig(filename=output_filename)
 
-        # Create the speech synthesizer
+        # Create the speech synthesizer which will generate the audio
         speech_synthesizer = speechsdk.SpeechSynthesizer(
             speech_config=self.speech_config,
             audio_config=audio_config
         )
 
-        # Apply SSML for voice style if specified
+        # Apply SSML( Speech Synthesis Markup Language) style if provided
+        # SSML is an XML-based markup language that lets you control the pronunciation, volume, pitch, rate, and other attributes of synthesized speech.
         if voice_style:
             ssml = f"""
             <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="en-US">

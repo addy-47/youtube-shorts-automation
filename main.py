@@ -1,16 +1,16 @@
-import logging
-import os
-from pathlib import Path
-from dotenv import load_dotenv
+import logging # for logging events
+import os # for environment variables and file paths
+from pathlib import Path # for file paths and directory creation
+from dotenv import load_dotenv # for loading environment variables
 from script_generator import generate_script
 from video_maker import YTShortsCreator
 from youtube_upload import upload_video, get_authenticated_service
 from nltk.corpus import stopwords
-import datetime
-import re
-import nltk
-from collections import Counter
-import requests
+import datetime # for timestamp
+import re # for regular expressions
+import nltk # for natural language processing
+from collections import Counter # for counting elements in a list
+import requests # for making HTTP requests
 
 load_dotenv()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
@@ -68,7 +68,7 @@ def get_keywords(script, max_keywords=5):
         list: A list of the top keywords.
     """
     # Ensure NLTK resources are downloaded
-    nltk.download('stopwords', quiet=True)
+    nltk.download('stopwords', quiet=True) #quiet=True to suppress output
     nltk.download('punkt', quiet=True)
 
     stop_words = set(stopwords.words('english'))
