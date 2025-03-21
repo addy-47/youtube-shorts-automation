@@ -98,31 +98,3 @@ class AzureVoiceover:
             raise Exception(f"Azure TTS error: {cancellation_details.reason}")
 
         return output_filename
-
-
-    def clean_text_for_tts(self, text):
-        """
-        Clean text for better TTS pronunciation.
-
-        Args:
-            text (str): Text to clean.
-
-        Returns:
-            str: Cleaned text.
-        """
-        # Replace common abbreviations
-        text = text.replace("&", " and ")
-        text = text.replace("%", " percent ")
-        text = text.replace("w/", "with ")
-        text = text.replace("vs.", "versus ")
-        text = text.replace("eg.", "for example")
-        text = text.replace("e.g.", "for example")
-        text = text.replace("i.e.", "that is")
-
-        # Remove special characters that might affect speech
-        text = re.sub(r'[^\w\s.,!?\'"-]', ' ', text)
-
-        # Replace multiple spaces with a single space
-        text = re.sub(r'\s+', ' ', text).strip()
-
-        return text
