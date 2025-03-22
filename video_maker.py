@@ -136,19 +136,28 @@ class YTShortsCreator:
             list: Paths to downloaded video files
         """
         try:
-            url = f"https://pixabay.com/api/videos/?key={self.pixabay_api_key}&q={query}&min_width=1080&min_height=1920"
-            response = requests.get(url)
-            if response.status_code == 200:
-                data = response.json()
-                videos = data.get("hits", [])
+            url = f"https://pixabay.com/api/videos/?key={self.pixabay_api_key}&q={query}&min_width=1080&min_height=1920&per_page=20"
+            response = requests.get(url) # make a request to the API
+            if response.status_code == 200: # if the request is successful
+                data = response.json()  # changes the response in json to py dict data
+                videos = data.get("hits", []) # get the videos from the data
                 video_paths = []
-                for video in videos[:count]:
+                # Randomly select videos from the top 10
+                # First limit to top 10 videos
+                top_videos = videos[:10]
+                # Then randomly select 'count' videos from the top 10
+                if len(top_videos) > count:
+                    selected_videos = random.sample(top_videos, count)
+                else:
+                    selected_videos = top_videos
+
+                for video in selected_videos:
                     video_url = video["videos"]["large"]["url"]
-                    video_path = os.path.join(self.temp_dir, f"pixabay_{video['id']}.mp4")
-                    with requests.get(video_url, stream=True) as r:
-                        r.raise_for_status()
-                        with open(video_path, 'wb') as f:
-                            for chunk in r.iter_content(chunk_size=8192):
+                    video_path = os.path.join(self.temp_dir, f"pixabay_{video['id']}.mp4") # create a path for the video
+                    with requests.get(video_url, stream=True) as r:  # get the video from the url
+                        r.raise_for_status() # raise an error if the request is not successful
+                        with open(video_path, 'wb') as f: # open the video file in write binary mode
+                            for chunk in r.iter_content(chunk_size=8192): # iterate over the content of the video
                                 f.write(chunk)
                     clip = VideoFileClip(video_path)
                     if clip.duration >= min_duration:
@@ -174,14 +183,25 @@ class YTShortsCreator:
             list: Paths to downloaded video files
         """
         try:
-            url = f"https://api.pexels.com/videos/search?query={query}&per_page={count}&orientation=portrait"
+            url = f"https://api.pexels.com/videos/search?query={query}&per_page=20&orientation=portrait"
             response = requests.get(url)
             if response.status_code == 200:
                 data = response.json()
-                videos = data.get("hits", [])
+                videos = data.get("videos", [])
                 video_paths = []
-                for video in videos[:count]:
-                    video_url = video["videos"]["large"]["url"]
+                # Randomly select videos from the top 10
+                # Limit to top 10 videos first
+                top_videos = videos[:10]
+                # Then randomly select 'count' videos from those top 10
+                if len(top_videos) > count:
+                    selected_videos = random.sample(top_videos, count)
+                else:
+                    selected_videos = top_videos
+
+                for video in selected_videos:
+                    video_files = video.get("video_files", []) # get the video files
+                    if video_files:
+                        video_url = video_files[0].get("link") # get the video link
                     video_path = os.path.join(self.temp_dir, f"pexels_{video['id']}.mp4")
                     with requests.get(video_url, stream=True) as r:
                         r.raise_for_status()

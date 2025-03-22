@@ -11,6 +11,7 @@ import re # for regular expressions
 import nltk # for natural language processing
 from collections import Counter # for counting elements in a list
 import requests # for making HTTP requests
+import random # for generating random numbers
 
 load_dotenv()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
@@ -37,19 +38,25 @@ def get_latest_ai_news():
     if not NEWS_API_KEY:
         raise ValueError("NewsAPI key is missing. Set NEWS_API_KEY in .env.")
 
+    # Calculate the date two weeks ago
+    two_weeks_ago = datetime.datetime.now() - datetime.timedelta(weeks=2)
+    # Format the date as YYYY-MM-DD for the News API
+    from_date = two_weeks_ago.strftime("%Y-%m-%d")
+
     # Specify technology and AI focus with multiple topics
     topics = ["artificial intelligence", "technology", "tech innovation", "AI", "machine learning"]
 
     # Try each topic until we find a suitable article
     for topic in topics:
-        url = f"https://newsapi.org/v2/top-headlines?q={topic}&category=technology&apiKey={NEWS_API_KEY}"
+        url = f"https://newsapi.org/v2/top-headlines?q={topic}&category=technology&from={from_date}&sortBy=popularity&pageSize=10&apiKey={NEWS_API_KEY}"
         response = requests.get(url)
 
         if response.status_code == 200:
             articles = response.json().get('articles', [])
             if articles:
-                # Get the first article title
-                return articles[0]['title']
+                chosen_article = random.choice(articles) # Choose a random article from top 10
+                return chosen_article['title']
+
 
     # Fallback to a general technology search if no AI-specific news
     url = f"https://newsapi.org/v2/top-headlines?category=technology&apiKey={NEWS_API_KEY}"
@@ -58,7 +65,8 @@ def get_latest_ai_news():
     if response.status_code == 200:
         articles = response.json().get('articles', [])
         if articles:
-            return articles[0]['title']
+            chosen_article = random.choice(articles)
+            return chosen_article['title']
 
     return "Latest Technology Innovation News"
 
