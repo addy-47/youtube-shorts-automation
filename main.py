@@ -203,7 +203,8 @@ def generate_youtube_short(topic, style="video", max_duration=25):
             voice_style="none",
             max_duration=max_duration,
             background_queries=section_keywords,
-            blur_background= False
+            blur_background= False,
+            edge_blur=True
         )
 
         # Optional: YouTube Upload
@@ -228,8 +229,6 @@ def main():
     try:
         topic = os.getenv("YOUTUBE_TOPIC", "Artificial Intelligence")
         style = os.getenv("BACKGROUND_STYLE", "video")
-        # Get blur background setting from environment variable (default: True)
-        blur_background = os.getenv("BLUR_BACKGROUND", "true").lower() == "true"
 
         video_path = generate_youtube_short(
             topic,

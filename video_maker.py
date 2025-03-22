@@ -199,9 +199,37 @@ class YTShortsCreator:
             logger.error(f"Error fetching videos from Pixabay: {e}")
             return self._fetch_from_pixabay(query, count, min_duration)
 
-    def _create_text_clip(self, text, duration=5, font_size=60, font_path=None, color='white', position='center', animation="fade", animation_duration=1.0, shadow=True, outline=True):
+    def _create_pill_image(self, size, color=(0, 0, 0, 160), radius=30):
         """
-        Create a text clip with optional effects
+        Create a pill-shaped background image with rounded corners.
+
+        Args:
+            size (tuple): Size of the image (width, height)
+            color (tuple): Color of the pill background (RGBA)
+            radius (int): Radius of the rounded corners
+
+        Returns:
+            Image: PIL Image with the pill-shaped background
+        """
+        width, height = size
+        img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(img)
+
+        # Draw the rounded rectangle
+        draw.rectangle([(radius, 0), (width - radius, height)], fill=color)
+        draw.rectangle([(0, radius), (width, height - radius)], fill=color)
+        draw.ellipse([(0, 0), (radius * 2, radius * 2)], fill=color)
+        draw.ellipse([(width - radius * 2, 0), (width, radius * 2)], fill=color)
+        draw.ellipse([(0, height - radius * 2), (radius * 2, height)], fill=color)
+        draw.ellipse([(width - radius * 2, height - radius * 2), (width, height)], fill=color)
+
+        return img
+
+    def _create_text_clip(self, text, duration=5, font_size=60, font_path=None, color='white',
+                          position='center', animation="fade", animation_duration=1.0, shadow=True,
+                          outline=True, with_pill=False, pill_color=(0, 0, 0, 160), pill_radius=30):
+        """
+        Create a text clip with optional effects and pill-shaped background.
 
         Args:
             text (str): Text content
@@ -214,14 +242,16 @@ class YTShortsCreator:
             animation_duration (float): Animation duration
             shadow (bool): Add shadow effect
             outline (bool): Add outline effect
+            with_pill (bool): Add pill-shaped background
+            pill_color (tuple): Color of the pill background (RGBA)
+            pill_radius (int): Radius of the pill's rounded corners
 
         Returns:
-            VideoClip: Text clip with effects
+            VideoClip: Text clip with effects and optional pill background
         """
         if not font_path:
             font_path = self.body_font_path
 
-        # Create the main text clip
         try:
             txt_clip = TextClip(
                 txt=text,
@@ -245,6 +275,12 @@ class YTShortsCreator:
 
         txt_clip = txt_clip.set_duration(duration)
         clips = []
+
+        # Add pill-shaped background if requested
+        if with_pill:
+            pill_image = self._create_pill_image(txt_clip.size, color=pill_color, radius=pill_radius)
+            pill_clip = ImageClip(np.array(pill_image), duration=duration)
+            clips.append(pill_clip)
 
         # Add shadow effect
         if shadow:
@@ -278,7 +314,8 @@ class YTShortsCreator:
         clips.append(txt_clip)
         text_composite = CompositeVideoClip(clips)
 
-        text_composite = text_composite.set_position("center","center")
+        # Set the position of the entire composite
+        text_composite = text_composite.set_position(position)
 
         # Apply animation
         if animation in self.transitions:
@@ -439,15 +476,50 @@ class YTShortsCreator:
 
         return clip.fl(lambda gf, t: blur_frame(gf, t))
 
-    def _process_background_clip(self, clip, target_duration, blur_background=True):
+    def custom_edge_blur(self, clip, edge_width=400, radius=8):
+        """
+        Apply a Gaussian blur effect to the edges of a video clip, leaving the center unblurred.
+
+        Args:
+            clip (VideoClip): Video clip to blur.
+            edge_width (int): Width of the blurred edge in pixels.
+            radius (int): Blur radius - increase for more blur
+
+        Returns:
+            VideoClip: Video clip with blurred edges.
+        """
+
+        def blur_frame(get_frame, t):
+            frame = get_frame(t)
+            img = Image.fromarray(frame)
+            width, height = img.size
+
+            # Create a mask for the unblurred center
+            mask = Image.new('L', (width, height), 0)
+            draw = ImageDraw.Draw(mask)
+            draw.rectangle(
+                [(edge_width, edge_width), (width - edge_width, height - edge_width)],
+                fill=255
+            )
+
+            # Blur the entire image
+            blurred = img.filter(ImageFilter.GaussianBlur(radius=radius))
+
+            # Composite the blurred image with the original using the mask
+            composite = Image.composite(img, blurred, mask)
+
+            return np.array(composite)
+
+        return clip.fl(lambda gf, t: blur_frame(gf, t))
+
+    def _process_background_clip(self, clip, target_duration, blur_background=False, edge_blur=False):
         """
         Process a background clip to match the required duration
-
         Args:
             clip (VideoClip): The input video clip
             target_duration (float): The required duration
             blur_background (bool): Whether to apply blur effect to the background
-
+            edge_blur (bool): Whether to apply edge blur effect to the background
         Returns:
             VideoClip: Processed clip that matches the target duration
         """
@@ -481,9 +553,12 @@ class YTShortsCreator:
         # Resize to match height
         clip = clip.resize(height=self.resolution[1])
 
-        # Apply blur effect only if requested
-        if blur_background:
+       # Apply blur effect only if requested
+        if blur_background and not edge_blur:
             clip = self.custom_blur(clip, radius=5)
+        elif edge_blur:
+            clip = self.custom_edge_blur(clip, edge_width=450, radius=8)
+
 
         # Center the video if it's not wide enough
         if clip.w < self.resolution[0]:
@@ -504,7 +579,7 @@ class YTShortsCreator:
 
     def create_youtube_short(self, title, script_sections, background_query="abstract background",
                             output_filename=None, add_captions=False, style="video", voice_style=None, max_duration=25,
-                            background_queries=None, blur_background=False):
+                            background_queries=None, blur_background=False, edge_blur=False):
         """
         Create a YouTube Short video with seamless backgrounds and no black screens
 
@@ -519,7 +594,7 @@ class YTShortsCreator:
             max_duration (int): Maximum duration in seconds (default: 25)
             background_queries (list): List of search terms for background videos, one per segment
             blur_background (bool): Whether to apply blur effect to background videos (default: True)
-
+            edge_blur (bool): Whether to apply edge blur effect to background videos (default: False)
         Returns:
             str: Path to the created video
         """
@@ -623,7 +698,7 @@ class YTShortsCreator:
                 bg_clip = VideoFileClip(bg_path)
 
                 # Process the background clip to match the required duration
-                processed_clip = self._process_background_clip(bg_clip, target_duration, blur_background=blur_background)
+                processed_clip = self._process_background_clip(bg_clip, target_duration, blur_background=blur_background, edge_blur=edge_blur)
                 processed_bg_clips.append(processed_clip)
 
             except Exception as e:
@@ -632,7 +707,7 @@ class YTShortsCreator:
                 if processed_bg_clips:
                     # Use a previously processed clip as a fallback
                     fallback_clip = random.choice(processed_bg_clips).copy()
-                    processed_clip = self._process_background_clip(fallback_clip, target_duration, blur_background=blur_background)
+                    processed_clip = self._process_background_clip(fallback_clip, target_duration, blur_background=blur_background, edge_blur=edge_blur)
                     processed_bg_clips.append(processed_clip)
                 else:
                     # Try to fetch a new background if we have no processed clips yet
@@ -640,7 +715,7 @@ class YTShortsCreator:
                         emergency_bg_paths = self._fetch_videos(background_query, count=1, min_duration=5)
                         if emergency_bg_paths:
                             emergency_clip = VideoFileClip(emergency_bg_paths[0])
-                            processed_clip = self._process_background_clip(emergency_clip, target_duration, blur_background=blur_background)
+                            processed_clip = self._process_background_clip(emergency_clip, target_duration, blur_background=blur_background, edge_blur=edge_blur)
                             processed_bg_clips.append(processed_clip)
                     except Exception as e2:
                         logger.error(f"Failed to create background. ABORTING{str(e2)}")
@@ -670,7 +745,7 @@ class YTShortsCreator:
                 last_clip = processed_bg_clips[-1]
 
                 # Create a copy of the last clip and loop it as needed
-                extra_clip = self._process_background_clip(last_clip.copy(), needed_duration, blur_background=blur_background)
+                extra_clip = self._process_background_clip(last_clip.copy(), needed_duration, blur_background=blur_background, edge_blur=edge_blur)
 
                 # Add crossfade to the extension
                 extra_clip = extra_clip.crossfadein(transition_duration)
@@ -774,7 +849,7 @@ class YTShortsCreator:
 
                 # Use last clip to create additional background
                 last_clip = processed_bg_clips[-1].copy()
-                extra_clip = self._process_background_clip(last_clip, needed_duration, blur_background=blur_background)
+                extra_clip = self._process_background_clip(last_clip, needed_duration, blur_background=blur_background, edge_blur=edge_blur)
 
                 # Add crossfade to the extension
                 extra_clip = extra_clip.crossfadein(transition_duration)
@@ -804,14 +879,16 @@ class YTShortsCreator:
                 if i == 0 and title:
                     title_clip = self._create_text_clip(
                         title, duration=duration, font_size=70, font_path=self.title_font_path,
-                        position=('center', 150), animation="fade", animation_duration=0.8
+                        position=('center', 150), animation="fade", animation_duration=0.8,
+                        with_pill=True, pill_color=(0, 0, 0, 160), pill_radius=30
                     ).set_start(current_time)
                     text_clips.append(title_clip)
 
                 # Add section text with regular style for intro/outro
                 text_clip = self._create_text_clip(
                     text, duration=duration, font_size=55, font_path=self.body_font_path,
-                    position=('center', 'center'), animation="fade", animation_duration=0.8
+                    position=('center', 'center'), animation="fade", animation_duration=0.8,
+                    with_pill=True, pill_color=(0, 0, 0, 160), pill_radius=30
                 ).set_start(current_time)
                 text_clips.append(text_clip)
             else:
