@@ -136,16 +136,16 @@ class YTShortsCreator:
             list: Paths to downloaded video files
         """
         try:
-            url = f"https://pixabay.com/api/videos/?key={self.pixabay_api_key}&q={query}&min_width=1080&min_height=1920&per_page=20"
+            url = f"https://pixabay.com/api/videos/?key={self.pixabay_api_key}&q={query}&min_width=1080&min_height=1920&per_page=10"
             response = requests.get(url) # make a request to the API
             if response.status_code == 200: # if the request is successful
                 data = response.json()  # changes the response in json to py dict data
                 videos = data.get("hits", []) # get the videos from the data
                 video_paths = []
-                # Randomly select videos from the top 10
-                # First limit to top 10 videos
-                top_videos = videos[:10]
-                # Then randomly select 'count' videos from the top 10
+                # Randomly select videos from the top 4
+                # First limit to top 4 videos
+                top_videos = videos[:4]
+                # Then randomly select 'count' videos from the top 4
                 if len(top_videos) > count:
                     selected_videos = random.sample(top_videos, count)
                 else:
@@ -183,16 +183,16 @@ class YTShortsCreator:
             list: Paths to downloaded video files
         """
         try:
-            url = f"https://api.pexels.com/videos/search?query={query}&per_page=20&orientation=portrait"
+            url = f"https://api.pexels.com/videos/search?query={query}&per_page=10&orientation=portrait"
             response = requests.get(url)
             if response.status_code == 200:
                 data = response.json()
                 videos = data.get("videos", [])
                 video_paths = []
-                # Randomly select videos from the top 10
-                # Limit to top 10 videos first
-                top_videos = videos[:10]
-                # Then randomly select 'count' videos from those top 10
+                # Randomly select videos from the top 4
+                # Limit to top 4 videos first
+                top_videos = videos[:4]
+                # Then randomly select 'count' videos from those top 4
                 if len(top_videos) > count:
                     selected_videos = random.sample(top_videos, count)
                 else:
