@@ -144,7 +144,7 @@ class YTShortsCreator:
                 video_paths = []
                 # Randomly select videos from the top 4
                 # First limit to top 4 videos
-                top_videos = videos[:4]
+                top_videos = videos[:2]
                 # Then randomly select 'count' videos from the top 4
                 if len(top_videos) > count:
                     selected_videos = random.sample(top_videos, count)
@@ -191,7 +191,7 @@ class YTShortsCreator:
                 video_paths = []
                 # Randomly select videos from the top 4
                 # Limit to top 4 videos first
-                top_videos = videos[:4]
+                top_videos = videos[:2]
                 # Then randomly select 'count' videos from those top 4
                 if len(top_videos) > count:
                     selected_videos = random.sample(top_videos, count)
@@ -496,7 +496,7 @@ class YTShortsCreator:
 
         return clip.fl(lambda gf, t: blur_frame(gf, t))
 
-    def custom_edge_blur(self, clip, edge_width=400, radius=8):
+    def custom_edge_blur(self, clip, edge_width=50, radius=10):
         """
         Apply a Gaussian blur effect to the edges of a video clip, leaving the center unblurred.
 
@@ -577,7 +577,7 @@ class YTShortsCreator:
         if blur_background and not edge_blur:
             clip = self.custom_blur(clip, radius=5)
         elif edge_blur:
-            clip = self.custom_edge_blur(clip, edge_width=450, radius=8)
+            clip = self.custom_edge_blur(clip, edge_width=75, radius=10)
 
 
         # Center the video if it's not wide enough
