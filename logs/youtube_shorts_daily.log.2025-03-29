@@ -1,0 +1,19 @@
+2025-03-29 21:15:23,606 - INFO - __main__ - Generating script for topic: Disney Villains Cursed Café - Nintendo
+2025-03-29 21:15:26,924 - INFO - __main__ - Raw script generated successfully
+2025-03-29 21:15:26,925 - INFO - __main__ - Script parsed into 6 sections
+2025-03-29 21:15:26,925 - INFO - __main__ - Section 1: Welcome to the future of fun!... (duration: 3s)
+2025-03-29 21:15:26,926 - INFO - __main__ - Section 2: Disney's latest AI project, th... (duration: 5s)
+2025-03-29 21:15:26,926 - INFO - __main__ - Section 3: Imagine dining with your favor... (duration: 5s)
+2025-03-29 21:15:26,927 - INFO - __main__ - Section 4: It's a unique blend of storyte... (duration: 5s)
+2025-03-29 21:15:26,927 - INFO - __main__ - Section 5: Don’t miss out on this revolut... (duration: 5s)
+2025-03-29 21:15:26,927 - INFO - __main__ - Section 6: Hit that like button and subsc... (duration: 5s)
+2025-03-29 21:15:26,928 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-03-29 21:15:33,243 - INFO - __main__ - Section 1 query: future fun
+2025-03-29 21:15:33,243 - INFO - __main__ - Section 2 query: Disney AI project
+2025-03-29 21:15:33,245 - INFO - __main__ - Section 3 query: dining with villains
+2025-03-29 21:15:33,246 - INFO - __main__ - Section 4 query: storytelling technology
+2025-03-29 21:15:33,246 - INFO - __main__ - Section 5 query: revolutionary café experience
+2025-03-29 21:15:33,246 - INFO - __main__ - Section 6 query: like subscribe button
+2025-03-29 21:15:33,246 - INFO - __main__ - Creating YouTube Short
+2025-03-29 22:41:07,181 - INFO - __main__ - Uploading to YouTube
+2025-03-29 22:42:07,728 - INFO - __main__ - YouTube Short created successfully: ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250329_211520.mp4

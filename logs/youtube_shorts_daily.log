@@ -1,21 +1,21 @@
-2025-03-28 21:15:30,362 - INFO - __main__ - Generating script for topic: This Disney villains café game, out today, was made especially for me - Polygon
-2025-03-28 21:15:33,559 - INFO - __main__ - Raw script generated successfully
-2025-03-28 21:15:33,559 - INFO - __main__ - Script parsed into 6 sections
-2025-03-28 21:15:33,560 - INFO - __main__ - Section 1: Disney fans, get ready for som... (duration: 5s)
-2025-03-28 21:15:33,560 - INFO - __main__ - Section 2: The new Disney villains café g... (duration: 5s)
-2025-03-28 21:15:33,561 - INFO - __main__ - Section 3: This game uses cutting-edge AI... (duration: 5s)
-2025-03-28 21:15:33,562 - INFO - __main__ - Section 4: Dive into a world where your c... (duration: 5s)
-2025-03-28 21:15:33,563 - INFO - __main__ - Section 5: Don’t miss out on this thrilli... (duration: 5s)
-2025-03-28 21:15:33,563 - INFO - __main__ - Section 6: Check it out now and let us kn... (duration: 5s)
-2025-03-28 21:15:33,564 - INFO - __main__ - Generating video search queries for each section using AI...
-2025-03-28 21:15:35,993 - INFO - __main__ - Section 1 query: Disney magic
-2025-03-28 21:15:35,994 - INFO - __main__ - Section 2 query: Disney villains café game
-2025-03-28 21:15:35,994 - INFO - __main__ - Section 3 query: AI gaming experience
-2025-03-28 21:15:35,995 - INFO - __main__ - Section 4 query: interactive villain story
-2025-03-28 21:15:35,995 - INFO - __main__ - Section 5 query: nostalgia innovation blend
-2025-03-28 21:15:35,996 - INFO - __main__ - Section 6 query: favorite Disney villain
-2025-03-28 21:15:35,996 - INFO - __main__ - Using fallback query: Disney magic
-2025-03-28 21:15:35,997 - INFO - __main__ - Creating YouTube Short
-2025-03-28 22:44:28,762 - INFO - __main__ - Uploading to YouTube
-2025-03-28 22:44:30,009 - ERROR - __main__ - Error generating YouTube Short: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
-2025-03-28 22:44:30,011 - ERROR - __main__ - Process failed: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+2025-03-31 21:15:30,697 - INFO - __main__ - Generating script for topic: Playing Nintendo’s greatest triumph on its biggest failure - Polygon
+2025-03-31 21:15:36,663 - INFO - __main__ - Raw script generated successfully
+2025-03-31 21:15:36,664 - INFO - __main__ - Script parsed into 7 sections
+2025-03-31 21:15:36,665 - INFO - __main__ - Section 1: Nintendo is back in the spotli... (duration: 5s)
+2025-03-31 21:15:36,665 - INFO - __main__ - Section 2: Imagine playing its greatest t... (duration: 5s)
+2025-03-31 21:15:36,666 - INFO - __main__ - Section 3: The latest AI news reveals how... (duration: 5s)
+2025-03-31 21:15:36,667 - INFO - __main__ - Section 4: They're using AI to enhance cl... (duration: 5s)
+2025-03-31 21:15:36,667 - INFO - __main__ - Section 5: Get ready to relive those icon... (duration: 5s)
+2025-03-31 21:15:36,668 - INFO - __main__ - Section 6: Want to stay updated on the la... (duration: 5s)
+2025-03-31 21:15:36,669 - INFO - __main__ - Section 7: Hit that follow button!... (duration: 3s)
+2025-03-31 21:15:36,669 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-03-31 21:15:39,503 - INFO - __main__ - Section 1 query: Nintendo spotlight
+2025-03-31 21:15:39,504 - INFO - __main__ - Section 2 query: gaming triumph failure
+2025-03-31 21:15:39,505 - INFO - __main__ - Section 3 query: nostalgia innovation
+2025-03-31 21:15:39,507 - INFO - __main__ - Section 4 query: AI classic games
+2025-03-31 21:15:39,507 - INFO - __main__ - Section 5 query: iconic game moments
+2025-03-31 21:15:39,508 - INFO - __main__ - Section 6 query: latest tech updates
+2025-03-31 21:15:39,509 - INFO - __main__ - Section 7 query: social media follow
+2025-03-31 21:15:39,509 - INFO - __main__ - Creating YouTube Short
+2025-03-31 22:28:16,212 - INFO - __main__ - Uploading to YouTube
+2025-03-31 22:28:22,801 - INFO - __main__ - YouTube Short created successfully: ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250331_211528.mp4
