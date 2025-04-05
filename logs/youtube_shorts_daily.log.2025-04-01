@@ -1,0 +1,17 @@
+2025-04-01 21:15:40,002 - INFO - __main__ - Generating script for topic: CREEK & RIVER and Bandai Namco establish mobile games-focused joint venture URS Games - Gematsu
+2025-04-01 21:15:43,083 - INFO - __main__ - Raw script generated successfully
+2025-04-01 21:15:43,084 - INFO - __main__ - Script parsed into 5 sections
+2025-04-01 21:15:43,084 - INFO - __main__ - Section 1: Big news in the gaming world!... (duration: 3s)
+2025-04-01 21:15:43,084 - INFO - __main__ - Section 2: CREEK & RIVER and Bandai Namco... (duration: 5s)
+2025-04-01 21:15:43,085 - INFO - __main__ - Section 3: This partnership aims to blend... (duration: 5s)
+2025-04-01 21:15:43,085 - INFO - __main__ - Section 4: Get ready for innovative title... (duration: 5s)
+2025-04-01 21:15:43,085 - INFO - __main__ - Section 5: Don’t miss out on the latest u... (duration: 5s)
+2025-04-01 21:15:43,087 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-04-01 21:15:45,298 - INFO - __main__ - Section 1 query: gaming news
+2025-04-01 21:15:45,301 - INFO - __main__ - Section 2 query: mobile gaming partnership
+2025-04-01 21:15:45,305 - INFO - __main__ - Section 3 query: AI technology gameplay
+2025-04-01 21:15:45,308 - INFO - __main__ - Section 4 query: innovative mobile games
+2025-04-01 21:15:45,311 - INFO - __main__ - Section 5 query: subscribe for updates
+2025-04-01 21:15:45,313 - INFO - __main__ - Creating YouTube Short
+2025-04-01 22:52:42,534 - INFO - __main__ - Uploading to YouTube
+2025-04-01 22:52:51,315 - INFO - __main__ - YouTube Short created successfully: ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250401_211538.mp4

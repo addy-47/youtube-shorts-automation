@@ -1,0 +1,19 @@
+2025-04-03 23:15:27,547 - INFO - __main__ - Generating script for topic: Mario Kart World launches exclusively with the Nintendo Switch 2 - The Verge
+2025-04-03 23:15:29,920 - INFO - __main__ - Raw script generated successfully
+2025-04-03 23:15:29,921 - INFO - __main__ - Script parsed into 7 sections
+2025-04-03 23:15:29,921 - INFO - __main__ - Section 1: Big news for gamers!... (duration: 3s)
+2025-04-03 23:15:29,921 - INFO - __main__ - Section 2: Mario Kart World is launching ... (duration: 5s)
+2025-04-03 23:15:29,922 - INFO - __main__ - Section 3: This new title promises stunni... (duration: 5s)
+2025-04-03 23:15:29,922 - INFO - __main__ - Section 4: Get ready for a whole new raci... (duration: 5s)
+2025-04-03 23:15:29,923 - INFO - __main__ - Section 5: Are you as excited as we are?... (duration: 3s)
+2025-04-03 23:15:29,923 - INFO - __main__ - Section 6: Let us know in the comments!... (duration: 3s)
+2025-04-03 23:15:29,923 - INFO - __main__ - Section 7: Don’t forget to like and subsc... (duration: 5s)
+2025-04-03 23:15:29,924 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-04-03 23:15:32,042 - INFO - __main__ - Section 1 query: gaming news
+2025-04-03 23:15:32,043 - INFO - __main__ - Section 2 query: Nintendo Switch 2
+2025-04-03 23:15:32,043 - INFO - __main__ - Section 3 query: AI gameplay graphics
+2025-04-03 23:15:32,043 - INFO - __main__ - Section 4 query: dynamic racing tracks
+2025-04-03 23:15:32,043 - INFO - __main__ - Section 5 query: excited gamers
+2025-04-03 23:15:32,044 - INFO - __main__ - Section 6 query: comments section
+2025-04-03 23:15:32,044 - INFO - __main__ - Section 7 query: like and subscribe
+2025-04-03 23:15:32,044 - INFO - __main__ - Creating YouTube Short

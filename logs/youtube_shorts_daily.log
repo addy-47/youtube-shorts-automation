@@ -1,21 +1,63 @@
-2025-03-31 21:15:30,697 - INFO - __main__ - Generating script for topic: Playing Nintendo’s greatest triumph on its biggest failure - Polygon
-2025-03-31 21:15:36,663 - INFO - __main__ - Raw script generated successfully
-2025-03-31 21:15:36,664 - INFO - __main__ - Script parsed into 7 sections
-2025-03-31 21:15:36,665 - INFO - __main__ - Section 1: Nintendo is back in the spotli... (duration: 5s)
-2025-03-31 21:15:36,665 - INFO - __main__ - Section 2: Imagine playing its greatest t... (duration: 5s)
-2025-03-31 21:15:36,666 - INFO - __main__ - Section 3: The latest AI news reveals how... (duration: 5s)
-2025-03-31 21:15:36,667 - INFO - __main__ - Section 4: They're using AI to enhance cl... (duration: 5s)
-2025-03-31 21:15:36,667 - INFO - __main__ - Section 5: Get ready to relive those icon... (duration: 5s)
-2025-03-31 21:15:36,668 - INFO - __main__ - Section 6: Want to stay updated on the la... (duration: 5s)
-2025-03-31 21:15:36,669 - INFO - __main__ - Section 7: Hit that follow button!... (duration: 3s)
-2025-03-31 21:15:36,669 - INFO - __main__ - Generating video search queries for each section using AI...
-2025-03-31 21:15:39,503 - INFO - __main__ - Section 1 query: Nintendo spotlight
-2025-03-31 21:15:39,504 - INFO - __main__ - Section 2 query: gaming triumph failure
-2025-03-31 21:15:39,505 - INFO - __main__ - Section 3 query: nostalgia innovation
-2025-03-31 21:15:39,507 - INFO - __main__ - Section 4 query: AI classic games
-2025-03-31 21:15:39,507 - INFO - __main__ - Section 5 query: iconic game moments
-2025-03-31 21:15:39,508 - INFO - __main__ - Section 6 query: latest tech updates
-2025-03-31 21:15:39,509 - INFO - __main__ - Section 7 query: social media follow
-2025-03-31 21:15:39,509 - INFO - __main__ - Creating YouTube Short
-2025-03-31 22:28:16,212 - INFO - __main__ - Uploading to YouTube
-2025-03-31 22:28:22,801 - INFO - __main__ - YouTube Short created successfully: ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250331_211528.mp4
+2025-04-05 21:27:47,783 - INFO - root - Day 95: Using image-based creator (YTShortsCreator_I)
+2025-04-05 21:27:47,871 - INFO - shorts_maker_V - Azure TTS initialized successfully
+2025-04-05 21:27:47,875 - INFO - shorts_maker_I - Azure TTS initialized successfully
+2025-04-05 21:27:47,877 - INFO - __main__ - Using style: photorealistic
+2025-04-05 21:27:47,877 - INFO - __main__ - Using style: photorealistic
+2025-04-05 21:27:49,503 - INFO - __main__ - Generating script for topic: Midjourney releases V7, its first new AI image model in nearly a year - TechCrunch
+2025-04-05 21:27:49,503 - INFO - __main__ - Generating script for topic: Midjourney releases V7, its first new AI image model in nearly a year - TechCrunch
+2025-04-05 21:27:51,682 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-05 21:27:51,692 - INFO - script_generator - Script cleaned
+2025-04-05 21:27:51,692 - INFO - script_generator - Script generated successfully with 70 words.
+2025-04-05 21:27:51,693 - INFO - __main__ - Raw script generated successfully
+2025-04-05 21:27:51,693 - INFO - __main__ - Raw script generated successfully
+2025-04-05 21:27:51,693 - INFO - __main__ - Script parsed into 7 sections
+2025-04-05 21:27:51,693 - INFO - __main__ - Script parsed into 7 sections
+2025-04-05 21:27:51,694 - INFO - __main__ - Section 1: Big news in the AI world!... (duration: 3s)
+2025-04-05 21:27:51,694 - INFO - __main__ - Section 1: Big news in the AI world!... (duration: 3s)
+2025-04-05 21:27:51,694 - INFO - __main__ - Section 2: Midjourney just dropped V7, it... (duration: 5s)
+2025-04-05 21:27:51,694 - INFO - __main__ - Section 2: Midjourney just dropped V7, it... (duration: 5s)
+2025-04-05 21:27:51,695 - INFO - __main__ - Section 3: This update promises stunning ... (duration: 5s)
+2025-04-05 21:27:51,695 - INFO - __main__ - Section 3: This update promises stunning ... (duration: 5s)
+2025-04-05 21:27:51,695 - INFO - __main__ - Section 4: Users can expect sharper detai... (duration: 5s)
+2025-04-05 21:27:51,695 - INFO - __main__ - Section 4: Users can expect sharper detai... (duration: 5s)
+2025-04-05 21:27:51,696 - INFO - __main__ - Section 5: Curious to see what this can d... (duration: 5s)
+2025-04-05 21:27:51,696 - INFO - __main__ - Section 5: Curious to see what this can d... (duration: 5s)
+2025-04-05 21:27:51,696 - INFO - __main__ - Section 6: Check it out and unleash your ... (duration: 5s)
+2025-04-05 21:27:51,696 - INFO - __main__ - Section 6: Check it out and unleash your ... (duration: 5s)
+2025-04-05 21:27:51,697 - INFO - __main__ - Section 7: Don’t forget to like and subsc... (duration: 5s)
+2025-04-05 21:27:51,697 - INFO - __main__ - Section 7: Don’t forget to like and subsc... (duration: 5s)
+2025-04-05 21:27:51,698 - INFO - root - Day 95: Using image-based creator (YTShortsCreator_I)
+2025-04-05 21:27:51,702 - INFO - shorts_maker_V - Azure TTS initialized successfully
+2025-04-05 21:27:51,705 - INFO - shorts_maker_I - Azure TTS initialized successfully
+2025-04-05 21:27:51,707 - INFO - __main__ - Generating image search prompts for each section using AI...
+2025-04-05 21:27:51,707 - INFO - __main__ - Generating image search prompts for each section using AI...
+2025-04-05 21:27:55,752 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-05 21:27:55,753 - INFO - script_generator - Successfully generated batch image prompts for 7 sections.
+2025-04-05 21:27:55,754 - INFO - __main__ - Section 1 query: a vibrant news headline displayed on a futuristic digital screen, surrounded by animated AI symbols and data streams, eye-catching colors and dynamic movement
+2025-04-05 21:27:55,754 - INFO - __main__ - Section 1 query: a vibrant news headline displayed on a futuristic digital screen, surrounded by animated AI symbols and data streams, eye-catching colors and dynamic movement
+2025-04-05 21:27:55,754 - INFO - __main__ - Section 2 query: a visually striking representation of Midjourney's V7 logo, with creative bursts of color and artistic elements, showcasing the concept of a new image model launch
+2025-04-05 21:27:55,754 - INFO - __main__ - Section 2 query: a visually striking representation of Midjourney's V7 logo, with creative bursts of color and artistic elements, showcasing the concept of a new image model launch
+2025-04-05 21:27:55,755 - INFO - __main__ - Section 3 query: a collage of stunning visuals including landscapes and abstract art, enhanced with realistic textures and creative elements, capturing the essence of enhanced realism and creativity
+2025-04-05 21:27:55,755 - INFO - __main__ - Section 3 query: a collage of stunning visuals including landscapes and abstract art, enhanced with realistic textures and creative elements, capturing the essence of enhanced realism and creativity
+2025-04-05 21:27:55,756 - INFO - __main__ - Section 4 query: an artistic workspace filled with colorful paint splashes and sharp details, showcasing vibrant artwork on canvas, with an artist in the background, conveying excitement and creativity
+2025-04-05 21:27:55,756 - INFO - __main__ - Section 4 query: an artistic workspace filled with colorful paint splashes and sharp details, showcasing vibrant artwork on canvas, with an artist in the background, conveying excitement and creativity
+2025-04-05 21:27:55,756 - INFO - __main__ - Section 5 query: a curious viewer gazing at a vibrant display of AI-generated art on a digital tablet, with expressions of awe and fascination, surrounded by swirling colors and creativity
+2025-04-05 21:27:55,756 - INFO - __main__ - Section 5 query: a curious viewer gazing at a vibrant display of AI-generated art on a digital tablet, with expressions of awe and fascination, surrounded by swirling colors and creativity
+2025-04-05 21:27:55,757 - INFO - __main__ - Section 6 query: an enthusiastic artist holding a paintbrush, surrounded by a burst of colorful ideas and creative tools, inviting viewers to explore and unleash their artistic potential
+2025-04-05 21:27:55,757 - INFO - __main__ - Section 6 query: an enthusiastic artist holding a paintbrush, surrounded by a burst of colorful ideas and creative tools, inviting viewers to explore and unleash their artistic potential
+2025-04-05 21:27:55,757 - INFO - __main__ - Section 7 query: a dynamic call to action graphic, featuring a thumbs up and a subscribe button, surrounded by animations of AI elements and vibrant colors, inviting interaction and engagement
+2025-04-05 21:27:55,757 - INFO - __main__ - Section 7 query: a dynamic call to action graphic, featuring a thumbs up and a subscribe button, surrounded by animations of AI elements and vibrant colors, inviting interaction and engagement
+2025-04-05 21:27:55,758 - INFO - __main__ - Creating YouTube Short with style: photorealistic
+2025-04-05 21:27:55,758 - INFO - __main__ - Creating YouTube Short with style: photorealistic
+2025-04-05 21:27:55,767 - INFO - shorts_maker_I - Creating YouTube Short: TRENDING AI NEWS
+2025-04-05 21:27:57,172 - INFO - shorts_maker_I - Processing section 1/7
+2025-04-05 21:27:57,179 - INFO - shorts_maker_I - Original prompt: a vibrant news headline displayed on a futuristic ...
+2025-04-05 21:27:57,179 - INFO - shorts_maker_I - Using style: photorealistic
+2025-04-05 21:27:57,180 - INFO - shorts_maker_I - Enhanced prompt: a vibrant news headline displayed on a futuristic ...
+2025-04-05 21:27:58,021 - ERROR - shorts_maker_I - Non-JSON error response: 503 - <!DOCTYPE html>
+<html class="" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta
+            ...
+2025-04-05 21:27:58,022 - INFO - shorts_maker_I - Service unavailable (503). Waiting 15 seconds before retry...

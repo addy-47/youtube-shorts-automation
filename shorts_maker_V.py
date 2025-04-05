@@ -16,12 +16,27 @@ from gtts import gTTS
 from dotenv import load_dotenv
 import shutil # for file operations like moving and deleting files
 import tempfile # for creating temporary files
+from datetime import datetime # for more detailed time tracking
 
 # Configure logging for easier debugging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-class YTShortsCreator:
+# Timer function for performance monitoring
+def measure_time(func):
+    """Decorator to measure the execution time of functions"""
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        start_datetime = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+        logger.info(f"⏱️ STARTING {func.__name__} at {start_datetime}")
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        duration = end_time - start_time
+        logger.info(f"⏱️ COMPLETED {func.__name__} in {duration:.2f} seconds")
+        return result
+    return wrapper
+
+class YTShortsCreator_V:
     def __init__(self, output_dir="output", fps=30):
         """
         Initialize the YouTube Shorts creator with necessary settings
@@ -85,6 +100,7 @@ class YTShortsCreator:
         self.pexels_api_key = os.getenv("PEXELS_API_KEY")
         self.pixabay_api_key = os.getenv("PIXABAY_API_KEY")
 
+    @measure_time
     def _fetch_videos(self, query, count=5, min_duration=5):
         """
         Fetch background videos from multiple sources with randomized API selection
@@ -122,7 +138,7 @@ class YTShortsCreator:
 
         return videos[:count]
 
-
+    @measure_time
     def _fetch_from_pixabay(self, query, count, min_duration):
         """
         Fetch background videos from Pixabay API
@@ -170,6 +186,7 @@ class YTShortsCreator:
             logger.error(f"Error fetching videos from Pixabay: {e}")
             return self._fetch_from_pexels(query, count, min_duration)
 
+    @measure_time
     def _fetch_from_pexels(self, query, count=5, min_duration=15):
         """
         Fetch background videos from Pexels API
@@ -219,6 +236,7 @@ class YTShortsCreator:
             logger.error(f"Error fetching videos from Pixabay: {e}")
             return self._fetch_from_pixabay(query, count, min_duration)
 
+    @measure_time
     def _create_pill_image(self, size, color=(0, 0, 0, 160), radius=30):
         """
         Create a pill-shaped background image with rounded corners.
@@ -245,11 +263,12 @@ class YTShortsCreator:
 
         return img
 
+    @measure_time
     def _create_text_clip(self, text, duration=5, font_size=60, font_path=None, color='white',
                           position='center', animation="fade", animation_duration=1.0, shadow=True,
                           outline=True, with_pill=False, pill_color=(0, 0, 0, 160), pill_radius=30):
         """
-        Create a text clip with optional effects and pill-shaped background.
+        Create a text clip with various effects and animations.
 
         Args:
             text (str): Text content
@@ -257,17 +276,17 @@ class YTShortsCreator:
             font_size (int): Font size
             font_path (str): Path to font file
             color (str): Text color
-            position (str/tuple): Position on screen
+            position (str): Position of text (top, center, bottom)
             animation (str): Animation type
-            animation_duration (float): Animation duration
-            shadow (bool): Add shadow effect
-            outline (bool): Add outline effect
-            with_pill (bool): Add pill-shaped background
-            pill_color (tuple): Color of the pill background (RGBA)
-            pill_radius (int): Radius of the pill's rounded corners
+            animation_duration (float): Duration of animation effects
+            shadow (bool): Whether to add shadow
+            outline (bool): Whether to add outline
+            with_pill (bool): Whether to add pill background
+            pill_color (tuple): RGBA color for pill background
+            pill_radius (int): Radius for pill corners
 
         Returns:
-            VideoClip: Text clip with effects and optional pill background
+            TextClip: MoviePy text clip with effects
         """
         if not font_path:
             font_path = self.body_font_path
@@ -348,6 +367,7 @@ class YTShortsCreator:
 
         return final_clip
 
+    @measure_time
     def _create_word_by_word_clip(self, text, duration, font_size=60, font_path=None,
                              text_color=(255, 255, 255, 255),
                              pill_color=(0, 0, 0, 160),  # Semi-transparent black
@@ -476,7 +496,7 @@ class YTShortsCreator:
 
         return final_clip
 
-
+    @measure_time
     def custom_blur(self, clip, radius=5):
         """
         Apply a Gaussian blur effect to video clips
@@ -496,19 +516,19 @@ class YTShortsCreator:
 
         return clip.fl(lambda gf, t: blur_frame(gf, t))
 
+    @measure_time
     def custom_edge_blur(self, clip, edge_width=50, radius=10):
         """
-        Apply a Gaussian blur effect to the edges of a video clip, leaving the center unblurred.
+        Apply blur only to the edges of a video clip
 
         Args:
-            clip (VideoClip): Video clip to blur.
-            edge_width (int): Width of the blurred edge in pixels.
-            radius (int): Blur radius - increase for more blur
+            clip (VideoClip): Video clip to blur edges of
+            edge_width (int): Width of the edge to blur
+            radius (int): Blur radius
 
         Returns:
-            VideoClip: Video clip with blurred edges.
+            VideoClip: Video clip with blurred edges
         """
-
         def blur_frame(get_frame, t):
             frame = get_frame(t)
             img = Image.fromarray(frame)
@@ -532,16 +552,19 @@ class YTShortsCreator:
 
         return clip.fl(lambda gf, t: blur_frame(gf, t))
 
+    @measure_time
     def _process_background_clip(self, clip, target_duration, blur_background=False, edge_blur=False):
         """
         Process a background clip to match the required duration
+
         Args:
-            clip (VideoClip): The input video clip
-            target_duration (float): The required duration
-            blur_background (bool): Whether to apply blur effect to the background
-            edge_blur (bool): Whether to apply edge blur effect to the background
+            clip (VideoClip): The video clip to process
+            target_duration (float): The desired duration in seconds
+            blur_background (bool): Whether to apply blur effect
+            edge_blur (bool): Whether to apply edge blur effect
+
         Returns:
-            VideoClip: Processed clip that matches the target duration
+            VideoClip: Processed clip with matching duration
         """
         # Handle videos shorter than needed duration with proper looping
         if clip.duration < target_duration:
@@ -579,7 +602,6 @@ class YTShortsCreator:
         elif edge_blur:
             clip = self.custom_edge_blur(clip, edge_width=75, radius=10)
 
-
         # Center the video if it's not wide enough
         if clip.w < self.resolution[0]:
             bg = ColorClip(size=self.resolution, color=(0, 0, 0)).set_duration(clip.duration)
@@ -596,7 +618,7 @@ class YTShortsCreator:
 
         return clip
 
-
+    @measure_time
     def create_youtube_short(self, title, script_sections, background_query="abstract background",
                             output_filename=None, add_captions=False, style="video", voice_style=None, max_duration=25,
                             background_queries=None, blur_background=False, edge_blur=False):
@@ -621,6 +643,10 @@ class YTShortsCreator:
         # Set output filename if not provided
         if output_filename is None:
             output_filename = os.path.join(self.output_dir, f"short_{int(time.time())}.mp4")
+
+        # Start timing the overall process
+        overall_start_time = time.time()
+        logger.info(f"⏱️ STARTING YouTube short creation at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
 
         # Calculate total duration and scale if needed
         total_duration = sum(section.get('duration', 5) for section in script_sections)
@@ -656,6 +682,9 @@ class YTShortsCreator:
         logger.info(f"Using {len(background_queries[:num_backgrounds])} different background queries")
 
         # Fetch background videos for each segment
+        fetch_start_time = time.time()
+        logger.info(f"⏱️ STARTING background video fetch at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+
         bg_paths = []
         for i in range(num_backgrounds):
             query = background_queries[i]
@@ -672,6 +701,9 @@ class YTShortsCreator:
                 fallback_paths = self._fetch_videos(background_query, count=1, min_duration=5)
                 if fallback_paths:
                     bg_paths.extend(fallback_paths)
+
+        fetch_end_time = time.time()
+        logger.info(f"⏱️ COMPLETED background video fetch in {fetch_end_time - fetch_start_time:.2f} seconds")
 
         # Final check if we have any backgrounds
         if not bg_paths:
@@ -694,7 +726,6 @@ class YTShortsCreator:
             if i == num_backgrounds - 1:
                 # Last segment gets all remaining duration
                 duration = remaining_duration
-
             else:
                 # Each segment gets roughly equal duration
                 duration = base_segment_duration
@@ -709,17 +740,26 @@ class YTShortsCreator:
         logger.info(f"Segment durations: {[round(d, 1) for d in segment_durations]}")
 
         # Create background clips with calculated durations
+        process_start_time = time.time()
+        logger.info(f"⏱️ STARTING background processing at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+
         processed_bg_clips = []
 
         for i, bg_path in enumerate(bg_paths):
             try:
                 # Load video
+                clip_process_start = time.time()
+                logger.info(f"⏱️ STARTING background clip {i+1} processing at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+
                 target_duration = segment_durations[i]
                 bg_clip = VideoFileClip(bg_path)
 
                 # Process the background clip to match the required duration
                 processed_clip = self._process_background_clip(bg_clip, target_duration, blur_background=blur_background, edge_blur=edge_blur)
                 processed_bg_clips.append(processed_clip)
+
+                clip_process_end = time.time()
+                logger.info(f"⏱️ COMPLETED background clip {i+1} processing in {clip_process_end - clip_process_start:.2f} seconds")
 
             except Exception as e:
                 logger.error(f"Error processing background video {i+1}: {str(e)}")
@@ -740,117 +780,109 @@ class YTShortsCreator:
                     except Exception as e2:
                         logger.error(f"Failed to create background. ABORTING{str(e2)}")
 
+        process_end_time = time.time()
+        logger.info(f"⏱️ COMPLETED background processing in {process_end_time - process_start_time:.2f} seconds")
+
         # Apply crossfade transitions between background clips
+        compose_start_time = time.time()
+        logger.info(f"⏱️ STARTING background composition at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+
         final_bg_clips = [processed_bg_clips[0]]
 
         for i in range(1, len(processed_bg_clips)):
             # Create the crossfade effect
+            transition_start = time.time()
+            logger.info(f"⏱️ STARTING transition {i} at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+
             crossfaded = concatenate_videoclips(
                 [final_bg_clips[-1], processed_bg_clips[i].crossfadein(transition_duration)],
                 padding=-transition_duration,
                 method="compose"
             )
-
             final_bg_clips[-1] = crossfaded
 
-        # Concatenate all background clips into one seamless background
-        background = concatenate_videoclips(final_bg_clips, method="compose")
+            transition_end = time.time()
+            logger.info(f"⏱️ COMPLETED transition {i} in {transition_end - transition_start:.2f} seconds")
 
-        # Double-check the background duration against total_duration
-        if abs(background.duration - total_duration) > 0.5:  # Allow small rounding differences
-            logger.warning(f"Background duration mismatch: {background.duration:.1f}s vs expected {total_duration:.1f}s")
-            if background.duration < total_duration:
-                # Instead of extending with black, create a looped version of the last clip
-                needed_duration = total_duration - background.duration
-                last_clip = processed_bg_clips[-1]
+        compose_end_time = time.time()
+        logger.info(f"⏱️ COMPLETED background composition in {compose_end_time - compose_start_time:.2f} seconds")
 
-                # Create a copy of the last clip and loop it as needed
-                extra_clip = self._process_background_clip(last_clip.copy(), needed_duration, blur_background=blur_background, edge_blur=edge_blur)
+        # The final background clip will now have all segments with crossfades
+        background_clip = final_bg_clips[0]
 
-                # Add crossfade to the extension
-                extra_clip = extra_clip.crossfadein(transition_duration)
-                extended_background = concatenate_videoclips(
-                    [background, extra_clip],
-                    padding=-transition_duration,
-                    method="compose"
-                )
-                background = extended_background
-            else:
-                # Trim if too long
-                background = background.subclip(0, total_duration)
+        # Generate audio clips with TTS for each section
+        tts_start_time = time.time()
+        logger.info(f"⏱️ STARTING TTS audio generation at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
 
-        logger.info(f"Final background duration: {background.duration:.1f}s")
-
-        # Generate TTS audio for each section and adjust section durations as needed
         audio_clips = []
-        current_time = 0
-        use_azure = self.azure_tts is not None
+        cumulative_duration = 0
 
-        # First pass: generate TTS audio and adjust section durations if needed
-        logger.info("Generating TTS audio and adjusting section durations")
-
-        # Process each section to generate TTS and calculate precise timing
         for i, section in enumerate(script_sections):
-            text = section['text']
-            original_duration = section.get('duration', 5)
+            section_text = section["text"]
+            section_voice_style = section.get("voice_style", voice_style)
 
-            tts_path = os.path.join(self.temp_dir, f"tts_{i}.mp3")
+            section_tts_start = time.time()
+            logger.info(f"⏱️ STARTING TTS for section {i+1} at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
 
-            # Generate speech using Azure TTS or gTTS
-            section_voice_style = section.get('voice_style', 'normal')
-            if use_azure:
+            # Try to create TTS audio file
+            audio_path = os.path.join(self.temp_dir, f"section_{i}.mp3")
+
+            if self.azure_tts:
                 try:
-                    tts_path = self.azure_tts.generate_speech(
-                        text,
-                        output_filename=tts_path,
-                        voice_style=section_voice_style
-                    )
+                    voice = os.getenv("AZURE_VOICE", "en-US-JennyNeural")
+                    self.azure_tts.generate_speech(section_text, output_filename=audio_path)
                 except Exception as e:
-                    logger.warning(f"Azure TTS failed: {e}. Using gTTS.")
-                    # Use a slightly lower rate for gTTS to improve sync (0.9 = 90% of normal speed)
-                    tts = gTTS(text, lang='en', slow=True)
-                    tts.save(tts_path)
+                    logger.error(f"Azure TTS failed: {e}, falling back to gTTS")
+                    try:
+                        tts = gTTS(text=section_text, lang='en', slow=False)
+                        tts.save(audio_path)
+                    except Exception as e2:
+                        logger.error(f"gTTS also failed: {e2}, section {i} will be silent")
+                        audio_path = None
             else:
-                # Use a slightly lower rate to improve synchronization
-                tts = gTTS(text, lang='en', slow=True)
-                tts.save(tts_path)
+                try:
+                    tts = gTTS(text=section_text, lang='en', slow=False)
+                    tts.save(audio_path)
+                except Exception as e:
+                    logger.error(f"gTTS failed: {e}, section {i} will be silent")
+                    audio_path = None
 
-            # Load audio and get actual speech duration
-            speech = AudioFileClip(tts_path)
-            speech_duration = speech.duration
+            section_tts_end = time.time()
+            logger.info(f"⏱️ COMPLETED TTS for section {i+1} in {section_tts_end - section_tts_start:.2f} seconds")
 
-            # Count words for timing calculations
-            words = text.split()
-            word_count = len(words)
+            # If audio file was created successfully, add it to the list
+            if audio_path and os.path.exists(audio_path):
+                try:
+                    audio_clip = AudioFileClip(audio_path)
 
-            # Store speech info for later use
-            section['word_count'] = word_count
-            section['speech_duration'] = speech_duration
+                    # Set the position of the audio clip
+                    actual_duration = audio_clip.duration
 
-            # Adjust section duration if speech is longer than the allocated time
-            # Add padding for better timing (10% extra)
-            if speech_duration > original_duration - 0.5:
-                padding = speech_duration * 0.15  # Add 15% extra time for better pacing
-                new_duration = speech_duration + padding
-                section['duration'] = new_duration
-                logger.info(f"Section {i+1}: Adjusted duration from {original_duration:.1f}s to {new_duration:.1f}s")
+                    # Make sure audio is at least as long as specified in JSON
+                    min_section_duration = section.get("duration", 5)
+                    if actual_duration < min_section_duration:
+                        # Pad with silence by setting audio start time slightly earlier
+                        # This effectively stretches the clip to minimum duration
+                        actual_duration = min_section_duration
+
+                    # Set the start time for this audio clip
+                    start_time = cumulative_duration
+                    audio_clip = audio_clip.set_start(start_time)
+
+                    # Add to the list of audio clips
+                    audio_clips.append(audio_clip)
+
+                    # Update cumulative duration for next clip
+                    cumulative_duration += actual_duration
+
+                except Exception as e:
+                    logger.error(f"Error processing audio for section {i}: {e}")
             else:
-                section['duration'] = original_duration
+                # If no audio was created, increment duration counter anyway
+                cumulative_duration += section.get("duration", 5)
 
-            # Set audio start time with offset for sync
-            # Delay speech slightly to allow for intro animation
-            speech = speech.set_start(current_time + 0.2)  # 200ms delay for better sync
-            audio_clips.append(speech)
-
-            # Update current time for next section
-            current_time += section['duration']
-
-        # Log final timings for each section
-        logger.info("Final section durations after TTS adjustment:")
-        for i, section in enumerate(script_sections):
-            logger.info(f"Section {i+1}: Speech={section.get('speech_duration', 0):.1f}s, " +
-                       f"Final Duration={section.get('duration', 0):.1f}s, " +
-                       f"Words={section.get('word_count', 0)}")
+        tts_end_time = time.time()
+        logger.info(f"⏱️ COMPLETED TTS audio generation in {tts_end_time - tts_start_time:.2f} seconds")
 
         # Combine all audio clips
         combined_audio = CompositeAudioClip(audio_clips) if audio_clips else None
@@ -863,8 +895,8 @@ class YTShortsCreator:
             logger.info(f"Total duration increased from {total_duration:.1f}s to {updated_total_duration:.1f}s due to TTS")
 
             # If background is shorter than the new duration, extend it
-            if background.duration < updated_total_duration:
-                needed_duration = updated_total_duration - background.duration + 0.8 # +0.8 to avoid timing issues
+            if background_clip.duration < updated_total_duration:
+                needed_duration = updated_total_duration - background_clip.duration + 0.8 # +0.8 to avoid timing issues
                 logger.info(f"Extending background by {needed_duration:.1f}s to match new duration")
 
                 # Use last clip to create additional background
@@ -874,16 +906,16 @@ class YTShortsCreator:
                 # Add crossfade to the extension
                 extra_clip = extra_clip.crossfadein(transition_duration)
                 extended_background = concatenate_videoclips(
-                    [background, extra_clip],
+                    [background_clip, extra_clip],
                     padding=-transition_duration,
                     method="compose"
                 )
-                background = extended_background
+                background_clip = extended_background
 
             # Update the duration for reference
             total_duration = updated_total_duration
 
-        logger.info(f"Final background duration: {background.duration:.1f}s vs total content duration: {total_duration:.1f}s")
+        logger.info(f"Final background duration: {background_clip.duration:.1f}s vs total content duration: {total_duration:.1f}s")
 
         # Generate text overlays for each section
         text_clips = []
@@ -934,7 +966,7 @@ class YTShortsCreator:
                 caption_start_time += section.get('duration', 5)
 
         # Combine background and text overlays
-        final_clips = [background] + text_clips
+        final_clips = [background_clip] + text_clips
 
         # Create final video with audio
         final_video = CompositeVideoClip(final_clips, size=self.resolution)
@@ -947,7 +979,7 @@ class YTShortsCreator:
             codec="libx264",
             audio_codec="aac",
             fps=self.fps,
-            preset="fast",
+            preset="ultrafast",
             threads=4
         )
 

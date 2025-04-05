@@ -202,6 +202,97 @@ def generate_batch_video_queries(texts: list[str], overall_topic="technology", m
     # Fallback: Return empty dict if all retries fail
     return {}
 
+def generate_batch_image_prompts(texts: list[str], overall_topic="technology", model="gpt-4o-mini-2024-07-18", retries=3):
+    """
+    Generate detailed image generation prompts for a batch of script texts using OpenAI's API,
+    returning results as a JSON object.
+    Args:
+        texts (list[str]): A list of text contents from script sections.
+        overall_topic (str): The general topic of the video for context.
+        model (str): The OpenAI model to use.
+        retries (int): Number of retry attempts.
+    Returns:
+        dict: A dictionary mapping the index (int) of the input text to the generated image prompt (str).
+              Returns an empty dictionary on failure after retries.
+    """
+    if not openai.api_key:
+        raise ValueError("OpenAI API key is not set.")
+
+    # Prepare the input text part of the prompt
+    formatted_texts = ""
+    for i, text in enumerate(texts):
+        formatted_texts += f"--- Card {i} ---\n{text}\n\n"
+
+    prompt = f"""
+    You are an assistant that generates high-quality image prompts for AI image generation models like Stable Diffusion.
+    Based on the following text sections from a video script about '{overall_topic}', create a detailed image prompt for EACH section.
+
+    Input Script Sections:
+    {formatted_texts}
+
+    Instructions:
+    1. Analyze each "Card [index]" section independently.
+    2. For each card, create a detailed image prompt (15-30 words) that:
+       - Captures the main concept of that specific section
+       - Includes clear visual elements and composition
+       - Maintains a consistent style/theme across all prompts
+       - DO NOT include any style descriptors (like digital art, photorealistic, etc.) as the style will be applied separately
+       - Focus only on WHAT should be in the image, not HOW it should be rendered
+    3. Return ONLY a single JSON object mapping the card index (as an integer key) to its corresponding image prompt (as a string value).
+
+    Example Output Format:
+    {{
+      "0": "futuristic digital interface with flowing data, glowing blue elements, dark background, high detail, modern tech aesthetic",
+      "1": "AI neural network visualization, interconnected nodes with energy flowing between them, depth of field, dramatic lighting",
+      "2": "sleek robotic hand touching human hand, symbolic connection, soft backlighting, shallow depth of field"
+      ...
+    }}
+    """
+
+    for attempt in range(retries):
+        try:
+            client = openai.OpenAI()
+            response = client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=len(texts) * 50 + 100,  # Estimate tokens needed: ~50 per detailed prompt + JSON overhead
+                temperature=0.7,  # Slightly higher creativity for image prompts
+                response_format={"type": "json_object"}  # Request JSON output
+            )
+            response_content = response.choices[0].message.content.strip()
+
+            # Parse the JSON response
+            import json  # Import json module here for parsing
+            try:
+                prompt_dict_str_keys = json.loads(response_content)
+                # Convert string keys back to integers
+                prompt_dict = {int(k): v for k, v in prompt_dict_str_keys.items()}
+
+                # Basic validation (check if all indices are present)
+                if len(prompt_dict) == len(texts) and all(isinstance(k, int) and 0 <= k < len(texts) for k in prompt_dict):
+                    logger.info(f"Successfully generated batch image prompts for {len(texts)} sections.")
+                    return prompt_dict
+                else:
+                    logger.warning(f"Generated JSON keys do not match expected indices. Response: {response_content}")
+
+            except json.JSONDecodeError as json_e:
+                logger.error(f"Failed to parse JSON response from OpenAI: {json_e}. Response: {response_content}")
+            except Exception as parse_e:  # Catch other potential errors during dict conversion
+                 logger.error(f"Error processing JSON response: {parse_e}. Response: {response_content}")
+
+        except openai.OpenAIError as e:
+            logger.error(f"OpenAI API error generating batch image prompts (attempt {attempt + 1}/{retries}): {str(e)}")
+
+        # If loop continues, it means an error occurred
+        if attempt < retries - 1:
+             logger.info(f"Retrying batch image prompt generation ({attempt + 2}/{retries})...")
+             time.sleep(2 ** attempt)
+        else:
+            logger.error(f"Failed to generate batch image prompts after {retries} attempts.")
+
+    # Fallback: Return empty dict if all retries fail
+    return {}
+
 if __name__ == "__main__": # This is used to run the script directly for testing
     # Example usage for batch query generation
     sample_texts = [

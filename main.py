@@ -3,8 +3,9 @@ import logging.handlers # Import handlers
 import os # for environment variables and file paths
 from pathlib import Path # for file paths and directory creation
 from dotenv import load_dotenv # for loading environment variables
-from script_generator import generate_script, generate_batch_video_queries
-from video_maker import YTShortsCreator
+from script_generator import generate_script, generate_batch_video_queries,generate_batch_image_prompts
+from shorts_maker_V import YTShortsCreator_V
+from shorts_maker_I import YTShortsCreator_I
 from youtube_upload import upload_video, get_authenticated_service
 from nltk.corpus import stopwords
 import datetime # for timestamp
@@ -33,6 +34,10 @@ logger.setLevel(LOG_LEVEL)
 # Define log format
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
+# Remove any existing handlers to avoid duplicates
+for handler in logger.handlers[:]:
+    logger.removeHandler(handler)
+
 # Add the log message handler to the logger
 # Rotate logs daily at midnight, keep 7 backups
 handler = logging.handlers.TimedRotatingFileHandler(
@@ -46,9 +51,24 @@ stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
 
+# Configure root logger - first remove any existing handlers
+root_logger = logging.getLogger()
+for handler in root_logger.handlers[:]:
+    root_logger.removeHandler(handler)
+
 # Configure root logger similarly if other modules use logging.getLogger() without a name
 # This ensures consistency if other modules just call logging.info etc.
-logging.basicConfig(level=LOG_LEVEL, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s', handlers=[handler, stream_handler])
+root_logger.setLevel(LOG_LEVEL)
+root_handler = logging.handlers.TimedRotatingFileHandler(
+    LOG_FILENAME, when='midnight', interval=1, backupCount=7
+)
+root_handler.setFormatter(formatter)
+root_logger.addHandler(root_handler)
+
+# Add console output for root logger too
+root_stream_handler = logging.StreamHandler()
+root_stream_handler.setFormatter(formatter)
+root_logger.addHandler(root_stream_handler)
 
 def ensure_output_directory(directory="ai_shorts_output"):
     """Ensure the output directory exists."""
@@ -125,13 +145,26 @@ def get_keywords(script, max_keywords=3):
 
     return top_keywords
 
-def generate_youtube_short(topic, style="video", max_duration=25):
+def get_creator_for_day():
+    """Alternate between video and image creators based on day"""
+    today = datetime.datetime.now()
+    day_of_year = today.timetuple().tm_yday  # 1-366
+    use_images = day_of_year % 2 == 0  # Even days use videos, odd days use images
+
+    if use_images:
+        logging.info(f"Day {day_of_year}: Using video-based creator (YTShortsCreator_V)")
+        return YTShortsCreator_V()
+    else:
+        logging.info(f"Day {day_of_year}: Using image-based creator (YTShortsCreator_I)")
+        return YTShortsCreator_I()
+
+def generate_youtube_short(topic, style="photorealistic", max_duration=25):
     """
     Generate a YouTube Short.
 
     Args:
         topic (str): Topic for the YouTube Short
-        style (str): Type of background ("video" or "animation")
+        style (str): Style for the content ("photorealistic", "digital art", etc.)
         max_duration (int): Maximum video duration in seconds
     """
     try:
@@ -172,14 +205,20 @@ def generate_youtube_short(topic, style="video", max_duration=25):
         # Extract keywords for each section and the overall script
         # overall_keywords = get_keywords(script) # No longer using simple keyword extraction
         # logger.info(f"Overall keywords: {overall_keywords}")
-        logger.info("Generating video search queries for each section using AI...")
+        creator_type = get_creator_for_day()
 
         # Generate section-specific queries using the LLM in a single batch call
         card_texts = [card['text'] for card in script_cards]
-        batch_query_results = generate_batch_video_queries(card_texts, overall_topic=topic)
+        if isinstance(creator_type, YTShortsCreator_V):
+           logger.info("Generating video search queries for each section using AI...")
+           batch_query_results = generate_batch_video_queries(card_texts, overall_topic=topic, model="gpt-4o-mini-2024-07-18")
+        else:
+           logger.info("Generating image search prompts for each section using AI...")
+           batch_query_results = generate_batch_image_prompts(card_texts, overall_topic=topic, model="gpt-4o-mini-2024-07-18")
 
         # Extract queries in order, using a fallback if needed
         default_query = f"abstract {topic}"
+
         section_queries = []
         for i in range(len(script_cards)):
             query = batch_query_results.get(i, default_query) # Get query by index, fallback to default
@@ -189,25 +228,21 @@ def generate_youtube_short(topic, style="video", max_duration=25):
             section_queries.append(query)
             logger.info(f"Section {i+1} query: {query}")
 
-        # Generate a fallback query for the whole script if needed (using batch func with single item list)
-        # fallback_result = generate_batch_video_queries([script], overall_topic=topic)
-        # fallback_query = fallback_result.get(0, default_query)
-        # For simplicity, let's use the first section's query or the default as fallback
+        # Generate a fallback query for the whole script if needed
         fallback_query = section_queries[0] if section_queries else default_query
 
-        # Video Creation
-        logger.info("Creating YouTube Short")
-        creator = YTShortsCreator(output_dir=output_dir)
-        video_path = creator.create_youtube_short(
+        # Video Creation - always pass through the style parameter
+        logger.info(f"Creating YouTube Short with style: {style}")
+        video_path = creator_type.create_youtube_short(
             title=topic,
             script_sections=script_cards,
-            background_query=fallback_query, # Use LLM-generated fallback query
+            background_query=fallback_query,
             output_filename=output_path,
-            style=style,
+            style=style,  # Always use the style parameter passed to this function
             voice_style="none",
             max_duration=max_duration,
-            background_queries=section_queries, # Use the list of LLM-generated queries
-            blur_background= False,
+            background_queries=section_queries,
+            blur_background=False,
             edge_blur=True
         )
 
@@ -232,16 +267,29 @@ def generate_youtube_short(topic, style="video", max_duration=25):
 def main():
     try:
         topic = os.getenv("YOUTUBE_TOPIC", "Artificial Intelligence")
-        style = os.getenv("BACKGROUND_STYLE", "video")
 
-        video_path = generate_youtube_short(
-            topic,
-            style=style,
-            max_duration=25,
-        )
-        logger.info(f"YouTube Short created successfully: {video_path}")
+        # Get creator type
+        creator = get_creator_for_day()
+        # We'll always use "photorealistic" as the default style unless overridden at function call
+        style = "photorealistic"
+        logger.info(f"Using style: {style}")
+
+        try:
+            video_path = generate_youtube_short(
+                topic,
+                style=style,
+                max_duration=25,
+            )
+            logger.info(f"YouTube Short created successfully: {video_path}")
+        except Exception as e:
+            logger.error(f"Error generating YouTube Short: {str(e)}")
+            import traceback
+            logger.error(f"Detailed error: {traceback.format_exc()}")
+            raise
     except Exception as e:
-        logger.error(f"Process failed: {e}")
+        logger.error(f"Process failed: {str(e)}")
+        import traceback
+        logger.error(f"Detailed error trace: {traceback.format_exc()}")
 
 if __name__ == "__main__":
     main()
