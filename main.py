@@ -209,18 +209,17 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
         for i, card in enumerate(script_cards):
             logger.info(f"Section {i+1}: {card['text'][:30]}... (duration: {card['duration']}s)")
 
-        # Get or create creator type
         if creator_type is None:
             creator_type = get_creator_for_day()
 
         # Generate section-specific queries using the LLM in a single batch call
         card_texts = [card['text'] for card in script_cards]
         if isinstance(creator_type, YTShortsCreator_V):
-           logger.info("Generating video search queries for each section using AI...")
-           batch_query_results = generate_batch_video_queries(card_texts, overall_topic=topic, model="gpt-4o-mini-2024-07-18")
+            logger.info("Generating video search queries for each section using AI...")
+            batch_query_results = generate_batch_video_queries(card_texts, overall_topic=topic, model="gpt-4o-mini-2024-07-18")
         else:
-           logger.info("Generating image search prompts for each section using AI...")
-           batch_query_results = generate_batch_image_prompts(card_texts, overall_topic=topic, model="gpt-4o-mini-2024-07-18")
+            logger.info("Generating image search prompts for each section using AI...")
+            batch_query_results = generate_batch_image_prompts(card_texts, overall_topic=topic, model="gpt-4o-mini-2024-07-18")
 
         # Extract queries in order, using a fallback if needed
         default_query = f"abstract {topic}"
@@ -232,13 +231,19 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
                  query = default_query
                  logger.warning(f"Query for section {i} was empty, using fallback: '{default_query}'")
             section_queries.append(query)
-            logger.info(f"Section {i+1} query: {query}")
+
+        # Log all section queries at once to avoid duplication
+        logger.info(f"Section queries: {', '.join([f'{i+1}: {q}' for i, q in enumerate(section_queries)])}")
 
         # Generate a fallback query for the whole script if needed
         fallback_query = section_queries[0] if section_queries else default_query
 
-        # Video Creation - always pass through the style parameter
-        logger.info(f"Creating YouTube Short with style: {style}")
+        # Video Creation - only log style for image-based creators
+        if isinstance(creator_type, YTShortsCreator_I):
+            logger.info(f"Creating YouTube Short with style: {style}")
+        else:
+            logger.info(f"Creating YouTube Short")
+
         video_path = creator_type.create_youtube_short(
             title=topic,
             script_sections=script_cards,
@@ -270,23 +275,29 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
         logger.error(f"Error generating YouTube Short: {e}")
         raise
 
-def main():
+def main(creator_type=None):
     try:
         topic = os.getenv("YOUTUBE_TOPIC", "Artificial Intelligence")
 
-        # Get creator type - this will already log the creator type
-        creator = get_creator_for_day()
+        # Only get creator for day if no creator_type is provided
+        if creator_type is None:
+            creator_type = get_creator_for_day()
 
-        # We'll always use "photorealistic" as the default style unless overridden at function call
+        # Set style based on creator type
         style = "photorealistic"
-        logger.info(f"Using style: {style}")
+        # Only log style for image-based creators
+        if isinstance(creator_type, YTShortsCreator_I):
+            logger.info(f"Using style: {style}")
 
         try:
+            # Set max_duration to 25 seconds as requested
+            max_duration = 25  # Full duration for shorts
+
             video_path = generate_youtube_short(
                 topic,
                 style=style,
-                max_duration=25,
-                creator_type=creator  # Pass the creator we already initialized
+                max_duration=max_duration,
+                creator_type=creator_type
             )
             logger.info(f"YouTube Short created successfully: {video_path}")
         except Exception as e:
@@ -300,4 +311,18 @@ def main():
         logger.error(f"Detailed error trace: {traceback.format_exc()}")
 
 if __name__ == "__main__":
-    main()
+    # Add ability to override creator type from command line
+    import sys
+
+    creator_type = None
+    if len(sys.argv) > 1 and sys.argv[1] in ["video", "image"]:
+        # Allow command-line specification of creator type
+        if sys.argv[1] == "video":
+            logger.info("Manually selected video-based creator (YTShortsCreator_V)")
+            creator_type = YTShortsCreator_V()
+        else:  # image
+            logger.info("Manually selected image-based creator (YTShortsCreator_I)")
+            creator_type = YTShortsCreator_I()
+
+    # Call main with the selected creator type (or None for day-based selection)
+    main(creator_type)

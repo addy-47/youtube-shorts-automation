@@ -1,0 +1,103 @@
+2025-04-06 19:01:08,883 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-04-06 19:01:08,883 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-04-06 19:01:08,977 - INFO - shorts_maker_V - Azure TTS initialized successfully
+2025-04-06 19:01:12,417 - INFO - __main__ - Generating script for topic: On TikTok, YouTube, X, and everywhere, ‘views’ are lies - The Verge
+2025-04-06 19:01:12,417 - INFO - __main__ - Generating script for topic: On TikTok, YouTube, X, and everywhere, ‘views’ are lies - The Verge
+2025-04-06 19:01:15,072 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-06 19:01:15,085 - INFO - script_generator - Script cleaned
+2025-04-06 19:01:15,086 - INFO - script_generator - Script generated successfully with 68 words.
+2025-04-06 19:01:15,086 - INFO - __main__ - Raw script generated successfully
+2025-04-06 19:01:15,086 - INFO - __main__ - Raw script generated successfully
+2025-04-06 19:01:15,087 - INFO - __main__ - Script parsed into 6 sections
+2025-04-06 19:01:15,087 - INFO - __main__ - Script parsed into 6 sections
+2025-04-06 19:01:15,088 - INFO - __main__ - Section 1: Did you know that views on Tik... (duration: 5s)
+2025-04-06 19:01:15,088 - INFO - __main__ - Section 1: Did you know that views on Tik... (duration: 5s)
+2025-04-06 19:01:15,089 - INFO - __main__ - Section 2: Recent reports reveal that man... (duration: 5s)
+2025-04-06 19:01:15,089 - INFO - __main__ - Section 2: Recent reports reveal that man... (duration: 5s)
+2025-04-06 19:01:15,090 - INFO - __main__ - Section 3: This manipulation raises quest... (duration: 5s)
+2025-04-06 19:01:15,090 - INFO - __main__ - Section 3: This manipulation raises quest... (duration: 5s)
+2025-04-06 19:01:15,091 - INFO - __main__ - Section 4: Are we being misled by the num... (duration: 5s)
+2025-04-06 19:01:15,091 - INFO - __main__ - Section 4: Are we being misled by the num... (duration: 5s)
+2025-04-06 19:01:15,091 - INFO - __main__ - Section 5: It’s time to rethink how we co... (duration: 5s)
+2025-04-06 19:01:15,091 - INFO - __main__ - Section 5: It’s time to rethink how we co... (duration: 5s)
+2025-04-06 19:01:15,092 - INFO - __main__ - Section 6: If you want real insights into... (duration: 5s)
+2025-04-06 19:01:15,092 - INFO - __main__ - Section 6: If you want real insights into... (duration: 5s)
+2025-04-06 19:01:15,093 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-04-06 19:01:15,093 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-04-06 19:01:17,191 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-06 19:01:17,193 - INFO - script_generator - Successfully generated batch video queries for 6 sections.
+2025-04-06 19:01:17,194 - INFO - __main__ - Section queries: 1: social media platforms, 2: inflated view counts, 3: authenticity in media, 4: misleading statistics, 5: content consumption, 6: AI insights
+2025-04-06 19:01:17,194 - INFO - __main__ - Section queries: 1: social media platforms, 2: inflated view counts, 3: authenticity in media, 4: misleading statistics, 5: content consumption, 6: AI insights
+2025-04-06 19:01:17,197 - INFO - __main__ - Creating YouTube Short
+2025-04-06 19:01:17,197 - INFO - __main__ - Creating YouTube Short
+2025-04-06 19:01:17,197 - INFO - shorts_maker_V - Starting YouTube short creation
+2025-04-06 19:01:17,198 - INFO - shorts_maker_V - Starting YouTube short creation
+2025-04-06 19:01:17,198 - INFO - shorts_maker_V - Scaling durations by factor 0.83 to fit max duration of 25s
+2025-04-06 19:01:17,199 - INFO - shorts_maker_V - Total video duration: 25.0s
+2025-04-06 19:01:17,199 - INFO - shorts_maker_V - Creating video with 4 background segments for middle sections
+2025-04-06 19:01:17,199 - INFO - shorts_maker_V - Starting background video fetch
+2025-04-06 19:01:17,200 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-06 19:01:20,138 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-06 19:01:27,638 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-06 19:01:32,811 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-06 19:01:36,119 - INFO - shorts_maker_V - Completed background video fetch in 18.92 seconds
+2025-04-06 19:01:36,119 - INFO - shorts_maker_V - Starting TTS audio generation
+2025-04-06 19:01:37,080 - INFO - voiceover - Speech synthesized for text [Did you know that vi...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpon2bvhfj\section_0.mp3]
+2025-04-06 19:01:38,032 - INFO - voiceover - Speech synthesized for text [Recent reports revea...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpon2bvhfj\section_1.mp3]
+2025-04-06 19:01:38,677 - INFO - voiceover - Speech synthesized for text [This manipulation ra...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpon2bvhfj\section_2.mp3]
+2025-04-06 19:01:39,303 - INFO - voiceover - Speech synthesized for text [Are we being misled ...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpon2bvhfj\section_3.mp3]
+2025-04-06 19:01:39,941 - INFO - voiceover - Speech synthesized for text [It’s time to rethink...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpon2bvhfj\section_4.mp3]
+2025-04-06 19:01:40,619 - INFO - voiceover - Speech synthesized for text [If you want real ins...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpon2bvhfj\section_5.mp3]
+2025-04-06 19:01:40,769 - INFO - shorts_maker_V - Completed TTS audio generation in 4.65 seconds
+2025-04-06 19:01:40,769 - INFO - shorts_maker_V - Updated total duration: 27.2s
+2025-04-06 19:01:40,770 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-06 19:01:54,967 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-06 19:02:05,444 - INFO - shorts_maker_V - Starting background processing
+2025-04-06 19:03:21,923 - INFO - shorts_maker_V - Completed background processing in 76.48 seconds
+2025-04-06 19:03:21,931 - INFO - shorts_maker_V - Starting background composition
+2025-04-06 19:03:22,221 - INFO - shorts_maker_V - Completed background composition in 0.29 seconds
+2025-04-06 19:03:49,876 - WARNING - shorts_maker_V - Section duration (4.17s) exceeds available background (4.17s), looping
+2025-04-06 19:03:53,952 - WARNING - shorts_maker_V - Background clip too short (15.66s), resetting position
+2025-04-06 19:04:00,775 - INFO - shorts_maker_V - Using parallel renderer for improved performance
+2025-04-06 19:04:00,784 - INFO - shorts_maker_V - Starting parallel video rendering
+2025-04-06 19:04:00,786 - INFO - parallel_renderer - Starting parallel rendering of 6 clips with 4 workers
+2025-04-06 19:04:00,787 - INFO - parallel_renderer - Created 3 groups of clips for rendering
+2025-04-06 19:04:00,789 - INFO - parallel_renderer - Processing group 1/3: [0, 1]
+2025-04-06 19:04:00,789 - INFO - parallel_renderer - Processing section group with indices: [0, 1]
+2025-04-06 19:04:00,790 - INFO - parallel_renderer - Starting parallel rendering of 2 clips
+2025-04-06 19:04:01,559 - ERROR - parallel_renderer - Error getting result for clip 1/2: Can't get local object 'process_section_group.<locals>.render_with_timeout'
+2025-04-06 19:04:01,560 - ERROR - parallel_renderer - Error getting result for clip 2/2: Can't get local object 'process_section_group.<locals>.render_with_timeout'
+2025-04-06 19:04:01,561 - INFO - parallel_renderer - Completed parallel rendering with 0 successful results
+2025-04-06 19:04:20,409 - INFO - parallel_renderer - Closed multiprocessing pool
+2025-04-06 19:04:20,410 - INFO - parallel_renderer - Completed group 1, got 2 valid clips
+2025-04-06 19:04:20,410 - INFO - parallel_renderer - Processing group 2/3: [2, 3]
+2025-04-06 19:04:20,411 - INFO - parallel_renderer - Processing section group with indices: [2, 3]
+2025-04-06 19:04:20,411 - INFO - parallel_renderer - Starting parallel rendering of 2 clips
+2025-04-06 19:04:20,454 - ERROR - parallel_renderer - Error getting result for clip 1/2: Can't get local object 'process_section_group.<locals>.render_with_timeout'
+2025-04-06 19:04:20,456 - ERROR - parallel_renderer - Error getting result for clip 2/2: Can't get local object 'process_section_group.<locals>.render_with_timeout'
+2025-04-06 19:04:20,458 - INFO - parallel_renderer - Completed parallel rendering with 0 successful results
+2025-04-06 19:04:28,690 - INFO - parallel_renderer - Closed multiprocessing pool
+2025-04-06 19:04:28,691 - INFO - parallel_renderer - Completed group 2, got 2 valid clips
+2025-04-06 19:04:28,691 - INFO - parallel_renderer - Processing group 3/3: [4, 5]
+2025-04-06 19:04:28,691 - INFO - parallel_renderer - Processing section group with indices: [4, 5]
+2025-04-06 19:04:28,692 - INFO - parallel_renderer - Starting parallel rendering of 2 clips
+2025-04-06 19:04:28,725 - ERROR - parallel_renderer - Error getting result for clip 1/2: Can't get local object 'process_section_group.<locals>.render_with_timeout'
+2025-04-06 19:04:28,726 - ERROR - parallel_renderer - Error getting result for clip 2/2: Can't get local object 'process_section_group.<locals>.render_with_timeout'
+2025-04-06 19:04:28,726 - INFO - parallel_renderer - Completed parallel rendering with 0 successful results
+2025-04-06 19:04:37,029 - INFO - parallel_renderer - Closed multiprocessing pool
+2025-04-06 19:04:37,029 - INFO - parallel_renderer - Completed group 3, got 2 valid clips
+2025-04-06 19:04:37,030 - INFO - parallel_renderer - All groups processed, got 0 valid clips
+2025-04-06 19:04:37,031 - ERROR - parallel_renderer - No clips were rendered successfully
+2025-04-06 19:04:37,031 - WARNING - shorts_maker_V - Parallel renderer not available or failed: No clips were rendered successfully. Using standard rendering.
+2025-04-06 19:04:37,032 - INFO - shorts_maker_V - Starting standard video rendering
+2025-04-06 19:54:12,915 - INFO - shorts_maker_V - Completed video rendering in 2975.88 seconds
+2025-04-06 19:54:12,933 - INFO - shorts_maker_V - YouTube short creation completed in 3175.73 seconds
+2025-04-06 19:54:12,934 - INFO - shorts_maker_V - Video saved to: ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250406_190108.mp4
+2025-04-06 19:54:12,976 - WARNING - shorts_maker_V - Error cleaning up temporary files: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\adhbu\\AppData\\Local\\Temp\\tmpon2bvhfj\\pixabay_113150.mp4'
+2025-04-06 19:54:12,979 - INFO - shorts_maker_V - Completed YouTube short creation in 3175.78 seconds
+2025-04-06 19:54:12,981 - INFO - __main__ - Uploading to YouTube
+2025-04-06 19:54:12,981 - INFO - __main__ - Uploading to YouTube
+2025-04-06 19:54:13,538 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
+2025-04-06 19:54:19,950 - INFO - youtube_upload - ✅ Upload successful! Video ID: q2nbfv8gg4Y
+2025-04-06 19:54:19,953 - INFO - __main__ - YouTube Short created successfully: ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250406_190108.mp4
+2025-04-06 19:54:19,953 - INFO - __main__ - YouTube Short created successfully: ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250406_190108.mp4
