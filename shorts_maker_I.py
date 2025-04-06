@@ -23,7 +23,7 @@ from shorts_maker_V import YTShortsCreator_V
 from datetime import datetime # for more detailed time tracking
 
 # Configure logging for easier debugging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Do NOT initialize basicConfig here - this will be handled by main.py
 logger = logging.getLogger(__name__)
 
 # Timer function for performance monitoring
@@ -32,11 +32,11 @@ def measure_time(func):
     def wrapper(*args, **kwargs):
         start_time = time.time()
         start_datetime = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-        logger.info(f"⏱️ STARTING {func.__name__} at {start_datetime}")
+        logger.info(f"STARTING {func.__name__} at {start_datetime}")
         result = func(*args, **kwargs)
         end_time = time.time()
         duration = end_time - start_time
-        logger.info(f"⏱️ COMPLETED {func.__name__} in {duration:.2f} seconds")
+        logger.info(f"COMPLETED {func.__name__} in {duration:.2f} seconds")
         return result
     return wrapper
 
@@ -121,7 +121,7 @@ class YTShortsCreator_I:
             file_path (str): Path to save the image, if None a path will be generated
 
         Returns:
-            str: Path to the generated image
+            str: Path to the generated image or None if failed
         """
         if not file_path:
             file_path = os.path.join(self.temp_dir, f"gen_img_{int(time.time())}_{random.randint(1000, 9999)}.png")
@@ -156,16 +156,12 @@ class YTShortsCreator_I:
         retry_count = 0
         max_retries = 3
         success = False
+        initial_wait_time = 20  # Starting wait time in seconds
 
         # Check if Hugging Face API key is available
         if not self.huggingface_api_key:
-            logger.warning("No Hugging Face API key provided. Skipping image generation and using stock image.")
-            # Skip directly to fallback
-            fallback_image_path = self._fetch_stock_image(prompt.split(",")[0])
-            if fallback_image_path:
-                return fallback_image_path
-            # If fallback fails, create a text-based image
-            return self._create_text_based_image(prompt, file_path)
+            logger.error("No Hugging Face API key provided. Will fall back to shorts_maker_V.")
+            return None
 
         while not success and retry_count < max_retries:
             try:
@@ -189,145 +185,65 @@ class YTShortsCreator_I:
                         if "application/json" in response.headers.get("Content-Type", ""):
                             response_json = response.json()
                             if response.status_code == 503 and "estimated_time" in response_json:
-                                wait_time = response_json.get("estimated_time", 20)
+                                wait_time = response_json.get("estimated_time", initial_wait_time)
                                 logger.info(f"Model is loading. Waiting {wait_time} seconds...")
                                 time.sleep(wait_time)
                             else:
                                 # Other error
                                 logger.error(f"Error generating image: {response.status_code} - {response.text}")
-                                time.sleep(5)  # Wait before retrying
+                                time.sleep(initial_wait_time)  # Wait before retrying
                         else:
                             # Non-JSON response (HTML error page)
-                            logger.error(f"Non-JSON error response: {response.status_code} - {response.text[:100]}...")
+                            logger.error(f"Non-JSON error response: {response.status_code}")
                             # For 503 errors, wait longer before retry
                             if response.status_code == 503:
-                                logger.info("Service unavailable (503). Waiting 15 seconds before retry...")
-                                time.sleep(15)
+                                wait_time = initial_wait_time * (retry_count + 1)  # Gradually increase wait time
+                                logger.info(f"Service unavailable (503). Waiting {wait_time} seconds before retry...")
+                                time.sleep(wait_time)
                             else:
-                                time.sleep(5)  # Wait before retrying
+                                time.sleep(initial_wait_time)  # Wait before retrying
                     except ValueError:
                         # Non-JSON response
                         logger.error(f"Could not parse response: {response.status_code}")
-                        time.sleep(5)  # Wait before retrying
+                        time.sleep(initial_wait_time)  # Wait before retrying
+
+                    # Check if we should fall back before trying more retries
+                    if response.status_code == 503 and retry_count >= 1:
+                        logger.warning("Multiple 503 errors from Hugging Face API. Falling back to shorts_maker_V.")
+                        return None
 
                     retry_count += 1
             except requests.exceptions.RequestException as e:
                 logger.error(f"Network error during image generation: {e}")
                 retry_count += 1
-                time.sleep(5)
+                time.sleep(initial_wait_time)
             except Exception as e:
                 logger.error(f"Unexpected exception during image generation: {e}")
                 retry_count += 1
-                time.sleep(5)
+                time.sleep(initial_wait_time)
 
-        # If all retries failed, try to get a stock image as fallback
+        # If all retries failed, return None to signal fallback to shorts_maker_V
         if not success:
-            logger.warning("Failed to generate image with Hugging Face API, falling back to stock image")
-            fallback_image_path = self._fetch_stock_image(prompt.split(",")[0])
-            if fallback_image_path:
-                return fallback_image_path
-            # If even fallback fails, create a text-based image
-            return self._create_text_based_image(prompt, file_path)
+            logger.error("Failed to generate image with Hugging Face API after multiple attempts")
+            return None
 
         return file_path
 
     @measure_time
     def _fetch_stock_image(self, query):
         """
-        Fetch a stock image from Pexels as fallback
-
-        Args:
-            query (str): Search query
-
-        Returns:
-            str: Path to the downloaded image or None if failed
+        This method is intentionally disabled. Fallback now uses shorts_maker_V instead.
         """
-        try:
-            # Clean and format the query
-            query = query.split(',')[0].strip().replace(' ', '+')[:100]
-            logger.info(f"Fetching stock image with query: {query}")
-
-            url = f"https://api.pexels.com/v1/search?query={query}&per_page=5&orientation=portrait"
-            headers = {"Authorization": self.pexels_api_key}
-            response = requests.get(url, headers=headers)
-
-            if response.status_code == 200:
-                data = response.json()
-                if data.get("photos") and len(data["photos"]) > 0:
-                    # Choose a random photo from the results
-                    photo = random.choice(data["photos"])
-                    img_url = photo["src"]["large"]  # Use large instead of original for faster download
-                    img_path = os.path.join(self.temp_dir, f"pexels_{photo['id']}.jpg")
-
-                    # Download the image
-                    img_response = requests.get(img_url, stream=True)
-                    if img_response.status_code == 200:
-                        with open(img_path, 'wb') as f:
-                            for chunk in img_response.iter_content(chunk_size=8192):
-                                f.write(chunk)
-                        logger.info(f"Stock image downloaded: {img_path}")
-                        return img_path
-                else:
-                    logger.warning(f"No photos found for query: {query}")
-                    # Try a more generic query if specific one fails
-                    if query != "technology":
-                        logger.info("Trying with generic 'technology' query")
-                        return self._fetch_stock_image("technology")
-            else:
-                logger.error(f"Failed to fetch stock image: {response.status_code} - {response.text}")
-
-            return None
-        except Exception as e:
-            logger.error(f"Error fetching stock image: {e}")
-            return None
+        logger.warning("Stock image fetch called but is disabled. Will fall back to shorts_maker_V.")
+        return None
 
     @measure_time
     def _create_text_based_image(self, text, file_path):
         """
-        Create a simple text-based image as ultimate fallback
-
-        Args:
-            text (str): Text to display on image
-            file_path (str): Path to save the image
-
-        Returns:
-            str: Path to the created image
+        This method is intentionally disabled. Fallback now uses shorts_maker_V instead.
         """
-        try:
-            # Create a blank image with text
-            width, height = self.resolution
-            img = Image.new('RGB', (width, height), color=(0, 0, 0))
-            draw = ImageDraw.Draw(img)
-
-            # Use default font if available
-            try:
-                font = ImageFont.truetype(self.body_font_path, 60)
-            except:
-                font = ImageFont.load_default()
-
-            # Wrap text to fit image width
-            wrapped_text = textwrap.fill(text, width=30)
-
-            # Calculate text position for center alignment
-            bbox = draw.textbbox((0, 0), wrapped_text, font=font)
-            text_width = bbox[2] - bbox[0]
-            text_height = bbox[3] - bbox[1]
-            position = ((width - text_width) // 2, (height - text_height) // 2)
-
-            # Draw text in white
-            draw.text(position, wrapped_text, font=font, fill=(255, 255, 255))
-
-            # Save image
-            img.save(file_path)
-            return file_path
-        except Exception as e:
-            logger.error(f"Error creating text-based image: {e}")
-            # Create a simpler image with PIL's default capabilities
-            img = Image.new('RGB', self.resolution, color=(0, 0, 0))
-            draw = ImageDraw.Draw(img)
-            draw.text((10, 10), text[:100], fill=(255, 255, 255))
-            img.save(file_path)
-            return file_path
+        logger.warning("Text-based image creation called but is disabled. Will fall back to shorts_maker_V.")
+        return None
 
     @measure_time
     def _create_still_image_clip(self, image_path, duration, text=None, text_position=('center','center'),
@@ -559,6 +475,7 @@ class YTShortsCreator_I:
                         background_queries=None, blur_background=False, edge_blur=False):
         """
         Create a YouTube Short using AI-generated images for each script section
+        Falls back to shorts_maker_V (video-based) if image generation fails
 
         Args:
             title (str): Title of the short
@@ -586,6 +503,38 @@ class YTShortsCreator_I:
             # Ensure the output directory exists
             os.makedirs(os.path.dirname(output_filename), exist_ok=True)
 
+            # Try to generate AI images for sections
+            section_images = []
+            hugging_face_failed = False
+
+            # Test first image generation to see if Hugging Face API works
+            test_query = background_queries[0] if background_queries and len(background_queries) > 0 else background_query
+            logger.info(f"Testing Hugging Face API with query: {test_query}")
+            test_image = self._generate_image_from_prompt(test_query, style=style)
+
+            if test_image is None:
+                # Hugging Face API failed, fallback to shorts_maker_V
+                logger.warning("⚠️ FALLBACK: Hugging Face API failed for image generation")
+                logger.warning("⚠️ SWITCHING to shorts_maker_V to create video with stock videos instead of AI images")
+                hugging_face_failed = True
+
+                # Create video using shorts_maker_V
+                logger.info("Creating video using shorts_maker_V with the same script sections")
+                return self.v_creator.create_youtube_short(
+                    title=title,
+                    script_sections=script_sections,
+                    background_query=background_query,
+                    output_filename=output_filename,
+                    add_captions=add_captions,
+                    style="video",  # Force video style since we're using shorts_maker_V
+                    voice_style=voice_style,
+                    max_duration=max_duration,
+                    background_queries=background_queries,
+                    blur_background=blur_background,
+                    edge_blur=edge_blur
+                )
+
+            # If we get here, Hugging Face is working, proceed with image-based short
             # Generate images for each section
             section_clips = []
             section_audios = []
@@ -646,17 +595,43 @@ class YTShortsCreator_I:
                         image_path = self._generate_image_from_prompt(image_query, style=style)
                     except Exception as e:
                         logger.error(f"Error generating image for section {i}: {e}")
-                        # Create a text-based image as fallback
-                        image_path = self._create_text_based_image(section_text,
-                                                                  os.path.join(self.temp_dir, f"text_img_{i}.png"))
+                        # If any image fails, switch to video mode
+                        logger.warning("⚠️ FALLBACK: Image generation failed during processing")
+                        logger.warning("⚠️ SWITCHING to shorts_maker_V to create video with stock videos instead of AI images")
+                        return self.v_creator.create_youtube_short(
+                            title=title,
+                            script_sections=script_sections,
+                            background_query=background_query,
+                            output_filename=output_filename,
+                            add_captions=add_captions,
+                            style="video",
+                            voice_style=voice_style,
+                            max_duration=max_duration,
+                            background_queries=background_queries,
+                            blur_background=blur_background,
+                            edge_blur=edge_blur
+                        )
 
                     image_end_time = time.time()
                     logger.info(f"⏱️ COMPLETED image generation for section {i+1} in {image_end_time - image_start_time:.2f} seconds")
 
                     # Skip this section if we couldn't get an image
                     if not image_path or not os.path.exists(image_path):
-                        logger.warning(f"Skipping section {i} due to missing image")
-                        continue
+                        logger.warning(f"Image generation failed for section {i}")
+                        logger.warning("⚠️ FALLBACK: Switching to shorts_maker_V for video-based short")
+                        return self.v_creator.create_youtube_short(
+                            title=title,
+                            script_sections=script_sections,
+                            background_query=background_query,
+                            output_filename=output_filename,
+                            add_captions=add_captions,
+                            style="video",
+                            voice_style=voice_style,
+                            max_duration=max_duration,
+                            background_queries=background_queries,
+                            blur_background=blur_background,
+                            edge_blur=edge_blur
+                        )
 
                     # Create TTS audio for this section
                     audio_start_time = time.time()

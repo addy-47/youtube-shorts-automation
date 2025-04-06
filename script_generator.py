@@ -5,8 +5,7 @@ import logging
 import time  # for exponential backoff which mwans if the script fails to generate, it will try again after some time
 import re  # for filtering instructional labels
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Configure logging - don't use basicConfig since main.py handles this
 logger = logging.getLogger(__name__)
 
 # Load environment variables from .env

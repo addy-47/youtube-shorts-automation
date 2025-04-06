@@ -1,6 +1,7 @@
 import logging # for logging events
 import logging.handlers # Import handlers
 import os # for environment variables and file paths
+import sys # for stdout encoding
 from pathlib import Path # for file paths and directory creation
 from dotenv import load_dotenv # for loading environment variables
 from script_generator import generate_script, generate_batch_video_queries,generate_batch_image_prompts
@@ -31,8 +32,12 @@ Path(LOG_DIR).mkdir(parents=True, exist_ok=True)
 logger = logging.getLogger(__name__)
 logger.setLevel(LOG_LEVEL)
 
-# Define log format
+# Define log format - simpler format without emojis to avoid encoding issues
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+
+# Force stdout to use utf-8 encoding (helps with emoji on Windows)
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')
 
 # Remove any existing handlers to avoid duplicates
 for handler in logger.handlers[:]:
@@ -41,13 +46,14 @@ for handler in logger.handlers[:]:
 # Add the log message handler to the logger
 # Rotate logs daily at midnight, keep 7 backups
 handler = logging.handlers.TimedRotatingFileHandler(
-    LOG_FILENAME, when='midnight', interval=1, backupCount=7
+    LOG_FILENAME, when='midnight', interval=1, backupCount=7,
+    encoding='utf-8'  # Force UTF-8 encoding for log files
 )
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 # Add a handler to also output to console (like the original setup)
-stream_handler = logging.StreamHandler()
+stream_handler = logging.StreamHandler(sys.stdout)  # Use explicit stdout with proper encoding
 stream_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
 
@@ -60,13 +66,14 @@ for handler in root_logger.handlers[:]:
 # This ensures consistency if other modules just call logging.info etc.
 root_logger.setLevel(LOG_LEVEL)
 root_handler = logging.handlers.TimedRotatingFileHandler(
-    LOG_FILENAME, when='midnight', interval=1, backupCount=7
+    LOG_FILENAME, when='midnight', interval=1, backupCount=7,
+    encoding='utf-8'  # Force UTF-8 encoding for log files
 )
 root_handler.setFormatter(formatter)
 root_logger.addHandler(root_handler)
 
 # Add console output for root logger too
-root_stream_handler = logging.StreamHandler()
+root_stream_handler = logging.StreamHandler(sys.stdout)  # Use explicit stdout with proper encoding
 root_stream_handler.setFormatter(formatter)
 root_logger.addHandler(root_stream_handler)
 
@@ -149,16 +156,16 @@ def get_creator_for_day():
     """Alternate between video and image creators based on day"""
     today = datetime.datetime.now()
     day_of_year = today.timetuple().tm_yday  # 1-366
-    use_images = day_of_year % 2 == 0  # Even days use videos, odd days use images
+    use_images = day_of_year % 2 == 0  # Even days use images, odd days use videos
 
     if use_images:
-        logging.info(f"Day {day_of_year}: Using video-based creator (YTShortsCreator_V)")
-        return YTShortsCreator_V()
-    else:
-        logging.info(f"Day {day_of_year}: Using image-based creator (YTShortsCreator_I)")
+        logger.info(f"Day {day_of_year}: Using image-based creator (YTShortsCreator_I)")
         return YTShortsCreator_I()
+    else:
+        logger.info(f"Day {day_of_year}: Using video-based creator (YTShortsCreator_V)")
+        return YTShortsCreator_V()
 
-def generate_youtube_short(topic, style="photorealistic", max_duration=25):
+def generate_youtube_short(topic, style="photorealistic", max_duration=25, creator_type=None):
     """
     Generate a YouTube Short.
 
@@ -166,9 +173,9 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25):
         topic (str): Topic for the YouTube Short
         style (str): Style for the content ("photorealistic", "digital art", etc.)
         max_duration (int): Maximum video duration in seconds
+        creator_type: Optional creator instance to use (if None, will create a new one)
     """
     try:
-
         output_dir = ensure_output_directory()
 
         # Generate unique filename with timestamp
@@ -202,10 +209,9 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25):
         for i, card in enumerate(script_cards):
             logger.info(f"Section {i+1}: {card['text'][:30]}... (duration: {card['duration']}s)")
 
-        # Extract keywords for each section and the overall script
-        # overall_keywords = get_keywords(script) # No longer using simple keyword extraction
-        # logger.info(f"Overall keywords: {overall_keywords}")
-        creator_type = get_creator_for_day()
+        # Get or create creator type
+        if creator_type is None:
+            creator_type = get_creator_for_day()
 
         # Generate section-specific queries using the LLM in a single batch call
         card_texts = [card['text'] for card in script_cards]
@@ -268,8 +274,9 @@ def main():
     try:
         topic = os.getenv("YOUTUBE_TOPIC", "Artificial Intelligence")
 
-        # Get creator type
+        # Get creator type - this will already log the creator type
         creator = get_creator_for_day()
+
         # We'll always use "photorealistic" as the default style unless overridden at function call
         style = "photorealistic"
         logger.info(f"Using style: {style}")
@@ -279,6 +286,7 @@ def main():
                 topic,
                 style=style,
                 max_duration=25,
+                creator_type=creator  # Pass the creator we already initialized
             )
             logger.info(f"YouTube Short created successfully: {video_path}")
         except Exception as e:

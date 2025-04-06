@@ -1,7 +1,7 @@
 import os # for file operations
 import time # for timing events and creating filenames like timestamps
 import random # for randomizing elements
-import textwrap # for wrapping text but is being handled by textclip class in moviepy
+import textwrap # for wrapping text into lines but most cases being handled by textclip class in moviepy
 import requests # for making HTTP requests
 import numpy as np # for numerical operations here used for rounding off
 import logging # for logging events
@@ -19,7 +19,7 @@ import tempfile # for creating temporary files
 from datetime import datetime # for more detailed time tracking
 
 # Configure logging for easier debugging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Do NOT initialize basicConfig here - this will be handled by main.py
 logger = logging.getLogger(__name__)
 
 # Timer function for performance monitoring
@@ -28,11 +28,11 @@ def measure_time(func):
     def wrapper(*args, **kwargs):
         start_time = time.time()
         start_datetime = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-        logger.info(f"⏱️ STARTING {func.__name__} at {start_datetime}")
+        logger.info(f"STARTING {func.__name__} at {start_datetime}")
         result = func(*args, **kwargs)
         end_time = time.time()
         duration = end_time - start_time
-        logger.info(f"⏱️ COMPLETED {func.__name__} in {duration:.2f} seconds")
+        logger.info(f"COMPLETED {func.__name__} in {duration:.2f} seconds")
         return result
     return wrapper
 
@@ -646,7 +646,7 @@ class YTShortsCreator_V:
 
         # Start timing the overall process
         overall_start_time = time.time()
-        logger.info(f"⏱️ STARTING YouTube short creation at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+        logger.info(f"STARTING YouTube short creation at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
 
         # Calculate total duration and scale if needed
         total_duration = sum(section.get('duration', 5) for section in script_sections)
@@ -683,7 +683,7 @@ class YTShortsCreator_V:
 
         # Fetch background videos for each segment
         fetch_start_time = time.time()
-        logger.info(f"⏱️ STARTING background video fetch at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+        logger.info(f"STARTING background video fetch at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
 
         bg_paths = []
         for i in range(num_backgrounds):
@@ -703,7 +703,7 @@ class YTShortsCreator_V:
                     bg_paths.extend(fallback_paths)
 
         fetch_end_time = time.time()
-        logger.info(f"⏱️ COMPLETED background video fetch in {fetch_end_time - fetch_start_time:.2f} seconds")
+        logger.info(f"COMPLETED background video fetch in {fetch_end_time - fetch_start_time:.2f} seconds")
 
         # Final check if we have any backgrounds
         if not bg_paths:
@@ -741,7 +741,7 @@ class YTShortsCreator_V:
 
         # Create background clips with calculated durations
         process_start_time = time.time()
-        logger.info(f"⏱️ STARTING background processing at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+        logger.info(f"STARTING background processing at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
 
         processed_bg_clips = []
 
@@ -749,7 +749,7 @@ class YTShortsCreator_V:
             try:
                 # Load video
                 clip_process_start = time.time()
-                logger.info(f"⏱️ STARTING background clip {i+1} processing at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+                logger.info(f"STARTING background clip {i+1} processing at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
 
                 target_duration = segment_durations[i]
                 bg_clip = VideoFileClip(bg_path)
@@ -759,7 +759,7 @@ class YTShortsCreator_V:
                 processed_bg_clips.append(processed_clip)
 
                 clip_process_end = time.time()
-                logger.info(f"⏱️ COMPLETED background clip {i+1} processing in {clip_process_end - clip_process_start:.2f} seconds")
+                logger.info(f"COMPLETED background clip {i+1} processing in {clip_process_end - clip_process_start:.2f} seconds")
 
             except Exception as e:
                 logger.error(f"Error processing background video {i+1}: {str(e)}")
@@ -781,18 +781,18 @@ class YTShortsCreator_V:
                         logger.error(f"Failed to create background. ABORTING{str(e2)}")
 
         process_end_time = time.time()
-        logger.info(f"⏱️ COMPLETED background processing in {process_end_time - process_start_time:.2f} seconds")
+        logger.info(f"COMPLETED background processing in {process_end_time - process_start_time:.2f} seconds")
 
         # Apply crossfade transitions between background clips
         compose_start_time = time.time()
-        logger.info(f"⏱️ STARTING background composition at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+        logger.info(f"STARTING background composition at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
 
         final_bg_clips = [processed_bg_clips[0]]
 
         for i in range(1, len(processed_bg_clips)):
             # Create the crossfade effect
             transition_start = time.time()
-            logger.info(f"⏱️ STARTING transition {i} at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+            logger.info(f"STARTING transition {i} at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
 
             crossfaded = concatenate_videoclips(
                 [final_bg_clips[-1], processed_bg_clips[i].crossfadein(transition_duration)],
@@ -802,17 +802,17 @@ class YTShortsCreator_V:
             final_bg_clips[-1] = crossfaded
 
             transition_end = time.time()
-            logger.info(f"⏱️ COMPLETED transition {i} in {transition_end - transition_start:.2f} seconds")
+            logger.info(f"COMPLETED transition {i} in {transition_end - transition_start:.2f} seconds")
 
         compose_end_time = time.time()
-        logger.info(f"⏱️ COMPLETED background composition in {compose_end_time - compose_start_time:.2f} seconds")
+        logger.info(f"COMPLETED background composition in {compose_end_time - compose_start_time:.2f} seconds")
 
         # The final background clip will now have all segments with crossfades
         background_clip = final_bg_clips[0]
 
         # Generate audio clips with TTS for each section
         tts_start_time = time.time()
-        logger.info(f"⏱️ STARTING TTS audio generation at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+        logger.info(f"STARTING TTS audio generation at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
 
         audio_clips = []
         cumulative_duration = 0
@@ -822,7 +822,7 @@ class YTShortsCreator_V:
             section_voice_style = section.get("voice_style", voice_style)
 
             section_tts_start = time.time()
-            logger.info(f"⏱️ STARTING TTS for section {i+1} at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
+            logger.info(f"STARTING TTS for section {i+1} at {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
 
             # Try to create TTS audio file
             audio_path = os.path.join(self.temp_dir, f"section_{i}.mp3")
@@ -848,7 +848,7 @@ class YTShortsCreator_V:
                     audio_path = None
 
             section_tts_end = time.time()
-            logger.info(f"⏱️ COMPLETED TTS for section {i+1} in {section_tts_end - section_tts_start:.2f} seconds")
+            logger.info(f"COMPLETED TTS for section {i+1} in {section_tts_end - section_tts_start:.2f} seconds")
 
             # If audio file was created successfully, add it to the list
             if audio_path and os.path.exists(audio_path):
@@ -882,7 +882,7 @@ class YTShortsCreator_V:
                 cumulative_duration += section.get("duration", 5)
 
         tts_end_time = time.time()
-        logger.info(f"⏱️ COMPLETED TTS audio generation in {tts_end_time - tts_start_time:.2f} seconds")
+        logger.info(f"COMPLETED TTS audio generation in {tts_end_time - tts_start_time:.2f} seconds")
 
         # Combine all audio clips
         combined_audio = CompositeAudioClip(audio_clips) if audio_clips else None
