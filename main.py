@@ -25,57 +25,40 @@ LOG_DIR = 'logs'  # Define log directory
 LOG_FILENAME = os.path.join(LOG_DIR, 'youtube_shorts_daily.log') # Create full path
 LOG_LEVEL = logging.INFO
 
+# Add a debug flag to enable more verbose logging when needed
+DEBUG_MODE = os.getenv("DEBUG_MODE", "false").lower() == "true"
+if DEBUG_MODE:
+    LOG_LEVEL = logging.DEBUG
+    print("DEBUG MODE ENABLED: More verbose logging activated")
+
 # Ensure log directory exists
 Path(LOG_DIR).mkdir(parents=True, exist_ok=True)
 
-# Set up a specific logger with our desired output level
-logger = logging.getLogger(__name__)
-logger.setLevel(LOG_LEVEL)
+# First, disable any existing loggers to avoid duplicate outputs
+logging.getLogger().handlers = []
+
+# Configure a single root logger
+root_logger = logging.getLogger()
+root_logger.setLevel(LOG_LEVEL)
 
 # Define log format - simpler format without emojis to avoid encoding issues
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
-# Force stdout to use utf-8 encoding (helps with emoji on Windows)
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
-
-# Remove any existing handlers to avoid duplicates
-for handler in logger.handlers[:]:
-    logger.removeHandler(handler)
-
-# Add the log message handler to the logger
-# Rotate logs daily at midnight, keep 7 backups
-handler = logging.handlers.TimedRotatingFileHandler(
+# Add file handler with rotation
+file_handler = logging.handlers.TimedRotatingFileHandler(
     LOG_FILENAME, when='midnight', interval=1, backupCount=7,
     encoding='utf-8'  # Force UTF-8 encoding for log files
 )
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+file_handler.setFormatter(formatter)
+root_logger.addHandler(file_handler)
 
-# Add a handler to also output to console (like the original setup)
-stream_handler = logging.StreamHandler(sys.stdout)  # Use explicit stdout with proper encoding
-stream_handler.setFormatter(formatter)
-logger.addHandler(stream_handler)
+# Add console handler
+console_handler = logging.StreamHandler(sys.stdout)  # Use explicit stdout with proper encoding
+console_handler.setFormatter(formatter)
+root_logger.addHandler(console_handler)
 
-# Configure root logger - first remove any existing handlers
-root_logger = logging.getLogger()
-for handler in root_logger.handlers[:]:
-    root_logger.removeHandler(handler)
-
-# Configure root logger similarly if other modules use logging.getLogger() without a name
-# This ensures consistency if other modules just call logging.info etc.
-root_logger.setLevel(LOG_LEVEL)
-root_handler = logging.handlers.TimedRotatingFileHandler(
-    LOG_FILENAME, when='midnight', interval=1, backupCount=7,
-    encoding='utf-8'  # Force UTF-8 encoding for log files
-)
-root_handler.setFormatter(formatter)
-root_logger.addHandler(root_handler)
-
-# Add console output for root logger too
-root_stream_handler = logging.StreamHandler(sys.stdout)  # Use explicit stdout with proper encoding
-root_stream_handler.setFormatter(formatter)
-root_logger.addHandler(root_stream_handler)
+# Use the root logger for this module
+logger = logging.getLogger(__name__)
 
 def ensure_output_directory(directory="ai_shorts_output"):
     """Ensure the output directory exists."""
@@ -299,7 +282,6 @@ def main(creator_type=None):
                 max_duration=max_duration,
                 creator_type=creator_type
             )
-            logger.info(f"YouTube Short created successfully: {video_path}")
         except Exception as e:
             logger.error(f"Error generating YouTube Short: {str(e)}")
             import traceback
@@ -309,6 +291,8 @@ def main(creator_type=None):
         logger.error(f"Process failed: {str(e)}")
         import traceback
         logger.error(f"Detailed error trace: {traceback.format_exc()}")
+
+    return video_path
 
 if __name__ == "__main__":
     # Add ability to override creator type from command line

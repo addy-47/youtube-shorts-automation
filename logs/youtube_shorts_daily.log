@@ -1,103 +1,69 @@
-2025-04-06 19:01:08,883 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
-2025-04-06 19:01:08,883 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
-2025-04-06 19:01:08,977 - INFO - shorts_maker_V - Azure TTS initialized successfully
-2025-04-06 19:01:12,417 - INFO - __main__ - Generating script for topic: On TikTok, YouTube, X, and everywhere, ‘views’ are lies - The Verge
-2025-04-06 19:01:12,417 - INFO - __main__ - Generating script for topic: On TikTok, YouTube, X, and everywhere, ‘views’ are lies - The Verge
-2025-04-06 19:01:15,072 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-04-06 19:01:15,085 - INFO - script_generator - Script cleaned
-2025-04-06 19:01:15,086 - INFO - script_generator - Script generated successfully with 68 words.
-2025-04-06 19:01:15,086 - INFO - __main__ - Raw script generated successfully
-2025-04-06 19:01:15,086 - INFO - __main__ - Raw script generated successfully
-2025-04-06 19:01:15,087 - INFO - __main__ - Script parsed into 6 sections
-2025-04-06 19:01:15,087 - INFO - __main__ - Script parsed into 6 sections
-2025-04-06 19:01:15,088 - INFO - __main__ - Section 1: Did you know that views on Tik... (duration: 5s)
-2025-04-06 19:01:15,088 - INFO - __main__ - Section 1: Did you know that views on Tik... (duration: 5s)
-2025-04-06 19:01:15,089 - INFO - __main__ - Section 2: Recent reports reveal that man... (duration: 5s)
-2025-04-06 19:01:15,089 - INFO - __main__ - Section 2: Recent reports reveal that man... (duration: 5s)
-2025-04-06 19:01:15,090 - INFO - __main__ - Section 3: This manipulation raises quest... (duration: 5s)
-2025-04-06 19:01:15,090 - INFO - __main__ - Section 3: This manipulation raises quest... (duration: 5s)
-2025-04-06 19:01:15,091 - INFO - __main__ - Section 4: Are we being misled by the num... (duration: 5s)
-2025-04-06 19:01:15,091 - INFO - __main__ - Section 4: Are we being misled by the num... (duration: 5s)
-2025-04-06 19:01:15,091 - INFO - __main__ - Section 5: It’s time to rethink how we co... (duration: 5s)
-2025-04-06 19:01:15,091 - INFO - __main__ - Section 5: It’s time to rethink how we co... (duration: 5s)
-2025-04-06 19:01:15,092 - INFO - __main__ - Section 6: If you want real insights into... (duration: 5s)
-2025-04-06 19:01:15,092 - INFO - __main__ - Section 6: If you want real insights into... (duration: 5s)
-2025-04-06 19:01:15,093 - INFO - __main__ - Generating video search queries for each section using AI...
-2025-04-06 19:01:15,093 - INFO - __main__ - Generating video search queries for each section using AI...
-2025-04-06 19:01:17,191 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-04-06 19:01:17,193 - INFO - script_generator - Successfully generated batch video queries for 6 sections.
-2025-04-06 19:01:17,194 - INFO - __main__ - Section queries: 1: social media platforms, 2: inflated view counts, 3: authenticity in media, 4: misleading statistics, 5: content consumption, 6: AI insights
-2025-04-06 19:01:17,194 - INFO - __main__ - Section queries: 1: social media platforms, 2: inflated view counts, 3: authenticity in media, 4: misleading statistics, 5: content consumption, 6: AI insights
-2025-04-06 19:01:17,197 - INFO - __main__ - Creating YouTube Short
-2025-04-06 19:01:17,197 - INFO - __main__ - Creating YouTube Short
-2025-04-06 19:01:17,197 - INFO - shorts_maker_V - Starting YouTube short creation
-2025-04-06 19:01:17,198 - INFO - shorts_maker_V - Starting YouTube short creation
-2025-04-06 19:01:17,198 - INFO - shorts_maker_V - Scaling durations by factor 0.83 to fit max duration of 25s
-2025-04-06 19:01:17,199 - INFO - shorts_maker_V - Total video duration: 25.0s
-2025-04-06 19:01:17,199 - INFO - shorts_maker_V - Creating video with 4 background segments for middle sections
-2025-04-06 19:01:17,199 - INFO - shorts_maker_V - Starting background video fetch
-2025-04-06 19:01:17,200 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-06 19:01:20,138 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-06 19:01:27,638 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
-2025-04-06 19:01:32,811 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-06 19:01:36,119 - INFO - shorts_maker_V - Completed background video fetch in 18.92 seconds
-2025-04-06 19:01:36,119 - INFO - shorts_maker_V - Starting TTS audio generation
-2025-04-06 19:01:37,080 - INFO - voiceover - Speech synthesized for text [Did you know that vi...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpon2bvhfj\section_0.mp3]
-2025-04-06 19:01:38,032 - INFO - voiceover - Speech synthesized for text [Recent reports revea...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpon2bvhfj\section_1.mp3]
-2025-04-06 19:01:38,677 - INFO - voiceover - Speech synthesized for text [This manipulation ra...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpon2bvhfj\section_2.mp3]
-2025-04-06 19:01:39,303 - INFO - voiceover - Speech synthesized for text [Are we being misled ...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpon2bvhfj\section_3.mp3]
-2025-04-06 19:01:39,941 - INFO - voiceover - Speech synthesized for text [It’s time to rethink...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpon2bvhfj\section_4.mp3]
-2025-04-06 19:01:40,619 - INFO - voiceover - Speech synthesized for text [If you want real ins...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpon2bvhfj\section_5.mp3]
-2025-04-06 19:01:40,769 - INFO - shorts_maker_V - Completed TTS audio generation in 4.65 seconds
-2025-04-06 19:01:40,769 - INFO - shorts_maker_V - Updated total duration: 27.2s
-2025-04-06 19:01:40,770 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
-2025-04-06 19:01:54,967 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
-2025-04-06 19:02:05,444 - INFO - shorts_maker_V - Starting background processing
-2025-04-06 19:03:21,923 - INFO - shorts_maker_V - Completed background processing in 76.48 seconds
-2025-04-06 19:03:21,931 - INFO - shorts_maker_V - Starting background composition
-2025-04-06 19:03:22,221 - INFO - shorts_maker_V - Completed background composition in 0.29 seconds
-2025-04-06 19:03:49,876 - WARNING - shorts_maker_V - Section duration (4.17s) exceeds available background (4.17s), looping
-2025-04-06 19:03:53,952 - WARNING - shorts_maker_V - Background clip too short (15.66s), resetting position
-2025-04-06 19:04:00,775 - INFO - shorts_maker_V - Using parallel renderer for improved performance
-2025-04-06 19:04:00,784 - INFO - shorts_maker_V - Starting parallel video rendering
-2025-04-06 19:04:00,786 - INFO - parallel_renderer - Starting parallel rendering of 6 clips with 4 workers
-2025-04-06 19:04:00,787 - INFO - parallel_renderer - Created 3 groups of clips for rendering
-2025-04-06 19:04:00,789 - INFO - parallel_renderer - Processing group 1/3: [0, 1]
-2025-04-06 19:04:00,789 - INFO - parallel_renderer - Processing section group with indices: [0, 1]
-2025-04-06 19:04:00,790 - INFO - parallel_renderer - Starting parallel rendering of 2 clips
-2025-04-06 19:04:01,559 - ERROR - parallel_renderer - Error getting result for clip 1/2: Can't get local object 'process_section_group.<locals>.render_with_timeout'
-2025-04-06 19:04:01,560 - ERROR - parallel_renderer - Error getting result for clip 2/2: Can't get local object 'process_section_group.<locals>.render_with_timeout'
-2025-04-06 19:04:01,561 - INFO - parallel_renderer - Completed parallel rendering with 0 successful results
-2025-04-06 19:04:20,409 - INFO - parallel_renderer - Closed multiprocessing pool
-2025-04-06 19:04:20,410 - INFO - parallel_renderer - Completed group 1, got 2 valid clips
-2025-04-06 19:04:20,410 - INFO - parallel_renderer - Processing group 2/3: [2, 3]
-2025-04-06 19:04:20,411 - INFO - parallel_renderer - Processing section group with indices: [2, 3]
-2025-04-06 19:04:20,411 - INFO - parallel_renderer - Starting parallel rendering of 2 clips
-2025-04-06 19:04:20,454 - ERROR - parallel_renderer - Error getting result for clip 1/2: Can't get local object 'process_section_group.<locals>.render_with_timeout'
-2025-04-06 19:04:20,456 - ERROR - parallel_renderer - Error getting result for clip 2/2: Can't get local object 'process_section_group.<locals>.render_with_timeout'
-2025-04-06 19:04:20,458 - INFO - parallel_renderer - Completed parallel rendering with 0 successful results
-2025-04-06 19:04:28,690 - INFO - parallel_renderer - Closed multiprocessing pool
-2025-04-06 19:04:28,691 - INFO - parallel_renderer - Completed group 2, got 2 valid clips
-2025-04-06 19:04:28,691 - INFO - parallel_renderer - Processing group 3/3: [4, 5]
-2025-04-06 19:04:28,691 - INFO - parallel_renderer - Processing section group with indices: [4, 5]
-2025-04-06 19:04:28,692 - INFO - parallel_renderer - Starting parallel rendering of 2 clips
-2025-04-06 19:04:28,725 - ERROR - parallel_renderer - Error getting result for clip 1/2: Can't get local object 'process_section_group.<locals>.render_with_timeout'
-2025-04-06 19:04:28,726 - ERROR - parallel_renderer - Error getting result for clip 2/2: Can't get local object 'process_section_group.<locals>.render_with_timeout'
-2025-04-06 19:04:28,726 - INFO - parallel_renderer - Completed parallel rendering with 0 successful results
-2025-04-06 19:04:37,029 - INFO - parallel_renderer - Closed multiprocessing pool
-2025-04-06 19:04:37,029 - INFO - parallel_renderer - Completed group 3, got 2 valid clips
-2025-04-06 19:04:37,030 - INFO - parallel_renderer - All groups processed, got 0 valid clips
-2025-04-06 19:04:37,031 - ERROR - parallel_renderer - No clips were rendered successfully
-2025-04-06 19:04:37,031 - WARNING - shorts_maker_V - Parallel renderer not available or failed: No clips were rendered successfully. Using standard rendering.
-2025-04-06 19:04:37,032 - INFO - shorts_maker_V - Starting standard video rendering
-2025-04-06 19:54:12,915 - INFO - shorts_maker_V - Completed video rendering in 2975.88 seconds
-2025-04-06 19:54:12,933 - INFO - shorts_maker_V - YouTube short creation completed in 3175.73 seconds
-2025-04-06 19:54:12,934 - INFO - shorts_maker_V - Video saved to: ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250406_190108.mp4
-2025-04-06 19:54:12,976 - WARNING - shorts_maker_V - Error cleaning up temporary files: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\adhbu\\AppData\\Local\\Temp\\tmpon2bvhfj\\pixabay_113150.mp4'
-2025-04-06 19:54:12,979 - INFO - shorts_maker_V - Completed YouTube short creation in 3175.78 seconds
-2025-04-06 19:54:12,981 - INFO - __main__ - Uploading to YouTube
-2025-04-06 19:54:12,981 - INFO - __main__ - Uploading to YouTube
-2025-04-06 19:54:13,538 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
-2025-04-06 19:54:19,950 - INFO - youtube_upload - ✅ Upload successful! Video ID: q2nbfv8gg4Y
-2025-04-06 19:54:19,953 - INFO - __main__ - YouTube Short created successfully: ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250406_190108.mp4
-2025-04-06 19:54:19,953 - INFO - __main__ - YouTube Short created successfully: ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250406_190108.mp4
+2025-04-06 22:10:54,381 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-04-06 22:10:54,464 - INFO - shorts_maker_V - Azure TTS initialized successfully
+2025-04-06 22:10:58,273 - INFO - __main__ - Generating script for topic: Nintendo Korea site leaks big Donkey Kong Bananza detail - Nintendo Everything
+2025-04-06 22:11:01,329 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-06 22:11:01,341 - INFO - script_generator - Script cleaned
+2025-04-06 22:11:01,341 - INFO - script_generator - Script generated successfully with 67 words.
+2025-04-06 22:11:01,342 - INFO - __main__ - Raw script generated successfully
+2025-04-06 22:11:01,350 - INFO - __main__ - Script parsed into 5 sections
+2025-04-06 22:11:01,353 - INFO - __main__ - Section 1: Big news for gamers!... (duration: 3s)
+2025-04-06 22:11:01,354 - INFO - __main__ - Section 2: The Nintendo Korea site has le... (duration: 5s)
+2025-04-06 22:11:01,355 - INFO - __main__ - Section 3: Could this be the revival Donk... (duration: 5s)
+2025-04-06 22:11:01,360 - INFO - __main__ - Section 4: Stay tuned for more updates as... (duration: 5s)
+2025-04-06 22:11:01,366 - INFO - __main__ - Section 5: Don’t forget to like, share, a... (duration: 5s)
+2025-04-06 22:11:01,377 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-04-06 22:11:03,345 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-06 22:11:03,347 - INFO - script_generator - Successfully generated batch video queries for 5 sections.
+2025-04-06 22:11:03,347 - INFO - __main__ - Section queries: 1: exciting gaming news, 2: Nintendo Donkey Kong gameplay, 3: Donkey Kong revival, 4: video updates announcement, 5: like share subscribe
+2025-04-06 22:11:03,347 - INFO - __main__ - Creating YouTube Short
+2025-04-06 22:11:03,347 - INFO - shorts_maker_V - Starting YouTube short creation
+2025-04-06 22:11:03,348 - INFO - shorts_maker_V - Starting YouTube short creation
+2025-04-06 22:11:03,348 - INFO - shorts_maker_V - Total video duration: 23.0s
+2025-04-06 22:11:03,348 - INFO - shorts_maker_V - Creating video with 3 background segments for middle sections
+2025-04-06 22:11:03,349 - INFO - shorts_maker_V - Starting background video fetch
+2025-04-06 22:11:03,349 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-06 22:11:06,596 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-06 22:11:09,565 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-06 22:11:13,762 - INFO - shorts_maker_V - Completed background video fetch in 10.41 seconds
+2025-04-06 22:11:13,762 - INFO - shorts_maker_V - Starting TTS audio generation
+2025-04-06 22:11:14,068 - INFO - voiceover - Speech synthesized for text [Big news for gamers!...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp9ub3ntqt\section_0.mp3]
+2025-04-06 22:11:15,696 - INFO - voiceover - Speech synthesized for text [The Nintendo Korea s...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp9ub3ntqt\section_1.mp3]
+2025-04-06 22:11:17,324 - INFO - voiceover - Speech synthesized for text [Could this be the re...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp9ub3ntqt\section_2.mp3]
+2025-04-06 22:11:18,960 - INFO - voiceover - Speech synthesized for text [Stay tuned for more ...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp9ub3ntqt\section_3.mp3]
+2025-04-06 22:11:19,744 - INFO - voiceover - Speech synthesized for text [Don’t forget to like...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp9ub3ntqt\section_4.mp3]
+2025-04-06 22:11:20,025 - INFO - shorts_maker_V - Completed TTS audio generation in 6.26 seconds
+2025-04-06 22:11:20,026 - INFO - shorts_maker_V - Updated total duration: 28.2s
+2025-04-06 22:11:20,026 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-06 22:11:28,638 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-06 22:11:35,596 - INFO - shorts_maker_V - Starting background processing
+2025-04-06 22:11:39,838 - INFO - shorts_maker_V - Completed background processing in 4.24 seconds
+2025-04-06 22:11:39,843 - INFO - shorts_maker_V - Starting background composition
+2025-04-06 22:11:40,527 - INFO - shorts_maker_V - Completed background composition in 0.68 seconds
+2025-04-06 22:11:50,399 - WARNING - shorts_maker_V - Background clip too short (18.24s), resetting position
+2025-04-06 22:11:56,298 - INFO - shorts_maker_V - Using parallel renderer for improved performance
+2025-04-06 22:11:56,301 - INFO - shorts_maker_V - Starting parallel video rendering
+2025-04-06 22:11:56,303 - INFO - parallel_renderer - Starting parallel rendering of 5 clips with 4 workers
+2025-04-06 22:11:56,303 - INFO - parallel_renderer - Pre-rendering clip 0 to avoid pickling issues
+2025-04-06 22:17:56,959 - INFO - parallel_renderer - Pre-rendering clip 1 to avoid pickling issues
+2025-04-06 22:26:10,532 - INFO - parallel_renderer - Pre-rendering clip 2 to avoid pickling issues
+2025-04-06 22:30:59,423 - INFO - parallel_renderer - Pre-rendering clip 3 to avoid pickling issues
+2025-04-06 22:34:00,557 - INFO - parallel_renderer - Pre-rendering clip 4 to avoid pickling issues
+2025-04-06 22:36:08,078 - INFO - parallel_renderer - Successfully loaded pre-rendered clip 0
+2025-04-06 22:36:08,553 - INFO - parallel_renderer - Successfully loaded pre-rendered clip 1
+2025-04-06 22:36:09,148 - INFO - parallel_renderer - Successfully loaded pre-rendered clip 2
+2025-04-06 22:36:09,761 - INFO - parallel_renderer - Successfully loaded pre-rendered clip 3
+2025-04-06 22:36:10,834 - INFO - parallel_renderer - Successfully loaded pre-rendered clip 4
+2025-04-06 22:36:10,835 - INFO - parallel_renderer - Concatenating 5 pre-rendered clips
+2025-04-06 22:36:10,853 - INFO - parallel_renderer - Writing final video to ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250406_221054.mp4, duration: 28.27s
+2025-04-06 22:36:32,498 - WARNING - py.warnings - D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\video\io\ffmpeg_reader.py:123: UserWarning: Warning: in file C:\Users\adhbu\AppData\Local\Temp\tmp9ub3ntqt\parallel_render\prerender_1_1743958076.mp4, 6220800 bytes wanted but 0 bytes read,at frame 308/309, at time 10.27/10.27 sec. Using the last valid frame instead.
+  warnings.warn("Warning: in file %s, "%(self.filename)+
+
+2025-04-06 22:36:51,796 - INFO - parallel_renderer - Completed rendering in 1495.49 seconds
+2025-04-06 22:36:51,797 - INFO - shorts_maker_V - Completed video rendering in 1495.50 seconds
+2025-04-06 22:36:51,798 - INFO - shorts_maker_V - YouTube short creation completed in 1548.45 seconds
+2025-04-06 22:36:51,798 - INFO - shorts_maker_V - Video saved to: ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250406_221054.mp4
+2025-04-06 22:36:51,807 - WARNING - shorts_maker_V - Error cleaning up temporary files: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\adhbu\\AppData\\Local\\Temp\\tmp9ub3ntqt\\pexels_10145286.mp4'
+2025-04-06 22:36:51,812 - INFO - shorts_maker_V - Completed YouTube short creation in 1548.46 seconds
+2025-04-06 22:36:51,814 - INFO - __main__ - Uploading to YouTube
+2025-04-06 22:36:52,245 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
+2025-04-06 22:37:08,466 - INFO - youtube_upload - ✅ Upload successful! Video ID: YHc2eAWQtlU

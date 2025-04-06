@@ -8,12 +8,13 @@ import time
 import logging
 import tempfile
 import multiprocessing
+from tqdm import tqdm
 from moviepy.editor import VideoFileClip, concatenate_videoclips, CompositeVideoClip, AudioFileClip
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2):
+def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2, show_progress=True):
     """
     Render a single clip segment to a file.
 
@@ -23,6 +24,7 @@ def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2)
         fps: Frames per second
         preset: Video encoding preset
         threads: Number of threads for encoding
+        show_progress: Whether to show a progress bar
 
     Returns:
         output_path: The path where the clip was saved
@@ -74,7 +76,9 @@ def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2)
                 # Continue without audio processing
 
         # Use optimized encoding settings
-        # Always show progress bar by setting logger=None (logger prevents progress bar)
+        # Show progress bar with tqdm if requested
+        logger_setting = None if show_progress else "bar"
+
         clip.write_videofile(
             output_path,
             fps=fps,
@@ -90,7 +94,7 @@ def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2)
                 "-ar", "48000",         # Audio sample rate
                 "-pix_fmt", "yuv420p"   # Compatible pixel format for all players
             ],
-            logger=None  # Set to None to show progress bar
+            logger=logger_setting  # None shows progress bar, "bar" hides it
         )
         duration = time.time() - start_time
         logger.info(f"Completed render of segment {output_path} in {duration:.2f} seconds")
@@ -106,6 +110,17 @@ def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2)
     except Exception as e:
         logger.error(f"Error rendering segment {output_path}: {e}")
         raise
+
+# Make this a top-level function so it can be pickled properly by multiprocessing
+def render_with_timeout(task):
+    """Render a clip with proper error handling for multiprocessing"""
+    try:
+        clip, output_path, fps_val, preset_val, threads_val = task
+        logger.info(f"Starting render of clip to {output_path}")
+        return render_clip_segment(clip, output_path, fps_val, preset_val, threads_val)
+    except Exception as e:
+        logger.error(f"Error in parallel rendering task: {e}")
+        return None
 
 def process_section_group(section_clips, group_indices, temp_dir, fps=30, preset="veryfast"):
     """
@@ -146,16 +161,6 @@ def process_section_group(section_clips, group_indices, temp_dir, fps=30, preset
     # Otherwise, use multiprocessing for parallel rendering
     if render_tasks:
         logger.info(f"Starting parallel rendering of {len(render_tasks)} clips")
-
-        # Use a separate function to handle individual rendering with timeout
-        def render_with_timeout(task):
-            try:
-                clip, output_path, fps_val, preset_val, threads_val = task
-                logger.info(f"Starting render of clip to {output_path}")
-                return render_clip_segment(clip, output_path, fps_val, preset_val, threads_val)
-            except Exception as e:
-                logger.error(f"Error in parallel rendering task: {e}")
-                return None
 
         # Use process pool with proper timeout handling
         pool = multiprocessing.Pool(processes=min(len(render_tasks), multiprocessing.cpu_count()))
@@ -223,91 +228,92 @@ def render_clips_in_parallel(clips, output_path, temp_dir=None, fps=30, max_work
 
     logger.info(f"Starting parallel rendering of {len(clips)} clips with {max_workers} workers")
 
-    # Divide clips into groups for parallel processing
-    # Process fewer clips at once to avoid memory issues
-    clip_groups = []
-    max_clips_per_group = 2  # Process at most 2 clips at a time
-    for i in range(0, len(clips), max_clips_per_group):
-        group = list(range(i, min(i + max_clips_per_group, len(clips))))
-        clip_groups.append(group)
+    # Pre-render clips to files to avoid pickling issues with lambda functions
+    prerender_paths = []
 
-    logger.info(f"Created {len(clip_groups)} groups of clips for rendering")
-
-    # Process each group in sequence, but render clips in each group in parallel
-    temp_paths = []
-    for group_idx, group in enumerate(clip_groups):
-        logger.info(f"Processing group {group_idx+1}/{len(clip_groups)}: {group}")
-
+    # Create progress bar in console for pre-rendering
+    print(f"\nPre-rendering {len(clips)} clips to prepare for parallel processing:")
+    for i, clip in enumerate(tqdm(clips, desc="Pre-rendering clips", unit="clip")):
         try:
-            group_paths = process_section_group(clips, group, temp_dir, fps, preset)
-            temp_paths.extend([p for p in group_paths if os.path.exists(p) and os.path.getsize(p) > 0])
-            logger.info(f"Completed group {group_idx+1}, got {len(group_paths)} valid clips")
+            # Create a simple temp file path for pre-rendering
+            prerender_path = os.path.join(temp_dir, f"prerender_{i}_{int(time.time())}.mp4")
+            prerender_paths.append(prerender_path)
+
+            # Write clip to file with basic settings
+            logger.info(f"Pre-rendering clip {i} to avoid pickling issues")
+
+            # Use render_clip_segment with progress bar
+            render_clip_segment(
+                clip,
+                prerender_path,
+                fps=fps,
+                preset="ultrafast",  # Use fastest preset for pre-rendering
+                threads=2,
+                show_progress=False  # Don't show moviepy's progress bar since we're using tqdm
+            )
+
         except Exception as e:
-            logger.error(f"Error processing group {group_idx+1}: {e}")
-            # Continue with next group
+            logger.error(f"Error pre-rendering clip {i}: {e}")
+            prerender_paths.append(None)
 
-    logger.info(f"All groups processed, got {len(temp_paths)} valid clips")
+    # Load pre-rendered clips back for further processing
+    prerendered_clips = []
+    print("\nLoading pre-rendered clips:")
+    for i, path in enumerate(tqdm(prerender_paths, desc="Loading clips", unit="clip")):
+        if path and os.path.exists(path) and os.path.getsize(path) > 0:
+            try:
+                clip = VideoFileClip(path)
+                prerendered_clips.append(clip)
+                logger.info(f"Successfully loaded pre-rendered clip {i}")
+            except Exception as e:
+                logger.error(f"Error loading pre-rendered clip {i}: {e}")
+        else:
+            logger.error(f"Pre-rendered clip {i} is missing or empty")
 
-    # Load rendered clips in the correct order
-    if len(temp_paths) == 0:
-        logger.error("No clips were rendered successfully")
-        raise ValueError("No clips were rendered successfully")
+    if not prerendered_clips:
+        logger.error("No clips were successfully pre-rendered")
+        raise ValueError("No clips were successfully pre-rendered")
 
-    logger.info(f"Loading {len(temp_paths)} rendered clips in sequence order")
-
-    # Sort by section number from the filename
-    # Get only valid paths that exist and have content
-    valid_temp_paths = [p for p in temp_paths if os.path.exists(p) and os.path.getsize(p) > 0]
-
-    if len(valid_temp_paths) == 0:
-        logger.error("No valid rendered clip files found")
-        raise ValueError("No valid rendered clip files found")
-
-    # Sort by section number
-    ordered_temp_paths = sorted(valid_temp_paths, key=lambda p: int(os.path.basename(p).split('_')[1]))
-    rendered_clips = []
-
-    for path in ordered_temp_paths:
-        try:
-            clip = VideoFileClip(path)
-            rendered_clips.append(clip)
-            logger.info(f"Loaded clip: {path}, duration: {clip.duration:.2f}s")
-        except Exception as e:
-            logger.error(f"Error loading rendered clip {path}: {e}")
-
-    # Concatenate in the original order to maintain transitions
-    logger.info(f"Concatenating {len(rendered_clips)} rendered clips")
+    # Create the final output by concatenating the clips
     try:
-        if not rendered_clips:
-            raise ValueError("No clips were successfully rendered. Cannot produce final video.")
+        logger.info(f"Concatenating {len(prerendered_clips)} pre-rendered clips")
+        final_clip = concatenate_videoclips(prerendered_clips)
 
-        # Create final composition
-        final_clip = concatenate_videoclips(rendered_clips)
-
-        # Write the final combined video
+        # Write the final combined video with improved settings
         logger.info(f"Writing final video to {output_path}, duration: {final_clip.duration:.2f}s")
+        print(f"\nRendering final video (duration: {final_clip.duration:.2f}s):")
         final_clip.write_videofile(
             output_path,
             fps=fps,
             codec="libx264",
             audio_codec="aac",
             threads=4,
-            preset=preset
+            preset=preset,
+            ffmpeg_params=[
+                "-bufsize", "24M",      # Larger buffer
+                "-maxrate", "8M",       # Higher max rate
+                "-b:a", "192k",         # Higher audio bitrate
+                "-ar", "48000",         # Audio sample rate
+                "-pix_fmt", "yuv420p"   # Compatible pixel format for all players
+            ]
         )
 
-        # Close clips to release resources
-        for clip in rendered_clips:
+        # Clean up resources
+        for clip in prerendered_clips:
             try:
                 clip.close()
             except:
                 pass
 
-        final_clip.close()
+        try:
+            final_clip.close()
+        except:
+            pass
 
         # Clean up temporary files
-        for path in temp_paths:
+        for path in prerender_paths:
             try:
-                if os.path.exists(path):
+                if path and os.path.exists(path):
                     os.remove(path)
             except Exception as e:
                 logger.warning(f"Error removing temp file {path}: {e}")

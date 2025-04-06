@@ -902,33 +902,40 @@ class YTShortsCreator_I:
                 )
 
                 logger.info(f"Completed video rendering in {time.time() - render_start_time:.2f} seconds")
-            except (ImportError, Exception) as e:
-                logger.warning(f"Parallel renderer not available or failed: {e}. Using standard rendering.")
+            except Exception as e:
+                logger.warning(f"Parallel renderer failed: {e}. Using standard rendering.")
 
                 # Concatenate all clips
-            concat_start_time = time.time()
-            logger.info(f"Starting standard video rendering")
+                concat_start_time = time.time()
+                logger.info(f"Starting standard video rendering")
 
-            final_clip = concatenate_videoclips(section_clips)
+                final_clip = concatenate_videoclips(section_clips)
 
-            # Ensure we don't exceed maximum duration
-            if final_clip.duration > max_duration:
-                logger.warning(f"Video exceeds maximum duration ({final_clip.duration}s > {max_duration}s), trimming")
-                final_clip = final_clip.subclip(0, max_duration)
+                # Ensure we don't exceed maximum duration
+                if final_clip.duration > max_duration:
+                    logger.warning(f"Video exceeds maximum duration ({final_clip.duration}s > {max_duration}s), trimming")
+                    final_clip = final_clip.subclip(0, max_duration)
 
-            # Write the final video
-            logger.info(f"Writing video to {output_filename} (duration: {final_clip.duration:.2f}s)")
+                # Write the final video with improved settings
+                logger.info(f"Writing video to {output_filename} (duration: {final_clip.duration:.2f}s)")
 
-            final_clip.write_videofile(
-                output_filename,
-                fps=self.fps,
-                codec="libx264",
-                audio_codec="aac",
-                threads=4,
-                preset="veryfast"
-            )
+                final_clip.write_videofile(
+                    output_filename,
+                    fps=self.fps,
+                    codec="libx264",
+                    audio_codec="aac",
+                    threads=4,
+                    preset="veryfast",
+                    ffmpeg_params=[
+                        "-bufsize", "24M",      # Larger buffer
+                        "-maxrate", "8M",       # Higher max rate
+                        "-b:a", "192k",         # Higher audio bitrate
+                        "-ar", "48000",         # Audio sample rate
+                        "-pix_fmt", "yuv420p"   # Compatible pixel format for all players
+                    ]
+                )
 
-            logger.info(f"Completed video rendering in {time.time() - concat_start_time:.2f} seconds")
+                logger.info(f"Completed video rendering in {time.time() - concat_start_time:.2f} seconds")
 
             # Print summary of creation process
             overall_duration = time.time() - overall_start_time

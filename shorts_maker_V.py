@@ -17,6 +17,8 @@ from dotenv import load_dotenv
 import shutil # for file operations like moving and deleting files
 import tempfile # for creating temporary files
 from datetime import datetime # for more detailed time tracking
+import concurrent.futures
+from functools import wraps
 
 # Configure logging for easier debugging
 # Do NOT initialize basicConfig here - this will be handled by main.py
@@ -58,7 +60,7 @@ class YTShortsCreator_V:
         # Video settings
         self.resolution = (1080, 1920)  # Portrait mode for shorts (width, height)
         self.fps = fps
-        self.audio_sync_offset = 0.25  # Delay audio slightly to sync with visuals
+        self.audio_sync_offset = 0.0  # Remove audio delay to improve sync
 
         # Font settings
         self.fonts_dir = os.path.join(os.path.dirname(__file__), 'fonts')
@@ -122,23 +124,34 @@ class YTShortsCreator_V:
 
         # Randomly decide which API to try first
         apis = ["pexels", "pixabay"]
-        api = random.choice(apis)
-        logger.info(f"Fetching {count} videos using {api} API")
+        random.shuffle(apis)  # Shuffle the list to try APIs in random order
 
-        if api == "pexels":
-            try:
-                api_videos = self._fetch_from_pexels(query, count, min_duration)
-            except Exception as e:
-                logger.error(f"Error fetching videos from Pexels: {e}")
-                return []
-        else:  # pixabay
-            try:
-                api_videos = self._fetch_from_pixabay(query, count, min_duration)
-            except Exception as e:
-                logger.error(f"Error fetching videos from Pixabay: {e}")
-                return []
+        # Try each API in sequence
+        for api in apis:
+            logger.info(f"Fetching {count} videos using {api} API")
 
-        videos.extend(api_videos)
+            if api == "pexels":
+                try:
+                    api_videos = self._fetch_from_pexels(query, count, min_duration)
+                    if api_videos:  # If we got videos, add them and stop trying
+                        videos.extend(api_videos)
+                        break
+                except Exception as e:
+                    logger.error(f"Error fetching videos from Pexels: {e}")
+                    # Continue to next API
+            else:  # pixabay
+                try:
+                    api_videos = self._fetch_from_pixabay(query, count, min_duration)
+                    if api_videos:  # If we got videos, add them and stop trying
+                        videos.extend(api_videos)
+                        break
+                except Exception as e:
+                    logger.error(f"Error fetching videos from Pixabay: {e}")
+                    # Continue to next API
+
+        # If we have fewer videos than requested, but at least one, return what we have
+        if not videos:
+            logger.warning(f"Could not fetch any videos for query: {query}")
 
         return videos[:count]
 
@@ -170,24 +183,47 @@ class YTShortsCreator_V:
                 else:
                     selected_videos = top_videos
 
-                for video in selected_videos:
-                    video_url = video["videos"]["large"]["url"]
-                    video_path = os.path.join(self.temp_dir, f"pixabay_{video['id']}.mp4") # create a path for the video
-                    with requests.get(video_url, stream=True) as r:  # get the video from the url
-                        r.raise_for_status() # raise an error if the request is not successful
-                        with open(video_path, 'wb') as f: # open the video file in write binary mode
-                            for chunk in r.iter_content(chunk_size=8192): # iterate over the content of the video
-                                f.write(chunk)
-                    clip = VideoFileClip(video_path)
-                    if clip.duration >= min_duration:
-                        video_paths.append(video_path)
-                    clip.close()
+                def download_and_check_video(video):
+                    try:
+                        video_url = video["videos"]["large"]["url"]
+                        video_path = os.path.join(self.temp_dir, f"pixabay_{video['id']}.mp4") # create a path for the video
+                        with requests.get(video_url, stream=True) as r:  # get the video from the url
+                            r.raise_for_status() # raise an error if the request is not successful
+                            with open(video_path, 'wb') as f: # open the video file in write binary mode
+                                for chunk in r.iter_content(chunk_size=8192): # iterate over the content of the video
+                                    f.write(chunk)
+                        clip = VideoFileClip(video_path)
+                        if clip.duration >= min_duration:
+                            clip.close()
+                            return video_path
+                        clip.close()
+                        # Remove the video if it's too short
+                        if os.path.exists(video_path):
+                            os.remove(video_path)
+                        return None
+                    except Exception as e:
+                        logger.error(f"Error downloading video from Pixabay: {e}")
+                        return None
+
+                # Use ThreadPoolExecutor to download videos in parallel
+                with concurrent.futures.ThreadPoolExecutor(max_workers=min(len(selected_videos), 5)) as executor:
+                    # Submit all download tasks and collect futures
+                    future_to_video = {executor.submit(download_and_check_video, video): video for video in selected_videos}
+
+                    # Process completed futures
+                    for future in concurrent.futures.as_completed(future_to_video):
+                        video_path = future.result()
+                        if video_path:
+                            video_paths.append(video_path)
+
                 return video_paths
 
-            return self._fetch_from_pexels(query, count, min_duration)
+            # If response wasn't 200, return empty list
+            logger.warning(f"Pixabay API returned status code {response.status_code}")
+            return []
         except Exception as e:
             logger.error(f"Error fetching videos from Pixabay: {e}")
-            return self._fetch_from_pexels(query, count, min_duration)
+            return []
 
     @measure_time
     def _fetch_from_pexels(self, query, count=5, min_duration=15):
@@ -204,7 +240,8 @@ class YTShortsCreator_V:
         """
         try:
             url = f"https://api.pexels.com/videos/search?query={query}&per_page=20&orientation=portrait"
-            response = requests.get(url)
+            headers = {"Authorization": self.pexels_api_key}
+            response = requests.get(url, headers=headers)
             if response.status_code == 200:
                 data = response.json()
                 videos = data.get("videos", [])
@@ -217,26 +254,55 @@ class YTShortsCreator_V:
                 else:
                     selected_videos = top_videos
 
-                for video in selected_videos:
-                    video_files = video.get("video_files", []) # get the video files
-                    if video_files:
+                def download_and_check_video(video):
+                    try:
+                        video_files = video.get("video_files", []) # get the video files
+                        if not video_files:
+                            return None
+
                         video_url = video_files[0].get("link") # get the video link
-                    video_path = os.path.join(self.temp_dir, f"pexels_{video['id']}.mp4")
-                    with requests.get(video_url, stream=True) as r:
-                        r.raise_for_status()
-                        with open(video_path, 'wb') as f:
-                            for chunk in r.iter_content(chunk_size=8192):
-                                f.write(chunk)
-                    clip = VideoFileClip(video_path)
-                    if clip.duration >= min_duration:
-                        video_paths.append(video_path)
-                    clip.close()
+                        if not video_url:
+                            return None
+
+                        video_path = os.path.join(self.temp_dir, f"pexels_{video['id']}.mp4")
+                        with requests.get(video_url, stream=True) as r:
+                            r.raise_for_status()
+                            with open(video_path, 'wb') as f:
+                                for chunk in r.iter_content(chunk_size=8192):
+                                    f.write(chunk)
+
+                        clip = VideoFileClip(video_path)
+                        if clip.duration >= min_duration:
+                            clip.close()
+                            return video_path
+                        clip.close()
+                        # Remove the video if it's too short
+                        if os.path.exists(video_path):
+                            os.remove(video_path)
+                        return None
+                    except Exception as e:
+                        logger.error(f"Error downloading video from Pexels: {e}")
+                        return None
+
+                # Use ThreadPoolExecutor to download videos in parallel
+                with concurrent.futures.ThreadPoolExecutor(max_workers=min(len(selected_videos), 5)) as executor:
+                    # Submit all download tasks and collect futures
+                    future_to_video = {executor.submit(download_and_check_video, video): video for video in selected_videos}
+
+                    # Process completed futures
+                    for future in concurrent.futures.as_completed(future_to_video):
+                        video_path = future.result()
+                        if video_path:
+                            video_paths.append(video_path)
+
                 return video_paths
 
-            return self._fetch_from_pixabay(query, count, min_duration)
+            # If response wasn't 200, return empty list
+            logger.warning(f"Pexels API returned status code {response.status_code}")
+            return []
         except Exception as e:
             logger.error(f"Error fetching videos from Pexels: {e}")
-            return self._fetch_from_pixabay(query, count, min_duration)
+            return []
 
     @measure_time
     def _create_pill_image(self, size, color=(0, 0, 0, 160), radius=30):
@@ -395,16 +461,16 @@ class YTShortsCreator_V:
         words = text.split()
         char_counts = [len(word) for word in words]
         total_chars = sum(char_counts)
-        transition_duration = 0.05
+        transition_duration = 0.02  # Faster transitions for better sync
         total_transition_time = transition_duration * (len(words) - 1)
-        speech_duration = duration * 0.95
+        speech_duration = duration * 0.98  # Use more of the time for speech
         effective_duration = speech_duration - total_transition_time
 
         word_durations = []
-        min_word_time = 0.3
+        min_word_time = 0.2  # Slightly faster minimum word display time
         for word in words:
             char_ratio = len(word) / max(1, total_chars)
-            word_time = min_word_time + (effective_duration - min_word_time * len(words)) * char_ratio * 1.2
+            word_time = min_word_time + (effective_duration - min_word_time * len(words)) * char_ratio
             word_durations.append(word_time)
 
         # Adjust durations to match total duration
@@ -757,10 +823,18 @@ class YTShortsCreator_V:
             if audio_path and os.path.exists(audio_path):
                 try:
                     audio_clip = AudioFileClip(audio_path)
+
+                    # Make sure the audio clip has the right fps to avoid sync issues
+                    audio_clip = audio_clip.set_fps(44100)
+
                     actual_duration = audio_clip.duration
 
                     # Make sure audio is at least as long as specified in JSON
                     if actual_duration < min_section_duration:
+                        # Extend audio with silence if too short
+                        silence = AudioFileClip(audio_path).set_duration(min_section_duration - actual_duration)
+                        silence = silence.volumex(0)  # Make it silent
+                        audio_clip = CompositeAudioClip([audio_clip, silence.set_start(actual_duration)])
                         actual_duration = min_section_duration
 
                     # Store the final duration
@@ -1072,8 +1146,8 @@ class YTShortsCreator_V:
             )
 
             logger.info(f"Completed video rendering in {time.time() - render_start_time:.2f} seconds")
-        except (ImportError, Exception) as e:
-            logger.warning(f"Parallel renderer not available or failed: {e}. Using standard rendering.")
+        except Exception as e:
+            logger.warning(f"Parallel renderer failed: {e}. Using standard rendering.")
 
             # Concatenate all clips
             final_start_time = time.time()
@@ -1081,15 +1155,22 @@ class YTShortsCreator_V:
 
             final_clip = concatenate_videoclips(section_clips)
 
-        # Write the final video to file
+            # Write the final video to file with improved settings
             final_clip.write_videofile(
-            output_filename,
-            codec="libx264",
-            audio_codec="aac",
-            fps=self.fps,
-            preset="ultrafast",
-            threads=4
-        )
+                output_filename,
+                codec="libx264",
+                audio_codec="aac",
+                fps=self.fps,
+                preset="ultrafast",
+                threads=4,
+                ffmpeg_params=[
+                    "-bufsize", "24M",      # Larger buffer
+                    "-maxrate", "8M",       # Higher max rate
+                    "-b:a", "192k",         # Higher audio bitrate
+                    "-ar", "48000",         # Audio sample rate
+                    "-pix_fmt", "yuv420p"   # Compatible pixel format for all players
+                ]
+            )
 
             logger.info(f"Completed video rendering in {time.time() - final_start_time:.2f} seconds")
 
