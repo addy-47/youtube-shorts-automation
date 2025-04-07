@@ -1,69 +1,58 @@
-2025-04-06 22:10:54,381 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
-2025-04-06 22:10:54,464 - INFO - shorts_maker_V - Azure TTS initialized successfully
-2025-04-06 22:10:58,273 - INFO - __main__ - Generating script for topic: Nintendo Korea site leaks big Donkey Kong Bananza detail - Nintendo Everything
-2025-04-06 22:11:01,329 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-04-06 22:11:01,341 - INFO - script_generator - Script cleaned
-2025-04-06 22:11:01,341 - INFO - script_generator - Script generated successfully with 67 words.
-2025-04-06 22:11:01,342 - INFO - __main__ - Raw script generated successfully
-2025-04-06 22:11:01,350 - INFO - __main__ - Script parsed into 5 sections
-2025-04-06 22:11:01,353 - INFO - __main__ - Section 1: Big news for gamers!... (duration: 3s)
-2025-04-06 22:11:01,354 - INFO - __main__ - Section 2: The Nintendo Korea site has le... (duration: 5s)
-2025-04-06 22:11:01,355 - INFO - __main__ - Section 3: Could this be the revival Donk... (duration: 5s)
-2025-04-06 22:11:01,360 - INFO - __main__ - Section 4: Stay tuned for more updates as... (duration: 5s)
-2025-04-06 22:11:01,366 - INFO - __main__ - Section 5: Don’t forget to like, share, a... (duration: 5s)
-2025-04-06 22:11:01,377 - INFO - __main__ - Generating video search queries for each section using AI...
-2025-04-06 22:11:03,345 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-04-06 22:11:03,347 - INFO - script_generator - Successfully generated batch video queries for 5 sections.
-2025-04-06 22:11:03,347 - INFO - __main__ - Section queries: 1: exciting gaming news, 2: Nintendo Donkey Kong gameplay, 3: Donkey Kong revival, 4: video updates announcement, 5: like share subscribe
-2025-04-06 22:11:03,347 - INFO - __main__ - Creating YouTube Short
-2025-04-06 22:11:03,347 - INFO - shorts_maker_V - Starting YouTube short creation
-2025-04-06 22:11:03,348 - INFO - shorts_maker_V - Starting YouTube short creation
-2025-04-06 22:11:03,348 - INFO - shorts_maker_V - Total video duration: 23.0s
-2025-04-06 22:11:03,348 - INFO - shorts_maker_V - Creating video with 3 background segments for middle sections
-2025-04-06 22:11:03,349 - INFO - shorts_maker_V - Starting background video fetch
-2025-04-06 22:11:03,349 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-06 22:11:06,596 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-06 22:11:09,565 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-06 22:11:13,762 - INFO - shorts_maker_V - Completed background video fetch in 10.41 seconds
-2025-04-06 22:11:13,762 - INFO - shorts_maker_V - Starting TTS audio generation
-2025-04-06 22:11:14,068 - INFO - voiceover - Speech synthesized for text [Big news for gamers!...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp9ub3ntqt\section_0.mp3]
-2025-04-06 22:11:15,696 - INFO - voiceover - Speech synthesized for text [The Nintendo Korea s...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp9ub3ntqt\section_1.mp3]
-2025-04-06 22:11:17,324 - INFO - voiceover - Speech synthesized for text [Could this be the re...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp9ub3ntqt\section_2.mp3]
-2025-04-06 22:11:18,960 - INFO - voiceover - Speech synthesized for text [Stay tuned for more ...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp9ub3ntqt\section_3.mp3]
-2025-04-06 22:11:19,744 - INFO - voiceover - Speech synthesized for text [Don’t forget to like...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp9ub3ntqt\section_4.mp3]
-2025-04-06 22:11:20,025 - INFO - shorts_maker_V - Completed TTS audio generation in 6.26 seconds
-2025-04-06 22:11:20,026 - INFO - shorts_maker_V - Updated total duration: 28.2s
-2025-04-06 22:11:20,026 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
-2025-04-06 22:11:28,638 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-06 22:11:35,596 - INFO - shorts_maker_V - Starting background processing
-2025-04-06 22:11:39,838 - INFO - shorts_maker_V - Completed background processing in 4.24 seconds
-2025-04-06 22:11:39,843 - INFO - shorts_maker_V - Starting background composition
-2025-04-06 22:11:40,527 - INFO - shorts_maker_V - Completed background composition in 0.68 seconds
-2025-04-06 22:11:50,399 - WARNING - shorts_maker_V - Background clip too short (18.24s), resetting position
-2025-04-06 22:11:56,298 - INFO - shorts_maker_V - Using parallel renderer for improved performance
-2025-04-06 22:11:56,301 - INFO - shorts_maker_V - Starting parallel video rendering
-2025-04-06 22:11:56,303 - INFO - parallel_renderer - Starting parallel rendering of 5 clips with 4 workers
-2025-04-06 22:11:56,303 - INFO - parallel_renderer - Pre-rendering clip 0 to avoid pickling issues
-2025-04-06 22:17:56,959 - INFO - parallel_renderer - Pre-rendering clip 1 to avoid pickling issues
-2025-04-06 22:26:10,532 - INFO - parallel_renderer - Pre-rendering clip 2 to avoid pickling issues
-2025-04-06 22:30:59,423 - INFO - parallel_renderer - Pre-rendering clip 3 to avoid pickling issues
-2025-04-06 22:34:00,557 - INFO - parallel_renderer - Pre-rendering clip 4 to avoid pickling issues
-2025-04-06 22:36:08,078 - INFO - parallel_renderer - Successfully loaded pre-rendered clip 0
-2025-04-06 22:36:08,553 - INFO - parallel_renderer - Successfully loaded pre-rendered clip 1
-2025-04-06 22:36:09,148 - INFO - parallel_renderer - Successfully loaded pre-rendered clip 2
-2025-04-06 22:36:09,761 - INFO - parallel_renderer - Successfully loaded pre-rendered clip 3
-2025-04-06 22:36:10,834 - INFO - parallel_renderer - Successfully loaded pre-rendered clip 4
-2025-04-06 22:36:10,835 - INFO - parallel_renderer - Concatenating 5 pre-rendered clips
-2025-04-06 22:36:10,853 - INFO - parallel_renderer - Writing final video to ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250406_221054.mp4, duration: 28.27s
-2025-04-06 22:36:32,498 - WARNING - py.warnings - D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\video\io\ffmpeg_reader.py:123: UserWarning: Warning: in file C:\Users\adhbu\AppData\Local\Temp\tmp9ub3ntqt\parallel_render\prerender_1_1743958076.mp4, 6220800 bytes wanted but 0 bytes read,at frame 308/309, at time 10.27/10.27 sec. Using the last valid frame instead.
-  warnings.warn("Warning: in file %s, "%(self.filename)+
-
-2025-04-06 22:36:51,796 - INFO - parallel_renderer - Completed rendering in 1495.49 seconds
-2025-04-06 22:36:51,797 - INFO - shorts_maker_V - Completed video rendering in 1495.50 seconds
-2025-04-06 22:36:51,798 - INFO - shorts_maker_V - YouTube short creation completed in 1548.45 seconds
-2025-04-06 22:36:51,798 - INFO - shorts_maker_V - Video saved to: ai_shorts_output\yt_shorts_TRENDING_AI_NEWS_20250406_221054.mp4
-2025-04-06 22:36:51,807 - WARNING - shorts_maker_V - Error cleaning up temporary files: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\adhbu\\AppData\\Local\\Temp\\tmp9ub3ntqt\\pexels_10145286.mp4'
-2025-04-06 22:36:51,812 - INFO - shorts_maker_V - Completed YouTube short creation in 1548.46 seconds
-2025-04-06 22:36:51,814 - INFO - __main__ - Uploading to YouTube
-2025-04-06 22:36:52,245 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
-2025-04-06 22:37:08,466 - INFO - youtube_upload - ✅ Upload successful! Video ID: YHc2eAWQtlU
+2025-04-07 23:16:38,039 - INFO - __main__ - Day 97: Using video-based creator (YTShortsCreator_V)
+2025-04-07 23:16:38,161 - INFO - voiceover - Set initial silence timeout to 10000ms
+2025-04-07 23:16:38,162 - INFO - shorts_maker_V - Azure TTS initialized successfully
+2025-04-07 23:16:43,098 - INFO - __main__ - Generating script for topic: EXCLUSIVE - Ubisoft is Developing a Turn-Based Tactics Game Set in The Rainbow 6 Universe - Insider Gaming
+2025-04-07 23:16:47,153 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-07 23:16:47,173 - INFO - script_generator - Script cleaned
+2025-04-07 23:16:47,173 - INFO - script_generator - Script generated successfully with 71 words.
+2025-04-07 23:16:47,173 - INFO - __main__ - Raw script generated successfully
+2025-04-07 23:16:47,174 - INFO - __main__ - Script parsed into 7 sections
+2025-04-07 23:16:47,175 - INFO - __main__ - Section 1: Big news in gaming!... (duration: 3s)
+2025-04-07 23:16:47,175 - INFO - __main__ - Section 2: Ubisoft is cooking up a new tu... (duration: 5s)
+2025-04-07 23:16:47,175 - INFO - __main__ - Section 3: This exclusive reveal from Ins... (duration: 5s)
+2025-04-07 23:16:47,176 - INFO - __main__ - Section 4: Imagine planning your moves, o... (duration: 5s)
+2025-04-07 23:16:47,177 - INFO - __main__ - Section 5: Are you excited for this twist... (duration: 5s)
+2025-04-07 23:16:47,177 - INFO - __main__ - Section 6: Let us know in the comments!... (duration: 3s)
+2025-04-07 23:16:47,178 - INFO - __main__ - Section 7: Don’t forget to like and subsc... (duration: 5s)
+2025-04-07 23:16:47,178 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-04-07 23:16:49,370 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-07 23:16:49,374 - INFO - script_generator - Successfully generated batch video queries for 7 sections.
+2025-04-07 23:16:49,375 - INFO - __main__ - Section queries: 1: gaming news, 2: turn-based tactics game, 3: strategic gameplay operators, 4: Rainbow 6 lore, 5: franchise excitement, 6: comments engagement, 7: like subscribe reminder
+2025-04-07 23:16:49,376 - INFO - __main__ - Creating YouTube Short
+2025-04-07 23:16:49,377 - INFO - shorts_maker_V - Starting YouTube short creation
+2025-04-07 23:16:49,377 - INFO - shorts_maker_V - Scaling durations by factor 0.81 to fit max duration of 25s
+2025-04-07 23:16:49,378 - INFO - shorts_maker_V - Total video duration: 25.0s
+2025-04-07 23:16:49,379 - INFO - shorts_maker_V - Creating video with 5 background segments for middle sections
+2025-04-07 23:16:49,380 - INFO - shorts_maker_V - Starting background video fetch
+2025-04-07 23:16:49,381 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-07 23:16:54,641 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-07 23:19:04,207 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-07 23:21:53,401 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-07 23:21:55,544 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-07 23:22:03,105 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-07 23:22:56,153 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-07 23:24:55,788 - INFO - shorts_maker_V - Completed background video fetch in 486.41 seconds
+2025-04-07 23:24:55,789 - INFO - shorts_maker_V - Starting TTS audio generation
+2025-04-07 23:25:19,843 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-07 23:25:19,844 - ERROR - voiceover - Error details: Timeout while synthesizing. Current RTF: 2.81733 (threshold 2), frame interval 3023ms (threshold 3000ms). USP state: ReceivingData. Received audio size: 34358 bytes.
+2025-04-07 23:25:19,845 - INFO - voiceover - Retrying after timeout error (attempt 1/3)
+2025-04-07 23:25:22,418 - INFO - voiceover - Speech synthesized for text [Big news in gaming!...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp56z9pfst\section_0.mp3]
+2025-04-07 23:25:31,834 - INFO - voiceover - Speech synthesized for text [Ubisoft is cooking u...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp56z9pfst\section_1.mp3]
+2025-04-07 23:25:32,870 - INFO - voiceover - Speech synthesized for text [This exclusive revea...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp56z9pfst\section_2.mp3]
+2025-04-07 23:25:33,769 - INFO - voiceover - Speech synthesized for text [Imagine planning you...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp56z9pfst\section_3.mp3]
+2025-04-07 23:25:34,651 - INFO - voiceover - Speech synthesized for text [Are you excited for ...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp56z9pfst\section_4.mp3]
+2025-04-07 23:25:35,418 - INFO - voiceover - Speech synthesized for text [Let us know in the c...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp56z9pfst\section_5.mp3]
+2025-04-07 23:25:36,370 - INFO - voiceover - Speech synthesized for text [Don’t forget to like...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp56z9pfst\section_6.mp3]
+2025-04-07 23:25:36,660 - INFO - shorts_maker_V - Completed TTS audio generation in 40.87 seconds
+2025-04-07 23:25:36,661 - INFO - shorts_maker_V - Updated total duration: 26.8s
+2025-04-07 23:25:36,661 - INFO - shorts_maker_V - Starting background processing
+2025-04-07 23:26:13,406 - INFO - shorts_maker_V - Completed background processing in 36.73 seconds
+2025-04-07 23:26:25,903 - INFO - shorts_maker_V - Using parallel renderer for improved performance
+2025-04-07 23:26:26,377 - INFO - parallel_renderer - Starting parallel rendering of 7 clips with 4 workers
+2025-04-07 23:26:26,634 - WARNING - shorts_maker_V - Parallel renderer failed: Can't get local object 'VideoClip.__init__.<locals>.<lambda>'. Using standard rendering.
+2025-04-07 23:26:26,636 - INFO - shorts_maker_V - Starting standard video rendering
+2025-04-07 23:44:15,490 - WARNING - shorts_maker_V - Error cleaning up temporary files: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\adhbu\\AppData\\Local\\Temp\\tmp56z9pfst\\pexels_27430394.mp4'
+2025-04-07 23:44:15,509 - INFO - shorts_maker_V - Completed YouTube short creation in 1646.13 seconds
+2025-04-07 23:44:15,510 - INFO - __main__ - Uploading to YouTube
+2025-04-07 23:44:15,983 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
+2025-04-07 23:44:21,440 - INFO - youtube_upload - ✅ Upload successful! Video ID: 5yB5q55ynk8

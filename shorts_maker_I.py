@@ -82,24 +82,44 @@ class YTShortsCreator_I:
             except Exception as e:
                 logger.warning(f"Failed to initialize Azure TTS: {e}. Will use gTTS instead.")
 
-        # Define transition effects
+        # Define transition effects with named functions instead of lambdas
+        def fade_transition(clip, duration):
+            return clip.fadein(duration).fadeout(duration)
+
+        def slide_left_transition(clip, duration):
+            def position_func(t):
+                return ((t/duration) * self.resolution[0] - clip.w if t < duration else 0, 'center')
+            return clip.set_position(position_func)
+
+        def zoom_in_transition(clip, duration):
+            def size_func(t):
+                return max(1, 1 + 0.5 * min(t/duration, 1))
+            return clip.resize(size_func)
+
+        # Define video transition effects between background segments
+        def crossfade_transition(clip1, clip2, duration):
+            return concatenate_videoclips([
+                clip1.set_end(clip1.duration),
+                clip2.set_start(0).crossfadein(duration)
+            ], padding=-duration, method="compose")
+
+        def fade_black_transition(clip1, clip2, duration):
+            return concatenate_videoclips([
+                clip1.fadeout(duration),
+                clip2.fadein(duration)
+            ])
+
+        # Replace lambda functions with named functions
         self.transitions = {
-            "fade": lambda clip, duration: clip.fadein(duration).fadeout(duration),
-            "slide_left": lambda clip, duration: clip.set_position(lambda t: ((t/duration) * self.resolution[0] - clip.w if t < duration else 0, 'center')),
-            "zoom_in": lambda clip, duration: clip.resize(lambda t: max(1, 1 + 0.5 * min(t/duration, 1)))
+            "fade": fade_transition,
+            "slide_left": slide_left_transition,
+            "zoom_in": zoom_in_transition
         }
 
         # Define video transition effects between background segments
         self.video_transitions = {
-            "crossfade": lambda clip1, clip2, duration: concatenate_videoclips([
-                clip1.set_end(clip1.duration),
-                clip2.set_start(0).crossfadein(duration)
-            ], padding=-duration, method="compose"),
-
-            "fade_black": lambda clip1, clip2, duration: concatenate_videoclips([
-                clip1.fadeout(duration),
-                clip2.fadein(duration)
-            ])
+            "crossfade": crossfade_transition,
+            "fade_black": fade_black_transition
         }
 
         # Load Pexels API ke for background videos
@@ -294,7 +314,11 @@ class YTShortsCreator_I:
                 zoom_level = 1 + (t / duration) * zoom_factor
                 return zoom_level
 
-            image = image.resize(lambda t: zoom(t))
+            # Replace lambda with named function
+            def zoom_func(t):
+                return zoom(t)
+
+            image = image.resize(zoom_func)
 
         # Set the duration
         image = image.set_duration(duration)
@@ -407,6 +431,13 @@ class YTShortsCreator_I:
         """
         if not filename:
             filename = os.path.join(self.temp_dir, f"tts_{int(time.time())}.mp3")
+
+        # Make sure text is not empty and has minimum length
+        if not text or len(text.strip()) == 0:
+            text = "No text provided"
+        elif len(text.strip()) < 5:
+            # For very short texts like "Check it out!", expand it slightly to ensure TTS works well
+            text = text.strip() + "."  # Add period if missing
 
         # Try to use Azure TTS if available
         if self.azure_tts:
@@ -575,6 +606,21 @@ class YTShortsCreator_I:
                         audio_clip = AudioFileClip(audio_path)
                         actual_duration = audio_clip.duration
 
+                        # Check if audio has valid duration - fix for empty audio files
+                        if actual_duration <= 0:
+                            logger.warning(f"Audio file for section {i} has zero duration, creating fallback silent audio")
+                            # Create silent audio as fallback
+                            from moviepy.audio.AudioClip import AudioClip
+                            import numpy as np
+
+                            def make_frame(t):
+                                return np.zeros(2)  # Stereo silence
+
+                            # Use minimum section duration for silent audio
+                            audio_clip = AudioClip(make_frame=make_frame, duration=min_section_duration)
+                            audio_clip = audio_clip.set_fps(44100)
+                            actual_duration = min_section_duration
+
                         # Ensure minimum duration
                         actual_duration = max(actual_duration, min_section_duration)
 
@@ -672,7 +718,25 @@ class YTShortsCreator_I:
                     # Add audio if available
                     for idx, audio_clip, duration in audio_clips:
                         if idx == 0:  # First section is intro
-                            intro_clip = intro_clip.set_audio(audio_clip)
+                            # Verify audio clip is valid before using it
+                            try:
+                                if audio_clip.duration <= 0:
+                                    logger.warning(f"Intro audio clip has invalid duration: {audio_clip.duration}s. Creating silent audio.")
+                                    # Create silent audio as fallback
+                                    from moviepy.audio.AudioClip import AudioClip
+                                    import numpy as np
+
+                                    def make_frame(t):
+                                        return np.zeros(2)  # Stereo silence
+
+                                    # Create silent audio matching the intro duration
+                                    silent_audio = AudioClip(make_frame=make_frame, duration=intro_duration)
+                                    silent_audio = silent_audio.set_fps(44100)
+                                    intro_clip = intro_clip.set_audio(silent_audio)
+                                else:
+                                    intro_clip = intro_clip.set_audio(audio_clip)
+                            except Exception as e:
+                                logger.error(f"Error setting audio for intro: {e}")
                             break
 
                     section_clips.append(intro_clip)
@@ -745,7 +809,25 @@ class YTShortsCreator_I:
                         # Add audio if available
                         for idx, audio_clip, duration in audio_clips:
                             if idx == section_idx:
-                                section_clip = section_clip.set_audio(audio_clip)
+                                # Verify audio clip is valid before using it
+                                try:
+                                    if audio_clip.duration <= 0:
+                                        logger.warning(f"Section {idx} audio clip has invalid duration: {audio_clip.duration}s. Creating silent audio.")
+                                        # Create silent audio as fallback
+                                        from moviepy.audio.AudioClip import AudioClip
+                                        import numpy as np
+
+                                        def make_frame(t):
+                                            return np.zeros(2)  # Stereo silence
+
+                                        # Create silent audio matching the section duration
+                                        silent_audio = AudioClip(make_frame=make_frame, duration=section_duration)
+                                        silent_audio = silent_audio.set_fps(44100)
+                                        section_clip = section_clip.set_audio(silent_audio)
+                                    else:
+                                        section_clip = section_clip.set_audio(audio_clip)
+                                except Exception as e:
+                                    logger.error(f"Error setting audio for section {idx}: {e}")
                                 break
 
                         middle_clips.append(section_clip)
@@ -839,8 +921,26 @@ class YTShortsCreator_I:
 
                 # Add audio if available
                 for idx, audio_clip, duration in audio_clips:
-                    if idx == outro_idx:
-                        outro_clip = outro_clip.set_audio(audio_clip)
+                    if idx == len(script_sections) - 1:  # Last section is outro
+                        # Verify audio clip is valid before using it
+                        try:
+                            if audio_clip.duration <= 0:
+                                logger.warning(f"Outro audio clip has invalid duration: {audio_clip.duration}s. Creating silent audio.")
+                                # Create silent audio as fallback
+                                from moviepy.audio.AudioClip import AudioClip
+                                import numpy as np
+
+                                def make_frame(t):
+                                    return np.zeros(2)  # Stereo silence
+
+                                # Create silent audio matching the outro duration
+                                silent_audio = AudioClip(make_frame=make_frame, duration=outro_duration)
+                                silent_audio = silent_audio.set_fps(44100)
+                                outro_clip = outro_clip.set_audio(silent_audio)
+                            else:
+                                outro_clip = outro_clip.set_audio(audio_clip)
+                        except Exception as e:
+                            logger.error(f"Error setting audio for outro: {e}")
                         break
 
                 section_clips.append(outro_clip)

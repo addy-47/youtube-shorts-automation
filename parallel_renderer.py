@@ -12,6 +12,29 @@ from tqdm import tqdm
 from moviepy.editor import VideoFileClip, concatenate_videoclips, CompositeVideoClip, AudioFileClip
 from datetime import datetime
 
+# Superior dill setup for better lambda function and closure support
+try:
+    import dill
+
+    # Force dill to use a more aggressive protocol
+    dill.settings['recurse'] = True
+
+    # Register dill as the serializer for multiprocessing
+    # This is the most important line - using the right registration method
+    multiprocessing.reduction.register(dill.dumps, dill.loads)
+
+    # Explicitly set the protocol version
+    DILL_PROTOCOL = dill.HIGHEST_PROTOCOL
+
+    USING_DILL = True
+    print(f"Using dill {dill.__version__} for enhanced function serialization with protocol {DILL_PROTOCOL}.")
+except ImportError:
+    USING_DILL = False
+    print("Dill not available. Using standard pickle for serialization.")
+except Exception as e:
+    print(f"Error setting up dill: {e}")
+    USING_DILL = False
+
 logger = logging.getLogger(__name__)
 
 def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2, show_progress=True):
@@ -117,86 +140,103 @@ def render_with_timeout(task):
     try:
         clip, output_path, fps_val, preset_val, threads_val = task
         logger.info(f"Starting render of clip to {output_path}")
-        return render_clip_segment(clip, output_path, fps_val, preset_val, threads_val)
+
+        # Instead of pre-rendering, use direct rendering with proper error handling
+        # This preserves the parallelization benefits while still handling lambda issues
+        try:
+            # Directly render the clip with all its original attributes
+            # Dill should handle the serialization of lambda functions, but just in case:
+
+            # 1. Make a local copy of the clip
+            clip_copy = clip.copy()
+
+            # 2. If the clip uses position/size functions, try to preserve their information
+            if hasattr(clip, 'pos') and callable(clip.pos):
+                # Store size and position info - this gets lost in multiprocessing
+                try:
+                    # Sample the position function at a few points
+                    t0 = 0
+                    tmid = clip.duration / 2 if hasattr(clip, 'duration') else 1
+                    tend = clip.duration if hasattr(clip, 'duration') else 2
+
+                    pos0 = clip.pos(t0)
+                    posmid = clip.pos(tmid)
+                    posend = clip.pos(tend)
+
+                    # If all positions are the same, we can use a fixed position
+                    if pos0 == posmid == posend:
+                        clip_copy = clip_copy.set_position(pos0)
+                    # Otherwise, use the position at midpoint which is usually most representative
+                    else:
+                        clip_copy = clip_copy.set_position(posmid)
+                except:
+                    # If position function fails, use center as fallback
+                    clip_copy = clip_copy.set_position('center')
+
+            # 3. Similarly handle size functions
+            if hasattr(clip, 'size') and callable(clip.size):
+                try:
+                    # Sample the size function at midpoint
+                    tmid = clip.duration / 2 if hasattr(clip, 'duration') else 1
+                    size_mid = clip.size(tmid)
+                    clip_copy = clip_copy.resize(newsize=size_mid)
+                except:
+                    # If size function fails, leave as is
+                    pass
+
+            # Use the copy for rendering
+            return render_clip_segment(clip_copy, output_path, fps_val, preset_val, threads_val)
+
+        except Exception as e:
+            logger.warning(f"Error with direct rendering: {e}. Trying fallback.")
+
+            # If direct rendering fails, try an emergency pre-render approach
+            try:
+                # Create a temporary path for emergency pre-rendering
+                temp_dir = os.path.dirname(output_path)
+                temp_filename = f"emergency_{os.path.basename(output_path)}"
+                temp_path = os.path.join(temp_dir, temp_filename)
+
+                logger.info(f"Emergency pre-rendering to: {temp_path}")
+
+                # Write with minimal settings for speed
+                clip.write_videofile(
+                    temp_path,
+                    fps=fps_val,
+                    preset="ultrafast",
+                    codec="libx264",
+                    audio_codec="aac",
+                    threads=2,
+                    logger="bar"
+                )
+
+                # Reload and render
+                from moviepy.editor import VideoFileClip
+                fallback_clip = VideoFileClip(temp_path)
+                result = render_clip_segment(fallback_clip, output_path, fps_val, preset_val, threads_val)
+
+                # Clean up
+                try:
+                    fallback_clip.close()
+                    if os.path.exists(temp_path):
+                        os.remove(temp_path)
+                except:
+                    pass
+
+                return result
+
+            except Exception as fallback_error:
+                logger.error(f"Fallback rendering also failed: {fallback_error}")
+                return None
+
     except Exception as e:
         logger.error(f"Error in parallel rendering task: {e}")
         return None
 
-def process_section_group(section_clips, group_indices, temp_dir, fps=30, preset="veryfast"):
-    """
-    Process a group of section clips in parallel.
-
-    Args:
-        section_clips: List of all section clips
-        group_indices: List of indices for this group
-        temp_dir: Directory for temporary files
-        fps: Frames per second
-        preset: Video encoding preset
-
-    Returns:
-        List of paths to rendered section files
-    """
-    logger.info(f"Processing section group with indices: {group_indices}")
-
-    # Create a temporary file for each section in this group
-    temp_files = []
-    render_tasks = []
-
-    for idx in group_indices:
-        if idx < len(section_clips):
-            clip = section_clips[idx]
-            temp_path = os.path.join(temp_dir, f"section_{idx}_{int(time.time())}.mp4")
-            temp_files.append(temp_path)
-            render_tasks.append((clip, temp_path, fps, preset, 2))
-
-    # If there's only one clip in this group, render it directly
-    if len(render_tasks) == 1:
-        logger.info(f"Single task in group - rendering directly: {group_indices[0]}")
-        try:
-            render_clip_segment(*render_tasks[0])
-        except Exception as e:
-            logger.error(f"Error rendering clip {group_indices[0]}: {e}")
-        return temp_files
-
-    # Otherwise, use multiprocessing for parallel rendering
-    if render_tasks:
-        logger.info(f"Starting parallel rendering of {len(render_tasks)} clips")
-
-        # Use process pool with proper timeout handling
-        pool = multiprocessing.Pool(processes=min(len(render_tasks), multiprocessing.cpu_count()))
-        try:
-            # Process clips in parallel with individual error handling
-            results = []
-            for task in render_tasks:
-                results.append(pool.apply_async(render_with_timeout, args=(task,)))
-
-            # Collect results with timeout
-            timeout_per_task = 300  # 5 minutes max per clip
-            completed_results = []
-            for i, result in enumerate(results):
-                try:
-                    completed_results.append(result.get(timeout=timeout_per_task))
-                    logger.info(f"Successfully rendered clip {i+1}/{len(results)}")
-                except multiprocessing.TimeoutError:
-                    logger.error(f"Rendering timed out for clip {i+1}/{len(results)}")
-                except Exception as e:
-                    logger.error(f"Error getting result for clip {i+1}/{len(results)}: {e}")
-
-            logger.info(f"Completed parallel rendering with {len(completed_results)} successful results")
-            return temp_files
-        except Exception as e:
-            logger.error(f"Error in parallel rendering: {e}")
-        finally:
-            pool.close()
-            pool.join()
-            logger.info(f"Closed multiprocessing pool")
-
-    return temp_files
-
 def render_clips_in_parallel(clips, output_path, temp_dir=None, fps=30, max_workers=None, preset="veryfast"):
     """
     Render video clips in parallel and combine them into a single video.
-    Uses multiprocessing to render multiple clips simultaneously.
+    Uses multiprocessing to render multiple clips simultaneously for faster processing.
 
     Args:
         clips: List of MoviePy clips to render (section_clips)
@@ -216,6 +256,8 @@ def render_clips_in_parallel(clips, output_path, temp_dir=None, fps=30, max_work
         temp_dir = tempfile.mkdtemp()
     os.makedirs(temp_dir, exist_ok=True)
 
+    # Remove pre-processing step - we'll handle serialization in the process pool
+
     # Determine max workers based on available CPUs
     if max_workers is None:
         max_workers = max(1, multiprocessing.cpu_count() - 1)  # Leave one CPU free
@@ -228,56 +270,123 @@ def render_clips_in_parallel(clips, output_path, temp_dir=None, fps=30, max_work
 
     logger.info(f"Starting parallel rendering of {len(clips)} clips with {max_workers} workers")
 
-    # Pre-render clips to files to avoid pickling issues with lambda functions
-    prerender_paths = []
+    # Create a list of tasks for multiprocessing
+    render_tasks = []
+    temp_paths = []
 
-    # Create progress bar in console for pre-rendering
-    print(f"\nPre-rendering {len(clips)} clips to prepare for parallel processing:")
-    for i, clip in enumerate(tqdm(clips, desc="Pre-rendering clips", unit="clip")):
+    # Create task paths
+    for idx, clip in enumerate(clips):
+        temp_path = os.path.join(temp_dir, f"section_{idx}_{int(time.time())}.mp4")
+        temp_paths.append(temp_path)
+        render_tasks.append((clip, temp_path, fps, preset, 2))
+
+    # Process clips in parallel
+    rendered_paths = []
+
+    if len(render_tasks) == 1:
+        # If there's only one clip, just render it directly
         try:
-            # Create a simple temp file path for pre-rendering
-            prerender_path = os.path.join(temp_dir, f"prerender_{i}_{int(time.time())}.mp4")
-            prerender_paths.append(prerender_path)
+            temp_path = render_clip_segment(*render_tasks[0])
+            if temp_path and os.path.exists(temp_path):
+                rendered_paths.append(temp_path)
+        except Exception as e:
+            logger.error(f"Error rendering single clip: {e}")
 
-            # Write clip to file with basic settings
-            logger.info(f"Pre-rendering clip {i} to avoid pickling issues")
+    elif USING_DILL:
+        # Use dill for better serialization with proper error handling
+        try:
+            # IMPORTANT: Create multiprocessing context that explicitly uses dill
+            # Create pool with initializer to ensure dill is properly used
+            def init_worker():
+                import dill
+                dill.settings['recurse'] = True
+                # Register dill in the worker process
+                multiprocessing.reduction.register(dill.dumps, dill.loads)
 
-            # Use render_clip_segment with progress bar
-            render_clip_segment(
-                clip,
-                prerender_path,
-                fps=fps,
-                preset="ultrafast",  # Use fastest preset for pre-rendering
-                threads=2,
-                show_progress=False  # Don't show moviepy's progress bar since we're using tqdm
-            )
+            with multiprocessing.get_context('spawn').Pool(
+                processes=max_workers,
+                initializer=init_worker
+            ) as pool:
+                # Create a progress bar for rendering
+                print(f"\nRendering {len(render_tasks)} clips in parallel:")
+
+                # Use map_async with explicit timeout to avoid hanging
+                results = pool.map_async(render_with_timeout, render_tasks)
+
+                # Monitor with our own progress bar
+                with tqdm(total=len(render_tasks), desc="Rendering clips", unit="clip") as pbar:
+                    # Check progress until complete
+                    while not results.ready():
+                        # Check how many tasks are done by looking at temp paths
+                        completed = sum(1 for p in temp_paths if os.path.exists(p))
+                        pbar.n = completed
+                        pbar.refresh()
+                        time.sleep(0.5)
+
+                    # Make sure the progress bar completes
+                    pbar.n = len(render_tasks)
+                    pbar.refresh()
+
+                # Get the results
+                for result in results.get():
+                    if result and os.path.exists(result):
+                        rendered_paths.append(result)
+                        logger.info(f"Successfully rendered a clip")
+                    else:
+                        logger.error(f"Failed to render a clip")
 
         except Exception as e:
-            logger.error(f"Error pre-rendering clip {i}: {e}")
-            prerender_paths.append(None)
-
-    # Load pre-rendered clips back for further processing
-    prerendered_clips = []
-    print("\nLoading pre-rendered clips:")
-    for i, path in enumerate(tqdm(prerender_paths, desc="Loading clips", unit="clip")):
-        if path and os.path.exists(path) and os.path.getsize(path) > 0:
+            logger.error(f"Error with parallel processing: {e}")
+            # Fall back to sequential processing
+            logger.warning("Falling back to sequential processing")
+            print(f"\nRendering {len(render_tasks)} clips sequentially (multiprocessing failed):")
+            for i, task in enumerate(tqdm(render_tasks, desc="Rendering clips", unit="clip")):
+                try:
+                    temp_path = render_clip_segment(*task)
+                    if temp_path and os.path.exists(temp_path):
+                        rendered_paths.append(temp_path)
+                        logger.info(f"Successfully rendered clip {i+1}")
+                    else:
+                        logger.error(f"Failed to render clip {i+1}")
+                except Exception as e:
+                    logger.error(f"Error rendering clip {i+1}: {e}")
+    else:
+        # If dill not available, fall back to sequential processing
+        print(f"\nRendering {len(render_tasks)} clips sequentially (for better parallelization, install dill):")
+        for i, task in enumerate(tqdm(render_tasks, desc="Rendering clips", unit="clip")):
             try:
-                clip = VideoFileClip(path)
-                prerendered_clips.append(clip)
-                logger.info(f"Successfully loaded pre-rendered clip {i}")
+                temp_path = render_clip_segment(*task)
+                if temp_path and os.path.exists(temp_path):
+                    rendered_paths.append(temp_path)
+                    logger.info(f"Successfully rendered clip {i+1}")
+                else:
+                    logger.error(f"Failed to render clip {i+1}")
             except Exception as e:
-                logger.error(f"Error loading pre-rendered clip {i}: {e}")
-        else:
-            logger.error(f"Pre-rendered clip {i} is missing or empty")
+                logger.error(f"Error rendering clip {i+1}: {e}")
 
-    if not prerendered_clips:
-        logger.error("No clips were successfully pre-rendered")
-        raise ValueError("No clips were successfully pre-rendered")
+    if not rendered_paths:
+        logger.error("No clips were rendered successfully")
+        raise ValueError("No clips were rendered successfully")
+
+    # Load all rendered clips
+    loaded_clips = []
+    print("\nLoading rendered clips:")
+    for i, path in enumerate(tqdm(rendered_paths, desc="Loading clips", unit="clip")):
+        try:
+            clip = VideoFileClip(path)
+            loaded_clips.append(clip)
+            logger.info(f"Successfully loaded rendered clip {i}")
+        except Exception as e:
+            logger.error(f"Error loading rendered clip {i}: {e}")
+
+    if not loaded_clips:
+        logger.error("No clips were successfully loaded")
+        raise ValueError("No clips were successfully loaded")
 
     # Create the final output by concatenating the clips
     try:
-        logger.info(f"Concatenating {len(prerendered_clips)} pre-rendered clips")
-        final_clip = concatenate_videoclips(prerendered_clips)
+        logger.info(f"Concatenating {len(loaded_clips)} rendered clips")
+        final_clip = concatenate_videoclips(loaded_clips)
 
         # Write the final combined video with improved settings
         logger.info(f"Writing final video to {output_path}, duration: {final_clip.duration:.2f}s")
@@ -299,7 +408,7 @@ def render_clips_in_parallel(clips, output_path, temp_dir=None, fps=30, max_work
         )
 
         # Clean up resources
-        for clip in prerendered_clips:
+        for clip in loaded_clips:
             try:
                 clip.close()
             except:
@@ -311,9 +420,9 @@ def render_clips_in_parallel(clips, output_path, temp_dir=None, fps=30, max_work
             pass
 
         # Clean up temporary files
-        for path in prerender_paths:
+        for path in rendered_paths:
             try:
-                if path and os.path.exists(path):
+                if os.path.exists(path):
                     os.remove(path)
             except Exception as e:
                 logger.warning(f"Error removing temp file {path}: {e}")

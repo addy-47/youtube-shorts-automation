@@ -237,7 +237,7 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
             max_duration=max_duration,
             background_queries=section_queries,
             blur_background=False,
-            edge_blur=True
+            edge_blur=False
         )
 
         # Optional: YouTube Upload

@@ -10,6 +10,7 @@ from moviepy.editor import ( # for video editing
     VideoFileClip, VideoClip, TextClip, CompositeVideoClip,ImageClip,
     AudioFileClip, concatenate_videoclips, ColorClip, CompositeAudioClip
 )
+from moviepy.video.fx import all as vfx
 from moviepy.config import change_settings
 change_settings({"IMAGEMAGICK_BINARY": "magick"}) # for windows users
 from gtts import gTTS
@@ -81,24 +82,44 @@ class YTShortsCreator_V:
             except Exception as e:
                 logger.warning(f"Failed to initialize Azure TTS: {e}. Will use gTTS instead.")
 
-        # Define transition effects
+        # Define transition effects with named functions instead of lambdas
+        def fade_transition(clip, duration):
+            return clip.fadein(duration).fadeout(duration)
+
+        def slide_left_transition(clip, duration):
+            def position_func(t):
+                return ((t/duration) * self.resolution[0] - clip.w if t < duration else 0, 'center')
+            return clip.set_position(position_func)
+
+        def zoom_in_transition(clip, duration):
+            def size_func(t):
+                return max(1, 1 + 0.5 * min(t/duration, 1))
+            return clip.resize(size_func)
+
+        # Define video transition effects between background segments
+        def crossfade_transition(clip1, clip2, duration):
+            return concatenate_videoclips([
+                clip1.set_end(clip1.duration),
+                clip2.set_start(0).crossfadein(duration)
+            ], padding=-duration, method="compose")
+
+        def fade_black_transition(clip1, clip2, duration):
+            return concatenate_videoclips([
+                clip1.fadeout(duration),
+                clip2.fadein(duration)
+            ])
+
+        # Replace lambda functions with named functions
         self.transitions = {
-            "fade": lambda clip, duration: clip.fadein(duration).fadeout(duration),
-            "slide_left": lambda clip, duration: clip.set_position(lambda t: ((t/duration) * self.resolution[0] - clip.w if t < duration else 0, 'center')),
-            "zoom_in": lambda clip, duration: clip.resize(lambda t: max(1, 1 + 0.5 * min(t/duration, 1)))
+            "fade": fade_transition,
+            "slide_left": slide_left_transition,
+            "zoom_in": zoom_in_transition
         }
 
         # Define video transition effects between background segments
         self.video_transitions = {
-            "crossfade": lambda clip1, clip2, duration: concatenate_videoclips([
-                clip1.set_end(clip1.duration),
-                clip2.set_start(0).crossfadein(duration)
-            ], padding=-duration, method="compose"),
-
-            "fade_black": lambda clip1, clip2, duration: concatenate_videoclips([
-                clip1.fadeout(duration),
-                clip2.fadein(duration)
-            ])
+            "crossfade": crossfade_transition,
+            "fade_black": fade_black_transition
         }
 
         # Load Pexels API key for background videos
@@ -582,7 +603,10 @@ class YTShortsCreator_V:
             blurred = img.filter(ImageFilter.GaussianBlur(radius=radius))
             return np.array(blurred)
 
-        return clip.fl(lambda gf, t: blur_frame(gf, t))
+        def apply_blur(get_frame, t):
+            return blur_frame(get_frame, t)
+
+        return clip.fl(apply_blur)
 
     @measure_time
     def custom_edge_blur(self, clip, edge_width=50, radius=10):
@@ -618,7 +642,10 @@ class YTShortsCreator_V:
 
             return np.array(composite)
 
-        return clip.fl(lambda gf, t: blur_frame(gf, t))
+        def apply_edge_blur(get_frame, t):
+            return blur_frame(get_frame, t)
+
+        return clip.fl(apply_edge_blur)
 
     @measure_time
     def _process_background_clip(self, clip, target_duration, blur_background=False, edge_blur=False):
@@ -691,498 +718,402 @@ class YTShortsCreator_V:
                             output_filename=None, add_captions=False, style="video", voice_style=None, max_duration=25,
                             background_queries=None, blur_background=False, edge_blur=False):
         """
-        Create a YouTube Short video with seamless backgrounds and no black screens
+        Create a YouTube Short with the given script sections.
 
         Args:
-            title (str): Video title
-            script_sections (list): List of dictionaries with text and duration
-            background_query (str): Fallback search term for background videos
-            output_filename (str): Output file path
-            add_captions (bool): Add captions at the bottom
-            style (str): Video style
-            voice_style (str): Voice style for TTS
-            max_duration (int): Maximum duration in seconds (default: 25)
-            background_queries (list): List of search terms for background videos, one per segment
-            blur_background (bool): Whether to apply blur effect to background videos (default: True)
-            edge_blur (bool): Whether to apply edge blur effect to background videos (default: False)
+            title (str): Title for the video
+            script_sections (list): List of dict with text, duration, and voice_style
+            background_query (str): Search term for background video
+            output_filename (str): Output filename, if None one will be generated
+            add_captions (bool): If True, add captions to the video
+            style (str): Style of the video
+            voice_style (str): Voice style from Azure TTS (excited, cheerful, etc)
+            max_duration (int): Maximum video duration in seconds
+            background_queries (list): Optional list of section-specific background queries
+            blur_background (bool): Whether to apply blur effect to background videos
+            edge_blur (bool): Whether to apply edge blur to background videos
+
         Returns:
-            str: Path to the created video
+            str: Output file path
         """
-        # Set output filename if not provided
-        if output_filename is None:
-            output_filename = os.path.join(self.output_dir, f"short_{int(time.time())}.mp4")
-
-        # Start timing the overall process
-        overall_start_time = time.time()
-        logger.info(f"Starting YouTube short creation")
-
-        # Calculate total duration and scale if needed
-        total_duration = sum(section.get('duration', 5) for section in script_sections)
-
-        if total_duration > max_duration:
-            scale_factor = max_duration / total_duration
-            logger.info(f"Scaling durations by factor {scale_factor:.2f} to fit max duration of {max_duration}s")
-            for section in script_sections:
-                section['duration'] *= scale_factor
-            total_duration = max_duration
-
-        logger.info(f"Total video duration: {total_duration:.1f}s")
-
-        # Identify intro and outro sections
-        intro_section = script_sections[0] if script_sections else None
-        outro_section = script_sections[-1] if len(script_sections) > 1 else None
-
-        # Middle sections (excluding intro and outro)
-        middle_sections = script_sections[1:-1] if len(script_sections) > 2 else []
-
-        # Calculate optimal number of background segments for middle sections
-        if len(middle_sections) == 0:
-            num_backgrounds = 1  # Just one background for very short videos
-        else:
-            # One background per section, but maximum of 5
-            num_backgrounds = min(len(middle_sections), 5)
-
-        logger.info(f"Creating video with {num_backgrounds} background segments for middle sections")
-
-        # Prepare background queries
-        if background_queries is None or len(background_queries) < num_backgrounds:
-            # If no specific queries provided or not enough queries, use the default/fallback
-            if background_queries is None:
-                background_queries = []
-
-            # Fill remaining slots with the fallback query
-            while len(background_queries) < num_backgrounds:
-                background_queries.append(background_query)
-
-        # Fetch background videos for each segment
-        fetch_start_time = time.time()
-        logger.info(f"Starting background video fetch")
-
-        bg_paths = []
-        for i in range(num_backgrounds):
-            query = background_queries[i]
-            segment_paths = self._fetch_videos(query, count=1, min_duration=5)
-
-            if segment_paths:
-                bg_paths.extend(segment_paths)
-            else:
-                # Fallback to main query if this specific query fails
-                fallback_paths = self._fetch_videos(background_query, count=1, min_duration=5)
-                if fallback_paths:
-                    bg_paths.extend(fallback_paths)
-
-        logger.info(f"Completed background video fetch in {time.time() - fetch_start_time:.2f} seconds")
-
-        # Final check if we have any backgrounds
-        if not bg_paths:
-            raise ValueError("No background videos available. Aborting video creation.")
-
-        # If we have fewer backgrounds than needed, duplicate some
-        while len(bg_paths) < num_backgrounds:
-            bg_paths.append(random.choice(bg_paths))
-
-        # Transition duration between background clips
-        transition_duration = 0.5  # Shorter transitions for better timing
-
-        # Generate audio clips with TTS for each section
-        tts_start_time = time.time()
-        logger.info(f"Starting TTS audio generation")
-
-        audio_clips = []
-        section_durations = []  # Store actual durations after TTS generation
-
-        for i, section in enumerate(script_sections):
-            section_text = section["text"]
-            section_voice_style = section.get("voice_style", voice_style)
-            min_section_duration = section.get("duration", 5)
-
-            # Try to create TTS audio file
-            audio_path = os.path.join(self.temp_dir, f"section_{i}.mp3")
-
-            if self.azure_tts:
-                try:
-                    voice = os.getenv("AZURE_VOICE", "en-US-JennyNeural")
-                    self.azure_tts.generate_speech(section_text, output_filename=audio_path)
-                except Exception as e:
-                    logger.error(f"Azure TTS failed: {e}, falling back to gTTS")
-                    try:
-                        tts = gTTS(text=section_text, lang='en', slow=False)
-                        tts.save(audio_path)
-                    except Exception as e2:
-                        logger.error(f"gTTS also failed: {e2}, section {i} will be silent")
-                        audio_path = None
-            else:
-                try:
-                    tts = gTTS(text=section_text, lang='en', slow=False)
-                    tts.save(audio_path)
-                except Exception as e:
-                    logger.error(f"gTTS failed: {e}, section {i} will be silent")
-                    audio_path = None
-
-            # If audio file was created successfully, get its actual duration
-            if audio_path and os.path.exists(audio_path):
-                try:
-                    audio_clip = AudioFileClip(audio_path)
-
-                    # Make sure the audio clip has the right fps to avoid sync issues
-                    audio_clip = audio_clip.set_fps(44100)
-
-                    actual_duration = audio_clip.duration
-
-                    # Make sure audio is at least as long as specified in JSON
-                    if actual_duration < min_section_duration:
-                        # Extend audio with silence if too short
-                        silence = AudioFileClip(audio_path).set_duration(min_section_duration - actual_duration)
-                        silence = silence.volumex(0)  # Make it silent
-                        audio_clip = CompositeAudioClip([audio_clip, silence.set_start(actual_duration)])
-                        actual_duration = min_section_duration
-
-                    # Store the final duration
-                    section_durations.append(actual_duration)
-                    audio_clips.append((i, audio_clip, actual_duration))
-                except Exception as e:
-                    logger.error(f"Error processing audio for section {i}: {e}")
-                    section_durations.append(min_section_duration)
-            else:
-                # If no audio was created, use minimum duration
-                section_durations.append(min_section_duration)
-
-        # Update script sections with actual durations
-        for i, duration in enumerate(section_durations):
-            if i < len(script_sections):
-                script_sections[i]['duration'] = duration
-
-        # Recalculate total duration based on actual audio lengths
-        total_duration = sum(section_durations)
-
-        logger.info(f"Completed TTS audio generation in {time.time() - tts_start_time:.2f} seconds")
-        logger.info(f"Updated total duration: {total_duration:.1f}s")
-
-        # Process intro section background
-        if intro_section:
-            intro_duration = intro_section['duration']
-            intro_query = background_queries[0] if background_queries else background_query
-            intro_bg_path = self._fetch_videos(intro_query, count=1, min_duration=intro_duration)
-
-            if not intro_bg_path:
-                # Use first background from main fetch if intro-specific fetch fails
-                intro_bg_path = [bg_paths[0]] if bg_paths else None
-
-            if intro_bg_path:
-                intro_bg_clip = VideoFileClip(intro_bg_path[0])
-                intro_bg_clip = self._process_background_clip(
-                    intro_bg_clip,
-                    intro_duration,
-                    blur_background=blur_background,
-                    edge_blur=edge_blur
-                )
-            else:
-                # Create a colored background if no video available
-                intro_bg_clip = ColorClip(size=self.resolution, color=(20, 20, 20)).set_duration(intro_duration)
-
-        # Process outro section background
-        if outro_section and outro_section != intro_section:
-            outro_duration = outro_section['duration']
-            outro_query = background_queries[-1] if background_queries else background_query
-            outro_bg_path = self._fetch_videos(outro_query, count=1, min_duration=outro_duration)
-
-            if not outro_bg_path:
-                # Use last background from main fetch if outro-specific fetch fails
-                outro_bg_path = [bg_paths[-1]] if bg_paths else None
-
-            if outro_bg_path:
-                outro_bg_clip = VideoFileClip(outro_bg_path[0])
-                outro_bg_clip = self._process_background_clip(
-                    outro_bg_clip,
-                    outro_duration,
-                    blur_background=blur_background,
-                    edge_blur=edge_blur
-                )
-            else:
-                # Create a colored background if no video available
-                outro_bg_clip = ColorClip(size=self.resolution, color=(20, 20, 20)).set_duration(outro_duration)
-
-        # Calculate durations for middle section backgrounds
-        middle_section_durations = [section['duration'] for section in middle_sections]
-        middle_total_duration = sum(middle_section_durations)
-
-        # Divide middle section backgrounds evenly
-        if num_backgrounds > 0 and middle_total_duration > 0:
-            bg_segment_durations = []
-            segment_size = middle_total_duration / num_backgrounds
-
-            for i in range(num_backgrounds):
-                if i == num_backgrounds - 1:
-                    # Last segment gets remaining duration
-                    duration = middle_total_duration - sum(bg_segment_durations)
-                else:
-                    duration = segment_size
-
-                # Add transition overlap except for the last segment
-                if i < num_backgrounds - 1:
-                    duration += transition_duration
-
-                bg_segment_durations.append(duration)
-        else:
-            bg_segment_durations = []
-
-        # Process middle section backgrounds
-        process_start_time = time.time()
-        logger.info(f"Starting background processing")
-
-        middle_bg_clips = []
-
-        # Map middle section words to background segments
-        section_to_bg_mapping = {}
-        cumulative_duration = 0
-
-        for i, section in enumerate(middle_sections):
-            section_duration = section['duration']
-            section_end_time = cumulative_duration + section_duration
-
-            # Find which background segment(s) this section belongs to
-            segment_start = 0
-            for bg_idx, bg_duration in enumerate(bg_segment_durations):
-                segment_end = segment_start + bg_duration
-
-                # If section overlaps with this segment
-                if cumulative_duration < segment_end and section_end_time > segment_start:
-                    if i not in section_to_bg_mapping:
-                        section_to_bg_mapping[i] = []
-                    section_to_bg_mapping[i].append(bg_idx)
-
-                segment_start += bg_duration - (transition_duration if bg_idx < num_backgrounds - 1 else 0)
-
-            cumulative_duration += section_duration
-
-        # Process each background segment
-        for i, bg_path in enumerate(bg_paths[:num_backgrounds]):
-            try:
-                target_duration = bg_segment_durations[i]
-                bg_clip = VideoFileClip(bg_path)
-                processed_clip = self._process_background_clip(bg_clip, target_duration, blur_background=blur_background, edge_blur=edge_blur)
-                middle_bg_clips.append(processed_clip)
-            except Exception as e:
-                logger.error(f"Error processing background video {i+1}: {str(e)}")
-                # Create a colored background as fallback
-                fallback_clip = ColorClip(size=self.resolution, color=(20, 20, 20)).set_duration(bg_segment_durations[i])
-                middle_bg_clips.append(fallback_clip)
-
-        logger.info(f"Completed background processing in {time.time() - process_start_time:.2f} seconds")
-
-        # Apply crossfade transitions between middle background clips
-        if len(middle_bg_clips) > 1:
-            compose_start_time = time.time()
-            logger.info(f"Starting background composition")
-
-            final_middle_bg = [middle_bg_clips[0]]
-
-            for i in range(1, len(middle_bg_clips)):
-                crossfaded = concatenate_videoclips(
-                    [final_middle_bg[-1], middle_bg_clips[i].crossfadein(transition_duration)],
-                    padding=-transition_duration,
-                    method="compose"
-                )
-                final_middle_bg[-1] = crossfaded
-
-            logger.info(f"Completed background composition in {time.time() - compose_start_time:.2f} seconds")
-            middle_bg_clip = final_middle_bg[0]
-        elif len(middle_bg_clips) == 1:
-            middle_bg_clip = middle_bg_clips[0]
-        else:
-            middle_bg_clip = None
-
-        # Create section clips with text overlays
-        section_clips = []
-
-        # Process intro
-        if intro_section:
-            intro_text = intro_section['text']
-            intro_duration = intro_section['duration']
-
-            # Create title text if provided
-            if title:
-                    title_clip = self._create_text_clip(
-                    title, duration=intro_duration, font_size=70, font_path=self.title_font_path,
-                        position=('center', 150), animation="fade", animation_duration=0.8,
-                        with_pill=True, pill_color=(0, 0, 0, 160), pill_radius=30
-                )
-            else:
-                title_clip = None
-
-            # Create intro text
-            intro_text_clip = self._create_text_clip(
-                intro_text, duration=intro_duration, font_size=55, font_path=self.body_font_path,
-                    position=('center', 'center'), animation="fade", animation_duration=0.8,
-                    with_pill=True, pill_color=(0, 0, 0, 160), pill_radius=30
-            )
-
-            # Combine background with text
-            clips_to_combine = [intro_bg_clip]
-            if title_clip:
-                clips_to_combine.append(title_clip)
-            clips_to_combine.append(intro_text_clip)
-
-            intro_clip = CompositeVideoClip(clips_to_combine, size=self.resolution)
-
-            # Add audio if available
-            for idx, audio_clip, duration in audio_clips:
-                if idx == 0:  # First section is intro
-                    intro_clip = intro_clip.set_audio(audio_clip)
-                    break
-
-            section_clips.append(intro_clip)
-
-        # Process middle sections
-        if middle_sections and middle_bg_clip:
-            middle_clips = []
-            cumulative_time = 0
-
-            for i, section in enumerate(middle_sections):
-                section_text = section['text']
-                section_duration = section['duration']
-
-                # Create word-by-word text animation
-                word_clip = self._create_word_by_word_clip(
-                    section_text, duration=section_duration, font_size=60, font_path=self.body_font_path,
-                    text_color=(255, 255, 255, 255), pill_color=(0, 0, 0, 160), position=('center', 'center')
-                )
-
-                # Check if we need to reset the cumulative time
-                if cumulative_time + section_duration > middle_bg_clip.duration:
-                    logger.warning(f"Background clip too short ({middle_bg_clip.duration:.2f}s), resetting position")
-                    cumulative_time = 0
-
-                # Ensure we don't exceed the background clip's duration
-                end_time = min(cumulative_time + section_duration, middle_bg_clip.duration)
-                actual_duration = end_time - cumulative_time
-
-                # Extract the correct portion of the background
-                section_bg = middle_bg_clip.subclip(cumulative_time, end_time)
-
-                # If we didn't get enough background footage, loop it
-                if actual_duration < section_duration:
-                    logger.warning(f"Section duration ({section_duration:.2f}s) exceeds available background ({actual_duration:.2f}s), looping")
-                    remaining_duration = section_duration - actual_duration
-
-                    # Get footage from the beginning of the clip
-                    remaining_end = min(remaining_duration, middle_bg_clip.duration)
-                    additional_bg = middle_bg_clip.subclip(0, remaining_end)
-
-                    # Concatenate the two segments
-                    section_bg = concatenate_videoclips([section_bg, additional_bg])
-
-                    # Update actual duration with what we now have
-                    actual_duration = section_bg.duration
-
-                # Combine background with text
-                section_clip = CompositeVideoClip([section_bg, word_clip], size=self.resolution)
-
-                # Add audio if available
-                for idx, audio_clip, duration in audio_clips:
-                    if idx == i + 1:  # Middle sections start after intro
-                        section_clip = section_clip.set_audio(audio_clip)
-                        break
-
-                middle_clips.append(section_clip)
-                cumulative_time = (cumulative_time + actual_duration) % middle_bg_clip.duration  # Wrap around when we reach the end
-
-            section_clips.extend(middle_clips)
-
-        # Process outro
-        if outro_section and outro_section != intro_section:
-            outro_text = outro_section['text']
-            outro_duration = outro_section['duration']
-
-            # Create outro text
-            outro_text_clip = self._create_text_clip(
-                outro_text, duration=outro_duration, font_size=55, font_path=self.body_font_path,
-                position=('center', 'center'), animation="fade", animation_duration=0.8,
-                with_pill=True, pill_color=(0, 0, 0, 160), pill_radius=30
-            )
-
-            # Combine background with text
-            outro_clip = CompositeVideoClip([outro_bg_clip, outro_text_clip], size=self.resolution)
-
-            # Add audio if available
-            for idx, audio_clip, duration in audio_clips:
-                if idx == len(script_sections) - 1:  # Last section is outro
-                    outro_clip = outro_clip.set_audio(audio_clip)
-                    break
-
-            section_clips.append(outro_clip)
-
-        # Add captions at the bottom if requested
-        if add_captions:
-            for i, section_clip in enumerate(section_clips):
-                if i < len(script_sections):
-                    section_text = script_sections[i]['text']
-                    caption = self._create_text_clip(
-                        section_text, duration=section_clip.duration, font_size=40,
-                        font_path=self.body_font_path, position=('center', self.resolution[1] - 200),
-                        animation="fade", animation_duration=0.5
-                    )
-                    section_clips[i] = CompositeVideoClip([section_clip, caption], size=self.resolution)
-
-        # Use parallel rendering if available
         try:
-            from parallel_renderer import render_clips_in_parallel
-            logger.info("Using parallel renderer for improved performance")
+            if not output_filename:
+                date_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+                output_filename = os.path.join(self.output_dir, f"short_{date_str}.mp4")
 
-            # Create temp directory for parallel rendering
-            parallel_temp_dir = os.path.join(self.temp_dir, "parallel_render")
-            os.makedirs(parallel_temp_dir, exist_ok=True)
+            # Get total duration from script sections
+            total_raw_duration = sum(section.get('duration', 5) for section in script_sections)
+            duration_scaling_factor = min(1.0, max_duration / total_raw_duration) if total_raw_duration > max_duration else 1.0
 
-            # Render clips in parallel
-            render_start_time = time.time()
-            logger.info(f"Starting parallel video rendering")
+            # Scale durations if needed to fit max time
+            if duration_scaling_factor < 1.0:
+                logger.info(f"Scaling durations by factor {duration_scaling_factor:.2f} to fit max duration of {max_duration}s")
+                for section in script_sections:
+                    section['duration'] = section['duration'] * duration_scaling_factor
 
-            output_filename = render_clips_in_parallel(
-                section_clips,
-                output_filename,
-                temp_dir=parallel_temp_dir,
-                fps=self.fps,
-                preset="veryfast"
-            )
+            total_duration = sum(section.get('duration', 5) for section in script_sections)
+            logger.info(f"Total video duration: {total_duration}s")
 
-            logger.info(f"Completed video rendering in {time.time() - render_start_time:.2f} seconds")
+            # Calculate number of background segments needed (usually one per middle section, excluding first and last)
+            middle_section_count = max(1, len(script_sections) - 2)
+            logger.info(f"Creating video with {middle_section_count} background segments for middle sections")
+
+            # Background videos - section specific if provided
+            if background_queries and len(background_queries) == len(script_sections):
+                # Use section-specific queries
+                section_backgrounds = []
+
+                # Start fetching all backgrounds
+                logger.info("Starting background video fetch")
+                start_time = time.time()
+
+                # Process middle sections (excluding first and last sections)
+                for i, query in enumerate(background_queries[1:-1], 1):
+                    # Get multiple videos for variety
+                    section_videos = self._fetch_videos(query, count=1, min_duration=int(script_sections[i]['duration']) + 2)
+                    if section_videos:
+                        section_backgrounds.append(section_videos[0])
+                    else:
+                        # If no video found for section, try the generic background query
+                        fallback_videos = self._fetch_videos(background_query, count=1, min_duration=int(script_sections[i]['duration']) + 2)
+                        if fallback_videos:
+                            section_backgrounds.append(fallback_videos[0])
+
+                # Add backgrounds for first and last sections
+                first_section_videos = self._fetch_videos(background_queries[0], count=1, min_duration=int(script_sections[0]['duration']) + 2)
+                if first_section_videos:
+                    section_backgrounds.insert(0, first_section_videos[0])
+                else:
+                    # If no specific video found, add a generic one
+                    first_generic = self._fetch_videos(background_query, count=1, min_duration=int(script_sections[0]['duration']) + 2)
+                    if first_generic:
+                        section_backgrounds.insert(0, first_generic[0])
+
+                last_section_videos = self._fetch_videos(background_queries[-1], count=1, min_duration=int(script_sections[-1]['duration']) + 2)
+                if last_section_videos:
+                    section_backgrounds.append(last_section_videos[0])
+                else:
+                    # If no specific video found, add a generic one
+                    last_generic = self._fetch_videos(background_query, count=1, min_duration=int(script_sections[-1]['duration']) + 2)
+                    if last_generic:
+                        section_backgrounds.append(last_generic[0])
+
+                # Ensure we have enough backgrounds
+                while len(section_backgrounds) < len(script_sections):
+                    # Add generic backgrounds if needed
+                    generic_videos = self._fetch_videos(background_query, count=1, min_duration=5)
+                    if generic_videos:
+                        section_backgrounds.append(generic_videos[0])
+
+                end_time = time.time()
+                logger.info(f"Completed background video fetch in {end_time - start_time:.2f} seconds")
+                background_videos = section_backgrounds
+            else:
+                # Use a single query for all backgrounds
+                logger.info("Starting background video fetch")
+                start_time = time.time()
+                background_videos = self._fetch_videos(background_query, count=len(script_sections), min_duration=5)
+                end_time = time.time()
+                logger.info(f"Completed background video fetch in {end_time - start_time:.2f} seconds")
+
+            # Generate TTS for each section
+            logger.info("Starting TTS audio generation")
+            start_time = time.time()
+
+            audio_files = []
+            audio_durations = []
+
+            for i, section in enumerate(script_sections):
+                text = section['text']
+                section_voice_style = section.get('voice_style', voice_style)
+
+                # Generate temporary filename
+                section_audio_file = os.path.join(self.temp_dir, f"section_{i}.mp3")
+
+                # Azure TTS or gTTS
+                if self.azure_tts:
+                    try:
+                        audio_path = self.azure_tts.generate_speech(
+                            text,
+                            output_filename=section_audio_file,
+                            voice_style=section_voice_style
+                        )
+                    except Exception as e:
+                        logger.error(f"Azure TTS error: {e}. Falling back to gTTS.")
+                        tts = gTTS(text=text, lang='en', slow=False)
+                        tts.save(section_audio_file)
+                        audio_path = section_audio_file
+                else:
+                    tts = gTTS(text=text, lang='en', slow=False)
+                    tts.save(section_audio_file)
+                    audio_path = section_audio_file
+
+                audio_files.append(audio_path)
+
+                # Check actual audio duration and update section duration if needed
+                try:
+                    temp_audio = AudioFileClip(audio_path)
+                    actual_duration = temp_audio.duration
+                    section['actual_audio_duration'] = actual_duration  # Store actual duration for safety checks
+                    audio_durations.append(actual_duration)
+                    temp_audio.close()
+                except Exception as e:
+                    logger.error(f"Error checking audio duration for section {i}: {e}")
+                    section['actual_audio_duration'] = section['duration']  # Fallback to planned duration
+                    audio_durations.append(section['duration'])
+
+            end_time = time.time()
+            logger.info(f"Completed TTS audio generation in {end_time - start_time:.2f} seconds")
+
+            # Update total duration based on actual audio durations
+            total_actual_duration = sum(audio_durations)
+            logger.info(f"Updated total duration: {total_actual_duration}s")
+
+            # Make sure we have enough background videos
+            if len(background_videos) < len(script_sections):
+                # Fetch more background videos if needed
+                logger.info(f"Fetching {len(script_sections) - len(background_videos)} more background videos")
+                more_videos = self._fetch_videos(
+                    background_query,
+                    count=len(script_sections) - len(background_videos),
+                    min_duration=5
+                )
+                background_videos.extend(more_videos)
+
+            # Process background videos
+            logger.info("Starting background processing")
+            start_time = time.time()
+
+            background_clips = []
+            for i, (video_path, section) in enumerate(zip(background_videos, script_sections)):
+                try:
+                    # Get the actual audio duration instead of planned duration
+                    section_duration = section.get('actual_audio_duration', section.get('duration', 5))
+
+                    if os.path.exists(video_path):
+                        video_clip = VideoFileClip(video_path)
+
+                        # Apply processing to fit duration and style
+                        processed_clip = self._process_background_clip(
+                            video_clip,
+                            section_duration,
+                            blur_background=blur_background,
+                            edge_blur=edge_blur
+                        )
+
+                        # Store processed clip
+                        background_clips.append(processed_clip)
+                    else:
+                        logger.warning(f"Background video {i} not found: {video_path}")
+                        # Create a black background as fallback
+                        black_bg = ColorClip(size=self.resolution, color=(0, 0, 0), duration=section_duration)
+                        background_clips.append(black_bg)
+                except Exception as e:
+                    logger.error(f"Error processing background clip {i}: {e}")
+                    # Create a black background as fallback for this section
+                    section_duration = section.get('actual_audio_duration', section.get('duration', 5))
+                    black_bg = ColorClip(size=self.resolution, color=(0, 0, 0), duration=section_duration)
+                    background_clips.append(black_bg)
+
+            end_time = time.time()
+            logger.info(f"Completed background processing in {end_time - start_time:.2f} seconds")
+
+            # Create audio and video for each section
+            section_clips = []
+
+            for i, (section, audio_path, bg_clip) in enumerate(zip(script_sections, audio_files, background_clips)):
+                try:
+                    # Load audio with extra safety check
+                    audio_clip = AudioFileClip(audio_path)
+                    section_duration = audio_clip.duration  # Use actual audio duration
+
+                    # Ensure background clip is long enough
+                    if bg_clip.duration < section_duration:
+                        logger.warning(f"Section duration ({section_duration:.2f}s) exceeds available background ({bg_clip.duration:.2f}s), looping")
+                        # Instead of using vfx.loop which causes serialization issues, manually create a looped clip
+                        loops_needed = int(np.ceil(section_duration / bg_clip.duration))
+                        looped_clips = []
+
+                        for _ in range(loops_needed):
+                            looped_clips.append(bg_clip.copy())
+
+                        # Concatenate the loops
+                        bg_clip = concatenate_videoclips(looped_clips)
+                        # Trim to exact duration needed
+                        bg_clip = bg_clip.subclip(0, section_duration)
+
+                    # Set audio to background
+                    bg_with_audio = bg_clip.set_duration(section_duration).set_audio(audio_clip)
+
+                    # Add text captions if requested
+                    if add_captions:
+                        # Use different text approaches based on section position
+                        if i == 0 or i == len(script_sections) - 1:  # First section (intro) or last section (outro)
+                            # Use regular text clip for intro and outro
+                            text_clip = self._create_text_clip(
+                                section['text'],
+                                duration=section_duration,
+                                animation="fade",
+                                with_pill=True,
+                                font_size=70,  # Slightly larger font for intro/outro
+                                position=('center', 'center')
+                            )
+                        else:  # Middle sections
+                            # Use word-by-word animation for middle sections
+                            text_clip = self._create_word_by_word_clip(
+                                text=section['text'],
+                                duration=section_duration,
+                                font_size=60,
+                                position=('center', 'center'),
+                                text_color=(255, 255, 255, 255),
+                                pill_color=(0, 0, 0, 160)
+                            )
+
+                        # Composite the text over the background
+                        section_clip = CompositeVideoClip([bg_with_audio, text_clip])
+                    else:
+                        # Always add text overlay regardless of add_captions setting
+                        # But still respect the intro/middle/outro distinction
+                        if i == 0 or i == len(script_sections) - 1:  # First section (intro) or last section (outro)
+                            # Use regular text clip for intro and outro
+                            text_clip = self._create_text_clip(
+                                section['text'],
+                                duration=section_duration,
+                                animation="fade",
+                                with_pill=True,
+                                font_size=70,  # Larger font size for better visibility
+                                position=('center', 'center')
+                            )
+                        else:  # Middle sections
+                            # Use word-by-word animation for middle sections
+                            text_clip = self._create_word_by_word_clip(
+                                text=section['text'],
+                                duration=section_duration,
+                                font_size=60,
+                                position=('center', 'center'),
+                                text_color=(255, 255, 255, 255),
+                                pill_color=(0, 0, 0, 160)
+                            )
+
+                        # Composite the text over the background
+                        section_clip = CompositeVideoClip([bg_with_audio, text_clip])
+
+                    section_clips.append(section_clip)
+
+                except Exception as e:
+                    logger.error(f"Error creating section {i}: {e}")
+                    # Create a black clip with text as fallback
+                    fallback_duration = section.get('actual_audio_duration', section.get('duration', 5))
+                    black_bg = ColorClip(size=self.resolution, color=(0, 0, 0), duration=fallback_duration)
+
+                    try:
+                        # Try to add audio if possible
+                        audio_clip = AudioFileClip(audio_path)
+                        black_bg = black_bg.set_audio(audio_clip)
+                    except Exception as audio_err:
+                        logger.error(f"Error adding audio to fallback clip: {audio_err}")
+
+                    # Add text to explain the error
+                    error_text = TextClip(
+                        "Error loading section",
+                        color='white',
+                        size=self.resolution,
+                        fontsize=60,
+                        method='caption',
+                        align='center'
+                    ).set_duration(fallback_duration)
+
+                    section_clip = CompositeVideoClip([black_bg, error_text])
+                    section_clips.append(section_clip)
+
+            # Process and validate section clips
+            validated_section_clips = []
+            for i, clip in enumerate(section_clips):
+                try:
+                    # Ensure audio duration is valid for this section
+                    if clip.audio is not None:
+                        # Get actual duration of the audio and clip
+                        audio_duration = clip.audio.duration
+                        clip_duration = clip.duration
+
+                        # If audio is too short, loop or extend it
+                        if audio_duration < clip_duration:
+                            logger.warning(f"Audio for section {i} is shorter than clip ({audio_duration}s vs {clip_duration}s), extending")
+                            # Create a new audio that exactly matches the clip duration
+                            from moviepy.audio.AudioClip import CompositeAudioClip, AudioClip
+                            extended_audio = clip.audio.set_duration(clip_duration)
+                            clip = clip.set_audio(extended_audio)
+
+                        # If audio is longer, trim it
+                        elif audio_duration > clip_duration:
+                            logger.warning(f"Audio for section {i} is longer than clip ({audio_duration}s vs {clip_duration}s), trimming")
+                            trimmed_audio = clip.audio.subclip(0, clip_duration)
+                            clip = clip.set_audio(trimmed_audio)
+
+                    validated_section_clips.append(clip)
+                except Exception as e:
+                    logger.error(f"Error validating section clip {i}: {e}")
+                    # Use clip as-is if validation fails
+                    validated_section_clips.append(clip)
+
+            # Try parallel rendering first
+            try:
+                logger.info("Using parallel renderer for improved performance")
+                from parallel_renderer import render_clips_in_parallel
+                output_filename = render_clips_in_parallel(
+                    validated_section_clips,
+                    output_filename,
+                    temp_dir=self.temp_dir,
+                    fps=self.fps,
+                    preset="veryfast"
+                )
+            except Exception as parallel_error:
+                logger.warning(f"Parallel renderer failed: {parallel_error}. Using standard rendering.")
+
+                # Use standard rendering as fallback
+                logger.info("Starting standard video rendering")
+                try:
+                    # Concatenate all section clips
+                    final_clip = concatenate_videoclips(validated_section_clips)
+
+                    # Write final video
+                    final_clip.write_videofile(
+                        output_filename,
+                        fps=self.fps,
+                        codec="libx264",
+                        audio_codec="aac",
+                        threads=2,
+                        preset="veryfast",
+                        ffmpeg_params=[
+                            "-pix_fmt", "yuv420p",  # For compatibility with all players
+                            "-profile:v", "main",   # Better compatibility with mobile devices
+                            "-crf", "22",           # Better quality-to-size ratio
+                            "-maxrate", "3M",       # Maximum bitrate for streaming
+                            "-bufsize", "6M"        # Buffer size for rate control
+                        ]
+                    )
+                finally:
+                    # Clean up all clips
+                    for clip in validated_section_clips:
+                        try:
+                            clip.close()
+                        except:
+                            pass
+
+            # Final cleanup
+            self._cleanup()
+
+            return output_filename
+
         except Exception as e:
-            logger.warning(f"Parallel renderer failed: {e}. Using standard rendering.")
-
-            # Concatenate all clips
-            final_start_time = time.time()
-            logger.info(f"Starting standard video rendering")
-
-            final_clip = concatenate_videoclips(section_clips)
-
-            # Write the final video to file with improved settings
-            final_clip.write_videofile(
-                output_filename,
-                codec="libx264",
-                audio_codec="aac",
-                fps=self.fps,
-                preset="ultrafast",
-                threads=4,
-                ffmpeg_params=[
-                    "-bufsize", "24M",      # Larger buffer
-                    "-maxrate", "8M",       # Higher max rate
-                    "-b:a", "192k",         # Higher audio bitrate
-                    "-ar", "48000",         # Audio sample rate
-                    "-pix_fmt", "yuv420p"   # Compatible pixel format for all players
-                ]
-            )
-
-            logger.info(f"Completed video rendering in {time.time() - final_start_time:.2f} seconds")
-
-        # Print summary of creation process
-        overall_duration = time.time() - overall_start_time
-        logger.info(f"YouTube short creation completed in {overall_duration:.2f} seconds")
-        logger.info(f"Video saved to: {output_filename}")
-
-        # Clean up temporary files
-        self._cleanup()
-
-        return output_filename
+            logger.error(f"Error in create_youtube_short: {e}")
+            # If there's a temp directory, clean it up
+            if hasattr(self, 'temp_dir') and os.path.exists(self.temp_dir):
+                try:
+                    shutil.rmtree(self.temp_dir)
+                except Exception as cleanup_error:
+                    logger.error(f"Error cleaning up temp directory: {cleanup_error}")
+            raise
 
     def _cleanup(self):
         """Clean up temporary files"""
