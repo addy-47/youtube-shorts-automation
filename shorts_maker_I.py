@@ -55,6 +55,15 @@ class YTShortsCreator_I:
         os.makedirs(output_dir, exist_ok=True)
         os.makedirs(self.temp_dir, exist_ok=True)
 
+        # Check for enhanced rendering capability
+        self.has_enhanced_rendering = False
+        try:
+            import dill
+            self.has_enhanced_rendering = True
+            logger.info(f"Enhanced parallel rendering available with dill {dill.__version__}")
+        except ImportError:
+            logger.info("Basic rendering capability only (install dill for enhanced parallel rendering)")
+
         # Video settings
         self.resolution = (1080, 1920)  # Portrait mode for shorts (width, height)
         self.fps = fps
@@ -1015,6 +1024,14 @@ class YTShortsCreator_I:
 
             # Use parallel rendering if available
             try:
+                # Check for dill library - needed for optimal parallel rendering
+                try:
+                    import dill
+                    logger.info(f"Found dill {dill.__version__} for improved serialization")
+                except ImportError:
+                    logger.warning("Dill library not found - parallel rendering may be less efficient")
+                    logger.warning("Consider installing dill with: pip install dill")
+
                 from parallel_renderer import render_clips_in_parallel
                 logger.info("Using parallel renderer for improved performance")
 

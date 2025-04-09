@@ -1,5 +1,4 @@
 import os # for interacting with the operating system
-import azure.cognitiveservices.speech as speechsdk # for interacting with Azure Speech API
 import logging # for logging messages
 import re # for regular expressions
 import time # for handling retries
@@ -9,12 +8,12 @@ logger = logging.getLogger(__name__)
 class GoogleVoiceover:
     """Class to handle Google Cloud Text-to-Speech functionality"""
 
-    def __init__(self, voice="en-US-Neural2-D", output_dir="temp"):
+    def __init__(self, voice="en-GB-Neural2-B", output_dir="temp"):
         """
         Initialize Google Cloud TTS service.
 
         Args:
-            voice (str): Voice ID to use. Default is en-US-Neural2-D.
+            voice (str): Voice ID to use. Default is en-AU-Neural2-B.
             output_dir (str): Directory to save audio files.
         """
         import os

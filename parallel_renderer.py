@@ -12,30 +12,34 @@ from tqdm import tqdm
 from moviepy.editor import VideoFileClip, concatenate_videoclips, CompositeVideoClip, AudioFileClip
 from datetime import datetime
 
-# Superior dill setup for better lambda function and closure support
+logger = logging.getLogger(__name__)
+
+# Simple workaround flag to avoid patching errors
+USING_DILL = False
+
+# Only try to load dill if needed
 try:
     import dill
 
-    # Force dill to use a more aggressive protocol
+    # Configure dill with safe settings
     dill.settings['recurse'] = True
 
-    # Register dill as the serializer for multiprocessing
-    # This is the most important line - using the right registration method
-    multiprocessing.reduction.register(dill.dumps, dill.loads)
+    # Basic verification that dill works
+    test_func = lambda x: x+1
+    test_data = {"func": test_func}
+    serialized = dill.dumps(test_data)
+    deserialized = dill.loads(serialized)
 
-    # Explicitly set the protocol version
-    DILL_PROTOCOL = dill.HIGHEST_PROTOCOL
-
+    # If we got here, dill is working
     USING_DILL = True
-    print(f"Using dill {dill.__version__} for enhanced function serialization with protocol {DILL_PROTOCOL}.")
+    # Avoid patching multiprocessing, just use dill for explicit serialization
+
 except ImportError:
     USING_DILL = False
-    print("Dill not available. Using standard pickle for serialization.")
+    logger.info("Dill not available. Using standard pickle for serialization.")
 except Exception as e:
-    print(f"Error setting up dill: {e}")
+    logger.warning(f"Error setting up dill: {e}")
     USING_DILL = False
-
-logger = logging.getLogger(__name__)
 
 def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2, show_progress=True):
     """
@@ -134,104 +138,110 @@ def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2,
         logger.error(f"Error rendering segment {output_path}: {e}")
         raise
 
-# Make this a top-level function so it can be pickled properly by multiprocessing
-def render_with_timeout(task):
-    """Render a clip with proper error handling for multiprocessing"""
-    try:
-        clip, output_path, fps_val, preset_val, threads_val = task
-        logger.info(f"Starting render of clip to {output_path}")
+# Pre-rendering function for complex clips to avoid serialization issues
+def prerender_complex_clip(clip, temp_dir, idx, fps):
+    """Pre-render a complex clip to avoid serialization issues"""
+    # Generate a unique filename
+    temp_path = os.path.join(temp_dir, f"prerender_{idx}_{int(time.time())}.mp4")
 
-        # Instead of pre-rendering, use direct rendering with proper error handling
-        # This preserves the parallelization benefits while still handling lambda issues
+    # Make fixed copies of positions or sizes if needed
+    clean_clip = clip.copy()
+
+    # Convert any position functions to fixed values
+    if hasattr(clean_clip, 'pos') and callable(clean_clip.pos):
         try:
-            # Directly render the clip with all its original attributes
-            # Dill should handle the serialization of lambda functions, but just in case:
+            # Get the midpoint position
+            mid_pos = clean_clip.pos(clean_clip.duration / 2)
+            # Set a fixed position
+            clean_clip = clean_clip.set_position(mid_pos)
+        except:
+            # Default to center if position function fails
+            clean_clip = clean_clip.set_position('center')
 
-            # 1. Make a local copy of the clip
-            clip_copy = clip.copy()
+    # Convert any size functions to fixed values
+    if hasattr(clean_clip, 'size') and callable(clean_clip.size):
+        try:
+            # Get the midpoint size
+            mid_size = clean_clip.size(clean_clip.duration / 2)
+            # Set a fixed size
+            clean_clip = clean_clip.resize(mid_size)
+        except:
+            # Skip if size function fails
+            pass
 
-            # 2. If the clip uses position/size functions, try to preserve their information
-            if hasattr(clip, 'pos') and callable(clip.pos):
-                # Store size and position info - this gets lost in multiprocessing
-                try:
-                    # Sample the position function at a few points
-                    t0 = 0
-                    tmid = clip.duration / 2 if hasattr(clip, 'duration') else 1
-                    tend = clip.duration if hasattr(clip, 'duration') else 2
+    # Render to file with basic settings
+    clean_clip.write_videofile(
+        temp_path,
+        fps=fps,
+        preset="ultrafast",
+        codec="libx264",
+        audio_codec="aac",
+        threads=2,
+        logger="bar"
+    )
 
-                    pos0 = clip.pos(t0)
-                    posmid = clip.pos(tmid)
-                    posend = clip.pos(tend)
+    # Close the original clip to free memory
+    try:
+        clean_clip.close()
+    except:
+        pass
 
-                    # If all positions are the same, we can use a fixed position
-                    if pos0 == posmid == posend:
-                        clip_copy = clip_copy.set_position(pos0)
-                    # Otherwise, use the position at midpoint which is usually most representative
-                    else:
-                        clip_copy = clip_copy.set_position(posmid)
-                except:
-                    # If position function fails, use center as fallback
-                    clip_copy = clip_copy.set_position('center')
+    # Return the path to the pre-rendered file
+    return temp_path
 
-            # 3. Similarly handle size functions
-            if hasattr(clip, 'size') and callable(clip.size):
-                try:
-                    # Sample the size function at midpoint
-                    tmid = clip.duration / 2 if hasattr(clip, 'duration') else 1
-                    size_mid = clip.size(tmid)
-                    clip_copy = clip_copy.resize(newsize=size_mid)
-                except:
-                    # If size function fails, leave as is
-                    pass
+# Central function for processing clips that avoids lambdas
+def process_clip_for_parallel(task):
+    """Process a clip for parallel rendering - replaces render_with_timeout"""
+    try:
+        clip, output_path, fps_val, preset_val, threads_val, idx, is_prerendered = task
+        logger.info(f"Starting render of clip {idx} to {output_path}")
 
-            # Use the copy for rendering
-            return render_clip_segment(clip_copy, output_path, fps_val, preset_val, threads_val)
-
-        except Exception as e:
-            logger.warning(f"Error with direct rendering: {e}. Trying fallback.")
-
-            # If direct rendering fails, try an emergency pre-render approach
+        # If clip is already pre-rendered, just load and render it
+        if is_prerendered:
             try:
-                # Create a temporary path for emergency pre-rendering
-                temp_dir = os.path.dirname(output_path)
-                temp_filename = f"emergency_{os.path.basename(output_path)}"
-                temp_path = os.path.join(temp_dir, temp_filename)
-
-                logger.info(f"Emergency pre-rendering to: {temp_path}")
-
-                # Write with minimal settings for speed
-                clip.write_videofile(
-                    temp_path,
-                    fps=fps_val,
-                    preset="ultrafast",
-                    codec="libx264",
-                    audio_codec="aac",
-                    threads=2,
-                    logger="bar"
-                )
-
-                # Reload and render
-                from moviepy.editor import VideoFileClip
-                fallback_clip = VideoFileClip(temp_path)
-                result = render_clip_segment(fallback_clip, output_path, fps_val, preset_val, threads_val)
-
-                # Clean up
+                pre_clip = VideoFileClip(clip)
+                result = render_clip_segment(pre_clip, output_path, fps_val, preset_val, threads_val)
                 try:
-                    fallback_clip.close()
-                    if os.path.exists(temp_path):
-                        os.remove(temp_path)
+                    pre_clip.close()
                 except:
                     pass
-
                 return result
-
-            except Exception as fallback_error:
-                logger.error(f"Fallback rendering also failed: {fallback_error}")
+            except Exception as e:
+                logger.error(f"Error loading pre-rendered clip: {e}")
                 return None
+
+        # For normal clips, render directly
+        return render_clip_segment(clip, output_path, fps_val, preset_val, threads_val)
 
     except Exception as e:
         logger.error(f"Error in parallel rendering task: {e}")
         return None
+
+# Helper function to create fixed static clip versions
+def create_static_clip_version(clip):
+    """Create a static version of a clip with all dynamic attributes converted to static"""
+    # If already a string path, return as is
+    if isinstance(clip, str):
+        return clip, True
+
+    # Fix positions if needed
+    if hasattr(clip, 'pos') and callable(clip.pos):
+        try:
+            mid_pos = clip.pos(clip.duration / 2)
+            clip = clip.set_position(mid_pos)
+        except:
+            clip = clip.set_position('center')
+
+    # Fix sizes if needed
+    if hasattr(clip, 'size') and callable(clip.size):
+        try:
+            mid_size = clip.size(clip.duration / 2)
+            clip = clip.resize(mid_size)
+        except:
+            pass
+
+    # Return the fixed clip
+    return clip, False
 
 def render_clips_in_parallel(clips, output_path, temp_dir=None, fps=30, max_workers=None, preset="veryfast"):
     """
@@ -256,8 +266,6 @@ def render_clips_in_parallel(clips, output_path, temp_dir=None, fps=30, max_work
         temp_dir = tempfile.mkdtemp()
     os.makedirs(temp_dir, exist_ok=True)
 
-    # Remove pre-processing step - we'll handle serialization in the process pool
-
     # Determine max workers based on available CPUs
     if max_workers is None:
         max_workers = max(1, multiprocessing.cpu_count() - 1)  # Leave one CPU free
@@ -270,50 +278,72 @@ def render_clips_in_parallel(clips, output_path, temp_dir=None, fps=30, max_work
 
     logger.info(f"Starting parallel rendering of {len(clips)} clips with {max_workers} workers")
 
+    # Pre-process clips that might cause serialization issues
+    processed_clips = []
+    prerender_paths = []
+
+    for idx, clip in enumerate(clips):
+        # Check if clip is CompositeVideoClip or has complex attributes
+        is_complex = (
+            isinstance(clip, CompositeVideoClip) or
+            (hasattr(clip, 'fx_list') and len(getattr(clip, 'fx_list', [])) > 0) or
+            (hasattr(clip, 'mask') and clip.mask is not None)
+        )
+
+        if is_complex:
+            # Pre-render complex clips to avoid serialization issues
+            logger.info(f"Pre-rendering complex clip {idx}")
+            path = prerender_complex_clip(clip, temp_dir, idx, fps)
+            processed_clips.append(path)
+            prerender_paths.append(path)
+        else:
+            # For simpler clips, create static versions
+            static_clip, is_path = create_static_clip_version(clip)
+            processed_clips.append(static_clip)
+            if is_path:
+                prerender_paths.append(static_clip)
+
     # Create a list of tasks for multiprocessing
     render_tasks = []
     temp_paths = []
 
     # Create task paths
-    for idx, clip in enumerate(clips):
+    for idx, clip in enumerate(processed_clips):
         temp_path = os.path.join(temp_dir, f"section_{idx}_{int(time.time())}.mp4")
         temp_paths.append(temp_path)
-        render_tasks.append((clip, temp_path, fps, preset, 2))
+
+        # Check if clip is a path to a pre-rendered clip
+        is_prerendered = isinstance(clip, str)
+
+        # Add task parameters including index for better logging
+        render_tasks.append((clip, temp_path, fps, preset, 2, idx, is_prerendered))
 
     # Process clips in parallel
     rendered_paths = []
 
     if len(render_tasks) == 1:
         # If there's only one clip, just render it directly
+        task = render_tasks[0]
         try:
-            temp_path = render_clip_segment(*render_tasks[0])
+            temp_path = process_clip_for_parallel(task)
             if temp_path and os.path.exists(temp_path):
                 rendered_paths.append(temp_path)
         except Exception as e:
             logger.error(f"Error rendering single clip: {e}")
 
     elif USING_DILL:
-        # Use dill for better serialization with proper error handling
+        # Use dill for better serialization
+        logger.info("Using dill for parallel rendering")
         try:
-            # IMPORTANT: Create multiprocessing context that explicitly uses dill
-            # Create pool with initializer to ensure dill is properly used
-            def init_worker():
-                import dill
-                dill.settings['recurse'] = True
-                # Register dill in the worker process
-                multiprocessing.reduction.register(dill.dumps, dill.loads)
-
-            with multiprocessing.get_context('spawn').Pool(
-                processes=max_workers,
-                initializer=init_worker
-            ) as pool:
+            # Create pool with explicit context for better Windows compatibility
+            with multiprocessing.get_context('spawn').Pool(processes=max_workers) as pool:
                 # Create a progress bar for rendering
                 print(f"\nRendering {len(render_tasks)} clips in parallel:")
 
-                # Use map_async with explicit timeout to avoid hanging
-                results = pool.map_async(render_with_timeout, render_tasks)
+                # Use map_async to get results
+                results = pool.map_async(process_clip_for_parallel, render_tasks)
 
-                # Monitor with our own progress bar
+                # Monitor progress
                 with tqdm(total=len(render_tasks), desc="Rendering clips", unit="clip") as pbar:
                     # Check progress until complete
                     while not results.ready():
@@ -342,7 +372,7 @@ def render_clips_in_parallel(clips, output_path, temp_dir=None, fps=30, max_work
             print(f"\nRendering {len(render_tasks)} clips sequentially (multiprocessing failed):")
             for i, task in enumerate(tqdm(render_tasks, desc="Rendering clips", unit="clip")):
                 try:
-                    temp_path = render_clip_segment(*task)
+                    temp_path = process_clip_for_parallel(task)
                     if temp_path and os.path.exists(temp_path):
                         rendered_paths.append(temp_path)
                         logger.info(f"Successfully rendered clip {i+1}")
@@ -355,7 +385,7 @@ def render_clips_in_parallel(clips, output_path, temp_dir=None, fps=30, max_work
         print(f"\nRendering {len(render_tasks)} clips sequentially (for better parallelization, install dill):")
         for i, task in enumerate(tqdm(render_tasks, desc="Rendering clips", unit="clip")):
             try:
-                temp_path = render_clip_segment(*task)
+                temp_path = process_clip_for_parallel(task)
                 if temp_path and os.path.exists(temp_path):
                     rendered_paths.append(temp_path)
                     logger.info(f"Successfully rendered clip {i+1}")
@@ -363,6 +393,14 @@ def render_clips_in_parallel(clips, output_path, temp_dir=None, fps=30, max_work
                     logger.error(f"Failed to render clip {i+1}")
             except Exception as e:
                 logger.error(f"Error rendering clip {i+1}: {e}")
+
+    # Clean up pre-rendered clips that are no longer needed
+    for path in prerender_paths:
+        try:
+            if os.path.exists(path):
+                os.remove(path)
+        except Exception as e:
+            logger.warning(f"Error removing pre-rendered file {path}: {e}")
 
     if not rendered_paths:
         logger.error("No clips were rendered successfully")
