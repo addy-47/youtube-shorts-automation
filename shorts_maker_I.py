@@ -71,7 +71,22 @@ class YTShortsCreator_I:
 
         # Initialize TTS (Text-to-Speech)
         self.azure_tts = None
-        if os.getenv("USE_AZURE_TTS", "false").lower() == "true":
+        self.google_tts = None
+
+        # Initialize Google Cloud TTS
+        if os.getenv("USE_GOOGLE_TTS", "true").lower() == "true":
+            try:
+                from voiceover import GoogleVoiceover
+                self.google_tts = GoogleVoiceover(
+                    voice=os.getenv("GOOGLE_VOICE", "en-US-Neural2-D"),
+                    output_dir=self.temp_dir
+                )
+                logger.info("Google Cloud TTS initialized successfully")
+            except Exception as e:
+                logger.warning(f"Failed to initialize Google Cloud TTS: {e}. Will use gTTS instead.")
+
+        # Initialize Azure TTS as fallback (if configured)
+        elif os.getenv("USE_AZURE_TTS", "false").lower() == "true":
             try:
                 from voiceover import AzureVoiceover
                 self.azure_tts = AzureVoiceover(
@@ -438,6 +453,24 @@ class YTShortsCreator_I:
         elif len(text.strip()) < 5:
             # For very short texts like "Check it out!", expand it slightly to ensure TTS works well
             text = text.strip() + "."  # Add period if missing
+
+        # Try to use Google Cloud TTS if available
+        if self.google_tts:
+            try:
+                voice = os.getenv("GOOGLE_VOICE", "en-US-Neural2-D")
+                # Map voice styles for Google Cloud TTS
+                google_styles = {
+                    "excited": "excited",
+                    "calm": "calm",
+                    "serious": "serious",
+                    "sad": "sad",
+                    "none": None
+                }
+                style = google_styles.get(voice_style, None)
+
+                return self.google_tts.generate_speech(text, output_filename=filename, voice_style=style)
+            except Exception as e:
+                logger.error(f"Google Cloud TTS failed: {e}, falling back to Azure TTS or gTTS")
 
         # Try to use Azure TTS if available
         if self.azure_tts:

@@ -71,7 +71,22 @@ class YTShortsCreator_V:
 
         # Initialize TTS (Text-to-Speech)
         self.azure_tts = None
-        if os.getenv("USE_AZURE_TTS", "false").lower() == "true":
+        self.google_tts = None
+
+        # Initialize Google Cloud TTS
+        if os.getenv("USE_GOOGLE_TTS", "true").lower() == "true":
+            try:
+                from voiceover import GoogleVoiceover
+                self.google_tts = GoogleVoiceover(
+                    voice=os.getenv("GOOGLE_VOICE", "en-US-Neural2-D"),
+                    output_dir=self.temp_dir
+                )
+                logger.info("Google Cloud TTS initialized successfully")
+            except Exception as e:
+                logger.warning(f"Failed to initialize Google Cloud TTS: {e}. Will use gTTS instead.")
+
+        # Initialize Azure TTS as fallback (if configured)
+        elif os.getenv("USE_AZURE_TTS", "false").lower() == "true":
             try:
                 from voiceover import AzureVoiceover
                 self.azure_tts = AzureVoiceover(
@@ -831,7 +846,19 @@ class YTShortsCreator_V:
                 section_audio_file = os.path.join(self.temp_dir, f"section_{i}.mp3")
 
                 # Azure TTS or gTTS
-                if self.azure_tts:
+                if self.google_tts:
+                    try:
+                        audio_path = self.google_tts.generate_speech(
+                            text,
+                            output_filename=section_audio_file,
+                            voice_style=section_voice_style
+                        )
+                    except Exception as e:
+                        logger.error(f"Google Cloud TTS error: {e}. Falling back to gTTS.")
+                        tts = gTTS(text=text, lang='en', slow=False)
+                        tts.save(section_audio_file)
+                        audio_path = section_audio_file
+                elif self.azure_tts:
                     try:
                         audio_path = self.azure_tts.generate_speech(
                             text,

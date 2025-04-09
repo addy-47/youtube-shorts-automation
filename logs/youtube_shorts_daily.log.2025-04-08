@@ -1,0 +1,288 @@
+2025-04-08 21:15:40,748 - INFO - __main__ - Day 98: Using image-based creator (YTShortsCreator_I)
+2025-04-08 21:15:42,812 - INFO - voiceover - Set initial silence timeout to 10000ms
+2025-04-08 21:15:42,813 - INFO - shorts_maker_V - Azure TTS initialized successfully
+2025-04-08 21:15:42,817 - INFO - voiceover - Set initial silence timeout to 10000ms
+2025-04-08 21:15:42,819 - INFO - shorts_maker_I - Azure TTS initialized successfully
+2025-04-08 21:15:42,823 - INFO - __main__ - Using style: photorealistic
+2025-04-08 21:15:43,825 - INFO - __main__ - Generating script for topic: AI companies are commiting mass theft and hiding behind the language of ‘training’ - The Hill
+2025-04-08 21:15:48,081 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-08 21:15:48,175 - INFO - script_generator - Script cleaned
+2025-04-08 21:15:48,176 - INFO - script_generator - Script generated successfully with 52 words.
+2025-04-08 21:15:48,176 - INFO - __main__ - Raw script generated successfully
+2025-04-08 21:15:48,177 - INFO - __main__ - Script parsed into 5 sections
+2025-04-08 21:15:48,177 - INFO - __main__ - Section 1: AI companies are facing seriou... (duration: 5s)
+2025-04-08 21:15:48,178 - INFO - __main__ - Section 2: They're allegedly committing m... (duration: 5s)
+2025-04-08 21:15:48,178 - INFO - __main__ - Section 3: The conversation around AI eth... (duration: 5s)
+2025-04-08 21:15:48,178 - INFO - __main__ - Section 4: Are we letting tech giants get... (duration: 5s)
+2025-04-08 21:15:48,179 - INFO - __main__ - Section 5: Let us know your thoughts in t... (duration: 5s)
+2025-04-08 21:15:48,179 - INFO - __main__ - Generating image search prompts for each section using AI...
+2025-04-08 21:15:51,547 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-08 21:15:51,550 - INFO - script_generator - Successfully generated batch image prompts for 5 sections.
+2025-04-08 21:15:51,550 - INFO - __main__ - Section queries: 1: a group of diverse people looking concerned, surrounded by floating digital icons representing AI, in a dimly lit room, highlighting tension and urgency, 2: an abstract representation of a giant AI figure overshadowing smaller creators, with chains symbolizing theft, and a dark cloud of controversy overhead, 3: a heated debate scene with people of different backgrounds discussing ethics, surrounded by symbols of technology and creativity, vibrant colors to convey passion, 4: a giant hand representing tech giants reaching out towards a smaller hand representing creativity, with a backdrop of various artistic symbols being pulled away, 5: a digital comment section filled with diverse opinions, animated speech bubbles floating above a laptop, vibrant colors to attract engagement and discussion
+2025-04-08 21:15:51,551 - INFO - __main__ - Creating YouTube Short with style: photorealistic
+2025-04-08 21:15:51,551 - INFO - shorts_maker_I - STARTING create_youtube_short at 21:15:51.551
+2025-04-08 21:15:51,552 - INFO - shorts_maker_I - Creating YouTube Short: TRENDING AI NEWS
+2025-04-08 21:15:51,552 - INFO - shorts_maker_I - Testing Hugging Face API with query: a group of diverse people looking concerned, surrounded by floating digital icons representing AI, in a dimly lit room, highlighting tension and urgency
+2025-04-08 21:15:51,552 - INFO - shorts_maker_I - STARTING _generate_image_from_prompt at 21:15:51.552
+2025-04-08 21:15:51,553 - INFO - shorts_maker_I - Original prompt: a group of diverse people looking concerned, surro...
+2025-04-08 21:15:51,553 - INFO - shorts_maker_I - Using style: photorealistic
+2025-04-08 21:15:51,553 - INFO - shorts_maker_I - Enhanced prompt: a group of diverse people looking concerned, surro...
+2025-04-08 21:16:01,067 - INFO - shorts_maker_I - Image saved to C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\gen_img_1744127151_3861.png
+2025-04-08 21:16:01,068 - INFO - shorts_maker_I - COMPLETED _generate_image_from_prompt in 9.52 seconds
+2025-04-08 21:16:01,069 - INFO - shorts_maker_I - Starting TTS audio generation
+2025-04-08 21:16:01,069 - INFO - shorts_maker_I - STARTING _create_tts_audio at 21:16:01.069
+2025-04-08 21:16:01,300 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:01,301 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:01,301 - WARNING - voiceover - Azure TTS error (attempt 1/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:16:07,808 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:07,811 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:07,814 - WARNING - voiceover - Azure TTS error (attempt 2/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:16:11,977 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:11,978 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:11,978 - ERROR - voiceover - Azure TTS failed after 3 attempts: Azure TTS error: CancellationReason.Error
+2025-04-08 21:16:11,978 - ERROR - shorts_maker_I - Azure TTS failed: Azure TTS error: Azure TTS error: CancellationReason.Error, falling back to gTTS
+2025-04-08 21:16:12,748 - INFO - shorts_maker_I - Successfully created TTS audio: C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\tts_1744127161.mp3
+2025-04-08 21:16:12,748 - INFO - shorts_maker_I - COMPLETED _create_tts_audio in 11.68 seconds
+2025-04-08 21:16:13,367 - INFO - shorts_maker_I - STARTING _create_tts_audio at 21:16:13.367
+2025-04-08 21:16:13,541 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:13,542 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:13,544 - WARNING - voiceover - Azure TTS error (attempt 1/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:16:15,710 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:15,710 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:15,711 - WARNING - voiceover - Azure TTS error (attempt 2/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:16:19,887 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:19,887 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:19,887 - ERROR - voiceover - Azure TTS failed after 3 attempts: Azure TTS error: CancellationReason.Error
+2025-04-08 21:16:19,888 - ERROR - shorts_maker_I - Azure TTS failed: Azure TTS error: Azure TTS error: CancellationReason.Error, falling back to gTTS
+2025-04-08 21:16:21,933 - INFO - shorts_maker_I - Successfully created TTS audio: C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\tts_1744127173.mp3
+2025-04-08 21:16:21,933 - INFO - shorts_maker_I - COMPLETED _create_tts_audio in 8.57 seconds
+2025-04-08 21:16:22,094 - INFO - shorts_maker_I - STARTING _create_tts_audio at 21:16:22.094
+2025-04-08 21:16:22,265 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:22,265 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:22,265 - WARNING - voiceover - Azure TTS error (attempt 1/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:16:24,415 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:24,415 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:24,415 - WARNING - voiceover - Azure TTS error (attempt 2/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:16:28,606 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:28,606 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:28,607 - ERROR - voiceover - Azure TTS failed after 3 attempts: Azure TTS error: CancellationReason.Error
+2025-04-08 21:16:28,607 - ERROR - shorts_maker_I - Azure TTS failed: Azure TTS error: Azure TTS error: CancellationReason.Error, falling back to gTTS
+2025-04-08 21:16:29,360 - INFO - shorts_maker_I - Successfully created TTS audio: C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\tts_1744127182.mp3
+2025-04-08 21:16:29,360 - INFO - shorts_maker_I - COMPLETED _create_tts_audio in 7.27 seconds
+2025-04-08 21:16:29,509 - INFO - shorts_maker_I - STARTING _create_tts_audio at 21:16:29.509
+2025-04-08 21:16:29,656 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:29,656 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:29,657 - WARNING - voiceover - Azure TTS error (attempt 1/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:16:31,805 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:31,806 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:31,806 - WARNING - voiceover - Azure TTS error (attempt 2/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:16:35,982 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:35,982 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:35,982 - ERROR - voiceover - Azure TTS failed after 3 attempts: Azure TTS error: CancellationReason.Error
+2025-04-08 21:16:35,982 - ERROR - shorts_maker_I - Azure TTS failed: Azure TTS error: Azure TTS error: CancellationReason.Error, falling back to gTTS
+2025-04-08 21:16:36,582 - INFO - shorts_maker_I - Successfully created TTS audio: C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\tts_1744127189.mp3
+2025-04-08 21:16:36,583 - INFO - shorts_maker_I - COMPLETED _create_tts_audio in 7.07 seconds
+2025-04-08 21:16:36,735 - INFO - shorts_maker_I - STARTING _create_tts_audio at 21:16:36.734
+2025-04-08 21:16:36,902 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:36,902 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:36,902 - WARNING - voiceover - Azure TTS error (attempt 1/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:16:39,080 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:39,080 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:39,081 - WARNING - voiceover - Azure TTS error (attempt 2/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:16:43,262 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:16:43,262 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:16:43,263 - ERROR - voiceover - Azure TTS failed after 3 attempts: Azure TTS error: CancellationReason.Error
+2025-04-08 21:16:43,263 - ERROR - shorts_maker_I - Azure TTS failed: Azure TTS error: Azure TTS error: CancellationReason.Error, falling back to gTTS
+2025-04-08 21:16:43,774 - INFO - shorts_maker_I - Successfully created TTS audio: C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\tts_1744127196.mp3
+2025-04-08 21:16:43,775 - INFO - shorts_maker_I - COMPLETED _create_tts_audio in 7.04 seconds
+2025-04-08 21:16:43,963 - INFO - shorts_maker_I - Completed TTS audio generation in 42.89 seconds
+2025-04-08 21:16:43,964 - INFO - shorts_maker_I - Updated total duration: 30.5s
+2025-04-08 21:16:43,964 - INFO - shorts_maker_I - Generating image for intro section
+2025-04-08 21:16:43,965 - INFO - shorts_maker_I - STARTING _generate_image_from_prompt at 21:16:43.965
+2025-04-08 21:16:43,966 - INFO - shorts_maker_I - Original prompt: a group of diverse people looking concerned, surro...
+2025-04-08 21:16:43,966 - INFO - shorts_maker_I - Using style: photorealistic
+2025-04-08 21:16:43,966 - INFO - shorts_maker_I - Enhanced prompt: a group of diverse people looking concerned, surro...
+2025-04-08 21:16:44,523 - INFO - shorts_maker_I - Image saved to C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\gen_img_1744127203_2021.png
+2025-04-08 21:16:44,524 - INFO - shorts_maker_I - COMPLETED _generate_image_from_prompt in 0.56 seconds
+2025-04-08 21:16:44,524 - INFO - shorts_maker_I - Completed image generation for intro in 0.56 seconds
+2025-04-08 21:16:46,649 - INFO - shorts_maker_I - STARTING _create_still_image_clip at 21:16:46.649
+2025-04-08 21:16:46,746 - INFO - shorts_maker_I - COMPLETED _create_still_image_clip in 0.10 seconds
+2025-04-08 21:16:49,310 - INFO - shorts_maker_I - Generating image for middle section 1
+2025-04-08 21:16:49,310 - INFO - shorts_maker_I - STARTING _generate_image_from_prompt at 21:16:49.310
+2025-04-08 21:16:49,311 - INFO - shorts_maker_I - Original prompt: an abstract representation of a giant AI figure ov...
+2025-04-08 21:16:49,311 - INFO - shorts_maker_I - Using style: photorealistic
+2025-04-08 21:16:49,312 - INFO - shorts_maker_I - Enhanced prompt: an abstract representation of a giant AI figure ov...
+2025-04-08 21:17:06,168 - INFO - shorts_maker_I - Image saved to C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\gen_img_1744127209_1310.png
+2025-04-08 21:17:06,171 - INFO - shorts_maker_I - COMPLETED _generate_image_from_prompt in 16.86 seconds
+2025-04-08 21:17:06,172 - INFO - shorts_maker_I - Completed image generation in 16.86 seconds
+2025-04-08 21:17:06,172 - INFO - shorts_maker_I - STARTING _create_still_image_clip at 21:17:06.172
+2025-04-08 21:17:06,228 - INFO - shorts_maker_I - COMPLETED _create_still_image_clip in 0.06 seconds
+2025-04-08 21:17:06,432 - INFO - shorts_maker_I - Generating image for middle section 2
+2025-04-08 21:17:06,433 - INFO - shorts_maker_I - STARTING _generate_image_from_prompt at 21:17:06.433
+2025-04-08 21:17:06,434 - INFO - shorts_maker_I - Original prompt: a heated debate scene with people of different bac...
+2025-04-08 21:17:06,434 - INFO - shorts_maker_I - Using style: photorealistic
+2025-04-08 21:17:06,434 - INFO - shorts_maker_I - Enhanced prompt: a heated debate scene with people of different bac...
+2025-04-08 21:17:14,225 - INFO - shorts_maker_I - Image saved to C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\gen_img_1744127226_7380.png
+2025-04-08 21:17:14,226 - INFO - shorts_maker_I - COMPLETED _generate_image_from_prompt in 7.79 seconds
+2025-04-08 21:17:14,226 - INFO - shorts_maker_I - Completed image generation in 7.79 seconds
+2025-04-08 21:17:14,226 - INFO - shorts_maker_I - STARTING _create_still_image_clip at 21:17:14.226
+2025-04-08 21:17:14,274 - INFO - shorts_maker_I - COMPLETED _create_still_image_clip in 0.05 seconds
+2025-04-08 21:17:14,426 - INFO - shorts_maker_I - Generating image for middle section 3
+2025-04-08 21:17:14,427 - INFO - shorts_maker_I - STARTING _generate_image_from_prompt at 21:17:14.427
+2025-04-08 21:17:14,427 - INFO - shorts_maker_I - Original prompt: a giant hand representing tech giants reaching out...
+2025-04-08 21:17:14,428 - INFO - shorts_maker_I - Using style: photorealistic
+2025-04-08 21:17:14,428 - INFO - shorts_maker_I - Enhanced prompt: a giant hand representing tech giants reaching out...
+2025-04-08 21:17:21,480 - INFO - shorts_maker_I - Image saved to C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\gen_img_1744127234_5858.png
+2025-04-08 21:17:21,481 - INFO - shorts_maker_I - COMPLETED _generate_image_from_prompt in 7.05 seconds
+2025-04-08 21:17:21,482 - INFO - shorts_maker_I - Completed image generation in 7.06 seconds
+2025-04-08 21:17:21,483 - INFO - shorts_maker_I - STARTING _create_still_image_clip at 21:17:21.482
+2025-04-08 21:17:21,536 - INFO - shorts_maker_I - COMPLETED _create_still_image_clip in 0.05 seconds
+2025-04-08 21:17:21,712 - INFO - shorts_maker_I - Generating image for outro section
+2025-04-08 21:17:21,712 - INFO - shorts_maker_I - STARTING _generate_image_from_prompt at 21:17:21.712
+2025-04-08 21:17:21,713 - INFO - shorts_maker_I - Original prompt: a digital comment section filled with diverse opin...
+2025-04-08 21:17:21,713 - INFO - shorts_maker_I - Using style: photorealistic
+2025-04-08 21:17:21,713 - INFO - shorts_maker_I - Enhanced prompt: a digital comment section filled with diverse opin...
+2025-04-08 21:17:29,370 - INFO - shorts_maker_I - Image saved to C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\gen_img_1744127241_8003.png
+2025-04-08 21:17:29,374 - INFO - shorts_maker_I - COMPLETED _generate_image_from_prompt in 7.66 seconds
+2025-04-08 21:17:29,374 - INFO - shorts_maker_I - Completed image generation for outro in 7.66 seconds
+2025-04-08 21:17:29,375 - INFO - shorts_maker_I - STARTING _create_still_image_clip at 21:17:29.374
+2025-04-08 21:17:29,828 - INFO - shorts_maker_I - COMPLETED _create_still_image_clip in 0.45 seconds
+2025-04-08 21:18:05,814 - INFO - shorts_maker_I - Successfully processed 5/5 sections
+2025-04-08 21:18:06,949 - INFO - shorts_maker_I - Using parallel renderer for improved performance
+2025-04-08 21:18:06,953 - INFO - shorts_maker_I - Starting parallel video rendering
+2025-04-08 21:18:06,955 - INFO - parallel_renderer - Starting parallel rendering of 5 clips with 4 workers
+2025-04-08 21:18:07,062 - ERROR - parallel_renderer - Error with parallel processing: Can't get local object 'render_clips_in_parallel.<locals>.init_worker'
+2025-04-08 21:18:07,065 - WARNING - parallel_renderer - Falling back to sequential processing
+2025-04-08 21:18:07,445 - INFO - parallel_renderer - Starting render of segment to C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\parallel_render\section_0_1744127286.mp4
+2025-04-08 21:18:09,750 - INFO - parallel_renderer - Successfully preprocessed audio
+2025-04-08 21:18:10,036 - ERROR - parallel_renderer - Error rendering segment C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\parallel_render\section_0_1744127286.mp4: Error in file C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\parallel_render\section_0_1744127286_temp_audio.wav, Accessing time t=3.89-4.07 seconds, with clip duration=3 seconds, 
+2025-04-08 21:18:10,036 - ERROR - parallel_renderer - Error rendering clip 1: Error in file C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\parallel_render\section_0_1744127286_temp_audio.wav, Accessing time t=3.89-4.07 seconds, with clip duration=3 seconds, 
+2025-04-08 21:18:10,443 - INFO - parallel_renderer - Starting render of segment to C:\Users\adhbu\AppData\Local\Temp\tmpajrm8dso\parallel_render\section_1_1744127286.mp4
+2025-04-08 21:18:12,862 - INFO - parallel_renderer - Successfully preprocessed audio
+2025-04-08 21:26:37,203 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-04-08 21:26:38,639 - INFO - voiceover - Set initial silence timeout to 10000ms
+2025-04-08 21:26:38,654 - INFO - shorts_maker_V - Azure TTS initialized successfully
+2025-04-08 21:26:39,355 - INFO - __main__ - Generating script for topic: AI companies are commiting mass theft and hiding behind the language of ‘training’ - The Hill
+2025-04-08 21:26:48,821 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-08 21:26:48,885 - INFO - script_generator - Script cleaned
+2025-04-08 21:26:48,889 - INFO - script_generator - Script generated successfully with 61 words.
+2025-04-08 21:26:48,914 - INFO - __main__ - Raw script generated successfully
+2025-04-08 21:26:48,930 - INFO - __main__ - Script parsed into 7 sections
+2025-04-08 21:26:48,936 - INFO - __main__ - Section 1: AI companies are facing seriou... (duration: 5s)
+2025-04-08 21:26:48,984 - INFO - __main__ - Section 2: Recent reports claim they’re u... (duration: 5s)
+2025-04-08 21:26:49,022 - INFO - __main__ - Section 3: This raises huge ethical conce... (duration: 5s)
+2025-04-08 21:26:49,037 - INFO - __main__ - Section 4: Are we just letting them take ... (duration: 5s)
+2025-04-08 21:26:49,088 - INFO - __main__ - Section 5: We need to discuss this!... (duration: 3s)
+2025-04-08 21:26:49,100 - INFO - __main__ - Section 6: What do you think about the et... (duration: 5s)
+2025-04-08 21:26:49,121 - INFO - __main__ - Section 7: Share your thoughts below!... (duration: 3s)
+2025-04-08 21:26:49,167 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-04-08 21:26:55,340 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-08 21:26:55,370 - INFO - script_generator - Successfully generated batch video queries for 7 sections.
+2025-04-08 21:26:55,403 - INFO - __main__ - Section queries: 1: AI companies accusations, 2: data harvesting concerns, 3: ethical consent ownership, 4: creativity compensation debate, 5: discussion group meeting, 6: AI training ethics, 7: user comments feedback
+2025-04-08 21:26:55,576 - INFO - __main__ - Creating YouTube Short
+2025-04-08 21:26:55,671 - INFO - shorts_maker_V - Starting YouTube short creation
+2025-04-08 21:26:55,720 - INFO - shorts_maker_V - Scaling durations by factor 0.81 to fit max duration of 25s
+2025-04-08 21:26:55,748 - INFO - shorts_maker_V - Total video duration: 25.0s
+2025-04-08 21:26:55,785 - INFO - shorts_maker_V - Creating video with 5 background segments for middle sections
+2025-04-08 21:26:55,816 - INFO - shorts_maker_V - Starting background video fetch
+2025-04-08 21:26:55,853 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-08 21:27:16,791 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-08 21:27:20,982 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-08 21:27:28,531 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-08 21:27:30,813 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-08 21:27:33,301 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-08 21:27:36,015 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-08 21:27:40,150 - INFO - shorts_maker_V - Completed background video fetch in 44.30 seconds
+2025-04-08 21:27:40,151 - INFO - shorts_maker_V - Starting TTS audio generation
+2025-04-08 21:27:40,530 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:27:40,531 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:27:40,533 - WARNING - voiceover - Azure TTS error (attempt 1/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:27:42,751 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:27:42,752 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:27:42,753 - WARNING - voiceover - Azure TTS error (attempt 2/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:27:46,976 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:27:46,977 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:27:46,978 - ERROR - voiceover - Azure TTS failed after 3 attempts: Azure TTS error: CancellationReason.Error
+2025-04-08 21:27:46,979 - ERROR - shorts_maker_V - Azure TTS error: Azure TTS error: Azure TTS error: CancellationReason.Error. Falling back to gTTS.
+2025-04-08 21:27:48,409 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:27:48,410 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:27:48,411 - WARNING - voiceover - Azure TTS error (attempt 1/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:27:50,656 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:27:50,657 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:27:50,658 - WARNING - voiceover - Azure TTS error (attempt 2/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:27:54,832 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:27:54,833 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:27:54,834 - ERROR - voiceover - Azure TTS failed after 3 attempts: Azure TTS error: CancellationReason.Error
+2025-04-08 21:27:54,835 - ERROR - shorts_maker_V - Azure TTS error: Azure TTS error: Azure TTS error: CancellationReason.Error. Falling back to gTTS.
+2025-04-08 21:27:58,273 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:27:58,274 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:27:58,275 - WARNING - voiceover - Azure TTS error (attempt 1/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:28:00,623 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:00,624 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:00,625 - WARNING - voiceover - Azure TTS error (attempt 2/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:28:04,941 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:04,942 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:04,944 - ERROR - voiceover - Azure TTS failed after 3 attempts: Azure TTS error: CancellationReason.Error
+2025-04-08 21:28:04,945 - ERROR - shorts_maker_V - Azure TTS error: Azure TTS error: Azure TTS error: CancellationReason.Error. Falling back to gTTS.
+2025-04-08 21:28:09,459 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:09,461 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:09,462 - WARNING - voiceover - Azure TTS error (attempt 1/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:28:11,692 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:11,693 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:11,694 - WARNING - voiceover - Azure TTS error (attempt 2/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:28:15,892 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:15,893 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:15,895 - ERROR - voiceover - Azure TTS failed after 3 attempts: Azure TTS error: CancellationReason.Error
+2025-04-08 21:28:15,896 - ERROR - shorts_maker_V - Azure TTS error: Azure TTS error: Azure TTS error: CancellationReason.Error. Falling back to gTTS.
+2025-04-08 21:28:19,502 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:19,503 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:19,505 - WARNING - voiceover - Azure TTS error (attempt 1/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:28:21,702 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:21,704 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:21,707 - WARNING - voiceover - Azure TTS error (attempt 2/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:28:25,950 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:25,951 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:25,953 - ERROR - voiceover - Azure TTS failed after 3 attempts: Azure TTS error: CancellationReason.Error
+2025-04-08 21:28:25,954 - ERROR - shorts_maker_V - Azure TTS error: Azure TTS error: Azure TTS error: CancellationReason.Error. Falling back to gTTS.
+2025-04-08 21:28:27,141 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:27,142 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:27,143 - WARNING - voiceover - Azure TTS error (attempt 1/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:28:29,324 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:29,325 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:29,326 - WARNING - voiceover - Azure TTS error (attempt 2/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:28:33,522 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:33,523 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:33,524 - ERROR - voiceover - Azure TTS failed after 3 attempts: Azure TTS error: CancellationReason.Error
+2025-04-08 21:28:33,525 - ERROR - shorts_maker_V - Azure TTS error: Azure TTS error: Azure TTS error: CancellationReason.Error. Falling back to gTTS.
+2025-04-08 21:28:34,670 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:34,671 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:34,671 - WARNING - voiceover - Azure TTS error (attempt 1/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:28:36,908 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:36,908 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:36,909 - WARNING - voiceover - Azure TTS error (attempt 2/3): Azure TTS error: CancellationReason.Error. Retrying...
+2025-04-08 21:28:41,198 - ERROR - voiceover - Speech synthesis canceled: CancellationReason.Error
+2025-04-08 21:28:41,202 - ERROR - voiceover - Error details: WebSocket upgrade failed: Authentication error (401). Please check subscription information and region name. USP state: Sending. Received audio size: 0 bytes.
+2025-04-08 21:28:41,203 - ERROR - voiceover - Azure TTS failed after 3 attempts: Azure TTS error: CancellationReason.Error
+2025-04-08 21:28:41,204 - ERROR - shorts_maker_V - Azure TTS error: Azure TTS error: Azure TTS error: CancellationReason.Error. Falling back to gTTS.
+2025-04-08 21:28:42,593 - INFO - shorts_maker_V - Completed TTS audio generation in 62.44 seconds
+2025-04-08 21:28:42,594 - INFO - shorts_maker_V - Updated total duration: 27.94s
+2025-04-08 21:28:42,595 - INFO - shorts_maker_V - Starting background processing
+2025-04-08 21:30:24,360 - INFO - shorts_maker_V - Completed background processing in 101.73 seconds
+2025-04-08 21:31:36,929 - INFO - shorts_maker_V - Using parallel renderer for improved performance
+2025-04-08 21:31:39,741 - INFO - parallel_renderer - Starting parallel rendering of 7 clips with 4 workers
+2025-04-08 21:31:40,373 - ERROR - parallel_renderer - Error with parallel processing: Can't get local object 'render_clips_in_parallel.<locals>.init_worker'
+2025-04-08 21:31:40,388 - WARNING - parallel_renderer - Falling back to sequential processing
+2025-04-08 21:31:40,953 - INFO - parallel_renderer - Starting render of segment to C:\Users\adhbu\AppData\Local\Temp\tmpejdje09d\section_0_1744128099.mp4
+2025-04-08 21:31:47,624 - INFO - parallel_renderer - Successfully preprocessed audio
+2025-04-08 21:36:41,668 - INFO - parallel_renderer - Completed render of segment C:\Users\adhbu\AppData\Local\Temp\tmpejdje09d\section_0_1744128099.mp4 in 300.71 seconds
+2025-04-08 21:36:41,689 - INFO - parallel_renderer - Successfully rendered clip 1
+2025-04-08 21:36:41,705 - INFO - parallel_renderer - Starting render of segment to C:\Users\adhbu\AppData\Local\Temp\tmpejdje09d\section_1_1744128099.mp4
+2025-04-08 21:36:43,186 - INFO - parallel_renderer - Successfully preprocessed audio
+2025-04-08 21:44:27,483 - INFO - parallel_renderer - Completed render of segment C:\Users\adhbu\AppData\Local\Temp\tmpejdje09d\section_1_1744128099.mp4 in 465.77 seconds
+2025-04-08 21:44:27,505 - INFO - parallel_renderer - Successfully rendered clip 2
+2025-04-08 21:44:27,518 - INFO - parallel_renderer - Starting render of segment to C:\Users\adhbu\AppData\Local\Temp\tmpejdje09d\section_2_1744128099.mp4
+2025-04-08 21:44:28,930 - INFO - parallel_renderer - Successfully preprocessed audio
+2025-04-08 21:46:59,542 - INFO - parallel_renderer - Completed render of segment C:\Users\adhbu\AppData\Local\Temp\tmpejdje09d\section_2_1744128099.mp4 in 152.02 seconds
+2025-04-08 21:46:59,554 - INFO - parallel_renderer - Successfully rendered clip 3
+2025-04-08 21:46:59,566 - INFO - parallel_renderer - Starting render of segment to C:\Users\adhbu\AppData\Local\Temp\tmpejdje09d\section_3_1744128099.mp4
+2025-04-08 21:47:01,569 - INFO - parallel_renderer - Successfully preprocessed audio
