@@ -640,7 +640,7 @@ def render_clip_process(mp_tuple):
 
         return None
 
-def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, logger=None, temp_dir=None, preset="medium", codec="libx264", audio_codec="aac"):
+def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, logger=None, temp_dir=None, preset="veryfast", codec="libx264", audio_codec="aac"):
     """
     Render clips in parallel and concatenate them
 
@@ -651,7 +651,7 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
         num_processes: Number of processes to use for parallel rendering
         logger: Logger object to use for logging
         temp_dir: Optional temporary directory path (if None, a new one will be created)
-        preset: FFmpeg preset to use for encoding (default: "medium")
+        preset: FFmpeg preset to use for encoding (default: "veryfast")
         codec: Video codec to use (default: "libx264")
         audio_codec: Audio codec to use (default: "aac")
 
@@ -763,7 +763,7 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
 
             # Set codec and parameters
             final_codec = hw_accel if hw_accel else codec
-            final_preset = "fast" if hw_accel else preset  # Adjust preset based on hardware
+            final_preset = "fast" if hw_accel else preset  # Use the provided preset (now defaults to veryfast)
 
             # Build the FFmpeg command - simplified for stability
             ffmpeg_cmd = [
