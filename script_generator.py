@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import logging
 import time  # for exponential backoff which mwans if the script fails to generate, it will try again after some time
 import re  # for filtering instructional labels
+import json # for parsing JSON responses
 
 # Configure logging - don't use basicConfig since main.py handles this
 logger = logging.getLogger(__name__)
@@ -292,21 +293,153 @@ def generate_batch_image_prompts(texts: list[str], overall_topic="technology", m
     # Fallback: Return empty dict if all retries fail
     return {}
 
+def generate_comprehensive_content(topic, model="gpt-4o-mini-2024-07-18", max_tokens=800, retries=3):
+    """
+    Generate a comprehensive content package for a YouTube Short in a single API call.
+
+    Args:
+        topic (str): The topic or latest news to create content for
+        model (str): The OpenAI model to use
+        max_tokens (int): Maximum tokens for the response
+        retries (int): Number of retry attempts
+
+    Returns:
+        dict: A dictionary containing all generated content elements:
+            - script: The full script text
+            - title: An engaging title for the short
+            - description: Full description with hashtags
+            - thumbnail_hf_prompt: Detailed prompt for Hugging Face image generation
+            - thumbnail_unsplash_query: Simple query for Unsplash image search
+    """
+    if not openai.api_key:
+        raise ValueError("OpenAI API key is not set. Please set OPENAI_API_KEY in .env.")
+
+    # Current date for relevance
+    from datetime import datetime
+    current_date = datetime.now().strftime("%Y-%m-%d")
+
+    prompt = f"""
+    Create a complete content package for a YouTube Short about this topic: "{topic}"
+    Date: {current_date}
+
+    Provide ALL the following elements in a single JSON response:
+
+    1. "script": A 25-second script (100-140 words) that:
+       - Starts with an attention-grabbing opening (0-3 seconds)
+       - Highlights 1-2 key points about the topic (4-22 seconds)
+       - Ends with a clear call to action (23-25 seconds)
+       - Uses short, concise sentences
+       - DOES NOT include labels like "Hook:", "Intro:", etc.
+       - Is written as plain text to be spoken
+
+    2. "title": A catchy, engaging title for the YouTube Short (40-60 characters)
+       - Should grab attention and hint at valuable content
+       - Include relevant keywords for search
+
+    3. "description": A compelling video description (100-200 characters)
+       - Summarizes the content
+       - Includes 3-4 relevant trending hashtags
+
+    4. "thumbnail_hf_prompt": A detailed image prompt for AI image generation (20-30 words)
+       - Should represent the core visual concept for the thumbnail
+       - Include specific visual elements, composition details
+       - DO NOT include style descriptors (like "digital art", "photorealistic")
+       - Focus on WHAT should be in the image, not HOW it should be rendered
+       - Should make viewers want to click
+
+    5. "thumbnail_unsplash_query": A simple 2-4 word query for searching stock photos
+       - Should capture the core visual concept for a fallback thumbnail
+       - Use common terms that would yield good stock photo results
+
+    Format the response as a valid JSON object with these exact field names.
+    """
+
+    for attempt in range(retries):
+        try:
+            client = openai.OpenAI()
+            response = client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=max_tokens,
+                temperature=0.7,
+                response_format={"type": "json_object"}
+            )
+            response_content = response.choices[0].message.content.strip()
+
+            try:
+                # Parse and validate the JSON response
+                content_package = json.loads(response_content)
+
+                # Check if all required fields are present
+                required_fields = ["script", "title", "description", "thumbnail_hf_prompt", "thumbnail_unsplash_query"]
+                missing_fields = [field for field in required_fields if field not in content_package]
+
+                if missing_fields:
+                    logger.warning(f"JSON response missing required fields: {missing_fields}")
+                    raise ValueError(f"Missing required fields in response: {missing_fields}")
+
+                # Clean the script text of any remaining instructional labels
+                content_package["script"] = filter_instructional_labels(content_package["script"])
+
+                logger.info(f"Successfully generated comprehensive content package:")
+                logger.info(f"Title: {content_package['title']}")
+                logger.info(f"Script length: {len(content_package['script'].split())} words")
+                logger.info(f"Thumbnail HF prompt: {content_package['thumbnail_hf_prompt'][:50]}...")
+                logger.info(f"Thumbnail Unsplash query: {content_package['thumbnail_unsplash_query']}")
+
+                return content_package
+
+            except json.JSONDecodeError as json_e:
+                logger.error(f"Failed to parse JSON response from OpenAI: {json_e}")
+                logger.error(f"Raw response: {response_content}")
+                if attempt == retries - 1:
+                    raise
+            except ValueError as ve:
+                logger.error(f"Invalid response format: {str(ve)}")
+                if attempt == retries - 1:
+                    raise
+
+        except openai.OpenAIError as e:
+            logger.error(f"OpenAI API error (attempt {attempt + 1}/{retries}): {str(e)}")
+            if attempt == retries - 1:
+                raise Exception(f"Failed to generate content package after {retries} attempts: {str(e)}")
+
+        # If we get here, retry with exponential backoff
+        wait_time = 2 ** attempt
+        logger.info(f"Retrying in {wait_time} seconds (attempt {attempt + 1}/{retries})...")
+        time.sleep(wait_time)
+
+    # If we get here, all retries failed
+    raise Exception(f"Failed to generate comprehensive content package after {retries} attempts")
+
 if __name__ == "__main__": # This is used to run the script directly for testing
     # Example usage for batch query generation
-    sample_texts = [
-        "Welcome to the future of AI! Big changes are coming.",
-        "We see advancements in machine learning models daily.",
-        "This impacts everything from healthcare to entertainment.",
-        "Subscribe for more AI news!"
-    ]
-    batch_queries = generate_batch_video_queries(sample_texts, overall_topic="Artificial Intelligence")
-    print("Generated Batch Queries:")
-    import json
-    print(json.dumps(batch_queries, indent=2))
+    import logging
+    from pprint import pprint
 
-    # Keep the old example for generate_script
-    script_prompt = "Generate a short script about AI tools."
-    script = generate_script(script_prompt)
-    print("\nGenerated Script:")
-    print(script)
+    # Configure basic logging
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+
+    # Define a test function for the new comprehensive content generation
+    def test_comprehensive_content():
+        print("Testing comprehensive content generation...")
+        test_topic = "AI assistants are revolutionizing remote work"
+        print(f"Topic: {test_topic}")
+
+        try:
+            content_package = generate_comprehensive_content(test_topic)
+            print("\n===== GENERATED CONTENT PACKAGE =====")
+            print(f"Title: {content_package['title']}")
+            print(f"\nDescription: {content_package['description']}")
+            print(f"\nThumbnail HF Prompt: {content_package['thumbnail_hf_prompt']}")
+            print(f"\nThumbnail Unsplash Query: {content_package['thumbnail_unsplash_query']}")
+            print(f"\nScript ({len(content_package['script'].split())} words):")
+            print(content_package['script'])
+            print("\n=====  END OF CONTENT PACKAGE  =====")
+            return content_package
+        except Exception as e:
+            print(f"Error testing comprehensive content generation: {e}")
+            return None
+
+    # Choose which test to run
+    test_comprehensive_content()
