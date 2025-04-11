@@ -8,7 +8,12 @@ from google.auth.transport.requests import Request  # for making HTTP requests
 # Load environment variables
 load_dotenv()
 CLIENT_SECRETS_FILE = os.getenv("YOUTUBE_CLIENT_SECRETS", "client_secret.json")
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtube"]  # Added full YouTube scope for thumbnail uploads
+SCOPES = [
+    "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/youtube",
+    "https://www.googleapis.com/auth/youtube.force-ssl",
+    "https://www.googleapis.com/auth/youtube.readonly"
+]  # Added full YouTube scope for thumbnail uploads
 
 def authenticate_youtube():
     credentials = None

@@ -5,6 +5,7 @@ from youtube_auth import authenticate_youtube
 import logging
 from google.auth.transport.requests import Request
 from dotenv import load_dotenv
+import io
 
 # Configure logging - don't use basicConfig since main.py handles this
 logger = logging.getLogger(__name__)
@@ -64,14 +65,36 @@ def upload_video(youtube, file_path, title, description, tags, thumbnail_path=No
         if thumbnail_path and os.path.exists(thumbnail_path):
             try:
                 logger.info(f"Uploading thumbnail for video ID: {video_id}")
+                # Use a more robust approach for thumbnail upload
+                media = googleapiclient.http.MediaFileUpload(
+                    thumbnail_path,
+                    mimetype='image/jpeg',
+                    resumable=True
+                )
                 youtube.thumbnails().set(
                     videoId=video_id,
-                    media_body=googleapiclient.http.MediaFileUpload(thumbnail_path)
+                    media_body=media
                 ).execute()
                 logger.info(f"✅ Thumbnail upload successful!")
             except googleapiclient.errors.HttpError as e:
                 logger.error(f"Thumbnail upload failed: {e}")
-                # Continue even if thumbnail upload fails
+                # Try alternative approach if the first one fails
+                try:
+                    logger.info("Attempting alternative thumbnail upload method...")
+                    with open(thumbnail_path, 'rb') as image_file:
+                        image_data = image_file.read()
+                        youtube.thumbnails().set(
+                            videoId=video_id,
+                            media_body=googleapiclient.http.MediaIoBaseUpload(
+                                io.BytesIO(image_data),
+                                mimetype='image/jpeg',
+                                resumable=True
+                            )
+                        ).execute()
+                    logger.info(f"✅ Thumbnail upload successful with alternative method!")
+                except Exception as alt_error:
+                    logger.error(f"Alternative thumbnail upload also failed: {alt_error}")
+                    # Continue even if thumbnail upload fails
 
         return video_id
     except googleapiclient.errors.HttpError as e:

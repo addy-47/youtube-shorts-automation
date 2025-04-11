@@ -120,3 +120,111 @@
 2025-04-11 00:18:43,781 - INFO - __main__ - Process completed successfully!
 2025-04-11 00:18:43,781 - INFO - __main__ - Video path: ai_shorts_output\yt_shorts_This_Week_in_AI_Stunning_Visua_20250411_000101.mp4
 2025-04-11 00:18:43,781 - INFO - __main__ - Thumbnail path: ai_shorts_output\thumbnails\thumbnail_This_Week_in_AI_Stun_20250411_000101.jpg
+2025-04-11 21:15:40,659 - INFO - __main__ - Day 101: Using video-based creator (YTShortsCreator_V)
+2025-04-11 21:15:40,734 - INFO - shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
+2025-04-11 21:15:41,924 - INFO - shorts_maker_V - Google Cloud TTS initialized successfully
+2025-04-11 21:15:41,928 - INFO - __main__ - Generating comprehensive content for topic: TRENDING AI NEWS
+2025-04-11 21:15:49,470 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-11 21:15:49,501 - INFO - script_generator - Successfully generated comprehensive content package:
+2025-04-11 21:15:49,501 - INFO - script_generator - Title: Breaking AI News: Major Developments You Can't Miss!
+2025-04-11 21:15:49,502 - INFO - script_generator - Script length: 53 words
+2025-04-11 21:15:49,502 - INFO - script_generator - Thumbnail HF prompt: A visually striking thumbnail featuring a futurist...
+2025-04-11 21:15:49,503 - INFO - script_generator - Thumbnail Unsplash query: AI technology news
+2025-04-11 21:15:49,504 - INFO - __main__ - Content package generated successfully:
+2025-04-11 21:15:49,504 - INFO - __main__ - Title: LazyCreator presents: Breaking AI News: Major Developments You Can't Miss!
+2025-04-11 21:15:49,505 - INFO - __main__ - Description length: 145 characters
+2025-04-11 21:15:49,505 - INFO - __main__ - Raw script generated successfully
+2025-04-11 21:15:49,506 - INFO - __main__ - Script parsed into 5 sections
+2025-04-11 21:15:49,508 - INFO - __main__ - Section 1: AI is evolving faster than eve... (duration: 5s)
+2025-04-11 21:15:49,508 - INFO - __main__ - Section 2: This week, a breakthrough in n... (duration: 5s)
+2025-04-11 21:15:49,508 - INFO - __main__ - Section 3: Plus, a new ethical framework ... (duration: 5s)
+2025-04-11 21:15:49,509 - INFO - __main__ - Section 4: Stay informed and never miss a... (duration: 5s)
+2025-04-11 21:15:49,510 - INFO - __main__ - Section 5: Hit that subscribe button now!... (duration: 3s)
+2025-04-11 21:15:49,510 - INFO - __main__ - Added intro card with title
+2025-04-11 21:15:49,511 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-04-11 21:15:52,441 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-11 21:15:52,444 - INFO - script_generator - Successfully generated batch video queries for 6 sections.
+2025-04-11 21:15:52,444 - INFO - __main__ - Section queries: 1: breaking AI news, 2: rapid AI evolution, 3: natural language processing, 4: ethical AI framework, 5: stay informed AI, 6: subscribe button
+2025-04-11 21:15:52,445 - INFO - __main__ - Creating YouTube Short
+2025-04-11 21:15:52,446 - INFO - shorts_maker_V - Starting YouTube short creation
+2025-04-11 21:15:52,446 - INFO - shorts_maker_V - Scaling durations by factor 0.96 to fit max duration of 25s
+2025-04-11 21:15:52,447 - INFO - shorts_maker_V - Total video duration: 25.0s
+2025-04-11 21:15:52,448 - INFO - shorts_maker_V - Creating video with 4 background segments for middle sections
+2025-04-11 21:15:52,449 - INFO - shorts_maker_V - Starting background video fetch
+2025-04-11 21:15:52,450 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-11 21:16:00,433 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-11 21:16:06,567 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-11 21:16:09,716 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-11 21:16:13,178 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-11 21:16:14,779 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-11 21:16:18,569 - INFO - shorts_maker_V - Completed background video fetch in 26.12 seconds
+2025-04-11 21:16:18,573 - INFO - shorts_maker_V - Starting TTS audio generation
+2025-04-11 21:16:19,394 - INFO - voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\section_0.mp3]
+2025-04-11 21:16:19,884 - INFO - voiceover - Speech synthesized for text [AI is evolving faste...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\section_1.mp3]
+2025-04-11 21:16:20,459 - INFO - voiceover - Speech synthesized for text [This week, a breakth...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\section_2.mp3]
+2025-04-11 21:16:21,040 - INFO - voiceover - Speech synthesized for text [Plus, a new ethical ...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\section_3.mp3]
+2025-04-11 21:16:21,624 - INFO - voiceover - Speech synthesized for text [Stay informed and ne...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\section_4.mp3]
+2025-04-11 21:16:22,145 - INFO - voiceover - Speech synthesized for text [Hit that subscribe b...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\section_5.mp3]
+2025-04-11 21:16:22,407 - INFO - shorts_maker_V - Completed TTS audio generation in 3.83 seconds
+2025-04-11 21:16:22,407 - INFO - shorts_maker_V - Updated total duration: 23.81s
+2025-04-11 21:16:22,408 - INFO - shorts_maker_V - Starting background processing
+2025-04-11 21:17:14,643 - INFO - shorts_maker_V - Completed background processing in 52.22 seconds
+2025-04-11 21:17:32,135 - INFO - shorts_maker_V - Using parallel renderer for improved performance
+2025-04-11 21:17:32,142 - INFO - shorts_maker_V - Found dill 0.3.9 for improved serialization
+2025-04-11 21:17:32,610 - INFO - parallel_renderer - Rendering 6 clips in parallel using 7 processes with preset: veryfast
+2025-04-11 21:17:32,613 - INFO - parallel_renderer - Pre-processing complex clips...
+2025-04-11 21:17:32,727 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 0
+2025-04-11 21:17:32,728 - INFO - parallel_renderer - Pre-rendering clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\prerender_0_1744386452.mp4
+2025-04-11 21:20:01,363 - INFO - parallel_renderer - Successfully pre-rendered clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\prerender_0_1744386452.mp4
+2025-04-11 21:20:01,391 - INFO - parallel_renderer - Successfully pre-rendered complex clip 0
+2025-04-11 21:20:01,494 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 1
+2025-04-11 21:20:01,495 - INFO - parallel_renderer - Pre-rendering clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\prerender_1_1744386601.mp4
+2025-04-11 21:21:35,103 - INFO - parallel_renderer - Successfully pre-rendered clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\prerender_1_1744386601.mp4
+2025-04-11 21:21:35,112 - INFO - parallel_renderer - Successfully pre-rendered complex clip 1
+2025-04-11 21:21:35,245 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 2
+2025-04-11 21:21:35,246 - INFO - parallel_renderer - Pre-rendering clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\prerender_2_1744386695.mp4
+2025-04-11 21:25:17,175 - INFO - parallel_renderer - Successfully pre-rendered clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\prerender_2_1744386695.mp4
+2025-04-11 21:25:17,192 - INFO - parallel_renderer - Successfully pre-rendered complex clip 2
+2025-04-11 21:25:17,296 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 3
+2025-04-11 21:25:17,297 - INFO - parallel_renderer - Pre-rendering clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\prerender_3_1744386917.mp4
+2025-04-11 21:28:21,491 - INFO - parallel_renderer - Successfully pre-rendered clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\prerender_3_1744386917.mp4
+2025-04-11 21:28:21,501 - INFO - parallel_renderer - Successfully pre-rendered complex clip 3
+2025-04-11 21:28:21,560 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 4
+2025-04-11 21:28:21,561 - INFO - parallel_renderer - Pre-rendering clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\prerender_4_1744387101.mp4
+2025-04-11 21:31:21,942 - INFO - parallel_renderer - Successfully pre-rendered clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\prerender_4_1744387101.mp4
+2025-04-11 21:31:21,952 - INFO - parallel_renderer - Successfully pre-rendered complex clip 4
+2025-04-11 21:31:22,041 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 5
+2025-04-11 21:31:22,043 - INFO - parallel_renderer - Pre-rendering clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\prerender_5_1744387281.mp4
+2025-04-11 21:32:39,044 - INFO - parallel_renderer - Successfully pre-rendered clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\prerender_5_1744387281.mp4
+2025-04-11 21:32:39,061 - INFO - parallel_renderer - Successfully pre-rendered complex clip 5
+2025-04-11 21:32:39,066 - INFO - parallel_renderer - Rendering clips in parallel...
+2025-04-11 21:33:05,989 - INFO - parallel_renderer - Successfully rendered 6 out of 6 clips
+2025-04-11 21:33:05,990 - INFO - parallel_renderer - Concatenating clips using FFmpeg...
+2025-04-11 21:33:05,999 - INFO - parallel_renderer - Running FFmpeg concatenation: ffmpeg -y -f concat -safe 0 -i C:\Users\adhbu\AppData\Local\Temp\tmps0ltqr7u\concat_list.txt -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -max_muxing_queue_size 9999 -c:a aac -b:a 192k ai_shorts_output\yt_shorts_LazyCreator_presents_Breaking__20250411_211541.mp4
+2025-04-11 21:33:28,873 - INFO - parallel_renderer - Successfully concatenated clips to ai_shorts_output\yt_shorts_LazyCreator_presents_Breaking__20250411_211541.mp4
+2025-04-11 21:33:28,881 - WARNING - shorts_maker_V - Error cleaning up temporary files: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\adhbu\\AppData\\Local\\Temp\\tmps0ltqr7u\\pexels_18069863.mp4'
+2025-04-11 21:33:28,882 - INFO - shorts_maker_V - Completed YouTube short creation in 1056.44 seconds
+2025-04-11 21:33:28,883 - INFO - __main__ - Generating thumbnail for the short
+2025-04-11 21:33:28,912 - INFO - thumbnail - STARTING generate_thumbnail at 21:33:28.900
+2025-04-11 21:33:28,913 - INFO - thumbnail - Using thumbnail prompt: A visually striking thumbnail featuring a futuristic AI brain with glowing circuits, surrounded by news headlines and question marks, capturing the essence of trending AI news.
+2025-04-11 21:33:28,914 - INFO - thumbnail - STARTING generate_image_huggingface at 21:33:28.914
+2025-04-11 21:33:28,915 - INFO - thumbnail - Hugging Face prompt: A visually striking thumbnail featuring a futuristic AI brain with glowing ...
+2025-04-11 21:33:38,463 - INFO - thumbnail - Thumbnail image saved to C:\Users\adhbu\AppData\Local\Temp\tmpspqbcjo0\thumbnail_1744387408_8715.png
+2025-04-11 21:33:38,467 - INFO - thumbnail - COMPLETED generate_image_huggingface in 9.55 seconds
+2025-04-11 21:33:38,468 - INFO - thumbnail - STARTING create_thumbnail at 21:33:38.468
+2025-04-11 21:33:38,764 - INFO - thumbnail - Thumbnail created and saved to ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250411_211541.jpg
+2025-04-11 21:33:38,768 - INFO - thumbnail - COMPLETED create_thumbnail in 0.30 seconds
+2025-04-11 21:33:38,769 - INFO - thumbnail - Successfully generated thumbnail at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250411_211541.jpg
+2025-04-11 21:33:38,769 - INFO - thumbnail - COMPLETED generate_thumbnail in 9.87 seconds
+2025-04-11 21:33:38,770 - INFO - __main__ - Thumbnail generated at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250411_211541.jpg
+2025-04-11 21:33:38,772 - INFO - __main__ - Uploading to YouTube
+2025-04-11 21:34:28,409 - INFO - google_auth_oauthlib.flow - "GET /?state=iNXHgb94FOFS9B3B5TrgPcA845GCWe&code=4/0Ab_5qlnwDEXTWUVxp1zTuNpHhbDKsDMEvd5_2mUT9xk5aPDIuCLc--qtWHtEZ3mXmjWXlg&scope=https://www.googleapis.com/auth/youtube%20https://www.googleapis.com/auth/youtube.upload HTTP/1.1" 200 65
+2025-04-11 21:34:28,728 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
+2025-04-11 21:34:28,945 - INFO - youtube_upload - Uploading video: LazyCreator presents: Breaking AI News: Major Developments You Can't Miss!
+2025-04-11 21:34:36,423 - INFO - youtube_upload - ✅ Video upload successful! Video ID: N_9LYhJw6wk
+2025-04-11 21:34:36,424 - INFO - youtube_upload - Uploading thumbnail for video ID: N_9LYhJw6wk
+2025-04-11 21:34:37,574 - WARNING - googleapiclient.http - Encountered 403 Forbidden with reason "forbidden"
+2025-04-11 21:34:37,575 - ERROR - youtube_upload - Thumbnail upload failed: <HttpError 403 when requesting https://youtube.googleapis.com/upload/youtube/v3/thumbnails/set?videoId=N_9LYhJw6wk&alt=json&uploadType=media returned "The authenticated user doesn't have permissions to upload and set custom video thumbnails.". Details: "[{'message': "The authenticated user doesn't have permissions to upload and set custom video thumbnails.", 'domain': 'youtube.thumbnail', 'reason': 'forbidden', 'location': 'Authorization', 'locationType': 'header'}]">
+2025-04-11 21:34:37,576 - INFO - __main__ - Process completed successfully!
+2025-04-11 21:34:37,577 - INFO - __main__ - Video path: ai_shorts_output\yt_shorts_LazyCreator_presents_Breaking__20250411_211541.mp4
+2025-04-11 21:34:37,577 - INFO - __main__ - Thumbnail path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250411_211541.jpg
