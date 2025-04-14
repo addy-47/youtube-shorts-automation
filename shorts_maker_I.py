@@ -21,6 +21,7 @@ import tempfile # for creating temporary files
 # Import text clip functions from shorts_maker_V
 from shorts_maker_V import YTShortsCreator_V
 from datetime import datetime # for more detailed time tracking
+import concurrent.futures # for multithreading
 
 # Configure logging for easier debugging
 # Do NOT initialize basicConfig here - this will be handled by main.py
@@ -543,9 +544,48 @@ class YTShortsCreator_I:
             return None
 
     @measure_time
+    def add_watermark(self, clip, watermark_text="Lazycreator", position=("right", "top"), opacity=0.7, font_size=30):
+        """
+        Add a watermark to a video clip
+
+        Args:
+            clip (VideoClip): Video clip to add watermark to
+            watermark_text (str): Text to display as watermark
+            position (tuple): Position of watermark ('left'/'right', 'top'/'bottom')
+            opacity (float): Opacity of watermark (0-1)
+            font_size (int): Font size for watermark
+
+        Returns:
+            VideoClip: Clip with watermark added
+        """
+        # Create text clip for watermark
+        watermark = TextClip(
+            txt=watermark_text,
+            fontsize=font_size,
+            color='white',
+            align='center'
+        ).set_duration(clip.duration).set_opacity(opacity)
+
+        # Calculate position
+        if position[0] == "right":
+            x_pos = clip.w - watermark.w - 20
+        else:
+            x_pos = 20
+
+        if position[1] == "bottom":
+            y_pos = clip.h - watermark.h - 20
+        else:
+            y_pos = 20
+
+        watermark = watermark.set_position((x_pos, y_pos))
+
+        # Add watermark to video
+        return CompositeVideoClip([clip, watermark], size=self.resolution)
+
+    @measure_time
     def create_youtube_short(self, title, script_sections, background_query="abstract background",
-                        output_filename=None, add_captions=True, style="photorealistic", voice_style=None, max_duration=25,
-                        background_queries=None, blur_background=False, edge_blur=False):
+                        output_filename=None, add_captions=False, style="ghibli art", voice_style=None, max_duration=25,
+                        background_queries=None, blur_background=False, edge_blur=False, add_watermark_text=None):
         """
         Create a YouTube Short using AI-generated images for each script section
         Falls back to shorts_maker_V (video-based) if image generation fails
@@ -556,12 +596,13 @@ class YTShortsCreator_I:
             background_query (str): Fallback query for image generation
             output_filename (str): Output file path
             add_captions (bool): Whether to add captions to the video
-            style (str): Style of images to generate (e.g., "digital art", "cinematic", "photorealistic")
+            style (str): Style of images to generate (e.g., "digital art", "cinematic", "ghibli art")
             voice_style (str): Style of TTS voice
             max_duration (int): Maximum duration in seconds
             background_queries (list): List of queries for each section's background
             blur_background (bool): Whether to apply blur effect to backgrounds
             edge_blur (bool): Whether to apply edge blur to backgrounds
+            add_watermark_text (str): Text to use as watermark (None for no watermark)
 
         Returns:
             str: Path to the created video
@@ -611,7 +652,8 @@ class YTShortsCreator_I:
                     max_duration=max_duration,
                     background_queries=background_queries,
                     blur_background=blur_background,
-                    edge_blur=edge_blur
+                    edge_blur=edge_blur,
+                    add_watermark_text=add_watermark_text
                 )
 
             # If we get here, Hugging Face is working, proceed with image-based short
@@ -629,60 +671,79 @@ class YTShortsCreator_I:
             audio_clips = []
             section_durations = []  # Store actual durations after TTS generation
 
-            for i, section in enumerate(script_sections):
-                section_text = section["text"]
-                section_voice_style = section.get("voice_style", voice_style)
-                min_section_duration = section.get("duration", 5)
+            # Use multithreading for audio generation to improve performance
+            with concurrent.futures.ThreadPoolExecutor(max_workers=min(8, len(script_sections))) as executor:
+                # Create a list to hold future objects
+                future_to_section = {}
 
-                # Create TTS audio for this section
-                audio_path = None
-                try:
-                    audio_path = self._create_tts_audio(section_text, voice_style=section_voice_style)
-                except Exception as e:
-                    logger.error(f"Error creating TTS for section {i}: {e}")
+                # Submit TTS generation jobs to the executor
+                for i, section in enumerate(script_sections):
+                    section_text = section["text"]
+                    section_voice_style = section.get("voice_style", voice_style)
+                    future = executor.submit(
+                        self._create_tts_audio,
+                        section_text,
+                        None,
+                        section_voice_style
+                    )
+                    future_to_section[future] = (i, section)
 
-                # If audio file was created successfully, get its actual duration
-                if audio_path and os.path.exists(audio_path):
+                # Process results as they complete
+                for future in concurrent.futures.as_completed(future_to_section):
+                    i, section = future_to_section[future]
+                    min_section_duration = section.get("duration", 5)
+
                     try:
-                        # Get actual audio duration
-                        audio_clip = AudioFileClip(audio_path)
-                        actual_duration = audio_clip.duration
+                        audio_path = future.result()
 
-                        # Check if audio has valid duration - fix for empty audio files
-                        if actual_duration <= 0:
-                            logger.warning(f"Audio file for section {i} has zero duration, creating fallback silent audio")
-                            # Create silent audio as fallback
-                            from moviepy.audio.AudioClip import AudioClip
-                            import numpy as np
+                        # Process the completed audio file
+                        if audio_path and os.path.exists(audio_path):
+                            try:
+                                # Get actual audio duration
+                                audio_clip = AudioFileClip(audio_path)
+                                actual_duration = audio_clip.duration
 
-                            def make_frame(t):
-                                return np.zeros(2)  # Stereo silence
+                                # Check if audio has valid duration
+                                if actual_duration <= 0:
+                                    logger.warning(f"Audio file for section {i} has zero duration, creating fallback silent audio")
+                                    # Create silent audio as fallback
+                                    from moviepy.audio.AudioClip import AudioClip
+                                    import numpy as np
 
-                            # Use minimum section duration for silent audio
-                            audio_clip = AudioClip(make_frame=make_frame, duration=min_section_duration)
-                            audio_clip = audio_clip.set_fps(44100)
-                            actual_duration = min_section_duration
+                                    def make_frame(t):
+                                        return np.zeros(2)  # Stereo silence
 
-                        # Ensure minimum duration
-                        actual_duration = max(actual_duration, min_section_duration)
+                                    # Use minimum section duration for silent audio
+                                    audio_clip = AudioClip(make_frame=make_frame, duration=min_section_duration)
+                                    audio_clip = audio_clip.set_fps(44100)
+                                    actual_duration = min_section_duration
 
-                        # Store the final duration
-                        section_durations.append(actual_duration)
-                        audio_clips.append((i, audio_clip, actual_duration))
+                                # Ensure minimum duration
+                                actual_duration = max(actual_duration, min_section_duration)
+
+                                # Store the final duration and clip
+                                section_durations.append((i, actual_duration))
+                                audio_clips.append((i, audio_clip, actual_duration))
+                            except Exception as e:
+                                logger.error(f"Error processing audio for section {i}: {e}")
+                                section_durations.append((i, min_section_duration))
+                        else:
+                            # If no audio was created, use minimum duration
+                            section_durations.append((i, min_section_duration))
                     except Exception as e:
-                        logger.error(f"Error processing audio for section {i}: {e}")
-                        section_durations.append(min_section_duration)
-                else:
-                    # If no audio was created, use minimum duration
-                    section_durations.append(min_section_duration)
+                        logger.error(f"Error getting TTS result for section {i}: {e}")
+                        section_durations.append((i, min_section_duration))
+
+            # Sort durations by section index
+            section_durations.sort(key=lambda x: x[0])
 
             # Update script sections with actual durations
-            for i, duration in enumerate(section_durations):
+            for i, duration in section_durations:
                 if i < len(script_sections):
                     script_sections[i]['duration'] = duration
 
             # Recalculate total duration based on actual audio lengths
-            total_duration = sum(section_durations)
+            total_duration = sum(duration for _, duration in section_durations)
 
             logger.info(f"Completed TTS audio generation in {time.time() - tts_start_time:.2f} seconds")
             logger.info(f"Updated total duration: {total_duration:.1f}s")
@@ -713,7 +774,17 @@ class YTShortsCreator_I:
                     should_fallback_to_video = True
 
                 if not should_fallback_to_video:
-                    # Create title text if provided
+                    # Create base image clip
+                    intro_base_clip = self._create_still_image_clip(
+                        intro_image_path,
+                        duration=intro_duration,
+                        with_zoom=True
+                    )
+
+                    # Create components to overlay on the base clip
+                    components = [intro_base_clip]
+
+                    # Create title text if provided (only in intro)
                     if title:
                         title_clip = self.v_creator._create_text_clip(
                             title,
@@ -726,17 +797,9 @@ class YTShortsCreator_I:
                             pill_color=(0, 0, 0, 180),
                             pill_radius=30
                         )
-                    else:
-                        title_clip = None
+                        components.append(title_clip)
 
-                    # Create base image clip
-                    intro_base_clip = self._create_still_image_clip(
-                        intro_image_path,
-                        duration=intro_duration,
-                        with_zoom=True
-                    )
-
-                    # Create intro text
+                    # Create intro text separately from title
                     intro_text_clip = self.v_creator._create_text_clip(
                         intro_text,
                         duration=intro_duration,
@@ -748,14 +811,10 @@ class YTShortsCreator_I:
                         pill_color=(0, 0, 0, 160),
                         pill_radius=30
                     )
+                    components.append(intro_text_clip)
 
-                    # Combine image with text
-                    clips_to_combine = [intro_base_clip]
-                    if title_clip:
-                        clips_to_combine.append(title_clip)
-                    clips_to_combine.append(intro_text_clip)
-
-                    intro_clip = CompositeVideoClip(clips_to_combine, size=self.resolution)
+                    # Combine all components
+                    intro_clip = CompositeVideoClip(components, size=self.resolution)
 
                     # Add audio if available
                     for idx, audio_clip, duration in audio_clips:
@@ -796,38 +855,76 @@ class YTShortsCreator_I:
                     max_duration=max_duration,
                     background_queries=background_queries,
                     blur_background=blur_background,
-                    edge_blur=edge_blur
+                    edge_blur=edge_blur,
+                    add_watermark_text=add_watermark_text
                 )
 
             # Process middle sections
             if middle_sections and not should_fallback_to_video:
-                middle_clips = []
+                # Use parallel image generation to improve performance
+                future_to_section = {}
+                middle_section_images = [None] * len(middle_sections)
 
+                with concurrent.futures.ThreadPoolExecutor(max_workers=min(4, len(middle_sections))) as executor:
+                    # Submit image generation jobs
+                    for i, section in enumerate(middle_sections):
+                        section_idx = i + 1  # Middle sections start at index 1
+
+                        # Get the image prompt for this section
+                        if background_queries and section_idx < len(background_queries):
+                            image_query = background_queries[section_idx]
+                        else:
+                            image_query = background_query
+
+                        future = executor.submit(
+                            self._generate_image_from_prompt,
+                            image_query,
+                            style
+                        )
+                        future_to_section[future] = (i, section, section_idx)
+
+                    # Process results as they complete
+                    for future in concurrent.futures.as_completed(future_to_section):
+                        i, section, section_idx = future_to_section[future]
+                        try:
+                            image_path = future.result()
+                            if image_path:
+                                middle_section_images[i] = image_path
+                            else:
+                                logger.warning(f"⚠️ FALLBACK: Image generation failed for section {section_idx}")
+                                should_fallback_to_video = True
+                                break
+                        except Exception as e:
+                            logger.error(f"Error generating image for section {section_idx}: {e}")
+                            should_fallback_to_video = True
+                            break
+
+                # If any image generation failed, fall back to video mode
+                if should_fallback_to_video:
+                    return self.v_creator.create_youtube_short(
+                        title=title,
+                        script_sections=script_sections,
+                        background_query=background_query,
+                        output_filename=output_filename,
+                        add_captions=add_captions,
+                        style="video",
+                        voice_style=voice_style,
+                        max_duration=max_duration,
+                        background_queries=background_queries,
+                        blur_background=blur_background,
+                        edge_blur=edge_blur,
+                        add_watermark_text=add_watermark_text
+                    )
+
+                # Process each middle section
+                middle_clips = []
                 for i, section in enumerate(middle_sections):
                     section_text = section['text']
                     section_duration = section['duration']
                     section_idx = i + 1  # Middle sections start at index 1
-
-                    # Get the image prompt for this section
-                    if background_queries and section_idx < len(background_queries):
-                        image_query = background_queries[section_idx]
-                    else:
-                        image_query = background_query
-
-                    # Generate image for this section
-                    image_start_time = time.time()
-                    logger.info(f"Generating image for middle section {section_idx}")
+                    image_path = middle_section_images[i]
 
                     try:
-                        image_path = self._generate_image_from_prompt(image_query, style=style)
-                        logger.info(f"Completed image generation in {time.time() - image_start_time:.2f} seconds")
-
-                        if not image_path:
-                            # If image generation failed, fallback to video
-                            logger.warning(f"⚠️ FALLBACK: Image generation failed for section {section_idx}")
-                            should_fallback_to_video = True
-                            break
-
                         # Create base image clip
                         base_clip = self._create_still_image_clip(
                             image_path,
@@ -894,7 +991,8 @@ class YTShortsCreator_I:
                             max_duration=max_duration,
                             background_queries=background_queries,
                             blur_background=blur_background,
-                            edge_blur=edge_blur
+                            edge_blur=edge_blur,
+                            add_watermark_text=add_watermark_text
                         )
 
                 section_clips.extend(middle_clips)
@@ -935,7 +1033,8 @@ class YTShortsCreator_I:
                             max_duration=max_duration,
                             background_queries=background_queries,
                             blur_background=blur_background,
-                            edge_blur=edge_blur
+                            edge_blur=edge_blur,
+                            add_watermark_text=add_watermark_text
                         )
 
                 # Create base image clip
@@ -1017,7 +1116,8 @@ class YTShortsCreator_I:
                         max_duration=max_duration,
                         background_queries=background_queries,
                         blur_background=blur_background,
-                        edge_blur=edge_blur
+                        edge_blur=edge_blur,
+                        add_watermark_text=add_watermark_text
                     )
 
             logger.info(f"Successfully processed {len(section_clips)}/{len(script_sections)} sections")
@@ -1039,12 +1139,24 @@ class YTShortsCreator_I:
                 parallel_temp_dir = os.path.join(self.temp_dir, "parallel_render")
                 os.makedirs(parallel_temp_dir, exist_ok=True)
 
+                # Concatenate all clips
+                final_clip = concatenate_videoclips(section_clips)
+
+                # Ensure we don't exceed maximum duration
+                if final_clip.duration > max_duration:
+                    logger.warning(f"Video exceeds maximum duration ({final_clip.duration}s > {max_duration}s), trimming")
+                    final_clip = final_clip.subclip(0, max_duration)
+
+                # Add watermark if requested
+                if add_watermark_text:
+                    final_clip = self.add_watermark(final_clip, watermark_text=add_watermark_text)
+
                 # Render clips in parallel
                 render_start_time = time.time()
                 logger.info(f"Starting parallel video rendering")
 
                 output_filename = render_clips_in_parallel(
-                    section_clips,
+                    [final_clip],
                     output_filename,
                     temp_dir=parallel_temp_dir,
                     fps=self.fps,
@@ -1065,6 +1177,10 @@ class YTShortsCreator_I:
                 if final_clip.duration > max_duration:
                     logger.warning(f"Video exceeds maximum duration ({final_clip.duration}s > {max_duration}s), trimming")
                     final_clip = final_clip.subclip(0, max_duration)
+
+                # Add watermark if requested
+                if add_watermark_text:
+                    final_clip = self.add_watermark(final_clip, watermark_text=add_watermark_text)
 
                 # Write the final video with improved settings
                 logger.info(f"Writing video to {output_filename} (duration: {final_clip.duration:.2f}s)")

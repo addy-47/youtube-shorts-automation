@@ -4,7 +4,7 @@ import os # for environment variables and file paths
 import sys # for stdout encoding
 from pathlib import Path # for file paths and directory creation
 from dotenv import load_dotenv # for loading environment variables
-from script_generator import generate_script, generate_batch_video_queries, generate_batch_image_prompts, generate_comprehensive_content
+from script_generator import generate_batch_video_queries, generate_batch_image_prompts, generate_comprehensive_content
 from shorts_maker_V import YTShortsCreator_V
 from shorts_maker_I import YTShortsCreator_I
 from youtube_upload import upload_video, get_authenticated_service
@@ -168,10 +168,7 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
         # Generate unique filename with timestamp
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        # Get latest AI news topic if not already provided
-        if not topic or topic == "Artificial Intelligence":
-            topic = get_latest_ai_news()
-
+        topic = get_latest_ai_news()
         logger.info(f"Generating comprehensive content for topic: {topic}")
 
         # Generate all content in a single API call

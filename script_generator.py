@@ -74,46 +74,6 @@ def filter_instructional_labels(script):
 
     return filtered_script
 
-def generate_script(prompt, model="gpt-4o-mini-2024-07-18", max_tokens=150, retries=3):
-    """
-    Generate a YouTube Shorts script using OpenAI's API.
-    """
-    if not openai.api_key:
-        raise ValueError("OpenAI API key is not set. Please set OPENAI_API_KEY in .env.")
-
-    # Enhance the prompt to discourage instructional labels
-    enhanced_prompt = f"""
-    {prompt}
-
-    IMPORTANT: Do NOT include labels like "Hook:", "Opening Shot:", "Call to Action:", etc. in your response.
-    Just write the actual script content that would be spoken, without any section headers or instructional text.
-    """
-
-    for attempt in range(retries):
-        try:
-            client = openai.OpenAI()  # Create an OpenAI client
-            response = client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": enhanced_prompt}], # Use the enhanced prompt as the user message
-                max_tokens=max_tokens,
-                temperature=0.7 # Higher temperature means more randomness ranging from 0 to 1
-            )
-            script = response.choices[0].message.content.strip()
-            # Since response.choices is a list as it can generate multiple responses, [0] accesses the first element of that list and message
-            # is the attribute of that element and content is the attribute of message
-
-            # Additional post-processing to filter out any remaining instructional labels
-            script = filter_instructional_labels(script)
-            logger.info("Script cleaned")
-
-            logger.info(f"Script generated successfully with {len(script.split())} words.")
-            return script
-        except openai.OpenAIError as e:
-            logger.error(f"OpenAI API error (attempt {attempt + 1}/{retries}): {str(e)}")
-            if attempt == retries - 1:
-                raise Exception(f"Failed to generate script after {retries} attempts: {str(e)}")
-            time.sleep(2 ** attempt)  # Exponential backoff which means it will try again after 2^attempt seconds
-
 def generate_batch_video_queries(texts: list[str], overall_topic="technology", model="gpt-4o-mini-2024-07-18", retries=3):
     """
     Generate concise video search queries for a batch of script texts using OpenAI's API,

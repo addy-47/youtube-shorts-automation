@@ -8,7 +8,7 @@ import logging # for logging events
 from PIL import Image, ImageFilter, ImageDraw, ImageFont# for image processing
 from moviepy.editor import ( # for video editing
     VideoFileClip, VideoClip, TextClip, CompositeVideoClip,ImageClip,
-    AudioFileClip, concatenate_videoclips, ColorClip, CompositeAudioClip
+    AudioFileClip, concatenate_videoclips, ColorClip, CompositeAudioClip, concatenate_audioclips
 )
 from moviepy.video.fx import all as vfx
 from moviepy.config import change_settings
@@ -672,6 +672,45 @@ class YTShortsCreator_V:
         return clip.fl(apply_edge_blur)
 
     @measure_time
+    def add_watermark(self, clip, watermark_text="Lazycreator", position=("right", "top"), opacity=0.7, font_size=30):
+        """
+        Add a watermark to a video clip
+
+        Args:
+            clip (VideoClip): Video clip to add watermark to
+            watermark_text (str): Text to display as watermark
+            position (tuple): Position of watermark ('left'/'right', 'top'/'bottom')
+            opacity (float): Opacity of watermark (0-1)
+            font_size (int): Font size for watermark
+
+        Returns:
+            VideoClip: Clip with watermark added
+        """
+        # Create text clip for watermark
+        watermark = TextClip(
+            txt=watermark_text,
+            fontsize=font_size,
+            color='white',
+            align='center'
+        ).set_duration(clip.duration).set_opacity(opacity)
+
+        # Calculate position
+        if position[0] == "right":
+            x_pos = clip.w - watermark.w - 20
+        else:
+            x_pos = 20
+
+        if position[1] == "bottom":
+            y_pos = clip.h - watermark.h - 20
+        else:
+            y_pos = 20
+
+        watermark = watermark.set_position((x_pos, y_pos))
+
+        # Add watermark to video
+        return CompositeVideoClip([clip, watermark], size=self.resolution)
+
+    @measure_time
     def _process_background_clip(self, clip, target_duration, blur_background=False, edge_blur=False):
         """
         Process a background clip to match the required duration
@@ -740,7 +779,7 @@ class YTShortsCreator_V:
     @measure_time
     def create_youtube_short(self, title, script_sections, background_query="abstract background",
                             output_filename=None, add_captions=False, style="video", voice_style=None, max_duration=25,
-                            background_queries=None, blur_background=False, edge_blur=False):
+                            background_queries=None, blur_background=False, edge_blur=False, add_watermark_text=None):
         """
         Create a YouTube Short with the given script sections.
 
@@ -756,6 +795,7 @@ class YTShortsCreator_V:
             background_queries (list): Optional list of section-specific background queries
             blur_background (bool): Whether to apply blur effect to background videos
             edge_blur (bool): Whether to apply edge blur to background videos
+            add_watermark_text (str): Text to use as watermark (None for no watermark)
 
         Returns:
             str: Output file path
@@ -1121,7 +1161,14 @@ class YTShortsCreator_V:
                     # Concatenate all section clips
                     final_clip = concatenate_videoclips(validated_section_clips)
 
+                    # Add watermark if requested
+                    if add_watermark_text:
+                        final_clip = self.add_watermark(final_clip, watermark_text=add_watermark_text)
+
                     # Write final video
+                    logger.info(f"Rendering final video to {output_filename}")
+                    render_start = time.time()
+
                     final_clip.write_videofile(
                         output_filename,
                         fps=self.fps,
