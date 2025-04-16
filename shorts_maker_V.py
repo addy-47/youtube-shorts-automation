@@ -1132,25 +1132,34 @@ class YTShortsCreator_V:
                     # Use clip as-is if validation fails
                     validated_section_clips.append(clip)
 
-            # Try parallel rendering first
+            # Use parallel renderer to improve performance
             try:
+                from parallel_renderer import render_clips_in_parallel
                 logger.info("Using parallel renderer for improved performance")
 
-                # Check for dill library - needed for optimal parallel rendering
+                # Check for dill for improved serialization
                 try:
                     import dill
-                    logger.info(f"Found dill {dill.__version__} for improved serialization")
+                    version = dill.__version__
+                    if version >= "0.3.9":
+                        logger.info(f"Found dill {version} for improved serialization")
                 except ImportError:
-                    logger.warning("Dill library not found - parallel rendering may be less efficient")
-                    logger.warning("Consider installing dill with: pip install dill")
+                    logger.debug("Dill not found, using standard serialization")
 
-                from parallel_renderer import render_clips_in_parallel
+                # Make sure clips are in the correct order by sorting them based on their index
+                # Sort validated_section_clips by index if they were added out of order
+                section_indices = list(range(len(validated_section_clips)))
+                sorted_clips_with_indices = list(zip(section_indices, validated_section_clips))
+                sorted_clips = [clip for _, clip in sorted(sorted_clips_with_indices, key=lambda x: x[0])]
+                validated_section_clips = sorted_clips
+
+                # Render all clips in parallel
                 output_filename = render_clips_in_parallel(
                     validated_section_clips,
                     output_filename,
-                    temp_dir=self.temp_dir,
                     fps=self.fps,
-                    preset="veryfast"
+                    logger=logger,
+                    temp_dir=self.temp_dir
                 )
             except Exception as parallel_error:
                 logger.warning(f"Parallel renderer failed: {parallel_error}. Using standard rendering.")

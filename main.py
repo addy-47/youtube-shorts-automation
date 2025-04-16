@@ -16,6 +16,8 @@ import nltk # for natural language processing
 from collections import Counter # for counting elements in a list
 import requests # for making HTTP requests
 import random # for generating random numbers
+import json # for JSON handling
+import traceback # for error handling
 
 load_dotenv()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
@@ -66,8 +68,9 @@ def ensure_output_directory(directory="ai_shorts_output"):
     Path(directory).mkdir(parents=True, exist_ok=True)
     return directory
 
-def get_latest_ai_news():
-    """Get the latest technology or AI news."""
+def get_latest_news():
+
+    """Get the latest technology or AI news with minimal API calls."""
     if not NEWS_API_KEY:
         raise ValueError("NewsAPI key is missing. Set NEWS_API_KEY in .env.")
 
@@ -76,33 +79,70 @@ def get_latest_ai_news():
     # Format the date as YYYY-MM-DD for the News API
     from_date = two_weeks_ago.strftime("%Y-%m-%d")
 
-    # Specify technology and AI focus with multiple topics
-    topics = ["artificial intelligence", "technology", "tech innovation", "AI", "machine learning"]
+    # Get today's date for the cache key
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    # Try each topic until we find a suitable article
-    for topic in topics:
-        url = f"https://newsapi.org/v2/top-headlines?q={topic}&category=technology&from={from_date}&sortBy=popularity&pageSize=10&apiKey={NEWS_API_KEY}"
+    # Setup cache file
+    cache_dir = Path.home() / ".news_cache"
+    cache_dir.mkdir(exist_ok=True)
+    cache_file = cache_dir / f"news_cache_{today}.json"
+
+    # Read from cache if exists
+    used_articles = []
+    if cache_file.exists():
+        try:
+            with open(cache_file, 'r') as f:
+                used_articles = json.load(f)
+        except json.JSONDecodeError:
+            used_articles = []
+
+    # Combine all topics in a single query with OR operators
+    topics = ["artificial intelligence", "tech innovation",
+              "machine learning", "gaming", "robotics", "world news"]
+
+    # Create a query string with OR between each topic
+    query = " OR ".join(topics)
+
+    # Make a single API call with all topics
+    url = f"https://newsapi.org/v2/top-headlines?q={query}&category=technology&from={from_date}&sortBy=popularity&pageSize=30&apiKey={NEWS_API_KEY}"
+    response = requests.get(url)
+
+    articles = []
+    if response.status_code == 200:
+        articles = response.json().get('articles', [])
+
+    # If no articles found or API call failed, fallback to general technology
+    if not articles:
+        url = f"https://newsapi.org/v2/top-headlines?category=technology&apiKey={NEWS_API_KEY}"
         response = requests.get(url)
 
         if response.status_code == 200:
             articles = response.json().get('articles', [])
-            if articles:
-                chosen_article = random.choice(articles) # Choose a random article from top 10
-                return chosen_article['title']
 
+    # Filter out already used articles
+    unused_articles = [a for a in articles if a['title'] not in used_articles]
 
-    # Fallback to a general technology search if no AI-specific news
-    url = f"https://newsapi.org/v2/top-headlines?category=technology&apiKey={NEWS_API_KEY}"
-    response = requests.get(url)
+    # If we've used all articles, reset the cache
+    if not unused_articles and articles:
+        unused_articles = articles
+        used_articles = []
 
-    if response.status_code == 200:
-        articles = response.json().get('articles', [])
-        if articles:
-            chosen_article = random.choice(articles)
-            return chosen_article['title']
+    # Choose a random article from unused ones
+    if unused_articles:
+        # Take the top 10 articles or all if less than 10
+        top_articles = unused_articles[:min(10, len(unused_articles))]
+        chosen_article = random.choice(top_articles)
+
+        # Add to used articles
+        used_articles.append(chosen_article['title'])
+
+        # Update cache file
+        with open(cache_file, 'w') as f:
+            json.dump(used_articles, f)
+
+        return chosen_article['title']
 
     return "Latest Technology Innovation News"
-
 
 def parse_script_to_cards(script):
     """Parse the raw script into a list of cards with text and duration."""
@@ -168,8 +208,8 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
         # Generate unique filename with timestamp
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        topic = get_latest_ai_news()
-        logger.info(f"Generating comprehensive content for topic: {topic}")
+        topic = get_latest_news()
+        logger.info(f"Generating comprehensive content for : {topic}")
 
         # Generate all content in a single API call
         content_package = generate_comprehensive_content(topic, max_tokens=800)
@@ -306,10 +346,16 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
         if os.getenv("ENABLE_YOUTUBE_UPLOAD", "false").lower() == "true":
             logger.info("Uploading to YouTube")
             youtube = get_authenticated_service()
+
+            # Remove "LazyCreator presents: " prefix from title for upload
+            upload_title = title
+            if title.startswith("LazyCreator presents: "):
+                upload_title = title.replace("LazyCreator presents: ", "")
+
             upload_video(
                 youtube,
                 video_path,
-                title,  # Use the generated title
+                upload_title,  # Use the cleaned title without prefix
                 description,  # Use the generated description
                 ["shorts", "ai", "technology"],  # Still include default tags
                 thumbnail_path=thumbnail_path

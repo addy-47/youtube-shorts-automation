@@ -368,23 +368,26 @@ class ThumbnailGenerator:
 
             shorts_bbox = draw.textbbox((0, 0), shorts_label, font=shorts_font)
             shorts_width = shorts_bbox[2] - shorts_bbox[0]
+            shorts_height = shorts_bbox[3] - shorts_bbox[1]
 
             # Draw rounded rectangle background for SHORTS label
             label_padding = 10
             label_x = self.thumbnail_size[0] - shorts_width - label_padding * 2 - 20
             label_y = 20
-            label_height = 40
+            label_height = shorts_height + 10
 
             # Draw pill background for "SHORTS" text
             draw.rectangle(
                 [(label_x, label_y), (label_x + shorts_width + label_padding * 2, label_y + label_height)],
                 fill=(255, 0, 0, 200),
-                outline=(255, 255, 255, 200)
+                outline=(255, 255, 255, 200),
+                width=2  # Make outline more visible
             )
 
-            # Draw SHORTS text
+            # Draw SHORTS text - properly centered in the rectangle
+            text_y_offset = (label_height - shorts_height) // 2
             draw.text(
-                (label_x + label_padding, label_y + 5),
+                (label_x + label_padding, label_y + text_y_offset),
                 shorts_label,
                 font=shorts_font,
                 fill=(255, 255, 255, 255)
