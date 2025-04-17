@@ -1153,6 +1153,14 @@ class YTShortsCreator_V:
                 sorted_clips = [clip for _, clip in sorted(sorted_clips_with_indices, key=lambda x: x[0])]
                 validated_section_clips = sorted_clips
 
+                # Ensure all clips are properly named with their index before rendering
+                for i, clip in enumerate(validated_section_clips):
+                    # If clip has a '_idx' attribute, set it to ensure proper ordering
+                    if not hasattr(clip, '_idx'):
+                        clip._idx = i
+                    else:
+                        clip._idx = i  # Override any existing index to ensure sequential order
+
                 # Render all clips in parallel
                 output_filename = render_clips_in_parallel(
                     validated_section_clips,
@@ -1167,8 +1175,13 @@ class YTShortsCreator_V:
                 # Use standard rendering as fallback
                 logger.info("Starting standard video rendering")
                 try:
-                    # Concatenate all section clips
-                    final_clip = concatenate_videoclips(validated_section_clips)
+                    # Ensure correct order of clips before concatenation
+                    section_indices = list(range(len(validated_section_clips)))
+                    sorted_clips_with_indices = list(zip(section_indices, validated_section_clips))
+                    sorted_clips = [clip for _, clip in sorted(sorted_clips_with_indices, key=lambda x: x[0])]
+
+                    # Concatenate all section clips in correct order
+                    final_clip = concatenate_videoclips(sorted_clips)
 
                     # Add watermark if requested
                     if add_watermark_text:

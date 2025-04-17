@@ -15,6 +15,7 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 import gc
 import shutil
 import subprocess
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -743,8 +744,25 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
 
             # Create a temporary file list for FFmpeg
             concat_list_path = os.path.join(temp_directory, "concat_list.txt")
+
+            # Create a list of (index, clip_path) tuples if rendered_paths don't already have indices
+            indexed_paths = []
+            for i, path in enumerate(rendered_paths):
+                # If path has a format like "clip_{index}_*", extract the index
+                match = re.search(r"clip_(\d+)_", os.path.basename(path))
+                if match:
+                    idx = int(match.group(1))
+                    indexed_paths.append((idx, path))
+                else:
+                    indexed_paths.append((i, path))
+
+            # Sort by index
+            indexed_paths.sort(key=lambda x: x[0])
+            logger.info(f"Concatenating {len(indexed_paths)} clips in correct order")
+
+            # Write the sorted paths to concat list
             with open(concat_list_path, "w") as f:
-                for clip_path in rendered_paths:
+                for _, clip_path in indexed_paths:
                     # Format according to FFmpeg concat protocol
                     f.write(f"file '{os.path.abspath(clip_path)}'\n")
 

@@ -1,139 +1,128 @@
-2025-04-16 21:15:31,256 - INFO - __main__ - Day 106: Using image-based creator (YTShortsCreator_I)
-2025-04-16 21:15:31,318 - INFO - shorts_maker_I - Enhanced parallel rendering available with dill 0.3.9
-2025-04-16 21:15:31,320 - INFO - shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
-2025-04-16 21:15:32,094 - INFO - shorts_maker_V - Google Cloud TTS initialized successfully
-2025-04-16 21:15:32,101 - INFO - shorts_maker_I - Google Cloud TTS initialized successfully
-2025-04-16 21:15:32,104 - INFO - __main__ - Using style: photorealistic
-2025-04-16 21:15:33,963 - INFO - __main__ - Generating comprehensive content for : EA Reveals Price For Split Fiction On Switch 2 - Nintendo Life
-2025-04-16 21:15:38,686 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-04-16 21:15:38,702 - INFO - script_generator - Successfully generated comprehensive content package:
-2025-04-16 21:15:38,703 - INFO - script_generator - Title: EA's Split Fiction Price for Switch 2 Revealed!
-2025-04-16 21:15:38,703 - INFO - script_generator - Script length: 47 words
-2025-04-16 21:15:38,703 - INFO - script_generator - Thumbnail HF prompt: A dynamic image of the Split Fiction game cover on...
-2025-04-16 21:15:38,704 - INFO - script_generator - Thumbnail Unsplash query: Nintendo Switch gaming
-2025-04-16 21:15:38,704 - INFO - __main__ - Content package generated successfully:
-2025-04-16 21:15:38,704 - INFO - __main__ - Title: LazyCreator presents: EA's Split Fiction Price for Switch 2 Revealed!
-2025-04-16 21:15:38,705 - INFO - __main__ - Description length: 127 characters
-2025-04-16 21:15:38,705 - INFO - __main__ - Raw script generated successfully
-2025-04-16 21:15:38,705 - INFO - __main__ - Script parsed into 5 sections
-2025-04-16 21:15:38,706 - INFO - __main__ - Section 1: EA has finally revealed the pr... (duration: 5s)
-2025-04-16 21:15:38,706 - INFO - __main__ - Section 2: Fans are buzzing about the exc... (duration: 5s)
-2025-04-16 21:15:38,706 - INFO - __main__ - Section 3: Priced at just $49.99, it's se... (duration: 5s)
-2025-04-16 21:15:38,706 - INFO - __main__ - Section 4: Will you be picking it up?... (duration: 3s)
-2025-04-16 21:15:38,707 - INFO - __main__ - Section 5: Let us know in the comments be... (duration: 5s)
-2025-04-16 21:15:38,707 - INFO - __main__ - Added intro card with title
-2025-04-16 21:15:38,707 - INFO - __main__ - Generating image search prompts for each section using AI...
-2025-04-16 21:15:43,584 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-04-16 21:15:43,586 - INFO - script_generator - Successfully generated batch image prompts for 6 sections.
-2025-04-16 21:15:43,588 - INFO - __main__ - Section queries: 1: a vibrant title card featuring the text 'EA's Split Fiction Price for Switch 2 Revealed!' in bold, colorful typography against a dynamic gaming background, with gaming elements like controllers and characters, 2: an excited crowd of gamers gathered around a gaming console, looking at a screen displaying the price announcement for Split Fiction, with expressions of anticipation and enthusiasm, 3: a split-screen image showcasing stunning graphics from Split Fiction, with vivid landscapes and intense action scenes, surrounded by fans discussing the game's exciting features in a lively atmosphere, 4: a close-up of a price tag displaying '$49.99' on a retail shelf filled with copies of Split Fiction, with bright summer-themed decorations and promotional posters in the background, 5: a thought-provoking image of a gamer pondering in front of a display featuring Split Fiction, with question marks floating around, symbolizing the decision to purchase the game, 6: a comment section layout with various users' avatars and comments about Split Fiction, set against a colorful gaming backdrop, encouraging interaction and engagement among fans
-2025-04-16 21:15:43,589 - INFO - __main__ - Creating YouTube Short with style: photorealistic
-2025-04-16 21:15:43,589 - INFO - shorts_maker_I - STARTING create_youtube_short at 21:15:43.589
-2025-04-16 21:15:43,589 - INFO - shorts_maker_I - Creating YouTube Short: LazyCreator presents: EA's Split Fiction Price for Switch 2 Revealed!
-2025-04-16 21:15:43,590 - INFO - shorts_maker_I - Testing Hugging Face API with query: a vibrant title card featuring the text 'EA's Split Fiction Price for Switch 2 Revealed!' in bold, colorful typography against a dynamic gaming background, with gaming elements like controllers and characters
-2025-04-16 21:15:43,590 - INFO - shorts_maker_I - STARTING _generate_image_from_prompt at 21:15:43.590
-2025-04-16 21:15:43,591 - INFO - shorts_maker_I - Original prompt: a vibrant title card featuring the text 'EA's Spli...
-2025-04-16 21:15:43,591 - INFO - shorts_maker_I - Using style: photorealistic
-2025-04-16 21:15:43,591 - INFO - shorts_maker_I - Enhanced prompt: a vibrant title card featuring the text 'EA's Spli...
-2025-04-16 21:15:43,994 - ERROR - shorts_maker_I - Error generating image: 404 - {"error":"Model stabilityai/stable-diffusion-2-1 inference is not supported HF inference api"}
-2025-04-16 21:16:04,708 - ERROR - shorts_maker_I - Error generating image: 404 - {"error":"Model stabilityai/stable-diffusion-2-1 inference is not supported HF inference api"}
-2025-04-16 21:16:25,487 - ERROR - shorts_maker_I - Error generating image: 404 - {"error":"Model stabilityai/stable-diffusion-2-1 inference is not supported HF inference api"}
-2025-04-16 21:16:45,487 - ERROR - shorts_maker_I - Failed to generate image with Hugging Face API after multiple attempts
-2025-04-16 21:16:45,488 - INFO - shorts_maker_I - COMPLETED _generate_image_from_prompt in 61.90 seconds
-2025-04-16 21:16:45,489 - WARNING - shorts_maker_I - ⚠️ FALLBACK: Hugging Face API failed for image generation
-2025-04-16 21:16:45,491 - WARNING - shorts_maker_I - ⚠️ SWITCHING to shorts_maker_V to create video with stock videos instead of AI images
-2025-04-16 21:16:45,491 - INFO - shorts_maker_I - Creating video using shorts_maker_V with the same script sections
-2025-04-16 21:16:45,492 - INFO - shorts_maker_V - Starting YouTube short creation
-2025-04-16 21:16:45,492 - INFO - shorts_maker_V - Scaling durations by factor 0.96 to fit max duration of 25s
-2025-04-16 21:16:45,492 - INFO - shorts_maker_V - Total video duration: 25.0s
-2025-04-16 21:16:45,492 - INFO - shorts_maker_V - Creating video with 4 background segments for middle sections
-2025-04-16 21:16:45,492 - INFO - shorts_maker_V - Starting background video fetch
-2025-04-16 21:16:45,493 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-16 21:16:49,089 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
-2025-04-16 21:16:49,464 - WARNING - shorts_maker_V - Pixabay API returned status code 400
-2025-04-16 21:16:49,465 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-16 21:16:52,235 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
-2025-04-16 21:16:52,563 - WARNING - shorts_maker_V - Pixabay API returned status code 400
-2025-04-16 21:16:52,564 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-16 21:16:56,519 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-16 21:16:58,404 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
-2025-04-16 21:16:58,859 - WARNING - shorts_maker_V - Pixabay API returned status code 400
-2025-04-16 21:16:58,859 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-16 21:17:02,572 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-16 21:17:03,914 - INFO - shorts_maker_V - Completed background video fetch in 18.42 seconds
-2025-04-16 21:17:03,915 - INFO - shorts_maker_V - Starting TTS audio generation
-2025-04-16 21:17:04,282 - INFO - voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\section_0.mp3]
-2025-04-16 21:17:04,709 - INFO - voiceover - Speech synthesized for text [EA has finally revea...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\section_1.mp3]
-2025-04-16 21:17:05,111 - INFO - voiceover - Speech synthesized for text [Fans are buzzing abo...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\section_2.mp3]
-2025-04-16 21:17:05,535 - INFO - voiceover - Speech synthesized for text [Priced at just $49.9...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\section_3.mp3]
-2025-04-16 21:17:05,922 - INFO - voiceover - Speech synthesized for text [Will you be picking ...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\section_4.mp3]
-2025-04-16 21:17:06,319 - INFO - voiceover - Speech synthesized for text [Let us know in the c...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\section_5.mp3]
-2025-04-16 21:17:06,470 - INFO - shorts_maker_V - Completed TTS audio generation in 2.56 seconds
-2025-04-16 21:17:06,471 - INFO - shorts_maker_V - Updated total duration: 19.35s
-2025-04-16 21:17:06,471 - INFO - shorts_maker_V - Starting background processing
-2025-04-16 21:17:12,723 - INFO - shorts_maker_V - Completed background processing in 6.25 seconds
-2025-04-16 21:17:25,297 - INFO - shorts_maker_V - Using parallel renderer for improved performance
-2025-04-16 21:17:25,301 - INFO - shorts_maker_V - Found dill 0.3.9 for improved serialization
-2025-04-16 21:17:25,466 - INFO - parallel_renderer - Rendering 6 clips in parallel using 7 processes with preset: veryfast
-2025-04-16 21:17:25,466 - INFO - parallel_renderer - Pre-processing complex clips...
-2025-04-16 21:17:25,525 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 0
-2025-04-16 21:17:25,526 - INFO - parallel_renderer - Pre-rendering clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\prerender_0_1744818445.mp4
-2025-04-16 21:19:13,437 - INFO - parallel_renderer - Successfully pre-rendered clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\prerender_0_1744818445.mp4
-2025-04-16 21:19:13,444 - INFO - parallel_renderer - Successfully pre-rendered complex clip 0
-2025-04-16 21:19:13,516 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 1
-2025-04-16 21:19:13,517 - INFO - parallel_renderer - Pre-rendering clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\prerender_1_1744818553.mp4
-2025-04-16 21:20:29,032 - INFO - parallel_renderer - Successfully pre-rendered clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\prerender_1_1744818553.mp4
-2025-04-16 21:20:29,034 - INFO - parallel_renderer - Successfully pre-rendered complex clip 1
-2025-04-16 21:20:29,122 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 2
-2025-04-16 21:20:29,123 - INFO - parallel_renderer - Pre-rendering clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\prerender_2_1744818629.mp4
-2025-04-16 21:21:44,201 - INFO - parallel_renderer - Successfully pre-rendered clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\prerender_2_1744818629.mp4
-2025-04-16 21:21:44,202 - INFO - parallel_renderer - Successfully pre-rendered complex clip 2
-2025-04-16 21:21:44,248 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 3
-2025-04-16 21:21:44,248 - INFO - parallel_renderer - Pre-rendering clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\prerender_3_1744818704.mp4
-2025-04-16 21:24:27,934 - INFO - parallel_renderer - Successfully pre-rendered clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\prerender_3_1744818704.mp4
-2025-04-16 21:24:27,941 - INFO - parallel_renderer - Successfully pre-rendered complex clip 3
-2025-04-16 21:24:28,008 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 4
-2025-04-16 21:24:28,009 - INFO - parallel_renderer - Pre-rendering clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\prerender_4_1744818867.mp4
-2025-04-16 21:24:56,350 - INFO - parallel_renderer - Successfully pre-rendered clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\prerender_4_1744818867.mp4
-2025-04-16 21:24:56,351 - INFO - parallel_renderer - Successfully pre-rendered complex clip 4
-2025-04-16 21:24:56,406 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 5
-2025-04-16 21:24:56,406 - INFO - parallel_renderer - Pre-rendering clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\prerender_5_1744818896.mp4
-2025-04-16 21:25:55,669 - INFO - parallel_renderer - Successfully pre-rendered clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\prerender_5_1744818896.mp4
-2025-04-16 21:25:55,669 - INFO - parallel_renderer - Successfully pre-rendered complex clip 5
-2025-04-16 21:25:55,672 - INFO - parallel_renderer - Rendering clips in parallel...
-2025-04-16 21:26:15,160 - INFO - parallel_renderer - Successfully rendered 6 out of 6 clips
-2025-04-16 21:26:15,162 - INFO - parallel_renderer - Concatenating clips using FFmpeg...
-2025-04-16 21:26:15,168 - INFO - parallel_renderer - Running FFmpeg concatenation: ffmpeg -y -f concat -safe 0 -i C:\Users\adhbu\AppData\Local\Temp\tmpsd__eri5\concat_list.txt -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -max_muxing_queue_size 9999 -c:a aac -b:a 192k ai_shorts_output\yt_shorts_LazyCreator_presents_EA's_Spli_20250416_211532.mp4
-2025-04-16 21:26:28,680 - INFO - parallel_renderer - Successfully concatenated clips to ai_shorts_output\yt_shorts_LazyCreator_presents_EA's_Spli_20250416_211532.mp4
-2025-04-16 21:26:28,686 - WARNING - shorts_maker_V - Error cleaning up temporary files: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\adhbu\\AppData\\Local\\Temp\\tmpsd__eri5\\pexels_5589655.mp4'
-2025-04-16 21:26:28,687 - INFO - shorts_maker_V - Completed YouTube short creation in 583.20 seconds
-2025-04-16 21:26:28,687 - INFO - shorts_maker_I - COMPLETED create_youtube_short in 645.10 seconds
-2025-04-16 21:26:28,687 - INFO - __main__ - Generating thumbnail for the short
-2025-04-16 21:26:28,696 - INFO - thumbnail - STARTING generate_thumbnail at 21:26:28.695
-2025-04-16 21:26:28,696 - INFO - thumbnail - Using thumbnail prompt: A dynamic image of the Split Fiction game cover on a Nintendo Switch 2 console, with vibrant colors and action-packed scenes from the game, and a price tag of $49.99 prominently displayed.
-2025-04-16 21:26:28,697 - INFO - thumbnail - STARTING generate_image_huggingface at 21:26:28.696
-2025-04-16 21:26:28,697 - INFO - thumbnail - Hugging Face prompt: A dynamic image of the Split Fiction game cover on a Nintendo Switch 2 cons...
-2025-04-16 21:26:29,543 - ERROR - thumbnail - Error from Hugging Face API: 404
-2025-04-16 21:26:45,259 - ERROR - thumbnail - Error from Hugging Face API: 404
-2025-04-16 21:27:15,260 - ERROR - thumbnail - Failed to generate image with Hugging Face API after multiple attempts
-2025-04-16 21:27:15,261 - INFO - thumbnail - COMPLETED generate_image_huggingface in 46.56 seconds
-2025-04-16 21:27:15,261 - INFO - thumbnail - Falling back to Unsplash for thumbnail image
-2025-04-16 21:27:15,261 - INFO - thumbnail - STARTING fetch_image_unsplash at 21:27:15.261
-2025-04-16 21:27:15,262 - INFO - thumbnail - Searching Unsplash with query: A dynamic image of the Split Fiction game cover on a Nintendo Switch 2 console, with vibrant colors and action-packed scenes from the game, and a price tag of $49.99 prominently displayed.
-2025-04-16 21:27:16,424 - INFO - thumbnail - Unsplash image downloaded to C:\Users\adhbu\AppData\Local\Temp\tmp3xp7_l6u\thumbnail_unsplash_1744819035_7109.jpg
-2025-04-16 21:27:16,425 - INFO - thumbnail - Image attribution: Photo by Miikka Luotio on Unsplash
-2025-04-16 21:27:16,426 - INFO - thumbnail - COMPLETED fetch_image_unsplash in 1.16 seconds
-2025-04-16 21:27:16,427 - INFO - thumbnail - STARTING create_thumbnail at 21:27:16.427
-2025-04-16 21:27:16,581 - INFO - thumbnail - Thumbnail created and saved to ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250416_211532.jpg
-2025-04-16 21:27:16,583 - INFO - thumbnail - COMPLETED create_thumbnail in 0.16 seconds
-2025-04-16 21:27:16,584 - INFO - thumbnail - Successfully generated thumbnail at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250416_211532.jpg
-2025-04-16 21:27:16,585 - INFO - thumbnail - COMPLETED generate_thumbnail in 47.89 seconds
-2025-04-16 21:27:16,585 - INFO - __main__ - Thumbnail generated at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250416_211532.jpg
-2025-04-16 21:27:16,587 - INFO - __main__ - Uploading to YouTube
-2025-04-16 21:27:16,795 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
-2025-04-16 21:27:16,939 - INFO - youtube_upload - Uploading video: LazyCreator presents: EA's Split Fiction Price for Switch 2 Revealed!
-2025-04-16 21:27:21,309 - INFO - youtube_upload - ✅ Video upload successful! Video ID: esFgdf8TGu0
-2025-04-16 21:27:21,310 - INFO - youtube_upload - Uploading thumbnail for video ID: esFgdf8TGu0
-2025-04-16 21:27:25,037 - INFO - youtube_upload - ✅ Thumbnail upload successful!
-2025-04-16 21:27:25,038 - INFO - __main__ - Process completed successfully!
-2025-04-16 21:27:25,038 - INFO - __main__ - Video path: ai_shorts_output\yt_shorts_LazyCreator_presents_EA's_Spli_20250416_211532.mp4
-2025-04-16 21:27:25,038 - INFO - __main__ - Thumbnail path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250416_211532.jpg
+2025-04-17 21:27:49,391 - INFO - __main__ - Day 107: Using video-based creator (YTShortsCreator_V)
+2025-04-17 21:27:49,476 - INFO - shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
+2025-04-17 21:27:50,546 - INFO - shorts_maker_V - Google Cloud TTS initialized successfully
+2025-04-17 21:27:51,699 - INFO - __main__ - Generating comprehensive content for : Switch 2's Backwards Compatibility List Provides Updates On Two Titles - Nintendo Life
+2025-04-17 21:27:56,311 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 21:27:56,342 - INFO - script_generator - Successfully generated comprehensive content package:
+2025-04-17 21:27:56,343 - INFO - script_generator - Title: Switch 2 Backwards Compatibility Update: Two Titles Confirmed!
+2025-04-17 21:27:56,343 - INFO - script_generator - Script length: 59 words
+2025-04-17 21:27:56,343 - INFO - script_generator - Thumbnail HF prompt: A vibrant collage featuring the Nintendo Switch 2 ...
+2025-04-17 21:27:56,344 - INFO - script_generator - Thumbnail Unsplash query: Nintendo Switch games
+2025-04-17 21:27:56,344 - INFO - __main__ - Content package generated successfully:
+2025-04-17 21:27:56,345 - INFO - __main__ - Title: LazyCreator presents: Switch 2 Backwards Compatibility Update: Two Titles Confirmed!
+2025-04-17 21:27:56,345 - INFO - __main__ - Description length: 173 characters
+2025-04-17 21:27:56,346 - INFO - __main__ - Raw script generated successfully
+2025-04-17 21:27:56,346 - INFO - __main__ - Script parsed into 7 sections
+2025-04-17 21:27:56,346 - INFO - __main__ - Section 1: Big news for Nintendo fans!... (duration: 3s)
+2025-04-17 21:27:56,347 - INFO - __main__ - Section 2: The Switch 2's backwards compa... (duration: 5s)
+2025-04-17 21:27:56,347 - INFO - __main__ - Section 3: Two beloved titles are confirm... (duration: 5s)
+2025-04-17 21:27:56,347 - INFO - __main__ - Section 4: This means you can enjoy even ... (duration: 5s)
+2025-04-17 21:27:56,347 - INFO - __main__ - Section 5: Are you excited to revisit you... (duration: 5s)
+2025-04-17 21:27:56,348 - INFO - __main__ - Section 6: Don’t miss out on the latest g... (duration: 5s)
+2025-04-17 21:27:56,349 - INFO - __main__ - Section 7: Hit that like button and subsc... (duration: 5s)
+2025-04-17 21:27:56,349 - INFO - __main__ - Added intro card with title
+2025-04-17 21:27:56,349 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-04-17 21:27:58,520 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 21:27:58,524 - INFO - script_generator - Successfully generated batch video queries for 8 sections.
+2025-04-17 21:27:58,524 - INFO - __main__ - Section queries: 1: Switch 2 update, 2: Nintendo fan excitement, 3: backwards compatibility update, 4: beloved game titles, 5: classic games console, 6: gaming nostalgia excitement, 7: latest gaming news, 8: subscribe for updates
+2025-04-17 21:27:58,524 - INFO - __main__ - Creating YouTube Short
+2025-04-17 21:27:58,524 - INFO - shorts_maker_V - Starting YouTube short creation
+2025-04-17 21:27:58,525 - INFO - shorts_maker_V - Scaling durations by factor 0.69 to fit max duration of 25s
+2025-04-17 21:27:58,525 - INFO - shorts_maker_V - Total video duration: 25.0s
+2025-04-17 21:27:58,525 - INFO - shorts_maker_V - Creating video with 6 background segments for middle sections
+2025-04-17 21:27:58,526 - INFO - shorts_maker_V - Starting background video fetch
+2025-04-17 21:27:58,526 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-17 21:28:04,037 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-17 21:28:12,960 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-17 21:28:14,526 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-17 21:28:17,322 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-17 21:29:02,452 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-17 21:29:04,903 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-17 21:29:15,198 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-17 21:29:23,848 - INFO - shorts_maker_V - Completed background video fetch in 85.32 seconds
+2025-04-17 21:29:23,848 - INFO - shorts_maker_V - Starting TTS audio generation
+2025-04-17 21:29:24,414 - INFO - voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\section_0.mp3]
+2025-04-17 21:29:25,038 - INFO - voiceover - Speech synthesized for text [Big news for Nintend...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\section_1.mp3]
+2025-04-17 21:29:25,626 - INFO - voiceover - Speech synthesized for text [The Switch 2's backw...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\section_2.mp3]
+2025-04-17 21:29:26,074 - INFO - voiceover - Speech synthesized for text [Two beloved titles a...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\section_3.mp3]
+2025-04-17 21:29:26,525 - INFO - voiceover - Speech synthesized for text [This means you can e...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\section_4.mp3]
+2025-04-17 21:29:26,922 - INFO - voiceover - Speech synthesized for text [Are you excited to r...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\section_5.mp3]
+2025-04-17 21:29:27,409 - INFO - voiceover - Speech synthesized for text [Don’t miss out on th...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\section_6.mp3]
+2025-04-17 21:29:27,865 - INFO - voiceover - Speech synthesized for text [Hit that like button...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\section_7.mp3]
+2025-04-17 21:29:28,050 - INFO - shorts_maker_V - Completed TTS audio generation in 4.20 seconds
+2025-04-17 21:29:28,051 - INFO - shorts_maker_V - Updated total duration: 23.89s
+2025-04-17 21:29:28,051 - INFO - shorts_maker_V - Starting background processing
+2025-04-17 21:30:13,876 - INFO - shorts_maker_V - Completed background processing in 45.72 seconds
+2025-04-17 21:30:36,352 - INFO - shorts_maker_V - Using parallel renderer for improved performance
+2025-04-17 21:30:36,359 - INFO - shorts_maker_V - Found dill 0.3.9 for improved serialization
+2025-04-17 21:30:36,361 - INFO - shorts_maker_V - Rendering 8 clips in parallel using 7 processes with preset: veryfast
+2025-04-17 21:30:36,361 - INFO - shorts_maker_V - Pre-processing complex clips...
+2025-04-17 21:30:36,424 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 0
+2025-04-17 21:30:36,426 - INFO - parallel_renderer - Pre-rendering clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_0_1744905636.mp4
+2025-04-17 21:35:07,489 - INFO - parallel_renderer - Successfully pre-rendered clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_0_1744905636.mp4
+2025-04-17 21:35:07,550 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 0
+2025-04-17 21:35:07,836 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 1
+2025-04-17 21:35:07,842 - INFO - parallel_renderer - Pre-rendering clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_1_1744905907.mp4
+2025-04-17 21:36:34,718 - INFO - parallel_renderer - Successfully pre-rendered clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_1_1744905907.mp4
+2025-04-17 21:36:34,728 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 1
+2025-04-17 21:36:34,790 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 2
+2025-04-17 21:36:34,791 - INFO - parallel_renderer - Pre-rendering clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_2_1744905994.mp4
+2025-04-17 21:37:29,542 - INFO - parallel_renderer - Successfully pre-rendered clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_2_1744905994.mp4
+2025-04-17 21:37:29,544 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 2
+2025-04-17 21:37:29,629 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 3
+2025-04-17 21:37:29,630 - INFO - parallel_renderer - Pre-rendering clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_3_1744906049.mp4
+2025-04-17 21:38:39,100 - INFO - parallel_renderer - Successfully pre-rendered clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_3_1744906049.mp4
+2025-04-17 21:38:39,101 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 3
+2025-04-17 21:38:39,169 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 4
+2025-04-17 21:38:39,169 - INFO - parallel_renderer - Pre-rendering clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_4_1744906119.mp4
+2025-04-17 21:39:44,676 - INFO - parallel_renderer - Successfully pre-rendered clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_4_1744906119.mp4
+2025-04-17 21:39:44,676 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 4
+2025-04-17 21:39:44,732 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 5
+2025-04-17 21:39:44,733 - INFO - parallel_renderer - Pre-rendering clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_5_1744906184.mp4
+2025-04-17 21:41:56,600 - INFO - parallel_renderer - Successfully pre-rendered clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_5_1744906184.mp4
+2025-04-17 21:41:56,611 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 5
+2025-04-17 21:41:56,671 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 6
+2025-04-17 21:41:56,672 - INFO - parallel_renderer - Pre-rendering clip 6 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_6_1744906316.mp4
+2025-04-17 21:42:44,945 - INFO - parallel_renderer - Successfully pre-rendered clip 6 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_6_1744906316.mp4
+2025-04-17 21:42:44,949 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 6
+2025-04-17 21:42:45,339 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 7
+2025-04-17 21:42:45,341 - INFO - parallel_renderer - Pre-rendering clip 7 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_7_1744906364.mp4
+2025-04-17 21:44:26,402 - INFO - parallel_renderer - Successfully pre-rendered clip 7 to C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\prerender_7_1744906364.mp4
+2025-04-17 21:44:26,417 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 7
+2025-04-17 21:44:26,419 - INFO - shorts_maker_V - Rendering clips in parallel...
+2025-04-17 21:44:57,192 - INFO - shorts_maker_V - Successfully rendered 8 out of 8 clips
+2025-04-17 21:44:57,194 - INFO - shorts_maker_V - Concatenating clips using FFmpeg...
+2025-04-17 21:44:57,201 - INFO - shorts_maker_V - Running FFmpeg concatenation: ffmpeg -y -f concat -safe 0 -i C:\Users\adhbu\AppData\Local\Temp\tmpro_d6zsc\concat_list.txt -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -max_muxing_queue_size 9999 -c:a aac -b:a 192k ai_shorts_output\yt_shorts_LazyCreator_presents_Switch_2__20250417_212750.mp4
+2025-04-17 21:45:22,916 - INFO - shorts_maker_V - Successfully concatenated clips to ai_shorts_output\yt_shorts_LazyCreator_presents_Switch_2__20250417_212750.mp4
+2025-04-17 21:45:22,963 - WARNING - shorts_maker_V - Error cleaning up temporary files: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\adhbu\\AppData\\Local\\Temp\\tmpro_d6zsc\\pexels_5767765.mp4'
+2025-04-17 21:45:22,967 - INFO - shorts_maker_V - Completed YouTube short creation in 1044.44 seconds
+2025-04-17 21:45:22,970 - INFO - __main__ - Generating thumbnail for the short
+2025-04-17 21:45:23,016 - INFO - thumbnail - STARTING generate_thumbnail at 21:45:23.014
+2025-04-17 21:45:23,018 - INFO - thumbnail - Using thumbnail prompt: A vibrant collage featuring the Nintendo Switch 2 console, iconic game covers of the two confirmed titles, and bold text announcing 'Backwards Compatibility Update!'
+2025-04-17 21:45:23,021 - INFO - thumbnail - STARTING generate_image_huggingface at 21:45:23.020
+2025-04-17 21:45:23,024 - INFO - thumbnail - Hugging Face prompt: A vibrant collage featuring the Nintendo Switch 2 console, iconic game cove...
+2025-04-17 21:45:23,605 - ERROR - thumbnail - Error from Hugging Face API: 404
+2025-04-17 21:45:39,398 - ERROR - thumbnail - Error from Hugging Face API: 404
+2025-04-17 21:46:09,399 - ERROR - thumbnail - Failed to generate image with Hugging Face API after multiple attempts
+2025-04-17 21:46:09,401 - INFO - thumbnail - COMPLETED generate_image_huggingface in 46.38 seconds
+2025-04-17 21:46:09,401 - INFO - thumbnail - Falling back to Unsplash for thumbnail image
+2025-04-17 21:46:09,401 - INFO - thumbnail - STARTING fetch_image_unsplash at 21:46:09.401
+2025-04-17 21:46:09,401 - INFO - thumbnail - Searching Unsplash with query: A vibrant collage featuring the Nintendo Switch 2 console, iconic game covers of the two confirmed titles, and bold text announcing 'Backwards Compatibility Update!'
+2025-04-17 21:46:10,391 - INFO - thumbnail - Unsplash image downloaded to C:\Users\adhbu\AppData\Local\Temp\tmp8fv2wmcm\thumbnail_unsplash_1744906569_3777.jpg
+2025-04-17 21:46:10,391 - INFO - thumbnail - Image attribution: Photo by Max Chen on Unsplash
+2025-04-17 21:46:10,393 - INFO - thumbnail - COMPLETED fetch_image_unsplash in 0.99 seconds
+2025-04-17 21:46:10,393 - INFO - thumbnail - STARTING create_thumbnail at 21:46:10.393
+2025-04-17 21:46:10,581 - INFO - thumbnail - Thumbnail created and saved to ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250417_212750.jpg
+2025-04-17 21:46:10,583 - INFO - thumbnail - COMPLETED create_thumbnail in 0.19 seconds
+2025-04-17 21:46:10,583 - INFO - thumbnail - Successfully generated thumbnail at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250417_212750.jpg
+2025-04-17 21:46:10,584 - INFO - thumbnail - COMPLETED generate_thumbnail in 47.57 seconds
+2025-04-17 21:46:10,584 - INFO - __main__ - Thumbnail generated at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250417_212750.jpg
+2025-04-17 21:46:10,585 - INFO - __main__ - Uploading to YouTube
+2025-04-17 21:46:11,080 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
+2025-04-17 21:46:11,216 - INFO - youtube_upload - Uploading video: Switch 2 Backwards Compatibility Update: Two Titles Confirmed!
+2025-04-17 21:46:19,779 - INFO - youtube_upload - ✅ Video upload successful! Video ID: J5Sbue_SK6A
+2025-04-17 21:46:19,780 - INFO - youtube_upload - Uploading thumbnail for video ID: J5Sbue_SK6A
+2025-04-17 21:46:23,456 - INFO - youtube_upload - ✅ Thumbnail upload successful!
+2025-04-17 21:46:23,456 - INFO - __main__ - Process completed successfully!
+2025-04-17 21:46:23,457 - INFO - __main__ - Video path: ai_shorts_output\yt_shorts_LazyCreator_presents_Switch_2__20250417_212750.mp4
+2025-04-17 21:46:23,457 - INFO - __main__ - Thumbnail path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250417_212750.jpg
