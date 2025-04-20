@@ -641,7 +641,7 @@ def render_clip_process(mp_tuple):
 
         return None
 
-def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, logger=None, temp_dir=None, preset="veryfast", codec="libx264", audio_codec="aac"):
+def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, logger=None, temp_dir=None, preset="veryfast", codec="libx264", audio_codec="aac", section_info=None):
     """
     Render clips in parallel and concatenate them
 
@@ -655,6 +655,7 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
         preset: FFmpeg preset to use for encoding (default: "veryfast")
         codec: Video codec to use (default: "libx264")
         audio_codec: Audio codec to use (default: "aac")
+        section_info: Optional dictionary mapping clip indices to section info for better debugging
 
     Returns:
         Path to the output file
@@ -667,24 +668,52 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
 
     logger.info(f"Rendering {len(clips)} clips in parallel using {num_processes} processes with preset: {preset}")
 
+    # Log section info if provided
+    if section_info:
+        logger.info("=== SECTION INFO RECEIVED BY PARALLEL RENDERER ===")
+        for idx, info in section_info.items():
+            logger.info(f"Clip {idx}: Section {info.get('section_idx', '?')} - '{info.get('section_text', 'Unknown')}'")
+        logger.info("=== END SECTION INFO ===")
+
     # Function to process rendering in a temp directory
     def process_in_temp_dir(temp_directory):
         # Store paths to rendered clips rather than clip objects to save memory
         processed_clips_paths = []
 
+        # Track clip info throughout the process
+        clip_tracking = {}
+
         # First step: Pre-render all complex clips to avoid serialization issues
         logger.info("Pre-processing complex clips...")
         for idx, clip in enumerate(clips):
+            # Log debug info if available
+            debug_info = getattr(clip, '_debug_info', f"Clip {idx}")
+            section_idx = getattr(clip, '_section_idx', idx)
+
+            # Track this clip's info
+            clip_tracking[idx] = {
+                'original_idx': idx,
+                'section_idx': section_idx,
+                'debug_info': debug_info
+            }
+
+            logger.info(f"Processing clip {idx}: {debug_info}")
+
             if is_complex_clip(clip):
-                logger.debug(f"Pre-rendering complex clip {idx}")
+                logger.info(f"Clip {idx} is complex, pre-rendering: {debug_info}")
                 try:
                     # Pre-render complex clips
                     clip_path = prerender_complex_clip(clip, temp_directory, idx, fps)
                     if clip_path:
                         processed_clips_paths.append((idx, clip_path))
-                        logger.info(f"Successfully pre-rendered complex clip {idx}")
+                        logger.info(f"Successfully pre-rendered complex clip {idx}: {debug_info}")
+
+                        # Update tracking with path info
+                        clip_tracking[idx]['path'] = clip_path
+                        clip_tracking[idx]['status'] = 'pre-rendered'
                     else:
-                        logger.warning(f"Failed to pre-render clip {idx}, skipping")
+                        logger.warning(f"Failed to pre-render clip {idx}: {debug_info}")
+                        clip_tracking[idx]['status'] = 'pre-render-failed'
 
                     # Explicitly close original clip to free memory
                     try:
@@ -694,19 +723,35 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
                         logger.debug(f"Error closing clip {idx}: {e}")
                 except Exception as e:
                     logger.error(f"Error pre-rendering clip {idx}: {e}")
+                    clip_tracking[idx]['status'] = 'pre-render-error'
             else:
                 # For simple clips, add to process list
                 processed_clips_paths.append((idx, clip))
+                logger.info(f"Added simple clip {idx} to processing list: {debug_info}")
+                clip_tracking[idx]['status'] = 'processing-queue'
+
+        # Log the processed clips paths before parallel rendering
+        logger.info("=== CLIPS BEFORE PARALLEL RENDERING ===")
+        for idx, (clip_idx, _) in enumerate(processed_clips_paths):
+            info = clip_tracking.get(clip_idx, {})
+            logger.info(f"Position {idx}: Clip {clip_idx} (Section {info.get('section_idx', '?')}) - {info.get('debug_info', 'Unknown')}")
+        logger.info("=== END CLIPS BEFORE PARALLEL RENDERING ===")
 
         # Second step: Process all clips in parallel
         logger.info("Rendering clips in parallel...")
         mp_clips = []
         for idx, clip_or_path in processed_clips_paths:
+            # Get tracking info
+            info = clip_tracking.get(idx, {})
+            debug_info = info.get('debug_info', f"Clip {idx}")
+
             # If it's already a path (pre-rendered), use it directly
             if isinstance(clip_or_path, str) and os.path.exists(clip_or_path):
+                logger.info(f"Adding pre-rendered clip {idx} to parallel processing: {debug_info}")
                 mp_clips.append((idx, clip_or_path, temp_directory, fps))
             else:
                 # Otherwise, it's a clip that needs rendering
+                logger.info(f"Adding clip {idx} to parallel processing: {debug_info}")
                 mp_clips.append((idx, clip_or_path, temp_directory, fps))
 
         # Clear processed_clips_paths to free memory
@@ -714,22 +759,48 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
 
         # Set up a multiprocessing pool and render each clip in parallel
         rendered_paths = []
+        rendered_paths_with_idx = []  # Store (idx, path) pairs
         with multiprocessing.Pool(processes=num_processes) as pool:
             # Process clips in parallel with progress tracking
             for result in tqdm(pool.imap_unordered(render_clip_process, mp_clips),
                               total=len(mp_clips),
                               desc="Rendering clips in parallel"):
                 if result is not None:
-                    rendered_paths.append(result)
-                    logger.debug(f"Clip rendered: {result}")
+                    # Extract the original clip index from the filename
+                    # Filenames should be in format "clip_{idx}_{timestamp}.mp4"
+                    match = re.search(r"clip_(\d+)_", os.path.basename(result))
+                    if match:
+                        orig_idx = int(match.group(1))
+                        rendered_paths_with_idx.append((orig_idx, result))
+                        logger.info(f"Clip {orig_idx} rendered: {result}")
+
+                        # Update tracking
+                        if orig_idx in clip_tracking:
+                            clip_tracking[orig_idx]['rendered_path'] = result
+                            clip_tracking[orig_idx]['status'] = 'rendered'
+                    else:
+                        logger.warning(f"Could not extract index from rendered path: {result}")
+                        rendered_paths.append(result)
 
                 # Force garbage collection periodically
                 if len(rendered_paths) % 5 == 0:
                     gc.collect()
 
+        # Log the rendered paths with indices
+        logger.info("=== RENDERED PATHS WITH INDICES ===")
+        for idx, path in rendered_paths_with_idx:
+            info = clip_tracking.get(idx, {})
+            logger.info(f"Clip {idx} (Section {info.get('section_idx', '?')}): {os.path.basename(path)}")
+        logger.info("=== END RENDERED PATHS ===")
+
         # Clear mp_clips list to free memory
         mp_clips = []
         gc.collect()
+
+        # Make sure we have all the rendered paths
+        if rendered_paths_with_idx:
+            # We have paths with indices, use those
+            rendered_paths = [path for _, path in rendered_paths_with_idx]
 
         if not rendered_paths:
             raise ValueError("No clips were successfully rendered")
@@ -747,18 +818,54 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
 
             # Create a list of (index, clip_path) tuples if rendered_paths don't already have indices
             indexed_paths = []
-            for i, path in enumerate(rendered_paths):
-                # If path has a format like "clip_{index}_*", extract the index
-                match = re.search(r"clip_(\d+)_", os.path.basename(path))
-                if match:
-                    idx = int(match.group(1))
+
+            # If we have rendered_paths_with_idx, use those indices directly
+            if rendered_paths_with_idx:
+                for idx, path in rendered_paths_with_idx:
                     indexed_paths.append((idx, path))
-                else:
-                    indexed_paths.append((i, path))
+
+                    # Add to tracking
+                    if idx in clip_tracking:
+                        clip_tracking[idx]['final_index'] = idx
+            else:
+                # Otherwise, extract indices from filenames or use enumeration
+                for i, path in enumerate(rendered_paths):
+                    # If path has a format like "clip_{index}_*", extract the index
+                    match = re.search(r"clip_(\d+)_", os.path.basename(path))
+                    if match:
+                        idx = int(match.group(1))
+                        indexed_paths.append((idx, path))
+
+                        # Add to tracking
+                        if idx in clip_tracking:
+                            clip_tracking[idx]['final_index'] = idx
+                    else:
+                        # Try to extract index from prerender_X_ format
+                        match = re.search(r"prerender_(\d+)_", os.path.basename(path))
+                        if match:
+                            idx = int(match.group(1))
+                            indexed_paths.append((idx, path))
+                            logger.info(f"Extracted index {idx} from prerender filename: {os.path.basename(path)}")
+
+                            # Add to tracking
+                            if idx in clip_tracking:
+                                clip_tracking[idx]['final_index'] = idx
+                        else:
+                            indexed_paths.append((i, path))
+                            logger.warning(f"Using enumeration index {i} for path: {path}")
 
             # Sort by index
             indexed_paths.sort(key=lambda x: x[0])
             logger.info(f"Concatenating {len(indexed_paths)} clips in correct order")
+
+            # Log the sorted order before concatenation
+            logger.info("=== CLIPS ORDER FOR CONCATENATION ===")
+            for concat_pos, (idx, path) in enumerate(indexed_paths):
+                info = clip_tracking.get(idx, {})
+                section_idx = info.get('section_idx', '?')
+                debug_info = info.get('debug_info', 'Unknown')
+                logger.info(f"Position {concat_pos}: Clip {idx} (Section {section_idx}) - {debug_info}")
+            logger.info("=== END CLIPS ORDER FOR CONCATENATION ===")
 
             # Write the sorted paths to concat list
             with open(concat_list_path, "w") as f:

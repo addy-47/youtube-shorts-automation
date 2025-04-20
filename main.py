@@ -148,12 +148,19 @@ def parse_script_to_cards(script):
     """Parse the raw script into a list of cards with text and duration."""
     cards = []
     sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|!)\s', script)
+
+    logger.info(f"Parsed script into {len(sentences)} sentences")
+
     for i, sentence in enumerate(sentences):
         if not sentence:
+            logger.debug(f"Skipping empty sentence at position {i}")
             continue
         duration = 5 if len(sentence) > 30 else 3
         voice_style = "excited" if i == 0 or i == len(sentences) - 1 else "normal"
         cards.append({"text": sentence, "duration": duration, "voice_style": voice_style})
+        logger.info(f"Added sentence {i} to cards: '{sentence[:30]}...' (duration: {duration}s)")
+
+    logger.info(f"Created {len(cards)} script cards")
     return cards
 
 def get_keywords(script, max_keywords=3):
@@ -244,7 +251,13 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
             "voice_style": "excited"
         }
         script_cards.insert(0, intro_card)
-        logger.info(f"Added intro card with title")
+        logger.info(f"Added intro card with title: '{intro_card['text']}'")
+
+        # Log all sections after insertion to confirm proper order
+        logger.info("=== FINAL SCRIPT CARDS ORDER ===")
+        for i, card in enumerate(script_cards):
+            logger.info(f"Section {i}: '{card['text'][:30]}...' (duration: {card['duration']}s)")
+        logger.info("=== END SCRIPT CARDS ORDER ===")
 
         if creator_type is None:
             creator_type = get_creator_for_day()

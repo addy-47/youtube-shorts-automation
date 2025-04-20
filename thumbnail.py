@@ -303,12 +303,18 @@ class ThumbnailGenerator:
         if not output_path:
             output_path = os.path.join(self.output_dir, f"thumbnail_{int(time.time())}.jpg")
 
+        logger.info(f"Creating thumbnail for title: '{title}'")
+        logger.info(f"Using base image: {image_path}")
+        logger.info(f"Output path: {output_path}")
+
         try:
             # Open the image
             img = Image.open(image_path)
+            logger.info(f"Base image size: {img.size}")
 
             # Resize to YouTube thumbnail dimensions
             img = img.resize(self.thumbnail_size, Image.LANCZOS)
+            logger.info(f"Resized image to YouTube thumbnail dimensions: {self.thumbnail_size}")
 
             # Convert to RGBA to support transparency for overlay
             img = img.convert("RGBA")
@@ -325,6 +331,7 @@ class ThumbnailGenerator:
 
             # Composite the image with the overlay
             img = Image.alpha_composite(img, overlay)
+            logger.info("Added gradient overlay to thumbnail")
 
             # Add title text
             draw = ImageDraw.Draw(img)
@@ -333,14 +340,17 @@ class ThumbnailGenerator:
             try:
                 # Calculate appropriate font size based on title length
                 font_size = 70 if len(title) < 30 else 60 if len(title) < 50 else 50
+                logger.info(f"Selected font size: {font_size} based on title length: {len(title)}")
                 font = ImageFont.truetype(self.title_font_path, font_size)
-            except:
+                logger.info(f"Loaded custom font from: {self.title_font_path}")
+            except Exception as e:
                 # Fallback to default font
                 font = ImageFont.load_default()
-                logger.warning("Using default font as custom font could not be loaded")
+                logger.warning(f"Using default font as custom font could not be loaded: {e}")
 
             # Wrap text to fit thumbnail width
             wrapped_text = textwrap.fill(title, width=30)
+            logger.info(f"Wrapped text: '{wrapped_text}'")
 
             # Calculate text position (centered horizontally, near bottom vertically)
             text_bbox = draw.textbbox((0, 0), wrapped_text, font=font)
@@ -349,32 +359,38 @@ class ThumbnailGenerator:
 
             text_x = (self.thumbnail_size[0] - text_width) // 2
             text_y = self.thumbnail_size[1] - text_height - 50  # 50px from bottom
+            logger.info(f"Text position calculated: x={text_x}, y={text_y}, width={text_width}, height={text_height}")
 
             # Draw text shadow/outline for better visibility
             outline_width = 3
             for dx, dy in [(dx, dy) for dx in range(-outline_width, outline_width+1, 2)
                                      for dy in range(-outline_width, outline_width+1, 2)]:
                 draw.text((text_x + dx, text_y + dy), wrapped_text, font=font, fill=(0, 0, 0, 255))
+            logger.info("Added text shadow/outline for visibility")
 
             # Draw the main text in white
             draw.text((text_x, text_y), wrapped_text, font=font, fill=(255, 255, 255, 255))
+            logger.info("Added main title text")
 
             # Add a small "SHORTS" label in the corner
             shorts_label = "SHORTS"
             try:
                 shorts_font = ImageFont.truetype(self.title_font_path, 30)
-            except:
+            except Exception as e:
                 shorts_font = ImageFont.load_default()
+                logger.warning(f"Using default font for SHORTS label due to error: {e}")
 
             shorts_bbox = draw.textbbox((0, 0), shorts_label, font=shorts_font)
             shorts_width = shorts_bbox[2] - shorts_bbox[0]
             shorts_height = shorts_bbox[3] - shorts_bbox[1]
+            logger.info(f"SHORTS label dimensions: width={shorts_width}, height={shorts_height}")
 
             # Draw rounded rectangle background for SHORTS label
             label_padding = 10
             label_x = self.thumbnail_size[0] - shorts_width - label_padding * 2 - 20
             label_y = 20
             label_height = shorts_height + 10
+            logger.info(f"SHORTS label position: x={label_x}, y={label_y}, height={label_height}")
 
             # Draw pill background for "SHORTS" text
             draw.rectangle(
@@ -383,15 +399,19 @@ class ThumbnailGenerator:
                 outline=(255, 255, 255, 200),
                 width=2  # Make outline more visible
             )
+            logger.info("Added rectangle background for SHORTS label")
 
             # Draw SHORTS text - properly centered in the rectangle
             text_y_offset = (label_height - shorts_height) // 2
+            text_position = (label_x + label_padding, label_y + text_y_offset)
+            logger.info(f"SHORTS text position: {text_position}, y_offset={text_y_offset}")
             draw.text(
-                (label_x + label_padding, label_y + text_y_offset),
+                text_position,
                 shorts_label,
                 font=shorts_font,
                 fill=(255, 255, 255, 255)
             )
+            logger.info("Added SHORTS text label")
 
             # Convert back to RGB for saving as JPG
             img = img.convert("RGB")
@@ -404,6 +424,8 @@ class ThumbnailGenerator:
 
         except Exception as e:
             logger.error(f"Error creating thumbnail: {e}")
+            import traceback
+            logger.error(f"Thumbnail creation traceback: {traceback.format_exc()}")
             return None
 
     @measure_time

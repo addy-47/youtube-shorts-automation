@@ -1126,11 +1126,27 @@ class YTShortsCreator_V:
                             trimmed_audio = clip.audio.subclip(0, clip_duration)
                             clip = clip.set_audio(trimmed_audio)
 
+                    # Add the section index as a custom attribute for tracking
+                    clip._section_idx = i
+                    clip._section_text = script_sections[i]['text'][:30] + "..." if len(script_sections[i]['text']) > 30 else script_sections[i]['text']
+                    logger.info(f"Adding validated clip {i}: '{clip._section_text}'")
+
                     validated_section_clips.append(clip)
                 except Exception as e:
                     logger.error(f"Error validating section clip {i}: {e}")
                     # Use clip as-is if validation fails
+                    clip._section_idx = i
+                    clip._section_text = f"Section {i} (validation failed)"
+                    logger.info(f"Adding fallback clip {i}")
                     validated_section_clips.append(clip)
+
+            # Log the validated clip order before rendering
+            logger.info("=== CLIP ORDER BEFORE RENDERING ===")
+            for i, clip in enumerate(validated_section_clips):
+                section_idx = getattr(clip, '_section_idx', 'Unknown')
+                section_text = getattr(clip, '_section_text', 'Unknown text')
+                logger.info(f"Position {i}: Section {section_idx} - '{section_text}'")
+            logger.info("=== END CLIP ORDER LOG ===")
 
             # Use parallel renderer to improve performance
             try:
@@ -1148,9 +1164,19 @@ class YTShortsCreator_V:
 
                 # Make sure clips are in the correct order by sorting them based on their index
                 # Sort validated_section_clips by index if they were added out of order
+                logger.info("Sorting clips by their section index before rendering")
                 section_indices = list(range(len(validated_section_clips)))
                 sorted_clips_with_indices = list(zip(section_indices, validated_section_clips))
                 sorted_clips = [clip for _, clip in sorted(sorted_clips_with_indices, key=lambda x: x[0])]
+
+                # Log the sorted clip order
+                logger.info("=== CLIP ORDER AFTER SORTING ===")
+                for i, clip in enumerate(sorted_clips):
+                    section_idx = getattr(clip, '_section_idx', 'Unknown')
+                    section_text = getattr(clip, '_section_text', 'Unknown text')
+                    logger.info(f"Position {i}: Section {section_idx} - '{section_text}'")
+                logger.info("=== END SORTED CLIP ORDER LOG ===")
+
                 validated_section_clips = sorted_clips
 
                 # Ensure all clips are properly named with their index before rendering
@@ -1161,13 +1187,26 @@ class YTShortsCreator_V:
                     else:
                         clip._idx = i  # Override any existing index to ensure sequential order
 
+                    # Set a debug attribute with section information to trace through rendering
+                    clip._debug_info = f"Section {getattr(clip, '_section_idx', i)}: {getattr(clip, '_section_text', '')}"
+                    logger.info(f"Setting clip {i} debug info: {clip._debug_info}")
+
+                # Pass source section info to parallel_renderer for better debugging
+                section_info = {}
+                for i, clip in enumerate(validated_section_clips):
+                    section_info[i] = {
+                        'section_idx': getattr(clip, '_section_idx', i),
+                        'section_text': getattr(clip, '_section_text', f'Section {i}')
+                    }
+
                 # Render all clips in parallel
                 output_filename = render_clips_in_parallel(
                     validated_section_clips,
                     output_filename,
                     fps=self.fps,
                     logger=logger,
-                    temp_dir=self.temp_dir
+                    temp_dir=self.temp_dir,
+                    section_info=section_info  # Pass section info for better debugging
                 )
             except Exception as parallel_error:
                 logger.warning(f"Parallel renderer failed: {parallel_error}. Using standard rendering.")
