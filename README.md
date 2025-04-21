@@ -1,13 +1,28 @@
 # YouTube Shorts Automation
 
-This project automates the creation of YouTube Shorts videos using AI-generated scripts, background videos, and text-to-speech (TTS) technology.
+This project automates the creation of YouTube Shorts videos using AI-generated scripts, images, background videos, and text-to-speech (TTS) technology.
 
 ## Features
 
-- Fetches the latest AI news using the NewsAPI
-- Generates a script for the YouTube Short based on the latest AI news
-- Creates a video with background clips, text overlays, and TTS audio
-- Optionally uploads the video to YouTube
+- Creates AI-powered YouTube Shorts with dynamic transitions and effects
+- Supports both image-based and video-based shorts generation
+- AI image generation using Hugging Face Stable Diffusion API
+- Background video fetching from Pexels and Pixabay
+- Multiple TTS options:
+  - Google Cloud TTS (high quality)
+  - Azure TTS (configurable voices)
+  - gTTS (fallback option)
+- Advanced video features:
+  - Parallel video processing for faster rendering
+  - Word-by-word text animations
+  - Customizable transitions and effects
+  - Smart background video processing
+  - Edge blur and background blur options
+  - Watermark support
+  - Automatic video duration adjustment
+  - Hardware acceleration support (NVIDIA GPU)
+- Automatic fallback mechanisms for reliability
+- Progress logging and error handling
 
 ## Project Structure
 
@@ -15,110 +30,121 @@ This project automates the creation of YouTube Shorts videos using AI-generated 
 youtube-shorts-automation/
 ├── .env                       # Environment variables
 ├── main.py                    # Main script
-├── README.md                  # Project documentation
-├── requirements.txt           # Project dependencies
-├── run_short_automation.bat   # Batch file to run the automation
-├── schedule.py                # Script for scheduling tasks (optional)
+├── parallel_renderer.py       # Parallel video rendering
 ├── script_generator.py        # Script generation logic
-├── video_maker.py             # Video creation logic
-├── voiceover.py               # Text-to-speech logic
-├── youtube_auth.py            # YouTube authentication logic
-├── youtube_upload.py          # YouTube upload logic
-├── ai_shorts_output/          # Output directory for generated videos
-├── ffmpeg/                    # Directory for ffmpeg binaries
-├── fonts/                     # Directory for font files
+├── shorts_maker_I.py         # Image-based shorts creator
+├── shorts_maker_V.py         # Video-based shorts creator
+├── thumbnail.py              # Thumbnail generation
+├── voiceover.py              # Text-to-speech base class
+├── voiceover_azure.py        # Azure TTS implementation
+├── youtube_auth.py           # YouTube authentication
+├── youtube_upload.py         # YouTube upload logic
+├── ai_shorts_output/         # Output directory for generated videos
+├── ffmpeg/                   # Directory for ffmpeg binaries
+├── fonts/                    # Directory for font files
+└── logs/                     # Directory for log files
 ```
 
 ## Setup
 
 1. **Clone the repository:**
-
    ```sh
    git clone https://github.com/yourusername/youtube-shorts-automation.git
    cd youtube-shorts-automation
    ```
 
 2. **Install dependencies:**
-
    ```sh
    pip install -r requirements.txt
    ```
 
 3. **Set up API credentials:**
-
    - Create a `client_secret.json` file for YouTube API credentials
-   - Create a `google_credentials.json` file for Google API credentials
-
-   _Note: These credential files are not included in the repository for security reasons and must be created by each user._
+   - Create a `google_credentials.json` file for Google Cloud API credentials
+   - Set up Hugging Face API token for AI image generation
+   - Set up Pexels and Pixabay API keys for video backgrounds
 
 4. **Set up environment variables:**
-
    Create a `.env` file in the root directory and add the following variables:
-
    ```env
+   # API Keys
+   HUGGINGFACE_API_KEY=your_huggingface_key
    NEWS_API_KEY=your_news_api_key
    PEXELS_API_KEY=your_pexels_api_key
    PIXABAY_API_KEY=your_pixabay_api_key
+
+   # TTS Configuration
+   USE_GOOGLE_TTS=true
    USE_AZURE_TTS=false
    AZURE_VOICE=en-US-JennyNeural
-   YOUTUBE_TOPIC=Artificial Intelligence
+
+   # Video Settings
    ENABLE_YOUTUBE_UPLOAD=false
-   ADD step 3, 4 and other large files to .gitignore file
+   YOUTUBE_TOPIC=Artificial Intelligence
+   HF_MODEL=stabilityai/stable-diffusion-2-1
+
+   # Optional Features
+   ENABLE_PARALLEL_RENDERING=true
+   ENABLE_GPU_ACCELERATION=true
    ```
 
-5. **Download NLTK data:**
-
-   ```sh
-   python -m nltk.downloader stopwords punkt
-   ```
-
-6. **Set up fonts:**
-
-   Place your font files in the `fonts/` directory.
+5. **Install additional requirements:**
+   - FFmpeg (required for video processing)
+   - ImageMagick (required for text effects)
+   - CUDA toolkit (optional, for GPU acceleration)
 
 ## Usage
 
-1. **Run the main script:**
-
+1. **Basic usage:**
    ```sh
    python main.py
    ```
 
-   This will generate a YouTube Short video based on the latest AI news and save it in the `ai_shorts_output` directory.
+2. **With specific options:**
+   ```sh
+   python main.py --style "digital art" --voice-style "enthusiastic" --add-watermark
+   ```
 
-2. **Optional: Upload to YouTube:**
+3. **Schedule automated runs:**
+   ```sh
+   python schedule.py
+   ```
 
-   If you want to upload the generated video to YouTube:
+## Advanced Features
 
-   - Set `ENABLE_YOUTUBE_UPLOAD=true` in the `.env` file
-   - Ensure you have valid credentials in your `client_secret.json` file
-   - Run the script as normal with `python main.py`
+### Image-based Shorts (shorts_maker_I.py)
+- Uses AI-generated images for visually appealing content
+- Automatic style selection and prompt enhancement
+- Smart fallback to video mode if image generation fails
+- Zoom and transition effects for still images
 
-## Scripts Description
+### Video-based Shorts (shorts_maker_V.py)
+- Smart video background selection and processing
+- Multiple transition effects between scenes
+- Word-by-word text animation
+- Background blur and edge blur effects
 
-- **main.py**: Main script to generate and optionally upload YouTube Shorts.
-- **script_generator.py**: Generates the script for the YouTube Short.
-- **video_maker.py**: Creates the video with background clips, text overlays, and TTS audio.
-- **youtube_upload.py**: Handles uploading the video to YouTube.
-- **voiceover.py**: Handles text-to-speech (TTS) using Azure TTS or gTTS.
+### Parallel Processing (parallel_renderer.py)
+- Multi-process video rendering for faster output
+- Smart clip pre-rendering for complex compositions
+- Hardware acceleration support
+- Memory-efficient processing of large videos
 
-## Creating API Credentials
+## Contributing
 
-### YouTube API Credentials
-
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select an existing project
-3. Enable the YouTube Data API v3
-4. Create OAuth 2.0 client credentials and download as `client_secret.json`
-5. Place the file in the root directory of the project
-
-### Google API Credentials
-
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new service account or use an existing one
-3. Download the service account key as JSON
-4. Rename the file to `google_credentials.json` and place it in the root directory
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
 This project is licensed under the MIT License.
+
+## Acknowledgments
+
+- FFmpeg for video processing
+- MoviePy for Python video editing
+- Hugging Face for AI image generation
+- Pexels and Pixabay for video content
