@@ -59,75 +59,7 @@ class ThumbnailGenerator:
         self.unsplash_api_url = "https://api.unsplash.com/search/photos"
 
         # Thumbnail settings
-        self.thumbnail_size = (1280, 720)  # YouTube recommended size
-
-    @measure_time
-    def generate_thumbnail_query(self, title, script_sections, model="gpt-4o-mini-2024-07-18"):
-        """
-        Generate an optimal thumbnail query based on the video content.
-
-        Args:
-            title (str): Title of the video
-            script_sections (list): List of script sections
-            model (str): OpenAI model to use
-
-        Returns:
-            str: Query for thumbnail image generation
-        """
-        try:
-            import openai
-
-            # Check if API key exists
-            if not openai.api_key:
-                logger.warning("OpenAI API key not found. Using title as fallback query.")
-                return f"{title}, eye-catching thumbnail"
-
-            # Create a condensed version of the script for context
-            script_context = ""
-            for i, section in enumerate(script_sections[:3]):  # Use first 3 sections at most
-                script_context += f"Section {i+1}: {section['text'][:100]}...\n"
-
-            prompt = f"""
-            You are a specialist in creating engaging YouTube Shorts thumbnails.
-
-            Create a detailed image generation prompt for a thumbnail based on this YouTube Short:
-
-            Title: {title}
-
-            Script Context:
-            {script_context}
-
-            Your task:
-            1. Create a single, specific image prompt (15-25 words) that will make viewers click
-            2. Focus on the key visual element that represents the video's main topic
-            3. Include composition details that would work well as a YouTube Shorts thumbnail
-            4. DO NOT include style descriptors like "digital art" or "photorealistic"
-            5. The prompt should be specific enough to create a clear, engaging image
-
-            Return ONLY the image prompt text, nothing else.
-            """
-
-            # Make request to OpenAI API
-            client = openai.OpenAI()
-            response = client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=100,
-                temperature=0.7
-            )
-
-            query = response.choices[0].message.content.strip()
-            logger.info(f"Generated thumbnail query: {query}")
-
-            # Add eye-catching elements to query if not present
-            if "eye-catching" not in query.lower() and "thumbnail" not in query.lower():
-                query += ", eye-catching thumbnail for YouTube Shorts"
-
-            return query
-
-        except Exception as e:
-            logger.error(f"Error generating thumbnail query: {e}")
-            return f"{title}, eye-catching thumbnail"
+        self.thumbnail_size = (1080, 1920)  # YouTube Shorts recommended size (9:16 aspect ratio)
 
     @measure_time
     def generate_image_huggingface(self, prompt, style="photorealistic", file_path=None):

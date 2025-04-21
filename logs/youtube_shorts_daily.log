@@ -1,0 +1,276 @@
+2025-04-21 21:16:09,190 - INFO - __main__ - Day 111: Using video-based creator (YTShortsCreator_V)
+2025-04-21 21:16:09,275 - INFO - shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
+2025-04-21 21:16:10,271 - INFO - shorts_maker_V - Google Cloud TTS initialized successfully
+2025-04-21 21:16:12,595 - INFO - __main__ - Generating comprehensive content for : Cyberpunk 2077 on Switch 2 uses DLSS confirms CD Projekt RED - Eurogamer
+2025-04-21 21:16:19,480 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-21 21:16:19,507 - INFO - script_generator - Successfully generated comprehensive content package:
+2025-04-21 21:16:19,508 - INFO - script_generator - Title: Cyberpunk 2077 on Switch 2: DLSS Confirmed!
+2025-04-21 21:16:19,509 - INFO - script_generator - Script length: 56 words
+2025-04-21 21:16:19,509 - INFO - script_generator - Thumbnail HF prompt: A dynamic image of a futuristic cityscape represen...
+2025-04-21 21:16:19,510 - INFO - script_generator - Thumbnail Unsplash query: futuristic cityscape
+2025-04-21 21:16:19,510 - INFO - __main__ - Content package generated successfully:
+2025-04-21 21:16:19,511 - INFO - __main__ - Title: LazyCreator presents: Cyberpunk 2077 on Switch 2: DLSS Confirmed!
+2025-04-21 21:16:19,511 - INFO - __main__ - Description length: 142 characters
+2025-04-21 21:16:19,512 - INFO - __main__ - Raw script generated successfully
+2025-04-21 21:16:19,513 - INFO - __main__ - Parsed script into 7 sentences
+2025-04-21 21:16:19,513 - INFO - __main__ - Added sentence 0 to cards: 'Cyberpunk 2077 is coming to th...' (duration: 5s)
+2025-04-21 21:16:19,514 - INFO - __main__ - Added sentence 1 to cards: 'This was confirmed by CD Proje...' (duration: 5s)
+2025-04-21 21:16:19,514 - INFO - __main__ - Added sentence 2 to cards: 'Fans can expect stunning graph...' (duration: 5s)
+2025-04-21 21:16:19,515 - INFO - __main__ - Added sentence 3 to cards: 'Imagine exploring Night City w...' (duration: 5s)
+2025-04-21 21:16:19,515 - INFO - __main__ - Added sentence 4 to cards: 'This is a game-changer for han...' (duration: 5s)
+2025-04-21 21:16:19,516 - INFO - __main__ - Added sentence 5 to cards: 'Are you excited to dive back i...' (duration: 5s)
+2025-04-21 21:16:19,518 - INFO - __main__ - Added sentence 6 to cards: 'Let us know in the comments!...' (duration: 3s)
+2025-04-21 21:16:19,518 - INFO - __main__ - Created 7 script cards
+2025-04-21 21:16:19,519 - INFO - __main__ - Script parsed into 7 sections
+2025-04-21 21:16:19,520 - INFO - __main__ - Section 1: Cyberpunk 2077 is coming to th... (duration: 5s)
+2025-04-21 21:16:19,520 - INFO - __main__ - Section 2: This was confirmed by CD Proje... (duration: 5s)
+2025-04-21 21:16:19,521 - INFO - __main__ - Section 3: Fans can expect stunning graph... (duration: 5s)
+2025-04-21 21:16:19,521 - INFO - __main__ - Section 4: Imagine exploring Night City w... (duration: 5s)
+2025-04-21 21:16:19,522 - INFO - __main__ - Section 5: This is a game-changer for han... (duration: 5s)
+2025-04-21 21:16:19,522 - INFO - __main__ - Section 6: Are you excited to dive back i... (duration: 5s)
+2025-04-21 21:16:19,523 - INFO - __main__ - Section 7: Let us know in the comments!... (duration: 3s)
+2025-04-21 21:16:19,523 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Cyberpunk 2077 on Switch 2: DLSS Confirmed!'
+2025-04-21 21:16:19,524 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
+2025-04-21 21:16:19,524 - INFO - __main__ - Section 0: 'LazyCreator presents: Cyberpun...' (duration: 3s)
+2025-04-21 21:16:19,525 - INFO - __main__ - Section 1: 'Cyberpunk 2077 is coming to th...' (duration: 5s)
+2025-04-21 21:16:19,525 - INFO - __main__ - Section 2: 'This was confirmed by CD Proje...' (duration: 5s)
+2025-04-21 21:16:19,526 - INFO - __main__ - Section 3: 'Fans can expect stunning graph...' (duration: 5s)
+2025-04-21 21:16:19,526 - INFO - __main__ - Section 4: 'Imagine exploring Night City w...' (duration: 5s)
+2025-04-21 21:16:19,527 - INFO - __main__ - Section 5: 'This is a game-changer for han...' (duration: 5s)
+2025-04-21 21:16:19,528 - INFO - __main__ - Section 6: 'Are you excited to dive back i...' (duration: 5s)
+2025-04-21 21:16:19,528 - INFO - __main__ - Section 7: 'Let us know in the comments!...' (duration: 3s)
+2025-04-21 21:16:19,529 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
+2025-04-21 21:16:19,529 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-04-21 21:16:21,937 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-21 21:16:21,941 - INFO - script_generator - Successfully generated batch video queries for 8 sections.
+2025-04-21 21:16:21,942 - INFO - __main__ - Section queries: 1: Cyberpunk 2077, 2: Switch 2 announcement, 3: CD Projekt RED, 4: DLSS technology graphics, 5: Night City exploration, 6: handheld gaming revolution, 7: cybernetic world excitement, 8: comments section interaction
+2025-04-21 21:16:21,942 - INFO - __main__ - Creating YouTube Short
+2025-04-21 21:16:21,943 - INFO - shorts_maker_V - Starting YouTube short creation
+2025-04-21 21:16:21,943 - INFO - shorts_maker_V - Scaling durations by factor 0.69 to fit max duration of 25s
+2025-04-21 21:16:21,943 - INFO - shorts_maker_V - Total video duration: 25.0s
+2025-04-21 21:16:21,944 - INFO - shorts_maker_V - Creating video with 6 background segments for middle sections
+2025-04-21 21:16:21,944 - INFO - shorts_maker_V - Starting background video fetch
+2025-04-21 21:16:21,944 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-04-21 21:16:25,142 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-21 21:16:27,759 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-21 21:16:30,561 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-21 21:16:34,218 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-21 21:16:36,483 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-21 21:16:39,828 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-21 21:16:41,959 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-04-21 21:16:44,494 - INFO - shorts_maker_V - Completed background video fetch in 22.55 seconds
+2025-04-21 21:16:44,495 - INFO - shorts_maker_V - Starting TTS audio generation
+2025-04-21 21:16:45,092 - INFO - voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_0.mp3]
+2025-04-21 21:16:45,800 - INFO - voiceover - Speech synthesized for text [Cyberpunk 2077 is co...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_1.mp3]
+2025-04-21 21:16:46,415 - INFO - voiceover - Speech synthesized for text [This was confirmed b...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_2.mp3]
+2025-04-21 21:16:47,032 - INFO - voiceover - Speech synthesized for text [Fans can expect stun...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_3.mp3]
+2025-04-21 21:16:47,644 - INFO - voiceover - Speech synthesized for text [Imagine exploring Ni...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_4.mp3]
+2025-04-21 21:16:48,360 - INFO - voiceover - Speech synthesized for text [This is a game-chang...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_5.mp3]
+2025-04-21 21:16:48,871 - INFO - voiceover - Speech synthesized for text [Are you excited to d...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_6.mp3]
+2025-04-21 21:16:49,486 - INFO - voiceover - Speech synthesized for text [Let us know in the c...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_7.mp3]
+2025-04-21 21:16:49,730 - INFO - shorts_maker_V - Completed TTS audio generation in 5.23 seconds
+2025-04-21 21:16:49,731 - INFO - shorts_maker_V - Updated total duration: 24.5s
+2025-04-21 21:16:49,731 - INFO - shorts_maker_V - Starting background processing
+2025-04-21 21:16:58,215 - INFO - shorts_maker_V - Completed background processing in 8.48 seconds
+2025-04-21 21:17:11,674 - INFO - shorts_maker_V - Adding validated clip 0: 'LazyCreator presents: Cyberpun...'
+2025-04-21 21:17:11,683 - INFO - shorts_maker_V - Adding validated clip 1: 'Cyberpunk 2077 is coming to th...'
+2025-04-21 21:17:11,683 - INFO - shorts_maker_V - Adding validated clip 2: 'This was confirmed by CD Proje...'
+2025-04-21 21:17:11,684 - INFO - shorts_maker_V - Adding validated clip 3: 'Fans can expect stunning graph...'
+2025-04-21 21:17:11,685 - INFO - shorts_maker_V - Adding validated clip 4: 'Imagine exploring Night City w...'
+2025-04-21 21:17:11,685 - INFO - shorts_maker_V - Adding validated clip 5: 'This is a game-changer for han...'
+2025-04-21 21:17:11,686 - INFO - shorts_maker_V - Adding validated clip 6: 'Are you excited to dive back i...'
+2025-04-21 21:17:11,686 - INFO - shorts_maker_V - Adding validated clip 7: 'Let us know in the comments!'
+2025-04-21 21:17:11,687 - INFO - shorts_maker_V - === CLIP ORDER BEFORE RENDERING ===
+2025-04-21 21:17:11,687 - INFO - shorts_maker_V - Position 0: Section 0 - 'LazyCreator presents: Cyberpun...'
+2025-04-21 21:17:11,688 - INFO - shorts_maker_V - Position 1: Section 1 - 'Cyberpunk 2077 is coming to th...'
+2025-04-21 21:17:11,688 - INFO - shorts_maker_V - Position 2: Section 2 - 'This was confirmed by CD Proje...'
+2025-04-21 21:17:11,689 - INFO - shorts_maker_V - Position 3: Section 3 - 'Fans can expect stunning graph...'
+2025-04-21 21:17:11,689 - INFO - shorts_maker_V - Position 4: Section 4 - 'Imagine exploring Night City w...'
+2025-04-21 21:17:11,689 - INFO - shorts_maker_V - Position 5: Section 5 - 'This is a game-changer for han...'
+2025-04-21 21:17:11,690 - INFO - shorts_maker_V - Position 6: Section 6 - 'Are you excited to dive back i...'
+2025-04-21 21:17:11,690 - INFO - shorts_maker_V - Position 7: Section 7 - 'Let us know in the comments!'
+2025-04-21 21:17:11,690 - INFO - shorts_maker_V - === END CLIP ORDER LOG ===
+2025-04-21 21:17:12,044 - INFO - shorts_maker_V - Using parallel renderer for improved performance
+2025-04-21 21:17:12,044 - INFO - shorts_maker_V - Found dill 0.3.9 for improved serialization
+2025-04-21 21:17:12,044 - INFO - shorts_maker_V - Sorting clips by their section index before rendering
+2025-04-21 21:17:12,046 - INFO - shorts_maker_V - === CLIP ORDER AFTER SORTING ===
+2025-04-21 21:17:12,046 - INFO - shorts_maker_V - Position 0: Section 0 - 'LazyCreator presents: Cyberpun...'
+2025-04-21 21:17:12,047 - INFO - shorts_maker_V - Position 1: Section 1 - 'Cyberpunk 2077 is coming to th...'
+2025-04-21 21:17:12,047 - INFO - shorts_maker_V - Position 2: Section 2 - 'This was confirmed by CD Proje...'
+2025-04-21 21:17:12,047 - INFO - shorts_maker_V - Position 3: Section 3 - 'Fans can expect stunning graph...'
+2025-04-21 21:17:12,048 - INFO - shorts_maker_V - Position 4: Section 4 - 'Imagine exploring Night City w...'
+2025-04-21 21:17:12,048 - INFO - shorts_maker_V - Position 5: Section 5 - 'This is a game-changer for han...'
+2025-04-21 21:17:12,048 - INFO - shorts_maker_V - Position 6: Section 6 - 'Are you excited to dive back i...'
+2025-04-21 21:17:12,049 - INFO - shorts_maker_V - Position 7: Section 7 - 'Let us know in the comments!'
+2025-04-21 21:17:12,049 - INFO - shorts_maker_V - === END SORTED CLIP ORDER LOG ===
+2025-04-21 21:17:12,051 - INFO - shorts_maker_V - Setting clip 0 debug info: Section 0: LazyCreator presents: Cyberpun...
+2025-04-21 21:17:12,051 - INFO - shorts_maker_V - Setting clip 1 debug info: Section 1: Cyberpunk 2077 is coming to th...
+2025-04-21 21:17:12,052 - INFO - shorts_maker_V - Setting clip 2 debug info: Section 2: This was confirmed by CD Proje...
+2025-04-21 21:17:12,052 - INFO - shorts_maker_V - Setting clip 3 debug info: Section 3: Fans can expect stunning graph...
+2025-04-21 21:17:12,053 - INFO - shorts_maker_V - Setting clip 4 debug info: Section 4: Imagine exploring Night City w...
+2025-04-21 21:17:12,053 - INFO - shorts_maker_V - Setting clip 5 debug info: Section 5: This is a game-changer for han...
+2025-04-21 21:17:12,053 - INFO - shorts_maker_V - Setting clip 6 debug info: Section 6: Are you excited to dive back i...
+2025-04-21 21:17:12,053 - INFO - shorts_maker_V - Setting clip 7 debug info: Section 7: Let us know in the comments!
+2025-04-21 21:17:12,055 - INFO - shorts_maker_V - Rendering 8 clips in parallel using 7 processes with preset: veryfast
+2025-04-21 21:17:12,055 - INFO - shorts_maker_V - === SECTION INFO RECEIVED BY PARALLEL RENDERER ===
+2025-04-21 21:17:12,056 - INFO - shorts_maker_V - Clip 0: Section 0 - 'LazyCreator presents: Cyberpun...'
+2025-04-21 21:17:12,056 - INFO - shorts_maker_V - Clip 1: Section 1 - 'Cyberpunk 2077 is coming to th...'
+2025-04-21 21:17:12,056 - INFO - shorts_maker_V - Clip 2: Section 2 - 'This was confirmed by CD Proje...'
+2025-04-21 21:17:12,057 - INFO - shorts_maker_V - Clip 3: Section 3 - 'Fans can expect stunning graph...'
+2025-04-21 21:17:12,057 - INFO - shorts_maker_V - Clip 4: Section 4 - 'Imagine exploring Night City w...'
+2025-04-21 21:17:12,057 - INFO - shorts_maker_V - Clip 5: Section 5 - 'This is a game-changer for han...'
+2025-04-21 21:17:12,058 - INFO - shorts_maker_V - Clip 6: Section 6 - 'Are you excited to dive back i...'
+2025-04-21 21:17:12,058 - INFO - shorts_maker_V - Clip 7: Section 7 - 'Let us know in the comments!'
+2025-04-21 21:17:12,058 - INFO - shorts_maker_V - === END SECTION INFO ===
+2025-04-21 21:17:12,059 - INFO - shorts_maker_V - Pre-processing complex clips...
+2025-04-21 21:17:12,060 - INFO - shorts_maker_V - Processing clip 0: Section 0: LazyCreator presents: Cyberpun...
+2025-04-21 21:17:12,060 - INFO - shorts_maker_V - Clip 0 is complex, pre-rendering: Section 0: LazyCreator presents: Cyberpun...
+2025-04-21 21:17:12,126 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 0
+2025-04-21 21:17:12,128 - INFO - parallel_renderer - Pre-rendering clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_0_1745250432.mp4
+2025-04-21 21:21:10,626 - INFO - parallel_renderer - Successfully pre-rendered clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_0_1745250432.mp4
+2025-04-21 21:21:10,631 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 0: Section 0: LazyCreator presents: Cyberpun...
+2025-04-21 21:21:10,634 - INFO - shorts_maker_V - Processing clip 1: Section 1: Cyberpunk 2077 is coming to th...
+2025-04-21 21:21:10,634 - INFO - shorts_maker_V - Clip 1 is complex, pre-rendering: Section 1: Cyberpunk 2077 is coming to th...
+2025-04-21 21:21:10,740 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 1
+2025-04-21 21:21:10,741 - INFO - parallel_renderer - Pre-rendering clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_1_1745250670.mp4
+2025-04-21 21:22:51,775 - INFO - parallel_renderer - Successfully pre-rendered clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_1_1745250670.mp4
+2025-04-21 21:22:51,786 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 1: Section 1: Cyberpunk 2077 is coming to th...
+2025-04-21 21:22:51,790 - INFO - shorts_maker_V - Processing clip 2: Section 2: This was confirmed by CD Proje...
+2025-04-21 21:22:51,790 - INFO - shorts_maker_V - Clip 2 is complex, pre-rendering: Section 2: This was confirmed by CD Proje...
+2025-04-21 21:22:51,884 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 2
+2025-04-21 21:22:51,885 - INFO - parallel_renderer - Pre-rendering clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_2_1745250771.mp4
+2025-04-21 21:23:47,366 - INFO - parallel_renderer - Successfully pre-rendered clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_2_1745250771.mp4
+2025-04-21 21:23:47,372 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 2: Section 2: This was confirmed by CD Proje...
+2025-04-21 21:23:47,374 - INFO - shorts_maker_V - Processing clip 3: Section 3: Fans can expect stunning graph...
+2025-04-21 21:23:47,374 - INFO - shorts_maker_V - Clip 3 is complex, pre-rendering: Section 3: Fans can expect stunning graph...
+2025-04-21 21:23:47,437 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 3
+2025-04-21 21:23:47,438 - INFO - parallel_renderer - Pre-rendering clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_3_1745250827.mp4
+2025-04-21 21:24:59,848 - INFO - parallel_renderer - Successfully pre-rendered clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_3_1745250827.mp4
+2025-04-21 21:24:59,853 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 3: Section 3: Fans can expect stunning graph...
+2025-04-21 21:24:59,855 - INFO - shorts_maker_V - Processing clip 4: Section 4: Imagine exploring Night City w...
+2025-04-21 21:24:59,855 - INFO - shorts_maker_V - Clip 4 is complex, pre-rendering: Section 4: Imagine exploring Night City w...
+2025-04-21 21:24:59,923 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 4
+2025-04-21 21:24:59,923 - INFO - parallel_renderer - Pre-rendering clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_4_1745250899.mp4
+2025-04-21 21:26:12,823 - INFO - parallel_renderer - Successfully pre-rendered clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_4_1745250899.mp4
+2025-04-21 21:26:12,824 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 4: Section 4: Imagine exploring Night City w...
+2025-04-21 21:26:12,825 - INFO - shorts_maker_V - Processing clip 5: Section 5: This is a game-changer for han...
+2025-04-21 21:26:12,826 - INFO - shorts_maker_V - Clip 5 is complex, pre-rendering: Section 5: This is a game-changer for han...
+2025-04-21 21:26:12,891 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 5
+2025-04-21 21:26:12,892 - INFO - parallel_renderer - Pre-rendering clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_5_1745250972.mp4
+2025-04-21 21:27:37,965 - INFO - parallel_renderer - Successfully pre-rendered clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_5_1745250972.mp4
+2025-04-21 21:27:37,971 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 5: Section 5: This is a game-changer for han...
+2025-04-21 21:27:37,974 - INFO - shorts_maker_V - Processing clip 6: Section 6: Are you excited to dive back i...
+2025-04-21 21:27:37,975 - INFO - shorts_maker_V - Clip 6 is complex, pre-rendering: Section 6: Are you excited to dive back i...
+2025-04-21 21:27:38,046 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 6
+2025-04-21 21:27:38,047 - INFO - parallel_renderer - Pre-rendering clip 6 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_6_1745251057.mp4
+2025-04-21 21:28:52,633 - INFO - parallel_renderer - Successfully pre-rendered clip 6 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_6_1745251057.mp4
+2025-04-21 21:28:52,634 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 6: Section 6: Are you excited to dive back i...
+2025-04-21 21:28:52,636 - INFO - shorts_maker_V - Processing clip 7: Section 7: Let us know in the comments!
+2025-04-21 21:28:52,637 - INFO - shorts_maker_V - Clip 7 is complex, pre-rendering: Section 7: Let us know in the comments!
+2025-04-21 21:28:52,709 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 7
+2025-04-21 21:28:52,710 - INFO - parallel_renderer - Pre-rendering clip 7 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_7_1745251132.mp4
+2025-04-21 21:29:33,447 - INFO - parallel_renderer - Successfully pre-rendered clip 7 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_7_1745251132.mp4
+2025-04-21 21:29:33,448 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 7: Section 7: Let us know in the comments!
+2025-04-21 21:29:33,451 - INFO - shorts_maker_V - === CLIPS BEFORE PARALLEL RENDERING ===
+2025-04-21 21:29:33,452 - INFO - shorts_maker_V - Position 0: Clip 0 (Section 0) - Section 0: LazyCreator presents: Cyberpun...
+2025-04-21 21:29:33,452 - INFO - shorts_maker_V - Position 1: Clip 1 (Section 1) - Section 1: Cyberpunk 2077 is coming to th...
+2025-04-21 21:29:33,453 - INFO - shorts_maker_V - Position 2: Clip 2 (Section 2) - Section 2: This was confirmed by CD Proje...
+2025-04-21 21:29:33,453 - INFO - shorts_maker_V - Position 3: Clip 3 (Section 3) - Section 3: Fans can expect stunning graph...
+2025-04-21 21:29:33,454 - INFO - shorts_maker_V - Position 4: Clip 4 (Section 4) - Section 4: Imagine exploring Night City w...
+2025-04-21 21:29:33,454 - INFO - shorts_maker_V - Position 5: Clip 5 (Section 5) - Section 5: This is a game-changer for han...
+2025-04-21 21:29:33,454 - INFO - shorts_maker_V - Position 6: Clip 6 (Section 6) - Section 6: Are you excited to dive back i...
+2025-04-21 21:29:33,455 - INFO - shorts_maker_V - Position 7: Clip 7 (Section 7) - Section 7: Let us know in the comments!
+2025-04-21 21:29:33,455 - INFO - shorts_maker_V - === END CLIPS BEFORE PARALLEL RENDERING ===
+2025-04-21 21:29:33,456 - INFO - shorts_maker_V - Rendering clips in parallel...
+2025-04-21 21:29:33,456 - INFO - shorts_maker_V - Adding pre-rendered clip 0 to parallel processing: Section 0: LazyCreator presents: Cyberpun...
+2025-04-21 21:29:33,457 - INFO - shorts_maker_V - Adding pre-rendered clip 1 to parallel processing: Section 1: Cyberpunk 2077 is coming to th...
+2025-04-21 21:29:33,457 - INFO - shorts_maker_V - Adding pre-rendered clip 2 to parallel processing: Section 2: This was confirmed by CD Proje...
+2025-04-21 21:29:33,458 - INFO - shorts_maker_V - Adding pre-rendered clip 3 to parallel processing: Section 3: Fans can expect stunning graph...
+2025-04-21 21:29:33,458 - INFO - shorts_maker_V - Adding pre-rendered clip 4 to parallel processing: Section 4: Imagine exploring Night City w...
+2025-04-21 21:29:33,459 - INFO - shorts_maker_V - Adding pre-rendered clip 5 to parallel processing: Section 5: This is a game-changer for han...
+2025-04-21 21:29:33,460 - INFO - shorts_maker_V - Adding pre-rendered clip 6 to parallel processing: Section 6: Are you excited to dive back i...
+2025-04-21 21:29:33,461 - INFO - shorts_maker_V - Adding pre-rendered clip 7 to parallel processing: Section 7: Let us know in the comments!
+2025-04-21 21:29:51,137 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_0_1745250432.mp4
+2025-04-21 21:29:51,144 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_7_1745251132.mp4
+2025-04-21 21:29:51,147 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_4_1745250899.mp4
+2025-04-21 21:29:51,148 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_1_1745250670.mp4
+2025-04-21 21:29:51,148 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_5_1745250972.mp4
+2025-04-21 21:29:52,503 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_2_1745250771.mp4
+2025-04-21 21:29:52,503 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_6_1745251057.mp4
+2025-04-21 21:29:52,504 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_3_1745250827.mp4
+2025-04-21 21:29:52,644 - INFO - shorts_maker_V - === RENDERED PATHS WITH INDICES ===
+2025-04-21 21:29:52,644 - INFO - shorts_maker_V - === END RENDERED PATHS ===
+2025-04-21 21:29:52,768 - INFO - shorts_maker_V - Successfully rendered 8 out of 8 clips
+2025-04-21 21:29:52,768 - INFO - shorts_maker_V - Concatenating clips using FFmpeg...
+2025-04-21 21:29:52,769 - INFO - shorts_maker_V - Extracted index 0 from prerender filename: prerender_0_1745250432.mp4
+2025-04-21 21:29:52,769 - INFO - shorts_maker_V - Extracted index 7 from prerender filename: prerender_7_1745251132.mp4
+2025-04-21 21:29:52,770 - INFO - shorts_maker_V - Extracted index 4 from prerender filename: prerender_4_1745250899.mp4
+2025-04-21 21:29:52,770 - INFO - shorts_maker_V - Extracted index 1 from prerender filename: prerender_1_1745250670.mp4
+2025-04-21 21:29:52,770 - INFO - shorts_maker_V - Extracted index 5 from prerender filename: prerender_5_1745250972.mp4
+2025-04-21 21:29:52,771 - INFO - shorts_maker_V - Extracted index 2 from prerender filename: prerender_2_1745250771.mp4
+2025-04-21 21:29:52,771 - INFO - shorts_maker_V - Extracted index 6 from prerender filename: prerender_6_1745251057.mp4
+2025-04-21 21:29:52,771 - INFO - shorts_maker_V - Extracted index 3 from prerender filename: prerender_3_1745250827.mp4
+2025-04-21 21:29:52,771 - INFO - shorts_maker_V - Concatenating 8 clips in correct order
+2025-04-21 21:29:52,772 - INFO - shorts_maker_V - === CLIPS ORDER FOR CONCATENATION ===
+2025-04-21 21:29:52,772 - INFO - shorts_maker_V - Position 0: Clip 0 (Section 0) - Section 0: LazyCreator presents: Cyberpun...
+2025-04-21 21:29:52,772 - INFO - shorts_maker_V - Position 1: Clip 1 (Section 1) - Section 1: Cyberpunk 2077 is coming to th...
+2025-04-21 21:29:52,772 - INFO - shorts_maker_V - Position 2: Clip 2 (Section 2) - Section 2: This was confirmed by CD Proje...
+2025-04-21 21:29:52,773 - INFO - shorts_maker_V - Position 3: Clip 3 (Section 3) - Section 3: Fans can expect stunning graph...
+2025-04-21 21:29:52,773 - INFO - shorts_maker_V - Position 4: Clip 4 (Section 4) - Section 4: Imagine exploring Night City w...
+2025-04-21 21:29:52,773 - INFO - shorts_maker_V - Position 5: Clip 5 (Section 5) - Section 5: This is a game-changer for han...
+2025-04-21 21:29:52,774 - INFO - shorts_maker_V - Position 6: Clip 6 (Section 6) - Section 6: Are you excited to dive back i...
+2025-04-21 21:29:52,774 - INFO - shorts_maker_V - Position 7: Clip 7 (Section 7) - Section 7: Let us know in the comments!
+2025-04-21 21:29:52,774 - INFO - shorts_maker_V - === END CLIPS ORDER FOR CONCATENATION ===
+2025-04-21 21:29:52,778 - INFO - shorts_maker_V - Running FFmpeg concatenation: ffmpeg -y -f concat -safe 0 -i C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\concat_list.txt -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -max_muxing_queue_size 9999 -c:a aac -b:a 192k ai_shorts_output\yt_shorts_LazyCreator_presents_Cyberpunk_20250421_211610.mp4
+2025-04-21 21:30:11,958 - INFO - shorts_maker_V - Successfully concatenated clips to ai_shorts_output\yt_shorts_LazyCreator_presents_Cyberpunk_20250421_211610.mp4
+2025-04-21 21:30:11,963 - WARNING - shorts_maker_V - Error cleaning up temporary files: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\adhbu\\AppData\\Local\\Temp\\tmpnfqor4ru\\pexels_10599408.mp4'
+2025-04-21 21:30:11,964 - INFO - shorts_maker_V - Completed YouTube short creation in 830.02 seconds
+2025-04-21 21:30:11,964 - INFO - __main__ - Generating thumbnail for the short
+2025-04-21 21:30:11,974 - INFO - thumbnail - STARTING generate_thumbnail at 21:30:11.974
+2025-04-21 21:30:11,975 - INFO - thumbnail - Using thumbnail prompt: A dynamic image of a futuristic cityscape representing Night City from Cyberpunk 2077, featuring neon lights and cybernetic elements, with a Switch 2 console in the foreground.
+2025-04-21 21:30:11,975 - INFO - thumbnail - STARTING generate_image_huggingface at 21:30:11.975
+2025-04-21 21:30:11,975 - INFO - thumbnail - Hugging Face prompt: A dynamic image of a futuristic cityscape representing Night City from Cybe...
+2025-04-21 21:30:12,758 - ERROR - thumbnail - Error from Hugging Face API: 404
+2025-04-21 21:30:28,480 - ERROR - thumbnail - Error from Hugging Face API: 404
+2025-04-21 21:30:58,480 - ERROR - thumbnail - Failed to generate image with Hugging Face API after multiple attempts
+2025-04-21 21:30:58,482 - INFO - thumbnail - COMPLETED generate_image_huggingface in 46.51 seconds
+2025-04-21 21:30:58,482 - INFO - thumbnail - Falling back to Unsplash for thumbnail image
+2025-04-21 21:30:58,483 - INFO - thumbnail - STARTING fetch_image_unsplash at 21:30:58.483
+2025-04-21 21:30:58,483 - INFO - thumbnail - Searching Unsplash with query: A dynamic image of a futuristic cityscape representing Night City from Cyberpunk 2077, featuring neon lights and cybernetic elements, with a Switch 2 console in the foreground.
+2025-04-21 21:30:59,545 - INFO - thumbnail - Unsplash image downloaded to C:\Users\adhbu\AppData\Local\Temp\tmpjffbfx8c\thumbnail_unsplash_1745251258_4558.jpg
+2025-04-21 21:30:59,546 - INFO - thumbnail - Image attribution: Photo by Anthony DELANOIX on Unsplash
+2025-04-21 21:30:59,547 - INFO - thumbnail - COMPLETED fetch_image_unsplash in 1.06 seconds
+2025-04-21 21:30:59,548 - INFO - thumbnail - STARTING create_thumbnail at 21:30:59.548
+2025-04-21 21:30:59,548 - INFO - thumbnail - Creating thumbnail for title: 'LazyCreator presents: Cyberpunk 2077 on Switch 2: DLSS Confirmed!'
+2025-04-21 21:30:59,548 - INFO - thumbnail - Using base image: C:\Users\adhbu\AppData\Local\Temp\tmpjffbfx8c\thumbnail_unsplash_1745251258_4558.jpg
+2025-04-21 21:30:59,548 - INFO - thumbnail - Output path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250421_211610.jpg
+2025-04-21 21:30:59,611 - INFO - thumbnail - Base image size: (1080, 720)
+2025-04-21 21:30:59,664 - INFO - thumbnail - Resized image to YouTube thumbnail dimensions: (1280, 720)
+2025-04-21 21:30:59,681 - INFO - thumbnail - Added gradient overlay to thumbnail
+2025-04-21 21:30:59,681 - INFO - thumbnail - Selected font size: 50 based on title length: 65
+2025-04-21 21:30:59,688 - INFO - thumbnail - Loaded custom font from: D:\youtube-shorts-automation\fonts\default_font.ttf
+2025-04-21 21:30:59,689 - INFO - thumbnail - Wrapped text: 'LazyCreator presents:
+Cyberpunk 2077 on Switch 2:
+DLSS Confirmed!'
+2025-04-21 21:30:59,693 - INFO - thumbnail - Text position calculated: x=301, y=516, width=678, height=154
+2025-04-21 21:30:59,755 - INFO - thumbnail - Added text shadow/outline for visibility
+2025-04-21 21:30:59,761 - INFO - thumbnail - Added main title text
+2025-04-21 21:30:59,762 - INFO - thumbnail - SHORTS label dimensions: width=113, height=21
+2025-04-21 21:30:59,763 - INFO - thumbnail - SHORTS label position: x=1127, y=20, height=31
+2025-04-21 21:30:59,763 - INFO - thumbnail - Added rectangle background for SHORTS label
+2025-04-21 21:30:59,763 - INFO - thumbnail - SHORTS text position: (1137, 25), y_offset=5
+2025-04-21 21:30:59,764 - INFO - thumbnail - Added SHORTS text label
+2025-04-21 21:30:59,782 - INFO - thumbnail - Thumbnail created and saved to ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250421_211610.jpg
+2025-04-21 21:30:59,785 - INFO - thumbnail - COMPLETED create_thumbnail in 0.24 seconds
+2025-04-21 21:30:59,786 - INFO - thumbnail - Successfully generated thumbnail at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250421_211610.jpg
+2025-04-21 21:30:59,786 - INFO - thumbnail - COMPLETED generate_thumbnail in 47.81 seconds
+2025-04-21 21:30:59,787 - INFO - __main__ - Thumbnail generated at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250421_211610.jpg
+2025-04-21 21:30:59,788 - INFO - __main__ - Uploading to YouTube
+2025-04-21 21:31:00,055 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
+2025-04-21 21:31:00,204 - INFO - youtube_upload - Uploading video: Cyberpunk 2077 on Switch 2: DLSS Confirmed!
+2025-04-21 21:31:04,884 - INFO - youtube_upload - ✅ Video upload successful! Video ID: cWL03Ltm_No
+2025-04-21 21:31:04,884 - INFO - youtube_upload - Uploading thumbnail for video ID: cWL03Ltm_No
+2025-04-21 21:31:09,096 - INFO - youtube_upload - ✅ Thumbnail upload successful!
+2025-04-21 21:31:09,097 - INFO - __main__ - Process completed successfully!
+2025-04-21 21:31:09,097 - INFO - __main__ - Video path: ai_shorts_output\yt_shorts_LazyCreator_presents_Cyberpunk_20250421_211610.mp4
+2025-04-21 21:31:09,097 - INFO - __main__ - Thumbnail path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250421_211610.jpg
