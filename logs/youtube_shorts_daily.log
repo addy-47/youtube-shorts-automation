@@ -1,276 +1,543 @@
-2025-04-21 21:16:09,190 - INFO - __main__ - Day 111: Using video-based creator (YTShortsCreator_V)
-2025-04-21 21:16:09,275 - INFO - shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
-2025-04-21 21:16:10,271 - INFO - shorts_maker_V - Google Cloud TTS initialized successfully
-2025-04-21 21:16:12,595 - INFO - __main__ - Generating comprehensive content for : Cyberpunk 2077 on Switch 2 uses DLSS confirms CD Projekt RED - Eurogamer
-2025-04-21 21:16:19,480 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-04-21 21:16:19,507 - INFO - script_generator - Successfully generated comprehensive content package:
-2025-04-21 21:16:19,508 - INFO - script_generator - Title: Cyberpunk 2077 on Switch 2: DLSS Confirmed!
-2025-04-21 21:16:19,509 - INFO - script_generator - Script length: 56 words
-2025-04-21 21:16:19,509 - INFO - script_generator - Thumbnail HF prompt: A dynamic image of a futuristic cityscape represen...
-2025-04-21 21:16:19,510 - INFO - script_generator - Thumbnail Unsplash query: futuristic cityscape
-2025-04-21 21:16:19,510 - INFO - __main__ - Content package generated successfully:
-2025-04-21 21:16:19,511 - INFO - __main__ - Title: LazyCreator presents: Cyberpunk 2077 on Switch 2: DLSS Confirmed!
-2025-04-21 21:16:19,511 - INFO - __main__ - Description length: 142 characters
-2025-04-21 21:16:19,512 - INFO - __main__ - Raw script generated successfully
-2025-04-21 21:16:19,513 - INFO - __main__ - Parsed script into 7 sentences
-2025-04-21 21:16:19,513 - INFO - __main__ - Added sentence 0 to cards: 'Cyberpunk 2077 is coming to th...' (duration: 5s)
-2025-04-21 21:16:19,514 - INFO - __main__ - Added sentence 1 to cards: 'This was confirmed by CD Proje...' (duration: 5s)
-2025-04-21 21:16:19,514 - INFO - __main__ - Added sentence 2 to cards: 'Fans can expect stunning graph...' (duration: 5s)
-2025-04-21 21:16:19,515 - INFO - __main__ - Added sentence 3 to cards: 'Imagine exploring Night City w...' (duration: 5s)
-2025-04-21 21:16:19,515 - INFO - __main__ - Added sentence 4 to cards: 'This is a game-changer for han...' (duration: 5s)
-2025-04-21 21:16:19,516 - INFO - __main__ - Added sentence 5 to cards: 'Are you excited to dive back i...' (duration: 5s)
-2025-04-21 21:16:19,518 - INFO - __main__ - Added sentence 6 to cards: 'Let us know in the comments!...' (duration: 3s)
-2025-04-21 21:16:19,518 - INFO - __main__ - Created 7 script cards
-2025-04-21 21:16:19,519 - INFO - __main__ - Script parsed into 7 sections
-2025-04-21 21:16:19,520 - INFO - __main__ - Section 1: Cyberpunk 2077 is coming to th... (duration: 5s)
-2025-04-21 21:16:19,520 - INFO - __main__ - Section 2: This was confirmed by CD Proje... (duration: 5s)
-2025-04-21 21:16:19,521 - INFO - __main__ - Section 3: Fans can expect stunning graph... (duration: 5s)
-2025-04-21 21:16:19,521 - INFO - __main__ - Section 4: Imagine exploring Night City w... (duration: 5s)
-2025-04-21 21:16:19,522 - INFO - __main__ - Section 5: This is a game-changer for han... (duration: 5s)
-2025-04-21 21:16:19,522 - INFO - __main__ - Section 6: Are you excited to dive back i... (duration: 5s)
-2025-04-21 21:16:19,523 - INFO - __main__ - Section 7: Let us know in the comments!... (duration: 3s)
-2025-04-21 21:16:19,523 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Cyberpunk 2077 on Switch 2: DLSS Confirmed!'
-2025-04-21 21:16:19,524 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
-2025-04-21 21:16:19,524 - INFO - __main__ - Section 0: 'LazyCreator presents: Cyberpun...' (duration: 3s)
-2025-04-21 21:16:19,525 - INFO - __main__ - Section 1: 'Cyberpunk 2077 is coming to th...' (duration: 5s)
-2025-04-21 21:16:19,525 - INFO - __main__ - Section 2: 'This was confirmed by CD Proje...' (duration: 5s)
-2025-04-21 21:16:19,526 - INFO - __main__ - Section 3: 'Fans can expect stunning graph...' (duration: 5s)
-2025-04-21 21:16:19,526 - INFO - __main__ - Section 4: 'Imagine exploring Night City w...' (duration: 5s)
-2025-04-21 21:16:19,527 - INFO - __main__ - Section 5: 'This is a game-changer for han...' (duration: 5s)
-2025-04-21 21:16:19,528 - INFO - __main__ - Section 6: 'Are you excited to dive back i...' (duration: 5s)
-2025-04-21 21:16:19,528 - INFO - __main__ - Section 7: 'Let us know in the comments!...' (duration: 3s)
-2025-04-21 21:16:19,529 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
-2025-04-21 21:16:19,529 - INFO - __main__ - Generating video search queries for each section using AI...
-2025-04-21 21:16:21,937 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-04-21 21:16:21,941 - INFO - script_generator - Successfully generated batch video queries for 8 sections.
-2025-04-21 21:16:21,942 - INFO - __main__ - Section queries: 1: Cyberpunk 2077, 2: Switch 2 announcement, 3: CD Projekt RED, 4: DLSS technology graphics, 5: Night City exploration, 6: handheld gaming revolution, 7: cybernetic world excitement, 8: comments section interaction
-2025-04-21 21:16:21,942 - INFO - __main__ - Creating YouTube Short
-2025-04-21 21:16:21,943 - INFO - shorts_maker_V - Starting YouTube short creation
-2025-04-21 21:16:21,943 - INFO - shorts_maker_V - Scaling durations by factor 0.69 to fit max duration of 25s
-2025-04-21 21:16:21,943 - INFO - shorts_maker_V - Total video duration: 25.0s
-2025-04-21 21:16:21,944 - INFO - shorts_maker_V - Creating video with 6 background segments for middle sections
-2025-04-21 21:16:21,944 - INFO - shorts_maker_V - Starting background video fetch
-2025-04-21 21:16:21,944 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
-2025-04-21 21:16:25,142 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-21 21:16:27,759 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-21 21:16:30,561 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-21 21:16:34,218 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-21 21:16:36,483 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-21 21:16:39,828 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-21 21:16:41,959 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
-2025-04-21 21:16:44,494 - INFO - shorts_maker_V - Completed background video fetch in 22.55 seconds
-2025-04-21 21:16:44,495 - INFO - shorts_maker_V - Starting TTS audio generation
-2025-04-21 21:16:45,092 - INFO - voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_0.mp3]
-2025-04-21 21:16:45,800 - INFO - voiceover - Speech synthesized for text [Cyberpunk 2077 is co...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_1.mp3]
-2025-04-21 21:16:46,415 - INFO - voiceover - Speech synthesized for text [This was confirmed b...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_2.mp3]
-2025-04-21 21:16:47,032 - INFO - voiceover - Speech synthesized for text [Fans can expect stun...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_3.mp3]
-2025-04-21 21:16:47,644 - INFO - voiceover - Speech synthesized for text [Imagine exploring Ni...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_4.mp3]
-2025-04-21 21:16:48,360 - INFO - voiceover - Speech synthesized for text [This is a game-chang...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_5.mp3]
-2025-04-21 21:16:48,871 - INFO - voiceover - Speech synthesized for text [Are you excited to d...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_6.mp3]
-2025-04-21 21:16:49,486 - INFO - voiceover - Speech synthesized for text [Let us know in the c...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\section_7.mp3]
-2025-04-21 21:16:49,730 - INFO - shorts_maker_V - Completed TTS audio generation in 5.23 seconds
-2025-04-21 21:16:49,731 - INFO - shorts_maker_V - Updated total duration: 24.5s
-2025-04-21 21:16:49,731 - INFO - shorts_maker_V - Starting background processing
-2025-04-21 21:16:58,215 - INFO - shorts_maker_V - Completed background processing in 8.48 seconds
-2025-04-21 21:17:11,674 - INFO - shorts_maker_V - Adding validated clip 0: 'LazyCreator presents: Cyberpun...'
-2025-04-21 21:17:11,683 - INFO - shorts_maker_V - Adding validated clip 1: 'Cyberpunk 2077 is coming to th...'
-2025-04-21 21:17:11,683 - INFO - shorts_maker_V - Adding validated clip 2: 'This was confirmed by CD Proje...'
-2025-04-21 21:17:11,684 - INFO - shorts_maker_V - Adding validated clip 3: 'Fans can expect stunning graph...'
-2025-04-21 21:17:11,685 - INFO - shorts_maker_V - Adding validated clip 4: 'Imagine exploring Night City w...'
-2025-04-21 21:17:11,685 - INFO - shorts_maker_V - Adding validated clip 5: 'This is a game-changer for han...'
-2025-04-21 21:17:11,686 - INFO - shorts_maker_V - Adding validated clip 6: 'Are you excited to dive back i...'
-2025-04-21 21:17:11,686 - INFO - shorts_maker_V - Adding validated clip 7: 'Let us know in the comments!'
-2025-04-21 21:17:11,687 - INFO - shorts_maker_V - === CLIP ORDER BEFORE RENDERING ===
-2025-04-21 21:17:11,687 - INFO - shorts_maker_V - Position 0: Section 0 - 'LazyCreator presents: Cyberpun...'
-2025-04-21 21:17:11,688 - INFO - shorts_maker_V - Position 1: Section 1 - 'Cyberpunk 2077 is coming to th...'
-2025-04-21 21:17:11,688 - INFO - shorts_maker_V - Position 2: Section 2 - 'This was confirmed by CD Proje...'
-2025-04-21 21:17:11,689 - INFO - shorts_maker_V - Position 3: Section 3 - 'Fans can expect stunning graph...'
-2025-04-21 21:17:11,689 - INFO - shorts_maker_V - Position 4: Section 4 - 'Imagine exploring Night City w...'
-2025-04-21 21:17:11,689 - INFO - shorts_maker_V - Position 5: Section 5 - 'This is a game-changer for han...'
-2025-04-21 21:17:11,690 - INFO - shorts_maker_V - Position 6: Section 6 - 'Are you excited to dive back i...'
-2025-04-21 21:17:11,690 - INFO - shorts_maker_V - Position 7: Section 7 - 'Let us know in the comments!'
-2025-04-21 21:17:11,690 - INFO - shorts_maker_V - === END CLIP ORDER LOG ===
-2025-04-21 21:17:12,044 - INFO - shorts_maker_V - Using parallel renderer for improved performance
-2025-04-21 21:17:12,044 - INFO - shorts_maker_V - Found dill 0.3.9 for improved serialization
-2025-04-21 21:17:12,044 - INFO - shorts_maker_V - Sorting clips by their section index before rendering
-2025-04-21 21:17:12,046 - INFO - shorts_maker_V - === CLIP ORDER AFTER SORTING ===
-2025-04-21 21:17:12,046 - INFO - shorts_maker_V - Position 0: Section 0 - 'LazyCreator presents: Cyberpun...'
-2025-04-21 21:17:12,047 - INFO - shorts_maker_V - Position 1: Section 1 - 'Cyberpunk 2077 is coming to th...'
-2025-04-21 21:17:12,047 - INFO - shorts_maker_V - Position 2: Section 2 - 'This was confirmed by CD Proje...'
-2025-04-21 21:17:12,047 - INFO - shorts_maker_V - Position 3: Section 3 - 'Fans can expect stunning graph...'
-2025-04-21 21:17:12,048 - INFO - shorts_maker_V - Position 4: Section 4 - 'Imagine exploring Night City w...'
-2025-04-21 21:17:12,048 - INFO - shorts_maker_V - Position 5: Section 5 - 'This is a game-changer for han...'
-2025-04-21 21:17:12,048 - INFO - shorts_maker_V - Position 6: Section 6 - 'Are you excited to dive back i...'
-2025-04-21 21:17:12,049 - INFO - shorts_maker_V - Position 7: Section 7 - 'Let us know in the comments!'
-2025-04-21 21:17:12,049 - INFO - shorts_maker_V - === END SORTED CLIP ORDER LOG ===
-2025-04-21 21:17:12,051 - INFO - shorts_maker_V - Setting clip 0 debug info: Section 0: LazyCreator presents: Cyberpun...
-2025-04-21 21:17:12,051 - INFO - shorts_maker_V - Setting clip 1 debug info: Section 1: Cyberpunk 2077 is coming to th...
-2025-04-21 21:17:12,052 - INFO - shorts_maker_V - Setting clip 2 debug info: Section 2: This was confirmed by CD Proje...
-2025-04-21 21:17:12,052 - INFO - shorts_maker_V - Setting clip 3 debug info: Section 3: Fans can expect stunning graph...
-2025-04-21 21:17:12,053 - INFO - shorts_maker_V - Setting clip 4 debug info: Section 4: Imagine exploring Night City w...
-2025-04-21 21:17:12,053 - INFO - shorts_maker_V - Setting clip 5 debug info: Section 5: This is a game-changer for han...
-2025-04-21 21:17:12,053 - INFO - shorts_maker_V - Setting clip 6 debug info: Section 6: Are you excited to dive back i...
-2025-04-21 21:17:12,053 - INFO - shorts_maker_V - Setting clip 7 debug info: Section 7: Let us know in the comments!
-2025-04-21 21:17:12,055 - INFO - shorts_maker_V - Rendering 8 clips in parallel using 7 processes with preset: veryfast
-2025-04-21 21:17:12,055 - INFO - shorts_maker_V - === SECTION INFO RECEIVED BY PARALLEL RENDERER ===
-2025-04-21 21:17:12,056 - INFO - shorts_maker_V - Clip 0: Section 0 - 'LazyCreator presents: Cyberpun...'
-2025-04-21 21:17:12,056 - INFO - shorts_maker_V - Clip 1: Section 1 - 'Cyberpunk 2077 is coming to th...'
-2025-04-21 21:17:12,056 - INFO - shorts_maker_V - Clip 2: Section 2 - 'This was confirmed by CD Proje...'
-2025-04-21 21:17:12,057 - INFO - shorts_maker_V - Clip 3: Section 3 - 'Fans can expect stunning graph...'
-2025-04-21 21:17:12,057 - INFO - shorts_maker_V - Clip 4: Section 4 - 'Imagine exploring Night City w...'
-2025-04-21 21:17:12,057 - INFO - shorts_maker_V - Clip 5: Section 5 - 'This is a game-changer for han...'
-2025-04-21 21:17:12,058 - INFO - shorts_maker_V - Clip 6: Section 6 - 'Are you excited to dive back i...'
-2025-04-21 21:17:12,058 - INFO - shorts_maker_V - Clip 7: Section 7 - 'Let us know in the comments!'
-2025-04-21 21:17:12,058 - INFO - shorts_maker_V - === END SECTION INFO ===
-2025-04-21 21:17:12,059 - INFO - shorts_maker_V - Pre-processing complex clips...
-2025-04-21 21:17:12,060 - INFO - shorts_maker_V - Processing clip 0: Section 0: LazyCreator presents: Cyberpun...
-2025-04-21 21:17:12,060 - INFO - shorts_maker_V - Clip 0 is complex, pre-rendering: Section 0: LazyCreator presents: Cyberpun...
-2025-04-21 21:17:12,126 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 0
-2025-04-21 21:17:12,128 - INFO - parallel_renderer - Pre-rendering clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_0_1745250432.mp4
-2025-04-21 21:21:10,626 - INFO - parallel_renderer - Successfully pre-rendered clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_0_1745250432.mp4
-2025-04-21 21:21:10,631 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 0: Section 0: LazyCreator presents: Cyberpun...
-2025-04-21 21:21:10,634 - INFO - shorts_maker_V - Processing clip 1: Section 1: Cyberpunk 2077 is coming to th...
-2025-04-21 21:21:10,634 - INFO - shorts_maker_V - Clip 1 is complex, pre-rendering: Section 1: Cyberpunk 2077 is coming to th...
-2025-04-21 21:21:10,740 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 1
-2025-04-21 21:21:10,741 - INFO - parallel_renderer - Pre-rendering clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_1_1745250670.mp4
-2025-04-21 21:22:51,775 - INFO - parallel_renderer - Successfully pre-rendered clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_1_1745250670.mp4
-2025-04-21 21:22:51,786 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 1: Section 1: Cyberpunk 2077 is coming to th...
-2025-04-21 21:22:51,790 - INFO - shorts_maker_V - Processing clip 2: Section 2: This was confirmed by CD Proje...
-2025-04-21 21:22:51,790 - INFO - shorts_maker_V - Clip 2 is complex, pre-rendering: Section 2: This was confirmed by CD Proje...
-2025-04-21 21:22:51,884 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 2
-2025-04-21 21:22:51,885 - INFO - parallel_renderer - Pre-rendering clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_2_1745250771.mp4
-2025-04-21 21:23:47,366 - INFO - parallel_renderer - Successfully pre-rendered clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_2_1745250771.mp4
-2025-04-21 21:23:47,372 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 2: Section 2: This was confirmed by CD Proje...
-2025-04-21 21:23:47,374 - INFO - shorts_maker_V - Processing clip 3: Section 3: Fans can expect stunning graph...
-2025-04-21 21:23:47,374 - INFO - shorts_maker_V - Clip 3 is complex, pre-rendering: Section 3: Fans can expect stunning graph...
-2025-04-21 21:23:47,437 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 3
-2025-04-21 21:23:47,438 - INFO - parallel_renderer - Pre-rendering clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_3_1745250827.mp4
-2025-04-21 21:24:59,848 - INFO - parallel_renderer - Successfully pre-rendered clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_3_1745250827.mp4
-2025-04-21 21:24:59,853 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 3: Section 3: Fans can expect stunning graph...
-2025-04-21 21:24:59,855 - INFO - shorts_maker_V - Processing clip 4: Section 4: Imagine exploring Night City w...
-2025-04-21 21:24:59,855 - INFO - shorts_maker_V - Clip 4 is complex, pre-rendering: Section 4: Imagine exploring Night City w...
-2025-04-21 21:24:59,923 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 4
-2025-04-21 21:24:59,923 - INFO - parallel_renderer - Pre-rendering clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_4_1745250899.mp4
-2025-04-21 21:26:12,823 - INFO - parallel_renderer - Successfully pre-rendered clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_4_1745250899.mp4
-2025-04-21 21:26:12,824 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 4: Section 4: Imagine exploring Night City w...
-2025-04-21 21:26:12,825 - INFO - shorts_maker_V - Processing clip 5: Section 5: This is a game-changer for han...
-2025-04-21 21:26:12,826 - INFO - shorts_maker_V - Clip 5 is complex, pre-rendering: Section 5: This is a game-changer for han...
-2025-04-21 21:26:12,891 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 5
-2025-04-21 21:26:12,892 - INFO - parallel_renderer - Pre-rendering clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_5_1745250972.mp4
-2025-04-21 21:27:37,965 - INFO - parallel_renderer - Successfully pre-rendered clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_5_1745250972.mp4
-2025-04-21 21:27:37,971 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 5: Section 5: This is a game-changer for han...
-2025-04-21 21:27:37,974 - INFO - shorts_maker_V - Processing clip 6: Section 6: Are you excited to dive back i...
-2025-04-21 21:27:37,975 - INFO - shorts_maker_V - Clip 6 is complex, pre-rendering: Section 6: Are you excited to dive back i...
-2025-04-21 21:27:38,046 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 6
-2025-04-21 21:27:38,047 - INFO - parallel_renderer - Pre-rendering clip 6 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_6_1745251057.mp4
-2025-04-21 21:28:52,633 - INFO - parallel_renderer - Successfully pre-rendered clip 6 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_6_1745251057.mp4
-2025-04-21 21:28:52,634 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 6: Section 6: Are you excited to dive back i...
-2025-04-21 21:28:52,636 - INFO - shorts_maker_V - Processing clip 7: Section 7: Let us know in the comments!
-2025-04-21 21:28:52,637 - INFO - shorts_maker_V - Clip 7 is complex, pre-rendering: Section 7: Let us know in the comments!
-2025-04-21 21:28:52,709 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 7
-2025-04-21 21:28:52,710 - INFO - parallel_renderer - Pre-rendering clip 7 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_7_1745251132.mp4
-2025-04-21 21:29:33,447 - INFO - parallel_renderer - Successfully pre-rendered clip 7 to C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_7_1745251132.mp4
-2025-04-21 21:29:33,448 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 7: Section 7: Let us know in the comments!
-2025-04-21 21:29:33,451 - INFO - shorts_maker_V - === CLIPS BEFORE PARALLEL RENDERING ===
-2025-04-21 21:29:33,452 - INFO - shorts_maker_V - Position 0: Clip 0 (Section 0) - Section 0: LazyCreator presents: Cyberpun...
-2025-04-21 21:29:33,452 - INFO - shorts_maker_V - Position 1: Clip 1 (Section 1) - Section 1: Cyberpunk 2077 is coming to th...
-2025-04-21 21:29:33,453 - INFO - shorts_maker_V - Position 2: Clip 2 (Section 2) - Section 2: This was confirmed by CD Proje...
-2025-04-21 21:29:33,453 - INFO - shorts_maker_V - Position 3: Clip 3 (Section 3) - Section 3: Fans can expect stunning graph...
-2025-04-21 21:29:33,454 - INFO - shorts_maker_V - Position 4: Clip 4 (Section 4) - Section 4: Imagine exploring Night City w...
-2025-04-21 21:29:33,454 - INFO - shorts_maker_V - Position 5: Clip 5 (Section 5) - Section 5: This is a game-changer for han...
-2025-04-21 21:29:33,454 - INFO - shorts_maker_V - Position 6: Clip 6 (Section 6) - Section 6: Are you excited to dive back i...
-2025-04-21 21:29:33,455 - INFO - shorts_maker_V - Position 7: Clip 7 (Section 7) - Section 7: Let us know in the comments!
-2025-04-21 21:29:33,455 - INFO - shorts_maker_V - === END CLIPS BEFORE PARALLEL RENDERING ===
-2025-04-21 21:29:33,456 - INFO - shorts_maker_V - Rendering clips in parallel...
-2025-04-21 21:29:33,456 - INFO - shorts_maker_V - Adding pre-rendered clip 0 to parallel processing: Section 0: LazyCreator presents: Cyberpun...
-2025-04-21 21:29:33,457 - INFO - shorts_maker_V - Adding pre-rendered clip 1 to parallel processing: Section 1: Cyberpunk 2077 is coming to th...
-2025-04-21 21:29:33,457 - INFO - shorts_maker_V - Adding pre-rendered clip 2 to parallel processing: Section 2: This was confirmed by CD Proje...
-2025-04-21 21:29:33,458 - INFO - shorts_maker_V - Adding pre-rendered clip 3 to parallel processing: Section 3: Fans can expect stunning graph...
-2025-04-21 21:29:33,458 - INFO - shorts_maker_V - Adding pre-rendered clip 4 to parallel processing: Section 4: Imagine exploring Night City w...
-2025-04-21 21:29:33,459 - INFO - shorts_maker_V - Adding pre-rendered clip 5 to parallel processing: Section 5: This is a game-changer for han...
-2025-04-21 21:29:33,460 - INFO - shorts_maker_V - Adding pre-rendered clip 6 to parallel processing: Section 6: Are you excited to dive back i...
-2025-04-21 21:29:33,461 - INFO - shorts_maker_V - Adding pre-rendered clip 7 to parallel processing: Section 7: Let us know in the comments!
-2025-04-21 21:29:51,137 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_0_1745250432.mp4
-2025-04-21 21:29:51,144 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_7_1745251132.mp4
-2025-04-21 21:29:51,147 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_4_1745250899.mp4
-2025-04-21 21:29:51,148 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_1_1745250670.mp4
-2025-04-21 21:29:51,148 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_5_1745250972.mp4
-2025-04-21 21:29:52,503 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_2_1745250771.mp4
-2025-04-21 21:29:52,503 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_6_1745251057.mp4
-2025-04-21 21:29:52,504 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\prerender_3_1745250827.mp4
-2025-04-21 21:29:52,644 - INFO - shorts_maker_V - === RENDERED PATHS WITH INDICES ===
-2025-04-21 21:29:52,644 - INFO - shorts_maker_V - === END RENDERED PATHS ===
-2025-04-21 21:29:52,768 - INFO - shorts_maker_V - Successfully rendered 8 out of 8 clips
-2025-04-21 21:29:52,768 - INFO - shorts_maker_V - Concatenating clips using FFmpeg...
-2025-04-21 21:29:52,769 - INFO - shorts_maker_V - Extracted index 0 from prerender filename: prerender_0_1745250432.mp4
-2025-04-21 21:29:52,769 - INFO - shorts_maker_V - Extracted index 7 from prerender filename: prerender_7_1745251132.mp4
-2025-04-21 21:29:52,770 - INFO - shorts_maker_V - Extracted index 4 from prerender filename: prerender_4_1745250899.mp4
-2025-04-21 21:29:52,770 - INFO - shorts_maker_V - Extracted index 1 from prerender filename: prerender_1_1745250670.mp4
-2025-04-21 21:29:52,770 - INFO - shorts_maker_V - Extracted index 5 from prerender filename: prerender_5_1745250972.mp4
-2025-04-21 21:29:52,771 - INFO - shorts_maker_V - Extracted index 2 from prerender filename: prerender_2_1745250771.mp4
-2025-04-21 21:29:52,771 - INFO - shorts_maker_V - Extracted index 6 from prerender filename: prerender_6_1745251057.mp4
-2025-04-21 21:29:52,771 - INFO - shorts_maker_V - Extracted index 3 from prerender filename: prerender_3_1745250827.mp4
-2025-04-21 21:29:52,771 - INFO - shorts_maker_V - Concatenating 8 clips in correct order
-2025-04-21 21:29:52,772 - INFO - shorts_maker_V - === CLIPS ORDER FOR CONCATENATION ===
-2025-04-21 21:29:52,772 - INFO - shorts_maker_V - Position 0: Clip 0 (Section 0) - Section 0: LazyCreator presents: Cyberpun...
-2025-04-21 21:29:52,772 - INFO - shorts_maker_V - Position 1: Clip 1 (Section 1) - Section 1: Cyberpunk 2077 is coming to th...
-2025-04-21 21:29:52,772 - INFO - shorts_maker_V - Position 2: Clip 2 (Section 2) - Section 2: This was confirmed by CD Proje...
-2025-04-21 21:29:52,773 - INFO - shorts_maker_V - Position 3: Clip 3 (Section 3) - Section 3: Fans can expect stunning graph...
-2025-04-21 21:29:52,773 - INFO - shorts_maker_V - Position 4: Clip 4 (Section 4) - Section 4: Imagine exploring Night City w...
-2025-04-21 21:29:52,773 - INFO - shorts_maker_V - Position 5: Clip 5 (Section 5) - Section 5: This is a game-changer for han...
-2025-04-21 21:29:52,774 - INFO - shorts_maker_V - Position 6: Clip 6 (Section 6) - Section 6: Are you excited to dive back i...
-2025-04-21 21:29:52,774 - INFO - shorts_maker_V - Position 7: Clip 7 (Section 7) - Section 7: Let us know in the comments!
-2025-04-21 21:29:52,774 - INFO - shorts_maker_V - === END CLIPS ORDER FOR CONCATENATION ===
-2025-04-21 21:29:52,778 - INFO - shorts_maker_V - Running FFmpeg concatenation: ffmpeg -y -f concat -safe 0 -i C:\Users\adhbu\AppData\Local\Temp\tmpnfqor4ru\concat_list.txt -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -max_muxing_queue_size 9999 -c:a aac -b:a 192k ai_shorts_output\yt_shorts_LazyCreator_presents_Cyberpunk_20250421_211610.mp4
-2025-04-21 21:30:11,958 - INFO - shorts_maker_V - Successfully concatenated clips to ai_shorts_output\yt_shorts_LazyCreator_presents_Cyberpunk_20250421_211610.mp4
-2025-04-21 21:30:11,963 - WARNING - shorts_maker_V - Error cleaning up temporary files: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\adhbu\\AppData\\Local\\Temp\\tmpnfqor4ru\\pexels_10599408.mp4'
-2025-04-21 21:30:11,964 - INFO - shorts_maker_V - Completed YouTube short creation in 830.02 seconds
-2025-04-21 21:30:11,964 - INFO - __main__ - Generating thumbnail for the short
-2025-04-21 21:30:11,974 - INFO - thumbnail - STARTING generate_thumbnail at 21:30:11.974
-2025-04-21 21:30:11,975 - INFO - thumbnail - Using thumbnail prompt: A dynamic image of a futuristic cityscape representing Night City from Cyberpunk 2077, featuring neon lights and cybernetic elements, with a Switch 2 console in the foreground.
-2025-04-21 21:30:11,975 - INFO - thumbnail - STARTING generate_image_huggingface at 21:30:11.975
-2025-04-21 21:30:11,975 - INFO - thumbnail - Hugging Face prompt: A dynamic image of a futuristic cityscape representing Night City from Cybe...
-2025-04-21 21:30:12,758 - ERROR - thumbnail - Error from Hugging Face API: 404
-2025-04-21 21:30:28,480 - ERROR - thumbnail - Error from Hugging Face API: 404
-2025-04-21 21:30:58,480 - ERROR - thumbnail - Failed to generate image with Hugging Face API after multiple attempts
-2025-04-21 21:30:58,482 - INFO - thumbnail - COMPLETED generate_image_huggingface in 46.51 seconds
-2025-04-21 21:30:58,482 - INFO - thumbnail - Falling back to Unsplash for thumbnail image
-2025-04-21 21:30:58,483 - INFO - thumbnail - STARTING fetch_image_unsplash at 21:30:58.483
-2025-04-21 21:30:58,483 - INFO - thumbnail - Searching Unsplash with query: A dynamic image of a futuristic cityscape representing Night City from Cyberpunk 2077, featuring neon lights and cybernetic elements, with a Switch 2 console in the foreground.
-2025-04-21 21:30:59,545 - INFO - thumbnail - Unsplash image downloaded to C:\Users\adhbu\AppData\Local\Temp\tmpjffbfx8c\thumbnail_unsplash_1745251258_4558.jpg
-2025-04-21 21:30:59,546 - INFO - thumbnail - Image attribution: Photo by Anthony DELANOIX on Unsplash
-2025-04-21 21:30:59,547 - INFO - thumbnail - COMPLETED fetch_image_unsplash in 1.06 seconds
-2025-04-21 21:30:59,548 - INFO - thumbnail - STARTING create_thumbnail at 21:30:59.548
-2025-04-21 21:30:59,548 - INFO - thumbnail - Creating thumbnail for title: 'LazyCreator presents: Cyberpunk 2077 on Switch 2: DLSS Confirmed!'
-2025-04-21 21:30:59,548 - INFO - thumbnail - Using base image: C:\Users\adhbu\AppData\Local\Temp\tmpjffbfx8c\thumbnail_unsplash_1745251258_4558.jpg
-2025-04-21 21:30:59,548 - INFO - thumbnail - Output path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250421_211610.jpg
-2025-04-21 21:30:59,611 - INFO - thumbnail - Base image size: (1080, 720)
-2025-04-21 21:30:59,664 - INFO - thumbnail - Resized image to YouTube thumbnail dimensions: (1280, 720)
-2025-04-21 21:30:59,681 - INFO - thumbnail - Added gradient overlay to thumbnail
-2025-04-21 21:30:59,681 - INFO - thumbnail - Selected font size: 50 based on title length: 65
-2025-04-21 21:30:59,688 - INFO - thumbnail - Loaded custom font from: D:\youtube-shorts-automation\fonts\default_font.ttf
-2025-04-21 21:30:59,689 - INFO - thumbnail - Wrapped text: 'LazyCreator presents:
-Cyberpunk 2077 on Switch 2:
-DLSS Confirmed!'
-2025-04-21 21:30:59,693 - INFO - thumbnail - Text position calculated: x=301, y=516, width=678, height=154
-2025-04-21 21:30:59,755 - INFO - thumbnail - Added text shadow/outline for visibility
-2025-04-21 21:30:59,761 - INFO - thumbnail - Added main title text
-2025-04-21 21:30:59,762 - INFO - thumbnail - SHORTS label dimensions: width=113, height=21
-2025-04-21 21:30:59,763 - INFO - thumbnail - SHORTS label position: x=1127, y=20, height=31
-2025-04-21 21:30:59,763 - INFO - thumbnail - Added rectangle background for SHORTS label
-2025-04-21 21:30:59,763 - INFO - thumbnail - SHORTS text position: (1137, 25), y_offset=5
-2025-04-21 21:30:59,764 - INFO - thumbnail - Added SHORTS text label
-2025-04-21 21:30:59,782 - INFO - thumbnail - Thumbnail created and saved to ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250421_211610.jpg
-2025-04-21 21:30:59,785 - INFO - thumbnail - COMPLETED create_thumbnail in 0.24 seconds
-2025-04-21 21:30:59,786 - INFO - thumbnail - Successfully generated thumbnail at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250421_211610.jpg
-2025-04-21 21:30:59,786 - INFO - thumbnail - COMPLETED generate_thumbnail in 47.81 seconds
-2025-04-21 21:30:59,787 - INFO - __main__ - Thumbnail generated at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250421_211610.jpg
-2025-04-21 21:30:59,788 - INFO - __main__ - Uploading to YouTube
-2025-04-21 21:31:00,055 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
-2025-04-21 21:31:00,204 - INFO - youtube_upload - Uploading video: Cyberpunk 2077 on Switch 2: DLSS Confirmed!
-2025-04-21 21:31:04,884 - INFO - youtube_upload - ✅ Video upload successful! Video ID: cWL03Ltm_No
-2025-04-21 21:31:04,884 - INFO - youtube_upload - Uploading thumbnail for video ID: cWL03Ltm_No
-2025-04-21 21:31:09,096 - INFO - youtube_upload - ✅ Thumbnail upload successful!
-2025-04-21 21:31:09,097 - INFO - __main__ - Process completed successfully!
-2025-04-21 21:31:09,097 - INFO - __main__ - Video path: ai_shorts_output\yt_shorts_LazyCreator_presents_Cyberpunk_20250421_211610.mp4
-2025-04-21 21:31:09,097 - INFO - __main__ - Thumbnail path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250421_211610.jpg
+2025-05-03 01:06:17,454 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-05-03 01:06:17,563 - INFO - shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
+2025-05-03 01:06:18,636 - INFO - shorts_maker_V - Google Cloud TTS initialized successfully
+2025-05-03 01:06:20,604 - INFO - __main__ - Generating comprehensive content for : Samsung Galaxy S25 Edge leaks in full with that tiny 3,900 mAh battery - 9to5Google
+2025-05-03 01:06:26,845 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-03 01:06:26,874 - INFO - script_generator - Successfully generated comprehensive content package:
+2025-05-03 01:06:26,875 - INFO - script_generator - Title: Samsung Galaxy S25 Edge Leaks: Battery Surprise Revealed!
+2025-05-03 01:06:26,877 - INFO - script_generator - Script length: 53 words
+2025-05-03 01:06:26,878 - INFO - script_generator - Thumbnail HF prompt: A close-up of the Samsung Galaxy S25 Edge, showcas...
+2025-05-03 01:06:26,879 - INFO - script_generator - Thumbnail Unsplash query: Samsung Galaxy smartphone
+2025-05-03 01:06:26,880 - INFO - __main__ - Content package generated successfully:
+2025-05-03 01:06:26,881 - INFO - __main__ - Title: LazyCreator presents: Samsung Galaxy S25 Edge Leaks: Battery Surprise Revealed!
+2025-05-03 01:06:26,882 - INFO - __main__ - Description length: 153 characters
+2025-05-03 01:06:26,884 - INFO - __main__ - Raw script generated successfully
+2025-05-03 01:06:26,885 - INFO - __main__ - Parsed script into 7 sentences
+2025-05-03 01:06:26,886 - INFO - __main__ - Added sentence 0 to cards: 'The Samsung Galaxy S25 Edge is...' (duration: 5s)
+2025-05-03 01:06:26,887 - INFO - __main__ - Added sentence 1 to cards: 'Leaks reveal a sleek design an...' (duration: 5s)
+2025-05-03 01:06:26,889 - INFO - __main__ - Added sentence 2 to cards: 'Fans are buzzing about this ne...' (duration: 5s)
+2025-05-03 01:06:26,891 - INFO - __main__ - Added sentence 3 to cards: 'Will it pack enough power?...' (duration: 3s)
+2025-05-03 01:06:26,893 - INFO - __main__ - Added sentence 4 to cards: 'With cutting-edge features, it...' (duration: 5s)
+2025-05-03 01:06:26,894 - INFO - __main__ - Added sentence 5 to cards: 'Stay tuned for more updates!...' (duration: 3s)
+2025-05-03 01:06:26,896 - INFO - __main__ - Added sentence 6 to cards: 'Like and subscribe for the lat...' (duration: 5s)
+2025-05-03 01:06:26,897 - INFO - __main__ - Created 7 script cards
+2025-05-03 01:06:26,899 - INFO - __main__ - Script parsed into 7 sections
+2025-05-03 01:06:26,902 - INFO - __main__ - Section 1: The Samsung Galaxy S25 Edge is... (duration: 5s)
+2025-05-03 01:06:26,904 - INFO - __main__ - Section 2: Leaks reveal a sleek design an... (duration: 5s)
+2025-05-03 01:06:26,906 - INFO - __main__ - Section 3: Fans are buzzing about this ne... (duration: 5s)
+2025-05-03 01:06:26,908 - INFO - __main__ - Section 4: Will it pack enough power?... (duration: 3s)
+2025-05-03 01:06:26,910 - INFO - __main__ - Section 5: With cutting-edge features, it... (duration: 5s)
+2025-05-03 01:06:26,913 - INFO - __main__ - Section 6: Stay tuned for more updates!... (duration: 3s)
+2025-05-03 01:06:26,913 - INFO - __main__ - Section 7: Like and subscribe for the lat... (duration: 5s)
+2025-05-03 01:06:26,914 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Samsung Galaxy S25 Edge Leaks: Battery Surprise Revealed!'
+2025-05-03 01:06:26,915 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
+2025-05-03 01:06:26,918 - INFO - __main__ - Section 0: 'LazyCreator presents: Samsung ...' (duration: 3s)
+2025-05-03 01:06:26,920 - INFO - __main__ - Section 1: 'The Samsung Galaxy S25 Edge is...' (duration: 5s)
+2025-05-03 01:06:26,923 - INFO - __main__ - Section 2: 'Leaks reveal a sleek design an...' (duration: 5s)
+2025-05-03 01:06:26,924 - INFO - __main__ - Section 3: 'Fans are buzzing about this ne...' (duration: 5s)
+2025-05-03 01:06:26,926 - INFO - __main__ - Section 4: 'Will it pack enough power?...' (duration: 3s)
+2025-05-03 01:06:26,928 - INFO - __main__ - Section 5: 'With cutting-edge features, it...' (duration: 5s)
+2025-05-03 01:06:26,929 - INFO - __main__ - Section 6: 'Stay tuned for more updates!...' (duration: 3s)
+2025-05-03 01:06:26,930 - INFO - __main__ - Section 7: 'Like and subscribe for the lat...' (duration: 5s)
+2025-05-03 01:06:26,931 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
+2025-05-03 01:06:26,932 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-05-03 01:06:31,145 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-03 01:06:31,452 - INFO - script_generator - Successfully generated batch video queries for 8 sections.
+2025-05-03 01:06:31,453 - INFO - __main__ - Section queries: 1: Samsung Galaxy S25 Edge, 2: Samsung Galaxy S25, 3: sleek smartphone design, 4: smartphone fans excitement, 5: smartphone battery power, 6: cutting-edge smartphone features, 7: tech news updates, 8: subscribe for tech news
+2025-05-03 01:06:31,454 - INFO - __main__ - Creating YouTube Short
+2025-05-03 01:06:31,455 - INFO - shorts_maker_V - Starting YouTube short creation
+2025-05-03 01:06:31,456 - INFO - shorts_maker_V - Scaling durations by factor 0.74 to fit max duration of 25s
+2025-05-03 01:06:31,457 - INFO - shorts_maker_V - Total video duration: 25.0s
+2025-05-03 01:06:31,458 - INFO - shorts_maker_V - Creating video with 6 background segments for middle sections
+2025-05-03 01:06:31,459 - INFO - shorts_maker_V - Starting background video fetch
+2025-05-03 01:06:31,461 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-05-03 01:06:35,051 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-05-03 01:06:37,518 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-05-03 01:06:40,094 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-05-03 01:06:48,560 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-05-03 01:06:52,471 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-05-03 01:06:58,417 - INFO - shorts_maker_V - Fetching 1 videos using pexels API
+2025-05-03 01:06:59,959 - INFO - shorts_maker_V - Fetching 1 videos using pixabay API
+2025-05-03 01:07:02,093 - INFO - shorts_maker_V - Completed background video fetch in 30.63 seconds
+2025-05-03 01:07:02,094 - INFO - shorts_maker_V - Starting TTS audio generation
+2025-05-03 01:07:02,785 - INFO - voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\section_0.mp3]
+2025-05-03 01:07:03,503 - INFO - voiceover - Speech synthesized for text [The Samsung Galaxy S...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\section_1.mp3]
+2025-05-03 01:07:04,287 - INFO - voiceover - Speech synthesized for text [Leaks reveal a sleek...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\section_2.mp3]
+2025-05-03 01:07:04,952 - INFO - voiceover - Speech synthesized for text [Fans are buzzing abo...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\section_3.mp3]
+2025-05-03 01:07:05,655 - INFO - voiceover - Speech synthesized for text [Will it pack enough ...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\section_4.mp3]
+2025-05-03 01:07:06,277 - INFO - voiceover - Speech synthesized for text [With cutting-edge fe...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\section_5.mp3]
+2025-05-03 01:07:06,887 - INFO - voiceover - Speech synthesized for text [Stay tuned for more ...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\section_6.mp3]
+2025-05-03 01:07:07,602 - INFO - voiceover - Speech synthesized for text [Like and subscribe f...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\section_7.mp3]
+2025-05-03 01:07:07,983 - INFO - shorts_maker_V - Completed TTS audio generation in 5.89 seconds
+2025-05-03 01:07:07,984 - INFO - shorts_maker_V - Updated total duration: 25.52s
+2025-05-03 01:07:07,985 - INFO - shorts_maker_V - Starting background processing
+2025-05-03 01:07:42,641 - INFO - shorts_maker_V - Completed background processing in 34.63 seconds
+2025-05-03 01:08:09,746 - INFO - shorts_maker_V - Adding validated clip 0: 'LazyCreator presents: Samsung ...'
+2025-05-03 01:08:09,755 - INFO - shorts_maker_V - Adding validated clip 1: 'The Samsung Galaxy S25 Edge is...'
+2025-05-03 01:08:09,755 - INFO - shorts_maker_V - Adding validated clip 2: 'Leaks reveal a sleek design an...'
+2025-05-03 01:08:09,756 - INFO - shorts_maker_V - Adding validated clip 3: 'Fans are buzzing about this ne...'
+2025-05-03 01:08:09,756 - INFO - shorts_maker_V - Adding validated clip 4: 'Will it pack enough power?'
+2025-05-03 01:08:09,756 - INFO - shorts_maker_V - Adding validated clip 5: 'With cutting-edge features, it...'
+2025-05-03 01:08:09,757 - INFO - shorts_maker_V - Adding validated clip 6: 'Stay tuned for more updates!'
+2025-05-03 01:08:09,757 - INFO - shorts_maker_V - Adding validated clip 7: 'Like and subscribe for the lat...'
+2025-05-03 01:08:09,758 - INFO - shorts_maker_V - === CLIP ORDER BEFORE RENDERING ===
+2025-05-03 01:08:09,758 - INFO - shorts_maker_V - Position 0: Section 0 - 'LazyCreator presents: Samsung ...'
+2025-05-03 01:08:09,758 - INFO - shorts_maker_V - Position 1: Section 1 - 'The Samsung Galaxy S25 Edge is...'
+2025-05-03 01:08:09,759 - INFO - shorts_maker_V - Position 2: Section 2 - 'Leaks reveal a sleek design an...'
+2025-05-03 01:08:09,759 - INFO - shorts_maker_V - Position 3: Section 3 - 'Fans are buzzing about this ne...'
+2025-05-03 01:08:09,759 - INFO - shorts_maker_V - Position 4: Section 4 - 'Will it pack enough power?'
+2025-05-03 01:08:09,760 - INFO - shorts_maker_V - Position 5: Section 5 - 'With cutting-edge features, it...'
+2025-05-03 01:08:09,760 - INFO - shorts_maker_V - Position 6: Section 6 - 'Stay tuned for more updates!'
+2025-05-03 01:08:09,760 - INFO - shorts_maker_V - Position 7: Section 7 - 'Like and subscribe for the lat...'
+2025-05-03 01:08:09,761 - INFO - shorts_maker_V - === END CLIP ORDER LOG ===
+2025-05-03 01:08:10,455 - INFO - shorts_maker_V - Using parallel renderer for improved performance
+2025-05-03 01:08:10,456 - INFO - shorts_maker_V - Found dill 0.3.9 for improved serialization
+2025-05-03 01:08:10,457 - INFO - shorts_maker_V - Sorting clips by their section index before rendering
+2025-05-03 01:08:10,458 - INFO - shorts_maker_V - === CLIP ORDER AFTER SORTING ===
+2025-05-03 01:08:10,458 - INFO - shorts_maker_V - Position 0: Section 0 - 'LazyCreator presents: Samsung ...'
+2025-05-03 01:08:10,459 - INFO - shorts_maker_V - Position 1: Section 1 - 'The Samsung Galaxy S25 Edge is...'
+2025-05-03 01:08:10,459 - INFO - shorts_maker_V - Position 2: Section 2 - 'Leaks reveal a sleek design an...'
+2025-05-03 01:08:10,460 - INFO - shorts_maker_V - Position 3: Section 3 - 'Fans are buzzing about this ne...'
+2025-05-03 01:08:10,461 - INFO - shorts_maker_V - Position 4: Section 4 - 'Will it pack enough power?'
+2025-05-03 01:08:10,462 - INFO - shorts_maker_V - Position 5: Section 5 - 'With cutting-edge features, it...'
+2025-05-03 01:08:10,463 - INFO - shorts_maker_V - Position 6: Section 6 - 'Stay tuned for more updates!'
+2025-05-03 01:08:10,464 - INFO - shorts_maker_V - Position 7: Section 7 - 'Like and subscribe for the lat...'
+2025-05-03 01:08:10,465 - INFO - shorts_maker_V - === END SORTED CLIP ORDER LOG ===
+2025-05-03 01:08:10,465 - INFO - shorts_maker_V - Setting clip 0 debug info: Section 0: LazyCreator presents: Samsung ...
+2025-05-03 01:08:10,466 - INFO - shorts_maker_V - Setting clip 1 debug info: Section 1: The Samsung Galaxy S25 Edge is...
+2025-05-03 01:08:10,467 - INFO - shorts_maker_V - Setting clip 2 debug info: Section 2: Leaks reveal a sleek design an...
+2025-05-03 01:08:10,468 - INFO - shorts_maker_V - Setting clip 3 debug info: Section 3: Fans are buzzing about this ne...
+2025-05-03 01:08:10,469 - INFO - shorts_maker_V - Setting clip 4 debug info: Section 4: Will it pack enough power?
+2025-05-03 01:08:10,470 - INFO - shorts_maker_V - Setting clip 5 debug info: Section 5: With cutting-edge features, it...
+2025-05-03 01:08:10,471 - INFO - shorts_maker_V - Setting clip 6 debug info: Section 6: Stay tuned for more updates!
+2025-05-03 01:08:10,472 - INFO - shorts_maker_V - Setting clip 7 debug info: Section 7: Like and subscribe for the lat...
+2025-05-03 01:08:10,474 - INFO - shorts_maker_V - Rendering 8 clips in parallel using 7 processes with preset: veryfast
+2025-05-03 01:08:10,475 - INFO - shorts_maker_V - === SECTION INFO RECEIVED BY PARALLEL RENDERER ===
+2025-05-03 01:08:10,481 - INFO - shorts_maker_V - Clip 0: Section 0 - 'LazyCreator presents: Samsung ...'
+2025-05-03 01:08:10,482 - INFO - shorts_maker_V - Clip 1: Section 1 - 'The Samsung Galaxy S25 Edge is...'
+2025-05-03 01:08:10,483 - INFO - shorts_maker_V - Clip 2: Section 2 - 'Leaks reveal a sleek design an...'
+2025-05-03 01:08:10,485 - INFO - shorts_maker_V - Clip 3: Section 3 - 'Fans are buzzing about this ne...'
+2025-05-03 01:08:10,486 - INFO - shorts_maker_V - Clip 4: Section 4 - 'Will it pack enough power?'
+2025-05-03 01:08:10,487 - INFO - shorts_maker_V - Clip 5: Section 5 - 'With cutting-edge features, it...'
+2025-05-03 01:08:10,487 - INFO - shorts_maker_V - Clip 6: Section 6 - 'Stay tuned for more updates!'
+2025-05-03 01:08:10,488 - INFO - shorts_maker_V - Clip 7: Section 7 - 'Like and subscribe for the lat...'
+2025-05-03 01:08:10,489 - INFO - shorts_maker_V - === END SECTION INFO ===
+2025-05-03 01:08:10,490 - INFO - shorts_maker_V - Pre-processing complex clips...
+2025-05-03 01:08:10,491 - INFO - shorts_maker_V - Processing clip 0: Section 0: LazyCreator presents: Samsung ...
+2025-05-03 01:08:10,492 - INFO - shorts_maker_V - Clip 0 is complex, pre-rendering: Section 0: LazyCreator presents: Samsung ...
+2025-05-03 01:08:10,615 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 0
+2025-05-03 01:08:10,616 - INFO - parallel_renderer - Pre-rendering clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_0_1746214690.mp4
+2025-05-03 01:11:55,252 - INFO - parallel_renderer - Successfully pre-rendered clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_0_1746214690.mp4
+2025-05-03 01:11:55,254 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 0: Section 0: LazyCreator presents: Samsung ...
+2025-05-03 01:11:55,265 - INFO - shorts_maker_V - Processing clip 1: Section 1: The Samsung Galaxy S25 Edge is...
+2025-05-03 01:11:55,266 - INFO - shorts_maker_V - Clip 1 is complex, pre-rendering: Section 1: The Samsung Galaxy S25 Edge is...
+2025-05-03 01:11:55,360 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 1
+2025-05-03 01:11:55,361 - INFO - parallel_renderer - Pre-rendering clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_1_1746214915.mp4
+2025-05-03 01:13:38,352 - INFO - parallel_renderer - Successfully pre-rendered clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_1_1746214915.mp4
+2025-05-03 01:13:38,357 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 1: Section 1: The Samsung Galaxy S25 Edge is...
+2025-05-03 01:13:38,359 - INFO - shorts_maker_V - Processing clip 2: Section 2: Leaks reveal a sleek design an...
+2025-05-03 01:13:38,361 - INFO - shorts_maker_V - Clip 2 is complex, pre-rendering: Section 2: Leaks reveal a sleek design an...
+2025-05-03 01:13:38,465 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 2
+2025-05-03 01:13:38,467 - INFO - parallel_renderer - Pre-rendering clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_2_1746215018.mp4
+2025-05-03 01:16:36,764 - INFO - parallel_renderer - Successfully pre-rendered clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_2_1746215018.mp4
+2025-05-03 01:16:36,778 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 2: Section 2: Leaks reveal a sleek design an...
+2025-05-03 01:16:36,780 - INFO - shorts_maker_V - Processing clip 3: Section 3: Fans are buzzing about this ne...
+2025-05-03 01:16:36,781 - INFO - shorts_maker_V - Clip 3 is complex, pre-rendering: Section 3: Fans are buzzing about this ne...
+2025-05-03 01:16:36,888 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 3
+2025-05-03 01:16:36,892 - INFO - parallel_renderer - Pre-rendering clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_3_1746215196.mp4
+2025-05-03 01:17:51,044 - INFO - parallel_renderer - Successfully pre-rendered clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_3_1746215196.mp4
+2025-05-03 01:17:51,045 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 3: Section 3: Fans are buzzing about this ne...
+2025-05-03 01:17:51,049 - INFO - shorts_maker_V - Processing clip 4: Section 4: Will it pack enough power?
+2025-05-03 01:17:51,050 - INFO - shorts_maker_V - Clip 4 is complex, pre-rendering: Section 4: Will it pack enough power?
+2025-05-03 01:17:51,173 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 4
+2025-05-03 01:17:51,175 - INFO - parallel_renderer - Pre-rendering clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_4_1746215271.mp4
+2025-05-03 01:19:05,668 - INFO - parallel_renderer - Successfully pre-rendered clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_4_1746215271.mp4
+2025-05-03 01:19:05,673 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 4: Section 4: Will it pack enough power?
+2025-05-03 01:19:05,681 - INFO - shorts_maker_V - Processing clip 5: Section 5: With cutting-edge features, it...
+2025-05-03 01:19:05,686 - INFO - shorts_maker_V - Clip 5 is complex, pre-rendering: Section 5: With cutting-edge features, it...
+2025-05-03 01:19:05,826 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 5
+2025-05-03 01:19:05,835 - INFO - parallel_renderer - Pre-rendering clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_5_1746215345.mp4
+2025-05-03 01:21:22,184 - INFO - parallel_renderer - Successfully pre-rendered clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_5_1746215345.mp4
+2025-05-03 01:21:22,196 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 5: Section 5: With cutting-edge features, it...
+2025-05-03 01:21:22,199 - INFO - shorts_maker_V - Processing clip 6: Section 6: Stay tuned for more updates!
+2025-05-03 01:21:22,200 - INFO - shorts_maker_V - Clip 6 is complex, pre-rendering: Section 6: Stay tuned for more updates!
+2025-05-03 01:21:22,326 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 6
+2025-05-03 01:21:22,330 - INFO - parallel_renderer - Pre-rendering clip 6 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_6_1746215482.mp4
+2025-05-03 01:22:56,329 - INFO - parallel_renderer - Successfully pre-rendered clip 6 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_6_1746215482.mp4
+2025-05-03 01:22:56,345 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 6: Section 6: Stay tuned for more updates!
+2025-05-03 01:22:56,347 - INFO - shorts_maker_V - Processing clip 7: Section 7: Like and subscribe for the lat...
+2025-05-03 01:22:56,348 - INFO - shorts_maker_V - Clip 7 is complex, pre-rendering: Section 7: Like and subscribe for the lat...
+2025-05-03 01:22:56,433 - INFO - parallel_renderer - Created new composite clip with fixed subclips for clip 7
+2025-05-03 01:22:56,435 - INFO - parallel_renderer - Pre-rendering clip 7 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_7_1746215576.mp4
+2025-05-03 01:24:36,600 - INFO - parallel_renderer - Successfully pre-rendered clip 7 to C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_7_1746215576.mp4
+2025-05-03 01:24:36,605 - INFO - shorts_maker_V - Successfully pre-rendered complex clip 7: Section 7: Like and subscribe for the lat...
+2025-05-03 01:24:36,610 - INFO - shorts_maker_V - === CLIPS BEFORE PARALLEL RENDERING ===
+2025-05-03 01:24:36,615 - INFO - shorts_maker_V - Position 0: Clip 0 (Section 0) - Section 0: LazyCreator presents: Samsung ...
+2025-05-03 01:24:36,616 - INFO - shorts_maker_V - Position 1: Clip 1 (Section 1) - Section 1: The Samsung Galaxy S25 Edge is...
+2025-05-03 01:24:36,618 - INFO - shorts_maker_V - Position 2: Clip 2 (Section 2) - Section 2: Leaks reveal a sleek design an...
+2025-05-03 01:24:36,619 - INFO - shorts_maker_V - Position 3: Clip 3 (Section 3) - Section 3: Fans are buzzing about this ne...
+2025-05-03 01:24:36,620 - INFO - shorts_maker_V - Position 4: Clip 4 (Section 4) - Section 4: Will it pack enough power?
+2025-05-03 01:24:36,621 - INFO - shorts_maker_V - Position 5: Clip 5 (Section 5) - Section 5: With cutting-edge features, it...
+2025-05-03 01:24:36,621 - INFO - shorts_maker_V - Position 6: Clip 6 (Section 6) - Section 6: Stay tuned for more updates!
+2025-05-03 01:24:36,622 - INFO - shorts_maker_V - Position 7: Clip 7 (Section 7) - Section 7: Like and subscribe for the lat...
+2025-05-03 01:24:36,622 - INFO - shorts_maker_V - === END CLIPS BEFORE PARALLEL RENDERING ===
+2025-05-03 01:24:36,623 - INFO - shorts_maker_V - Rendering clips in parallel...
+2025-05-03 01:24:36,626 - INFO - shorts_maker_V - Adding pre-rendered clip 0 to parallel processing: Section 0: LazyCreator presents: Samsung ...
+2025-05-03 01:24:36,628 - INFO - shorts_maker_V - Adding pre-rendered clip 1 to parallel processing: Section 1: The Samsung Galaxy S25 Edge is...
+2025-05-03 01:24:36,630 - INFO - shorts_maker_V - Adding pre-rendered clip 2 to parallel processing: Section 2: Leaks reveal a sleek design an...
+2025-05-03 01:24:36,632 - INFO - shorts_maker_V - Adding pre-rendered clip 3 to parallel processing: Section 3: Fans are buzzing about this ne...
+2025-05-03 01:24:36,633 - INFO - shorts_maker_V - Adding pre-rendered clip 4 to parallel processing: Section 4: Will it pack enough power?
+2025-05-03 01:24:36,635 - INFO - shorts_maker_V - Adding pre-rendered clip 5 to parallel processing: Section 5: With cutting-edge features, it...
+2025-05-03 01:24:36,636 - INFO - shorts_maker_V - Adding pre-rendered clip 6 to parallel processing: Section 6: Stay tuned for more updates!
+2025-05-03 01:24:36,638 - INFO - shorts_maker_V - Adding pre-rendered clip 7 to parallel processing: Section 7: Like and subscribe for the lat...
+2025-05-03 01:24:53,976 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_6_1746215482.mp4
+2025-05-03 01:24:53,981 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_1_1746214915.mp4
+2025-05-03 01:24:53,983 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_3_1746215196.mp4
+2025-05-03 01:24:53,983 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_7_1746215576.mp4
+2025-05-03 01:24:53,983 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_2_1746215018.mp4
+2025-05-03 01:24:55,644 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_0_1746214690.mp4
+2025-05-03 01:24:55,645 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_5_1746215345.mp4
+2025-05-03 01:24:55,646 - WARNING - shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\prerender_4_1746215271.mp4
+2025-05-03 01:24:55,803 - INFO - shorts_maker_V - === RENDERED PATHS WITH INDICES ===
+2025-05-03 01:24:55,805 - INFO - shorts_maker_V - === END RENDERED PATHS ===
+2025-05-03 01:24:56,062 - INFO - shorts_maker_V - Successfully rendered 8 out of 8 clips
+2025-05-03 01:24:56,063 - INFO - shorts_maker_V - Concatenating clips using FFmpeg...
+2025-05-03 01:24:56,064 - INFO - shorts_maker_V - Extracted index 6 from prerender filename: prerender_6_1746215482.mp4
+2025-05-03 01:24:56,065 - INFO - shorts_maker_V - Extracted index 1 from prerender filename: prerender_1_1746214915.mp4
+2025-05-03 01:24:56,065 - INFO - shorts_maker_V - Extracted index 3 from prerender filename: prerender_3_1746215196.mp4
+2025-05-03 01:24:56,066 - INFO - shorts_maker_V - Extracted index 7 from prerender filename: prerender_7_1746215576.mp4
+2025-05-03 01:24:56,066 - INFO - shorts_maker_V - Extracted index 2 from prerender filename: prerender_2_1746215018.mp4
+2025-05-03 01:24:56,067 - INFO - shorts_maker_V - Extracted index 0 from prerender filename: prerender_0_1746214690.mp4
+2025-05-03 01:24:56,067 - INFO - shorts_maker_V - Extracted index 5 from prerender filename: prerender_5_1746215345.mp4
+2025-05-03 01:24:56,068 - INFO - shorts_maker_V - Extracted index 4 from prerender filename: prerender_4_1746215271.mp4
+2025-05-03 01:24:56,068 - INFO - shorts_maker_V - Concatenating 8 clips in correct order
+2025-05-03 01:24:56,069 - INFO - shorts_maker_V - === CLIPS ORDER FOR CONCATENATION ===
+2025-05-03 01:24:56,070 - INFO - shorts_maker_V - Position 0: Clip 0 (Section 0) - Section 0: LazyCreator presents: Samsung ...
+2025-05-03 01:24:56,070 - INFO - shorts_maker_V - Position 1: Clip 1 (Section 1) - Section 1: The Samsung Galaxy S25 Edge is...
+2025-05-03 01:24:56,071 - INFO - shorts_maker_V - Position 2: Clip 2 (Section 2) - Section 2: Leaks reveal a sleek design an...
+2025-05-03 01:24:56,072 - INFO - shorts_maker_V - Position 3: Clip 3 (Section 3) - Section 3: Fans are buzzing about this ne...
+2025-05-03 01:24:56,073 - INFO - shorts_maker_V - Position 4: Clip 4 (Section 4) - Section 4: Will it pack enough power?
+2025-05-03 01:24:56,073 - INFO - shorts_maker_V - Position 5: Clip 5 (Section 5) - Section 5: With cutting-edge features, it...
+2025-05-03 01:24:56,074 - INFO - shorts_maker_V - Position 6: Clip 6 (Section 6) - Section 6: Stay tuned for more updates!
+2025-05-03 01:24:56,074 - INFO - shorts_maker_V - Position 7: Clip 7 (Section 7) - Section 7: Like and subscribe for the lat...
+2025-05-03 01:24:56,075 - INFO - shorts_maker_V - === END CLIPS ORDER FOR CONCATENATION ===
+2025-05-03 01:24:56,084 - INFO - shorts_maker_V - Running FFmpeg concatenation: ffmpeg -y -f concat -safe 0 -i C:\Users\adhbu\AppData\Local\Temp\tmpgqbbtap9\concat_list.txt -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -max_muxing_queue_size 9999 -c:a aac -b:a 192k ai_shorts_output\yt_shorts_LazyCreator_presents_Samsung_G_20250503_010618.mp4
+2025-05-03 01:25:07,976 - INFO - shorts_maker_V - Successfully concatenated clips to ai_shorts_output\yt_shorts_LazyCreator_presents_Samsung_G_20250503_010618.mp4
+2025-05-03 01:25:07,981 - WARNING - shorts_maker_V - Error cleaning up temporary files: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\adhbu\\AppData\\Local\\Temp\\tmpgqbbtap9\\pexels_31834293.mp4'
+2025-05-03 01:25:07,982 - INFO - shorts_maker_V - Completed YouTube short creation in 1116.53 seconds
+2025-05-03 01:25:07,982 - INFO - __main__ - Generating thumbnail for the short
+2025-05-03 01:25:07,991 - INFO - thumbnail - STARTING generate_thumbnail at 01:25:07.990
+2025-05-03 01:25:07,991 - INFO - thumbnail - Using thumbnail prompt: A close-up of the Samsung Galaxy S25 Edge, showcasing its sleek design and screen, with a prominent '3,900 mAh' battery graphic and a question mark to highlight the battery surprise.
+2025-05-03 01:25:07,991 - INFO - thumbnail - STARTING generate_image_huggingface at 01:25:07.991
+2025-05-03 01:25:07,992 - INFO - thumbnail - Hugging Face prompt: A close-up of the Samsung Galaxy S25 Edge, showcasing its sleek design and ...
+2025-05-03 01:25:08,796 - ERROR - thumbnail - Error from Hugging Face API: 404
+2025-05-03 01:25:24,524 - ERROR - thumbnail - Error from Hugging Face API: 404
+2025-05-03 01:25:54,525 - ERROR - thumbnail - Failed to generate image with Hugging Face API after multiple attempts
+2025-05-03 01:25:54,527 - INFO - thumbnail - COMPLETED generate_image_huggingface in 46.54 seconds
+2025-05-03 01:25:54,528 - INFO - thumbnail - Falling back to Unsplash for thumbnail image
+2025-05-03 01:25:54,528 - INFO - thumbnail - STARTING fetch_image_unsplash at 01:25:54.528
+2025-05-03 01:25:54,529 - INFO - thumbnail - Searching Unsplash with query: A close-up of the Samsung Galaxy S25 Edge, showcasing its sleek design and screen, with a prominent '3,900 mAh' battery graphic and a question mark to highlight the battery surprise.
+2025-05-03 01:25:55,981 - INFO - thumbnail - Unsplash image downloaded to C:\Users\adhbu\AppData\Local\Temp\tmpdiwdfz3a\thumbnail_unsplash_1746215754_9627.jpg
+2025-05-03 01:25:55,982 - INFO - thumbnail - Image attribution: Photo by Headway on Unsplash
+2025-05-03 01:25:55,985 - INFO - thumbnail - COMPLETED fetch_image_unsplash in 1.46 seconds
+2025-05-03 01:25:55,985 - INFO - thumbnail - STARTING create_thumbnail at 01:25:55.985
+2025-05-03 01:25:55,986 - INFO - thumbnail - Creating thumbnail for title: 'LazyCreator presents: Samsung Galaxy S25 Edge Leaks: Battery Surprise Revealed!'
+2025-05-03 01:25:55,986 - INFO - thumbnail - Using base image: C:\Users\adhbu\AppData\Local\Temp\tmpdiwdfz3a\thumbnail_unsplash_1746215754_9627.jpg
+2025-05-03 01:25:55,986 - INFO - thumbnail - Output path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250503_010618.jpg
+2025-05-03 01:25:56,025 - INFO - thumbnail - Base image size: (1080, 720)
+2025-05-03 01:25:56,093 - INFO - thumbnail - Resized image to YouTube thumbnail dimensions: (1080, 1920)
+2025-05-03 01:25:56,134 - INFO - thumbnail - Added gradient overlay to thumbnail
+2025-05-03 01:25:56,135 - INFO - thumbnail - Selected font size: 50 based on title length: 79
+2025-05-03 01:25:56,146 - WARNING - thumbnail - Using default font as custom font could not be loaded: cannot open resource
+2025-05-03 01:25:56,147 - INFO - thumbnail - Wrapped text: 'LazyCreator presents: Samsung
+Galaxy S25 Edge Leaks: Battery
+Surprise Revealed!'
+2025-05-03 01:25:56,165 - INFO - thumbnail - Text position calculated: x=467, y=1832, width=146, height=38
+2025-05-03 01:25:56,218 - INFO - thumbnail - Added text shadow/outline for visibility
+2025-05-03 01:25:56,222 - INFO - thumbnail - Added main title text
+2025-05-03 01:25:56,225 - WARNING - thumbnail - Using default font for SHORTS label due to error: cannot open resource
+2025-05-03 01:25:56,227 - INFO - thumbnail - SHORTS label dimensions: width=39, height=8
+2025-05-03 01:25:56,228 - INFO - thumbnail - SHORTS label position: x=1001, y=20, height=18
+2025-05-03 01:25:56,228 - INFO - thumbnail - Added rectangle background for SHORTS label
+2025-05-03 01:25:56,229 - INFO - thumbnail - SHORTS text position: (1011, 25), y_offset=5
+2025-05-03 01:25:56,230 - INFO - thumbnail - Added SHORTS text label
+2025-05-03 01:25:56,262 - INFO - thumbnail - Thumbnail created and saved to ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250503_010618.jpg
+2025-05-03 01:25:56,269 - INFO - thumbnail - COMPLETED create_thumbnail in 0.28 seconds
+2025-05-03 01:25:56,270 - INFO - thumbnail - Successfully generated thumbnail at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250503_010618.jpg
+2025-05-03 01:25:56,270 - INFO - thumbnail - COMPLETED generate_thumbnail in 48.28 seconds
+2025-05-03 01:25:56,271 - INFO - __main__ - Thumbnail generated at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250503_010618.jpg
+2025-05-03 01:25:56,273 - INFO - __main__ - Uploading to YouTube
+2025-05-03 01:25:56,656 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
+2025-05-03 01:25:56,894 - INFO - youtube_upload - Uploading video: Samsung Galaxy S25 Edge Leaks: Battery Surprise Revealed!
+2025-05-03 01:26:05,336 - INFO - youtube_upload - ✅ Video upload successful! Video ID: 44VyLAMGCcs
+2025-05-03 01:26:05,337 - INFO - youtube_upload - Uploading thumbnail for video ID: 44VyLAMGCcs
+2025-05-03 01:26:06,705 - ERROR - youtube_upload - Thumbnail upload failed: <HttpError 429 when requesting https://youtube.googleapis.com/upload/youtube/v3/thumbnails/set?videoId=44VyLAMGCcs&alt=json&uploadType=resumable returned "Resource has been exhausted (e.g. check quota).". Details: "[{'message': 'Resource has been exhausted (e.g. check quota).', 'domain': 'global', 'reason': 'rateLimitExceeded'}]">
+2025-05-03 01:26:06,707 - INFO - youtube_upload - Attempting alternative thumbnail upload method...
+2025-05-03 01:26:10,111 - INFO - youtube_upload - ✅ Thumbnail upload successful with alternative method!
+2025-05-03 01:26:10,112 - INFO - __main__ - Process completed successfully!
+2025-05-03 01:26:10,112 - INFO - __main__ - Video path: ai_shorts_output\yt_shorts_LazyCreator_presents_Samsung_G_20250503_010618.mp4
+2025-05-03 01:26:10,113 - INFO - __main__ - Thumbnail path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250503_010618.jpg
+2025-05-03 18:31:48,838 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-05-03 18:31:48,927 - INFO - automation.shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
+2025-05-03 18:31:48,929 - WARNING - automation.shorts_maker_V - Failed to initialize Google Cloud TTS: No module named 'voiceover'. Will use gTTS instead.
+2025-05-03 18:31:50,101 - INFO - __main__ - Generating comprehensive content for : French President Macron Congratulates Clair Obscur: Expedition 33 Developer For Creating 'One of the Best-Rated Games in History' - IGN
+2025-05-03 18:37:48,942 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-05-03 18:37:49,002 - INFO - automation.shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
+2025-05-03 18:37:50,174 - INFO - automation.shorts_maker_V - Google Cloud TTS initialized successfully
+2025-05-03 18:37:52,607 - INFO - __main__ - Generating comprehensive content for : Phishing attacks that defeat MFA are easier than ever. So what are we to do? - Ars Technica
+2025-05-03 18:37:57,726 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-03 18:37:57,758 - INFO - automation.content_generator - Successfully generated comprehensive content package:
+2025-05-03 18:37:57,759 - INFO - automation.content_generator - Title: Phishing Attacks vs. MFA: Are You Safe?
+2025-05-03 18:37:57,760 - INFO - automation.content_generator - Script length: 65 words
+2025-05-03 18:37:57,760 - INFO - automation.content_generator - Thumbnail HF prompt: A visual representation of a hacker in the shadows...
+2025-05-03 18:37:57,761 - INFO - automation.content_generator - Thumbnail Unsplash query: cybersecurity phishing
+2025-05-03 18:37:57,762 - INFO - __main__ - Content package generated successfully:
+2025-05-03 18:37:57,762 - INFO - __main__ - Title: LazyCreator presents: Phishing Attacks vs. MFA: Are You Safe?
+2025-05-03 18:37:57,762 - INFO - __main__ - Description length: 127 characters
+2025-05-03 18:37:57,763 - INFO - __main__ - Raw script generated successfully
+2025-05-03 18:37:57,765 - INFO - helper.minor_helper - Parsed script into 11 sentences
+2025-05-03 18:37:57,765 - INFO - helper.minor_helper - Added sentence 0 to cards: 'Phishing attacks are evolving....' (duration: 3s)
+2025-05-03 18:37:57,766 - INFO - helper.minor_helper - Added sentence 1 to cards: 'Did you know they can bypass m...' (duration: 5s)
+2025-05-03 18:37:57,767 - INFO - helper.minor_helper - Added sentence 2 to cards: 'Cybercriminals are using advan...' (duration: 5s)
+2025-05-03 18:37:57,770 - INFO - helper.minor_helper - Added sentence 3 to cards: 'Even the best security measure...' (duration: 5s)
+2025-05-03 18:37:57,771 - INFO - helper.minor_helper - Added sentence 4 to cards: 'Stay vigilant!...' (duration: 3s)
+2025-05-03 18:37:57,772 - INFO - helper.minor_helper - Added sentence 5 to cards: 'Verify every link and be cauti...' (duration: 5s)
+2025-05-03 18:37:57,773 - INFO - helper.minor_helper - Added sentence 6 to cards: 'Don't let your guard down!...' (duration: 3s)
+2025-05-03 18:37:57,774 - INFO - helper.minor_helper - Added sentence 7 to cards: 'Protect yourself and your acco...' (duration: 5s)
+2025-05-03 18:37:57,775 - INFO - helper.minor_helper - Added sentence 8 to cards: 'Educate yourself on phishing t...' (duration: 5s)
+2025-05-03 18:37:57,776 - INFO - helper.minor_helper - Added sentence 9 to cards: 'Share this video to keep other...' (duration: 5s)
+2025-05-03 18:37:57,777 - INFO - helper.minor_helper - Added sentence 10 to cards: 'Together, we can fight back!...' (duration: 3s)
+2025-05-03 18:37:57,777 - INFO - helper.minor_helper - Created 11 script cards
+2025-05-03 18:37:57,778 - INFO - __main__ - Script parsed into 11 sections
+2025-05-03 18:37:57,779 - INFO - __main__ - Section 1: Phishing attacks are evolving.... (duration: 3s)
+2025-05-03 18:37:57,779 - INFO - __main__ - Section 2: Did you know they can bypass m... (duration: 5s)
+2025-05-03 18:37:57,780 - INFO - __main__ - Section 3: Cybercriminals are using advan... (duration: 5s)
+2025-05-03 18:37:57,781 - INFO - __main__ - Section 4: Even the best security measure... (duration: 5s)
+2025-05-03 18:37:57,782 - INFO - __main__ - Section 5: Stay vigilant!... (duration: 3s)
+2025-05-03 18:37:57,785 - INFO - __main__ - Section 6: Verify every link and be cauti... (duration: 5s)
+2025-05-03 18:37:57,790 - INFO - __main__ - Section 7: Don't let your guard down!... (duration: 3s)
+2025-05-03 18:37:57,791 - INFO - __main__ - Section 8: Protect yourself and your acco... (duration: 5s)
+2025-05-03 18:37:57,793 - INFO - __main__ - Section 9: Educate yourself on phishing t... (duration: 5s)
+2025-05-03 18:37:57,796 - INFO - __main__ - Section 10: Share this video to keep other... (duration: 5s)
+2025-05-03 18:37:57,801 - INFO - __main__ - Section 11: Together, we can fight back!... (duration: 3s)
+2025-05-03 18:37:57,803 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Phishing Attacks vs. MFA: Are You Safe?'
+2025-05-03 18:37:57,803 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
+2025-05-03 18:37:57,804 - INFO - __main__ - Section 0: 'LazyCreator presents: Phishing...' (duration: 3s)
+2025-05-03 18:37:57,804 - INFO - __main__ - Section 1: 'Phishing attacks are evolving....' (duration: 3s)
+2025-05-03 18:37:57,805 - INFO - __main__ - Section 2: 'Did you know they can bypass m...' (duration: 5s)
+2025-05-03 18:37:57,805 - INFO - __main__ - Section 3: 'Cybercriminals are using advan...' (duration: 5s)
+2025-05-03 18:37:57,806 - INFO - __main__ - Section 4: 'Even the best security measure...' (duration: 5s)
+2025-05-03 18:37:57,806 - INFO - __main__ - Section 5: 'Stay vigilant!...' (duration: 3s)
+2025-05-03 18:37:57,806 - INFO - __main__ - Section 6: 'Verify every link and be cauti...' (duration: 5s)
+2025-05-03 18:37:57,807 - INFO - __main__ - Section 7: 'Don't let your guard down!...' (duration: 3s)
+2025-05-03 18:37:57,807 - INFO - __main__ - Section 8: 'Protect yourself and your acco...' (duration: 5s)
+2025-05-03 18:37:57,807 - INFO - __main__ - Section 9: 'Educate yourself on phishing t...' (duration: 5s)
+2025-05-03 18:37:57,808 - INFO - __main__ - Section 10: 'Share this video to keep other...' (duration: 5s)
+2025-05-03 18:37:57,808 - INFO - __main__ - Section 11: 'Together, we can fight back!...' (duration: 3s)
+2025-05-03 18:37:57,809 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
+2025-05-03 18:37:57,809 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-05-03 18:38:00,796 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-03 18:38:00,804 - INFO - automation.content_generator - Successfully generated batch video queries for 12 sections.
+2025-05-03 18:38:00,804 - INFO - __main__ - Section queries: 1: phishing attacks MFA, 2: evolving cyber threats, 3: bypass multi-factor authentication, 4: advanced cybercriminal techniques, 5: security measures vulnerabilities, 6: stay vigilant cybersecurity, 7: verify links caution, 8: guard down security, 9: protect accounts online, 10: educate phishing tactics, 11: share video awareness, 12: fight back together
+2025-05-03 18:38:00,805 - INFO - __main__ - Creating YouTube Short
+2025-05-03 18:38:00,806 - INFO - helper.minor_helper - Starting YouTube short creation
+2025-05-03 18:38:00,807 - ERROR - __main__ - Error generating YouTube Short: YTShortsCreator_V.create_youtube_short() got an unexpected keyword argument 'title'
+2025-05-03 18:38:00,808 - ERROR - __main__ - Error generating YouTube Short: YTShortsCreator_V.create_youtube_short() got an unexpected keyword argument 'title'
+2025-05-03 18:38:00,821 - ERROR - __main__ - Detailed error: Traceback (most recent call last):
+  File "D:\youtube-shorts-automation\main.py", line 276, in main
+    result = generate_youtube_short(
+        topic,
+    ...<2 lines>...
+        creator_type=creator_type
+    )
+  File "D:\youtube-shorts-automation\main.py", line 174, in generate_youtube_short
+    video_path = creator_type.create_youtube_short(
+        title=title,  # Use the generated title
+    ...<8 lines>...
+        edge_blur=False
+    )
+  File "D:\youtube-shorts-automation\helper\minor_helper.py", line 23, in wrapper
+    result = func(*args, **kwargs)
+TypeError: YTShortsCreator_V.create_youtube_short() got an unexpected keyword argument 'title'
+
+2025-05-03 18:38:00,823 - ERROR - __main__ - Process failed: YTShortsCreator_V.create_youtube_short() got an unexpected keyword argument 'title'
+2025-05-03 18:38:00,828 - ERROR - __main__ - Detailed error trace: Traceback (most recent call last):
+  File "D:\youtube-shorts-automation\main.py", line 276, in main
+    result = generate_youtube_short(
+        topic,
+    ...<2 lines>...
+        creator_type=creator_type
+    )
+  File "D:\youtube-shorts-automation\main.py", line 174, in generate_youtube_short
+    video_path = creator_type.create_youtube_short(
+        title=title,  # Use the generated title
+    ...<8 lines>...
+        edge_blur=False
+    )
+  File "D:\youtube-shorts-automation\helper\minor_helper.py", line 23, in wrapper
+    result = func(*args, **kwargs)
+TypeError: YTShortsCreator_V.create_youtube_short() got an unexpected keyword argument 'title'
+
+2025-05-03 18:39:57,234 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-05-03 18:39:57,292 - INFO - automation.shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
+2025-05-03 18:39:57,866 - INFO - automation.shorts_maker_V - Google Cloud TTS initialized successfully
+2025-05-03 18:40:00,100 - INFO - __main__ - Generating comprehensive content for : Patch Notes: Season 14 — Warcraft Rumble - Blizzard News
+2025-05-03 18:40:07,373 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-03 18:40:07,446 - INFO - automation.content_generator - Successfully generated comprehensive content package:
+2025-05-03 18:40:07,446 - INFO - automation.content_generator - Title: Warcraft Rumble Season 14 Patch Notes Revealed!
+2025-05-03 18:40:07,446 - INFO - automation.content_generator - Script length: 59 words
+2025-05-03 18:40:07,446 - INFO - automation.content_generator - Thumbnail HF prompt: A dynamic scene showcasing new heroes from Warcraf...
+2025-05-03 18:40:07,447 - INFO - automation.content_generator - Thumbnail Unsplash query: gaming action scene
+2025-05-03 18:40:07,447 - INFO - __main__ - Content package generated successfully:
+2025-05-03 18:40:07,453 - INFO - __main__ - Title: LazyCreator presents: Warcraft Rumble Season 14 Patch Notes Revealed!
+2025-05-03 18:40:07,453 - INFO - __main__ - Description length: 137 characters
+2025-05-03 18:40:07,454 - INFO - __main__ - Raw script generated successfully
+2025-05-03 18:40:07,456 - INFO - helper.minor_helper - Parsed script into 6 sentences
+2025-05-03 18:40:07,457 - INFO - helper.minor_helper - Added sentence 0 to cards: 'Get ready, Rumble fans!...' (duration: 3s)
+2025-05-03 18:40:07,457 - INFO - helper.minor_helper - Added sentence 1 to cards: 'Season 14 is here, and it's pa...' (duration: 5s)
+2025-05-03 18:40:07,458 - INFO - helper.minor_helper - Added sentence 2 to cards: 'New heroes are joining the bat...' (duration: 5s)
+2025-05-03 18:40:07,458 - INFO - helper.minor_helper - Added sentence 3 to cards: 'Plus, huge balance changes mea...' (duration: 5s)
+2025-05-03 18:40:07,459 - INFO - helper.minor_helper - Added sentence 4 to cards: 'Don’t miss out on the latest t...' (duration: 5s)
+2025-05-03 18:40:07,460 - INFO - helper.minor_helper - Added sentence 5 to cards: 'Check out the full patch notes...' (duration: 5s)
+2025-05-03 18:40:07,461 - INFO - helper.minor_helper - Created 6 script cards
+2025-05-03 18:40:07,462 - INFO - __main__ - Script parsed into 6 sections
+2025-05-03 18:40:07,462 - INFO - __main__ - Section 1: Get ready, Rumble fans!... (duration: 3s)
+2025-05-03 18:40:07,463 - INFO - __main__ - Section 2: Season 14 is here, and it's pa... (duration: 5s)
+2025-05-03 18:40:07,463 - INFO - __main__ - Section 3: New heroes are joining the bat... (duration: 5s)
+2025-05-03 18:40:07,463 - INFO - __main__ - Section 4: Plus, huge balance changes mea... (duration: 5s)
+2025-05-03 18:40:07,464 - INFO - __main__ - Section 5: Don’t miss out on the latest t... (duration: 5s)
+2025-05-03 18:40:07,465 - INFO - __main__ - Section 6: Check out the full patch notes... (duration: 5s)
+2025-05-03 18:40:07,465 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Warcraft Rumble Season 14 Patch Notes Revealed!'
+2025-05-03 18:40:07,465 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
+2025-05-03 18:40:07,466 - INFO - __main__ - Section 0: 'LazyCreator presents: Warcraft...' (duration: 3s)
+2025-05-03 18:40:07,466 - INFO - __main__ - Section 1: 'Get ready, Rumble fans!...' (duration: 3s)
+2025-05-03 18:40:07,467 - INFO - __main__ - Section 2: 'Season 14 is here, and it's pa...' (duration: 5s)
+2025-05-03 18:40:07,467 - INFO - __main__ - Section 3: 'New heroes are joining the bat...' (duration: 5s)
+2025-05-03 18:40:07,467 - INFO - __main__ - Section 4: 'Plus, huge balance changes mea...' (duration: 5s)
+2025-05-03 18:40:07,468 - INFO - __main__ - Section 5: 'Don’t miss out on the latest t...' (duration: 5s)
+2025-05-03 18:40:07,468 - INFO - __main__ - Section 6: 'Check out the full patch notes...' (duration: 5s)
+2025-05-03 18:40:07,469 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
+2025-05-03 18:40:07,469 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-05-03 18:40:09,953 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-03 18:40:10,018 - INFO - automation.content_generator - Successfully generated batch video queries for 7 sections.
+2025-05-03 18:40:10,018 - INFO - __main__ - Section queries: 1: Warcraft Rumble logo, 2: excited gaming community, 3: game update announcement, 4: new heroes gameplay, 5: game balance changes, 6: tactics and strategies, 7: game patch notes
+2025-05-03 18:40:10,019 - INFO - __main__ - Creating YouTube Short
+2025-05-03 18:40:10,020 - INFO - helper.minor_helper - Starting YouTube short creation
+2025-05-03 18:40:10,021 - INFO - automation.shorts_maker_V - Scaling durations by factor 0.81 to fit max duration of 25s
+2025-05-03 18:40:10,021 - INFO - automation.shorts_maker_V - Total video duration: 25.0s
+2025-05-03 18:40:10,022 - INFO - automation.shorts_maker_V - Creating video with 5 background segments for middle sections
+2025-05-03 18:40:10,022 - INFO - automation.shorts_maker_V - Starting background video fetch
+2025-05-03 18:40:10,023 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-03 18:40:19,134 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-03 18:40:21,368 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-03 18:40:24,087 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-03 18:40:26,073 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-03 18:40:27,989 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-03 18:40:32,432 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-03 18:40:34,414 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-03 18:40:43,531 - INFO - automation.shorts_maker_V - Completed background video fetch in 33.51 seconds
+2025-05-03 18:40:43,532 - INFO - automation.shorts_maker_V - Starting TTS audio generation
+2025-05-03 18:40:44,126 - INFO - automation.voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpc4bakiqz\section_0.mp3]
+2025-05-03 18:40:44,846 - INFO - automation.voiceover - Speech synthesized for text [Get ready, Rumble fa...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpc4bakiqz\section_1.mp3]
+2025-05-03 18:40:45,460 - INFO - automation.voiceover - Speech synthesized for text [Season 14 is here, a...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpc4bakiqz\section_2.mp3]
+2025-05-03 18:40:46,177 - INFO - automation.voiceover - Speech synthesized for text [New heroes are joini...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpc4bakiqz\section_3.mp3]
+2025-05-03 18:40:46,792 - INFO - automation.voiceover - Speech synthesized for text [Plus, huge balance c...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpc4bakiqz\section_4.mp3]
+2025-05-03 18:40:47,328 - INFO - automation.voiceover - Speech synthesized for text [Don’t miss out on th...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpc4bakiqz\section_5.mp3]
+2025-05-03 18:40:47,835 - INFO - automation.voiceover - Speech synthesized for text [Check out the full p...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpc4bakiqz\section_6.mp3]
+2025-05-03 18:40:48,114 - INFO - automation.shorts_maker_V - Completed TTS audio generation in 4.58 seconds
+2025-05-03 18:40:48,115 - INFO - automation.shorts_maker_V - Updated total duration: 23.57s
+2025-05-03 18:40:48,115 - INFO - automation.shorts_maker_V - Starting background processing
+2025-05-03 18:41:18,406 - INFO - automation.shorts_maker_V - Completed background processing in 30.28 seconds
+2025-05-03 18:41:19,248 - ERROR - automation.shorts_maker_V - Error creating section 0: TextHelper._create_text_clip() missing 1 required positional argument: 'text'
+2025-05-03 18:41:32,332 - ERROR - automation.shorts_maker_V - Error creating section 1: TextHelper._create_word_by_word_clip() missing 1 required positional argument: 'self'
+2025-05-03 18:41:34,696 - ERROR - automation.shorts_maker_V - Error creating section 2: TextHelper._create_word_by_word_clip() missing 1 required positional argument: 'self'
+2025-05-03 18:41:36,288 - ERROR - automation.shorts_maker_V - Error creating section 3: TextHelper._create_word_by_word_clip() missing 1 required positional argument: 'self'
+2025-05-03 19:06:09,350 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-05-03 19:06:09,394 - INFO - automation.shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
+2025-05-03 19:06:09,864 - INFO - automation.shorts_maker_V - Google Cloud TTS initialized successfully
+2025-05-03 19:06:11,840 - INFO - __main__ - Generating comprehensive content for : Anker’s lightest 45W USB-C charger is already on sale for 26 percent off - The Verge
+2025-05-03 19:06:16,178 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-03 19:06:16,196 - INFO - automation.content_generator - Successfully generated comprehensive content package:
+2025-05-03 19:06:16,196 - INFO - automation.content_generator - Title: Grab Anker's Lightest 45W USB-C Charger at 26% Off!
+2025-05-03 19:06:16,197 - INFO - automation.content_generator - Script length: 50 words
+2025-05-03 19:06:16,197 - INFO - automation.content_generator - Thumbnail HF prompt: A sleek, lightweight Anker 45W USB-C charger promi...
+2025-05-03 19:06:16,198 - INFO - automation.content_generator - Thumbnail Unsplash query: USB-C charger
+2025-05-03 19:06:16,198 - INFO - __main__ - Content package generated successfully:
+2025-05-03 19:06:16,198 - INFO - __main__ - Title: LazyCreator presents: Grab Anker's Lightest 45W USB-C Charger at 26% Off!
+2025-05-03 19:06:16,199 - INFO - __main__ - Description length: 125 characters
+2025-05-03 19:06:16,199 - INFO - __main__ - Raw script generated successfully
+2025-05-03 19:06:16,200 - INFO - helper.minor_helper - Parsed script into 6 sentences
+2025-05-03 19:06:16,201 - INFO - helper.minor_helper - Added sentence 0 to cards: 'Looking for a powerful charger...' (duration: 5s)
+2025-05-03 19:06:16,201 - INFO - helper.minor_helper - Added sentence 1 to cards: 'Anker's lightest 45W USB-C cha...' (duration: 5s)
+2025-05-03 19:06:16,202 - INFO - helper.minor_helper - Added sentence 2 to cards: 'This compact powerhouse is per...' (duration: 5s)
+2025-05-03 19:06:16,202 - INFO - helper.minor_helper - Added sentence 3 to cards: 'It’s lightweight, efficient, a...' (duration: 5s)
+2025-05-03 19:06:16,203 - INFO - helper.minor_helper - Added sentence 4 to cards: 'Don’t miss out on this deal!...' (duration: 3s)
+2025-05-03 19:06:16,203 - INFO - helper.minor_helper - Added sentence 5 to cards: 'Grab yours before the sale end...' (duration: 5s)
+2025-05-03 19:06:16,203 - INFO - helper.minor_helper - Created 6 script cards
+2025-05-03 19:06:16,204 - INFO - __main__ - Script parsed into 6 sections
+2025-05-03 19:06:16,204 - INFO - __main__ - Section 1: Looking for a powerful charger... (duration: 5s)
+2025-05-03 19:06:16,204 - INFO - __main__ - Section 2: Anker's lightest 45W USB-C cha... (duration: 5s)
+2025-05-03 19:06:16,205 - INFO - __main__ - Section 3: This compact powerhouse is per... (duration: 5s)
+2025-05-03 19:06:16,205 - INFO - __main__ - Section 4: It’s lightweight, efficient, a... (duration: 5s)
+2025-05-03 19:06:16,205 - INFO - __main__ - Section 5: Don’t miss out on this deal!... (duration: 3s)
+2025-05-03 19:06:16,209 - INFO - __main__ - Section 6: Grab yours before the sale end... (duration: 5s)
+2025-05-03 19:06:16,219 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Grab Anker's Lightest 45W USB-C Charger at 26% Off!'
+2025-05-03 19:06:16,219 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
+2025-05-03 19:06:16,220 - INFO - __main__ - Section 0: 'LazyCreator presents: Grab Ank...' (duration: 3s)
+2025-05-03 19:06:16,220 - INFO - __main__ - Section 1: 'Looking for a powerful charger...' (duration: 5s)
+2025-05-03 19:06:16,220 - INFO - __main__ - Section 2: 'Anker's lightest 45W USB-C cha...' (duration: 5s)
+2025-05-03 19:06:16,221 - INFO - __main__ - Section 3: 'This compact powerhouse is per...' (duration: 5s)
+2025-05-03 19:06:16,221 - INFO - __main__ - Section 4: 'It’s lightweight, efficient, a...' (duration: 5s)
+2025-05-03 19:06:16,222 - INFO - __main__ - Section 5: 'Don’t miss out on this deal!...' (duration: 3s)
+2025-05-03 19:06:16,222 - INFO - __main__ - Section 6: 'Grab yours before the sale end...' (duration: 5s)
+2025-05-03 19:06:16,223 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
+2025-05-03 19:06:16,223 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-05-03 19:06:18,458 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-03 19:06:18,460 - INFO - automation.content_generator - Successfully generated batch video queries for 7 sections.
+2025-05-03 19:06:18,461 - INFO - __main__ - Section queries: 1: Anker USB-C charger, 2: powerful lightweight charger, 3: discounted USB-C charger, 4: compact charging device, 5: lightweight efficient charger, 6: limited time offer, 7: sale countdown
+2025-05-03 19:06:18,461 - INFO - __main__ - Creating YouTube Short
+2025-05-03 19:06:18,462 - INFO - helper.minor_helper - Starting YouTube short creation
+2025-05-03 19:06:18,463 - INFO - automation.shorts_maker_V - Scaling durations by factor 0.81 to fit max duration of 25s
+2025-05-03 19:06:18,466 - INFO - automation.shorts_maker_V - Total video duration: 25.0s
+2025-05-03 19:06:18,466 - INFO - automation.shorts_maker_V - Creating video with 5 background segments for middle sections
+2025-05-03 19:06:18,467 - INFO - automation.shorts_maker_V - Starting background video fetch
+2025-05-03 19:06:18,467 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-03 19:06:24,012 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-03 19:06:26,353 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-03 19:06:30,281 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-03 19:06:36,501 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-03 19:06:39,787 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-03 19:06:42,269 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-03 19:06:44,356 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-03 19:06:46,710 - INFO - automation.shorts_maker_V - Completed background video fetch in 28.24 seconds
+2025-05-03 19:06:46,710 - INFO - automation.shorts_maker_V - Starting TTS audio generation
+2025-05-03 19:06:47,202 - INFO - automation.voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp_kgplms0\section_0.mp3]
+2025-05-03 19:06:47,589 - INFO - automation.voiceover - Speech synthesized for text [Looking for a powerf...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp_kgplms0\section_1.mp3]
+2025-05-03 19:06:48,069 - INFO - automation.voiceover - Speech synthesized for text [Anker's lightest 45W...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp_kgplms0\section_2.mp3]
+2025-05-03 19:06:48,497 - INFO - automation.voiceover - Speech synthesized for text [This compact powerho...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp_kgplms0\section_3.mp3]
+2025-05-03 19:06:48,894 - INFO - automation.voiceover - Speech synthesized for text [It’s lightweight, ef...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp_kgplms0\section_4.mp3]
+2025-05-03 19:06:49,286 - INFO - automation.voiceover - Speech synthesized for text [Don’t miss out on th...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp_kgplms0\section_5.mp3]
+2025-05-03 19:06:49,686 - INFO - automation.voiceover - Speech synthesized for text [Grab yours before th...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmp_kgplms0\section_6.mp3]
+2025-05-03 19:06:49,845 - INFO - automation.shorts_maker_V - Completed TTS audio generation in 3.13 seconds
+2025-05-03 19:06:49,846 - INFO - automation.shorts_maker_V - Updated total duration: 24.55s
+2025-05-03 19:06:49,846 - INFO - automation.shorts_maker_V - Starting background processing
+2025-05-03 19:07:14,006 - INFO - automation.shorts_maker_V - Completed background processing in 24.15 seconds
+2025-05-03 19:07:29,655 - INFO - automation.shorts_maker_V - Adding validated clip 0: 'LazyCreator presents: Grab Ank...'
+2025-05-03 19:07:29,657 - INFO - automation.shorts_maker_V - Adding validated clip 1: 'Looking for a powerful charger...'
+2025-05-03 19:07:29,658 - INFO - automation.shorts_maker_V - Adding validated clip 2: 'Anker's lightest 45W USB-C cha...'
+2025-05-03 19:07:29,658 - INFO - automation.shorts_maker_V - Adding validated clip 3: 'This compact powerhouse is per...'
+2025-05-03 19:07:29,658 - INFO - automation.shorts_maker_V - Adding validated clip 4: 'It’s lightweight, efficient, a...'
+2025-05-03 19:07:29,659 - INFO - automation.shorts_maker_V - Adding validated clip 5: 'Don’t miss out on this deal!'
+2025-05-03 19:07:29,659 - INFO - automation.shorts_maker_V - Adding validated clip 6: 'Grab yours before the sale end...'
+2025-05-03 19:07:29,660 - INFO - automation.shorts_maker_V - === CLIP ORDER BEFORE RENDERING ===
+2025-05-03 19:07:29,661 - INFO - automation.shorts_maker_V - Position 0: Section 0 - 'LazyCreator presents: Grab Ank...'
+2025-05-03 19:07:29,661 - INFO - automation.shorts_maker_V - Position 1: Section 1 - 'Looking for a powerful charger...'
+2025-05-03 19:07:29,661 - INFO - automation.shorts_maker_V - Position 2: Section 2 - 'Anker's lightest 45W USB-C cha...'
+2025-05-03 19:07:29,661 - INFO - automation.shorts_maker_V - Position 3: Section 3 - 'This compact powerhouse is per...'
+2025-05-03 19:07:29,662 - INFO - automation.shorts_maker_V - Position 4: Section 4 - 'It’s lightweight, efficient, a...'
+2025-05-03 19:07:29,662 - INFO - automation.shorts_maker_V - Position 5: Section 5 - 'Don’t miss out on this deal!'
+2025-05-03 19:07:29,663 - INFO - automation.shorts_maker_V - Position 6: Section 6 - 'Grab yours before the sale end...'
+2025-05-03 19:07:29,663 - INFO - automation.shorts_maker_V - === END CLIP ORDER LOG ===
+2025-05-03 19:07:29,667 - WARNING - automation.shorts_maker_V - Parallel renderer failed: No module named 'parallel_renderer'. Using standard rendering.
+2025-05-03 19:07:29,668 - INFO - automation.shorts_maker_V - Starting standard video rendering
+2025-05-03 19:07:31,664 - INFO - automation.shorts_maker_V - Rendering final video to ai_shorts_output\yt_shorts_LazyCreator_presents_Grab_Anke_20250503_190609.mp4

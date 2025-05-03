@@ -1,23 +1,17 @@
-import logging # for logging events
-import logging.handlers # Import handlers
 import os # for environment variables and file paths
 import sys # for stdout encoding
+import logging # for logging events
+import logging.handlers # Import handlers
 from pathlib import Path # for file paths and directory creation
 from dotenv import load_dotenv # for loading environment variables
-from script_generator import generate_batch_video_queries, generate_batch_image_prompts, generate_comprehensive_content
-from shorts_maker_V import YTShortsCreator_V
-from shorts_maker_I import YTShortsCreator_I
-from youtube_upload import upload_video, get_authenticated_service
-from thumbnail import ThumbnailGenerator
-from nltk.corpus import stopwords
 import datetime # for timestamp
-import re # for regular expressions
-import nltk # for natural language processing
-from collections import Counter # for counting elements in a list
-import requests # for making HTTP requests
-import random # for generating random numbers
-import json # for JSON handling
-import traceback # for error handling
+from automation.content_generator import generate_batch_video_queries, generate_batch_image_prompts, generate_comprehensive_content
+from automation.shorts_maker_V import YTShortsCreator_V
+from automation.shorts_maker_I import YTShortsCreator_I
+from automation.youtube_upload import upload_video, get_authenticated_service
+from automation.thumbnail import ThumbnailGenerator
+from helper.news import get_latest_news
+from helper.minor_helper import ensure_output_directory, parse_script_to_cards
 
 load_dotenv()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
@@ -63,126 +57,6 @@ root_logger.addHandler(console_handler)
 # Use the root logger for this module
 logger = logging.getLogger(__name__)
 
-def ensure_output_directory(directory="ai_shorts_output"):
-    """Ensure the output directory exists."""
-    Path(directory).mkdir(parents=True, exist_ok=True)
-    return directory
-
-def get_latest_news():
-
-    """Get the latest technology or AI news with minimal API calls."""
-    if not NEWS_API_KEY:
-        raise ValueError("NewsAPI key is missing. Set NEWS_API_KEY in .env.")
-
-    # Calculate the date two weeks ago
-    two_weeks_ago = datetime.datetime.now() - datetime.timedelta(weeks=2)
-    # Format the date as YYYY-MM-DD for the News API
-    from_date = two_weeks_ago.strftime("%Y-%m-%d")
-
-    # Get today's date for the cache key
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
-
-    # Setup cache file
-    cache_dir = Path.home() / ".news_cache"
-    cache_dir.mkdir(exist_ok=True)
-    cache_file = cache_dir / f"news_cache_{today}.json"
-
-    # Read from cache if exists
-    used_articles = []
-    if cache_file.exists():
-        try:
-            with open(cache_file, 'r') as f:
-                used_articles = json.load(f)
-        except json.JSONDecodeError:
-            used_articles = []
-
-    # Combine all topics in a single query with OR operators
-    topics = ["artificial intelligence", "tech innovation",
-              "machine learning", "gaming", "robotics", "world news"]
-
-    # Create a query string with OR between each topic
-    query = " OR ".join(topics)
-
-    # Make a single API call with all topics
-    url = f"https://newsapi.org/v2/top-headlines?q={query}&category=technology&from={from_date}&sortBy=popularity&pageSize=30&apiKey={NEWS_API_KEY}"
-    response = requests.get(url)
-
-    articles = []
-    if response.status_code == 200:
-        articles = response.json().get('articles', [])
-
-    # If no articles found or API call failed, fallback to general technology
-    if not articles:
-        url = f"https://newsapi.org/v2/top-headlines?category=technology&apiKey={NEWS_API_KEY}"
-        response = requests.get(url)
-
-        if response.status_code == 200:
-            articles = response.json().get('articles', [])
-
-    # Filter out already used articles
-    unused_articles = [a for a in articles if a['title'] not in used_articles]
-
-    # If we've used all articles, reset the cache
-    if not unused_articles and articles:
-        unused_articles = articles
-        used_articles = []
-
-    # Choose a random article from unused ones
-    if unused_articles:
-        # Take the top 10 articles or all if less than 10
-        top_articles = unused_articles[:min(10, len(unused_articles))]
-        chosen_article = random.choice(top_articles)
-
-        # Add to used articles
-        used_articles.append(chosen_article['title'])
-
-        # Update cache file
-        with open(cache_file, 'w') as f:
-            json.dump(used_articles, f)
-
-        return chosen_article['title']
-
-    return "Latest Technology Innovation News"
-
-def parse_script_to_cards(script):
-    """Parse the raw script into a list of cards with text and duration."""
-    cards = []
-    sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|!)\s', script)
-
-    logger.info(f"Parsed script into {len(sentences)} sentences")
-
-    for i, sentence in enumerate(sentences):
-        if not sentence:
-            logger.debug(f"Skipping empty sentence at position {i}")
-            continue
-        duration = 5 if len(sentence) > 30 else 3
-        voice_style = "excited" if i == 0 or i == len(sentences) - 1 else "normal"
-        cards.append({"text": sentence, "duration": duration, "voice_style": voice_style})
-        logger.info(f"Added sentence {i} to cards: '{sentence[:30]}...' (duration: {duration}s)")
-
-    logger.info(f"Created {len(cards)} script cards")
-    return cards
-
-def get_keywords(script, max_keywords=3):
-    """Extract keywords from text using NLTK (Now potentially unused)."""
-    # Ensure NLTK resources are downloaded
-    nltk.download('stopwords', quiet=True) #quiet=True to suppress output
-    nltk.download('punkt', quiet=True)
-
-    stop_words = set(stopwords.words('english'))
-
-    # Extract words from script, ignoring stopwords
-    words = re.findall(r'\b\w+\b', script.lower())
-    filtered_words = [word for word in words if word not in stop_words and len(word) > 3]
-
-    # Count word frequency
-    word_counts = Counter(filtered_words)
-
-    # Get the most common words
-    top_keywords = [word for word, count in word_counts.most_common(max_keywords)]
-
-    return top_keywords
-
 def get_creator_for_day():
     """Alternate between video and image creators based on day"""
     today = datetime.datetime.now()
@@ -215,7 +89,8 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
         # Generate unique filename with timestamp
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        topic = get_latest_news()
+        if topic is None:
+            topic = get_latest_news()
         logger.info(f"Generating comprehensive content for : {topic}")
 
         # Generate all content in a single API call
@@ -381,9 +256,9 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
         raise
 
 def main(creator_type=None):
-    try:
-        topic = os.getenv("YOUTUBE_TOPIC", "Artificial Intelligence")
 
+    try:
+        topic = None
         # Only get creator for day if no creator_type is provided
         if creator_type is None:
             creator_type = get_creator_for_day()
