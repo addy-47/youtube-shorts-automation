@@ -58,6 +58,11 @@ class YTShortsCreator_V:
         # Performance settings
         self.cpu_limit = int(os.getenv("CPU_LIMIT", 80))  # CPU usage limit percent
         self.max_parallel_workers = self._get_optimal_worker_count()
+        
+        # Parallel rendering failure tracking
+        self.parallel_failures = 0
+        self.max_parallel_failures = 3  # After this many failures, disable parallel rendering
+        self.parallel_rendering_enabled = True
 
         # Check for enhanced rendering capability
         self.has_enhanced_rendering = False
@@ -742,6 +747,12 @@ class YTShortsCreator_V:
             # Use parallel renderer to improve performance
             try:
                 from automation.parallel_renderer import render_clips_in_parallel
+                
+                # Check if parallel rendering is enabled or if we've had too many failures
+                if not self.parallel_rendering_enabled:
+                    logger.warning("Parallel rendering disabled due to previous failures, using standard rendering")
+                    raise Exception("Parallel rendering disabled")
+                
                 logger.info("Using parallel renderer for improved performance")
 
                 # Check for dill for improved serialization
@@ -827,6 +838,7 @@ class YTShortsCreator_V:
 
                 # Render all clips in parallel
                 try:
+                    logger.info("Attempting parallel rendering with enhanced pre-rendering of problematic clips")
                     output_filename = render_clips_in_parallel(
                         validated_section_clips,
                         output_filename,
@@ -836,27 +848,49 @@ class YTShortsCreator_V:
                         section_info=section_info,  # Pass section info for better debugging
                         num_processes=num_processes  # Pass optimized process count
                     )
+                    logger.info(f"Parallel rendering completed successfully: {output_filename}")
                 except Exception as e:
-                    if "expected 'except' or 'finally' block" in str(e):
+                    error_msg = str(e)
+                    if "expected 'except' or 'finally' block" in error_msg:
                         logger.error(f"Syntax error in parallel_renderer.py: {e}. Using standard rendering.")
                         raise Exception("Parallel renderer has syntax errors, please fix parallel_renderer.py")
-                    elif "Can't get local object" in str(e) or "pickle" in str(e).lower():
+                    elif "Can't get local object" in error_msg or "pickle" in error_msg.lower():
                         logger.warning(f"Serialization error in parallel renderer: {e}. Falling back to standard rendering.")
                         raise Exception("Serialization error in parallel renderer")
                     else:
-                        raise
+                        logger.error(f"Unhandled error in parallel rendering: {e}")
+                        raise Exception(f"Parallel rendering failed: {error_msg}")
             except Exception as parallel_error:
                 logger.warning(f"Parallel renderer failed: {parallel_error}. Using standard rendering.")
+
+                # Track parallel rendering failures
+                self.parallel_failures += 1
+                if self.parallel_failures >= self.max_parallel_failures:
+                    logger.warning(f"Parallel rendering has failed {self.parallel_failures} times, disabling it for future videos")
+                    self.parallel_rendering_enabled = False
 
                 # Use standard rendering as fallback
                 logger.info("Starting standard video rendering")
                 try:
+                    # Close any remaining clips from the parallel attempt
+                    for clip in validated_section_clips:
+                        try:
+                            if hasattr(clip, 'close'):
+                                clip.close()
+                        except:
+                            pass
+                    
+                    # Force garbage collection before standard rendering
+                    gc.collect()
+                    time.sleep(1)  # Give the system a moment to release resources
+
                     # Ensure correct order of clips before concatenation
                     section_indices = list(range(len(validated_section_clips)))
                     sorted_clips_with_indices = list(zip(section_indices, validated_section_clips))
                     sorted_clips = [clip for _, clip in sorted(sorted_clips_with_indices, key=lambda x: x[0])]
 
                     # Concatenate all section clips in correct order
+                    logger.info(f"Concatenating {len(sorted_clips)} clips using standard method")
                     final_clip = concatenate_videoclips(sorted_clips)
 
                     # Add watermark if requested
@@ -868,16 +902,21 @@ class YTShortsCreator_V:
                     # Use optimized encoder for final output
                     VideoEncoder.write_clip(
                         final_clip, 
-                        output_filename, 
+                        output_filename,
                         fps=30, 
                         is_final=True, 
                         show_progress=True
                     )
+                    logger.info(f"Standard rendering completed successfully: {output_filename}")
+                except Exception as standard_error:
+                    logger.error(f"Standard rendering also failed: {standard_error}")
+                    raise Exception(f"Video rendering failed: {standard_error}")
                 finally:
                     # Clean up all clips
                     for clip in validated_section_clips:
                         try:
-                            clip.close()
+                            if hasattr(clip, 'close'):
+                                clip.close()
                         except:
                             pass
 

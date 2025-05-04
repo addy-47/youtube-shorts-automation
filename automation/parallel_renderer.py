@@ -267,21 +267,30 @@ def convert_clip_for_parallel(clip):
         "size": clip.size
     }
     
-    # CRITICAL: Remove any __init__ lambdas which can't be pickled
-    # MoviePy sometimes uses lambdas in __init__ which are stored in 
-    # the clip's make_frame attribute but can't be serialized
+    # CRITICAL: Handle lambdas that can't be pickled
     if hasattr(clip, 'make_frame') and callable(clip.make_frame):
-        # For VideoClips with make_frame, we need to handle special
         try:
-            # Get the code object of the function
+            # Try to access the code object
             code = clip.make_frame.__code__
+            
             # Check if it's a lambda function with closure variables
-            if code.co_name == "<lambda>":
-                # This is a lambda that might cause serialization issues
-                logging.warning("Converting a lambda make_frame - may not serialize correctly")
-        except:
-            # If we can't inspect the function, just continue
-            pass
+            if code.co_name == "<lambda>" and clip.make_frame.__closure__ is not None:
+                logger.warning("Converting a lambda make_frame - may not serialize correctly")
+                
+                # For VideoClips with problematic make_frame, we need to use a workaround
+                # This is expensive but safer than dealing with serialization errors
+                try:
+                    # Create a flag to mark this clip for special handling
+                    logger.info(f"Marking clip with duration {clip.duration}s for special handling")
+                    clip._needs_special_handling = True
+                except:
+                    pass
+        except (AttributeError, TypeError):
+            # If we can't inspect the function, just add a flag
+            try:
+                clip._needs_special_handling = True
+            except:
+                pass
     
     # Check for callable position attribute
     if hasattr(clip, 'pos') and callable(clip.pos):
@@ -397,6 +406,7 @@ def render_clip_process(mp_tuple):
         
         # If clip is already a path string (pre-rendered), just return it
         if isinstance(clip, str) and os.path.exists(clip):
+            logging.info(f"Clip {idx} is already pre-rendered at {clip}")
             return clip
 
         # Generate a unique output path
@@ -406,6 +416,17 @@ def render_clip_process(mp_tuple):
         if clip is None:
             logging.error(f"Clip {idx} is None, skipping")
             return None
+            
+        # Check if this is a pre-rendered path from a problematic clip
+        if isinstance(clip, str) and clip.startswith("pre_rendered:"):
+            # Extract the actual path
+            real_path = clip[len("pre_rendered:"):]
+            if os.path.exists(real_path):
+                logging.info(f"Using pre-rendered clip at {real_path}")
+                return real_path
+            else:
+                logging.error(f"Pre-rendered path not found: {real_path}")
+                return None
 
         # Check system resources
         try:
@@ -426,6 +447,57 @@ def render_clip_process(mp_tuple):
         except ImportError:
             # psutil not available, skip resource check
             pass
+
+        # Check for problematic lambda functions that could cause serialization issues
+        problematic = False
+        try:
+            if hasattr(clip, 'make_frame') and callable(clip.make_frame):
+                try:
+                    # Get the code object of the function
+                    code = clip.make_frame.__code__
+                    if code.co_name == "<lambda>" and clip.make_frame.__closure__ is not None:
+                        problematic = True
+                        logging.warning(f"Detected problematic lambda in clip {idx}, will use emergency fallback")
+                except:
+                    # Can't determine if problematic, assume it is
+                    problematic = True
+                    logging.warning(f"Could not inspect make_frame for clip {idx}, may be problematic")
+        except:
+            pass
+            
+        # Try to handle special case for problematic clips with emergency rendering
+        if problematic:
+            try:
+                # Create an emergency rendered version using simple parameters
+                emergency_path = os.path.join(output_dir, f"emergency_clip_{idx}_{int(time.time() * 1000)}.mp4")
+                logging.info(f"Attempting emergency rendering of problematic clip {idx} to {emergency_path}")
+                
+                # Use the most basic settings to avoid issues
+                clip.write_videofile(
+                    emergency_path,
+                    fps=fps,
+                    codec="libx264",
+                    preset="ultrafast",
+                    audio_codec="aac",
+                    audio_bitrate="128k",
+                    bitrate="1000k",  # Low bitrate to speed things up
+                    threads=1,  # Single thread to avoid issues
+                    logger=None  # Disable progress bar
+                )
+                
+                # Close clip
+                if hasattr(clip, 'close'):
+                    clip.close()
+                    
+                # Force garbage collection
+                gc.collect()
+                
+                if os.path.exists(emergency_path) and os.path.getsize(emergency_path) > 0:
+                    logging.info(f"Emergency rendering successful for clip {idx}")
+                    return emergency_path
+            except Exception as e:
+                logging.error(f"Emergency rendering failed for clip {idx}: {e}")
+                # Continue with normal path
 
         # Different handling based on clip type to optimize performance
         if hasattr(clip, 'write_videofile'):
@@ -564,6 +636,89 @@ def render_clip_process(mp_tuple):
 
         return None
 
+def is_problematic_for_serialization(clip):
+    """
+    Check if a clip has properties that make it problematic for serialization
+    
+    Args:
+        clip: The MoviePy clip to check
+        
+    Returns:
+        bool: True if the clip will likely cause serialization issues
+    """
+    try:
+        # Check for the most common problematic pattern: lambda in make_frame
+        if hasattr(clip, 'make_frame') and callable(clip.make_frame):
+            try:
+                # Try to access the code object
+                code = clip.make_frame.__code__
+                # Check if it's a lambda function
+                if code.co_name == "<lambda>":
+                    # Check for closure variables that might cause issues
+                    if clip.make_frame.__closure__ is not None:
+                        return True
+            except (AttributeError, TypeError):
+                # If we can't access the code object or it doesn't have expected attributes
+                return True
+                
+        # Check for CompositeVideoClip with problematic subclips
+        if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips') and clip.clips:
+            for subclip in clip.clips:
+                if is_problematic_for_serialization(subclip):
+                    return True
+                    
+        return False
+    except Exception:
+        # If any error occurs during check, assume it's problematic
+        return True
+        
+def pre_render_problematic_clip(clip, output_dir, idx, fps=30):
+    """
+    Pre-render a clip that would cause serialization issues
+    
+    Args:
+        clip: The clip to pre-render
+        output_dir: Directory to save the rendered clip
+        idx: Index/identifier for the clip
+        fps: Frames per second
+        
+    Returns:
+        str: Path to the rendered clip file, or None if rendering failed
+    """
+    logger.info(f"Pre-rendering problematic clip {idx} to avoid serialization issues")
+    
+    try:
+        # Create a unique filename
+        timestamp = int(time.time() * 1000)
+        output_path = os.path.join(output_dir, f"pre_rendered_clip_{idx}_{timestamp}.mp4")
+        
+        # Use simple settings optimized for speed
+        clip.write_videofile(
+            output_path,
+            fps=fps,
+            codec="libx264",
+            preset="ultrafast",
+            audio_codec="aac",
+            threads=2,
+            logger=None  # Disable progress bar
+        )
+        
+        # Close the clip to free up resources
+        try:
+            if hasattr(clip, 'close'):
+                clip.close()
+        except:
+            pass
+            
+        # Force garbage collection
+        gc.collect()
+        
+        logger.info(f"Successfully pre-rendered clip {idx} to {output_path}")
+        return output_path
+    except Exception as e:
+        logger.error(f"Error pre-rendering clip {idx}: {e}")
+        return None
+
 def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, logger=None, temp_dir=None, preset="veryfast", codec="libx264", audio_codec="aac", section_info=None):
     """
     Render clips in parallel and concatenate them
@@ -601,11 +756,24 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
         # Prepare clips for parallel processing
         logger.info("Preparing clips for parallel processing...")
         prepared_clips = []
-
+        pre_rendered_indices = set()  # Track which clips were pre-rendered
+        
+        # First, check for problematic clips and pre-render them
         for idx, clip in enumerate(clips):
-            # Convert any callable attributes to keyframe data
-            prepared_clip = convert_clip_for_parallel(clip)
-            prepared_clips.append((idx, prepared_clip, temp_directory, fps))
+            if is_problematic_for_serialization(clip):
+                pre_rendered_path = pre_render_problematic_clip(clip, temp_directory, idx, fps)
+                if pre_rendered_path:
+                    # Add the pre-rendered clip path instead of the clip object
+                    prepared_clips.append((idx, pre_rendered_path, temp_directory, fps))
+                    pre_rendered_indices.add(idx)
+                else:
+                    # Fallback: try to use the original clip if pre-rendering failed
+                    converted_clip = convert_clip_for_parallel(clip)
+                    prepared_clips.append((idx, converted_clip, temp_directory, fps))
+            else:
+                # For non-problematic clips, just convert them as before
+                converted_clip = convert_clip_for_parallel(clip)
+                prepared_clips.append((idx, converted_clip, temp_directory, fps))
         
         # Process all clips in parallel
         logger.info("Rendering clips in parallel...")
