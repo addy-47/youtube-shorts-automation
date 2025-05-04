@@ -31,6 +31,7 @@ from helper.keyframe_animation import KeyframeTrack, convert_callable_to_keyfram
 import gc # for garbage collection
 from pathlib import Path
 import string
+import sys # for error handling and debugging
 
 # Configure logging for easier debugging
 # Do NOT initialize basicConfig here - this will be handled by main.py
@@ -377,6 +378,35 @@ class YTShortsCreator_V:
                 position=('center', 'center')
             )
 
+    def _loop_background_clip(self, bg_clip, section_duration):
+        """
+        Loop a background clip to reach the required duration
+        
+        Args:
+            bg_clip: Background clip to loop
+            section_duration: Target duration
+            
+        Returns:
+            Looped clip with exactly the target duration
+        """
+        if bg_clip.duration >= section_duration:
+            # If clip is already long enough, just trim it
+            return bg_clip.subclip(0, section_duration)
+            
+        # Calculate how many loops we need using numpy explicitly
+        loops_needed = int(np.ceil(section_duration / bg_clip.duration))
+        looped_clips = []
+        
+        # Create multiple copies of the clip
+        for _ in range(loops_needed):
+            looped_clips.append(bg_clip.copy())
+            
+        # Concatenate all copies
+        looped_clip = concatenate_videoclips(looped_clips)
+        
+        # Trim to exact duration needed
+        return looped_clip.subclip(0, section_duration)
+        
     @measure_time
     def create_youtube_short(self, title, script_sections, background_query, output_filename="yt_short.mp4", 
                             style="photorealistic", voice_style="neutral", max_duration=30, 
@@ -577,19 +607,8 @@ class YTShortsCreator_V:
                     # Ensure background clip is long enough
                     if bg_clip.duration < section_duration:
                         logger.warning(f"Section duration ({section_duration:.2f}s) exceeds available background ({bg_clip.duration:.2f}s), looping")
-                        # Instead of using vfx.loop which causes serialization issues, manually create a looped clip
-                        # Calculate how many loops we need
-                        loops_needed = int(np.ceil(section_duration / bg_clip.duration))
-                        looped_clips = []
-
-                        for _ in range(loops_needed):
-                            # Create a copy of the clip for each loop
-                            looped_clips.append(bg_clip.copy())
-
-                        # Concatenate the loops
-                        bg_clip = concatenate_videoclips(looped_clips)
-                        # Trim to exact duration needed
-                        bg_clip = bg_clip.subclip(0, section_duration)
+                        # Use the helper function to handle looping instead of inline code
+                        bg_clip = self._loop_background_clip(bg_clip, section_duration)
 
                     # Set audio to background
                     bg_with_audio = bg_clip.set_duration(section_duration).set_audio(audio_clip)
@@ -774,6 +793,26 @@ class YTShortsCreator_V:
                         except Exception as e:
                             logger.warning(f"Error setting static position for clip {i}: {e}")
                             clip = clip.set_position('center')
+                            
+                    # Handle callable attributes in subclips as well
+                    if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips') and clip.clips:
+                        fixed_subclips = []
+                        for subclip in clip.clips:
+                            # Apply same fix to subclips
+                            if hasattr(subclip, 'pos') and callable(subclip.pos):
+                                try:
+                                    mid_time = subclip.duration / 2
+                                    pos_value = subclip.pos(mid_time)
+                                    subclip = subclip.set_position(pos_value)
+                                except Exception as e:
+                                    logger.warning(f"Error setting static position for subclip: {e}")
+                                    subclip = subclip.set_position('center')
+                            fixed_subclips.append(subclip)
+                        
+                        # Recreate the composite clip with fixed subclips
+                        clip = CompositeVideoClip(fixed_subclips, size=clip.size)
+                        clip._section_idx = i
+                        clip._section_text = getattr(clip, '_section_text', f'Section {i}')
 
                 # Pass source section info to parallel_renderer for better debugging
                 section_info = {}
@@ -860,6 +899,19 @@ class YTShortsCreator_V:
     def _cleanup(self):
         """Clean up temporary files"""
         try:
+            # First, force all clips to close to release file handles
+            for attr_name in dir(self):
+                try:
+                    attr = getattr(self, attr_name)
+                    # Close any clip objects
+                    if hasattr(attr, 'close') and callable(attr.close):
+                        try:
+                            attr.close()
+                        except:
+                            pass
+                except:
+                    pass
+
             # Close any existing video or audio clips
             gc.collect()  # Force garbage collection to release file handles
             time.sleep(1)  # Wait a moment to ensure files are released
@@ -874,6 +926,21 @@ class YTShortsCreator_V:
                 logger.warning(f"Temp directory doesn't exist: {self.temp_dir}")
                 return
             
+            # Close any audio file handles (Especially important for Windows)
+            for file_path in to_delete:
+                if file_path.endswith('.mp3') or file_path.endswith('.wav'):
+                    try:
+                        # Try to open the file in exclusive mode, this will fail if file is in use
+                        # but will close any other references to the file
+                        with open(file_path, 'a+b') as f:
+                            f.close()
+                    except:
+                        pass
+            
+            # Try another garbage collection
+            gc.collect()
+            time.sleep(0.5)  # Small pause
+                
             # Clean up each file individually so one failure doesn't stop the whole process
             for file_path in to_delete:
                 try:
@@ -1003,8 +1070,8 @@ class YTShortsCreator_V:
         
         # Loop the clip if it's shorter than the target duration
         if clip.duration < target_duration:
-            from moviepy.video.fx.loop import loop
-            clip = loop(clip, duration=target_duration)
+            # Use our dedicated helper function for looping
+            clip = self._loop_background_clip(clip, target_duration)
         
         # Trim if longer than target duration
         if clip.duration > target_duration:

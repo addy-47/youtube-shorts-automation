@@ -18,6 +18,8 @@ from helper.video_encoder import VideoEncoder
 import shutil
 import tempfile
 import atexit
+import gc
+import time
 
 load_dotenv()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
@@ -77,13 +79,50 @@ def cleanup_temp_files():
     if os.path.exists(TEMP_DIR):
         try:
             logger.info(f"Cleaning up temporary directory: {TEMP_DIR}")
-            # Only remove files, not the directory itself
+            
+            # Explicitly force garbage collection before cleanup
+            gc.collect()
+            time.sleep(0.5)  # Brief pause to ensure files are released
+            
+            # Get a list of all files to delete
+            files_to_delete = []
             for filename in os.listdir(TEMP_DIR):
                 file_path = os.path.join(TEMP_DIR, filename)
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
+                files_to_delete.append(file_path)
+                
+            # Try to close any open file handles (especially important for audio files)
+            for file_path in files_to_delete:
+                if file_path.endswith('.mp3') or file_path.endswith('.wav'):
+                    try:
+                        with open(file_path, 'a+b') as f:
+                            pass  # Just open and close to ensure it's not locked
+                    except:
+                        pass  # Ignore errors
+            
+            # Another garbage collection
+            gc.collect()
+            time.sleep(0.5)  # Another pause
+                
+            # Delete each file individually
+            for file_path in files_to_delete:
+                try:
+                    if os.path.isfile(file_path):
+                        try:
+                            os.unlink(file_path)
+                            logger.debug(f"Deleted file: {file_path}")
+                        except PermissionError:
+                            logger.warning(f"File in use, skipping: {file_path}")
+                        except Exception as e:
+                            logger.warning(f"Error removing file {file_path}: {e}")
+                    elif os.path.isdir(file_path):
+                        try:
+                            shutil.rmtree(file_path, ignore_errors=True)
+                            logger.debug(f"Deleted directory: {file_path}")
+                        except Exception as e:
+                            logger.warning(f"Error removing directory {file_path}: {e}")
+                except Exception as e:
+                    logger.warning(f"Error cleaning up {file_path}: {e}")
+                    
             logger.info("Temporary files cleaned up successfully")
         except Exception as e:
             logger.error(f"Error cleaning up temporary files: {e}")

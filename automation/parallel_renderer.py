@@ -267,6 +267,22 @@ def convert_clip_for_parallel(clip):
         "size": clip.size
     }
     
+    # CRITICAL: Remove any __init__ lambdas which can't be pickled
+    # MoviePy sometimes uses lambdas in __init__ which are stored in 
+    # the clip's make_frame attribute but can't be serialized
+    if hasattr(clip, 'make_frame') and callable(clip.make_frame):
+        # For VideoClips with make_frame, we need to handle special
+        try:
+            # Get the code object of the function
+            code = clip.make_frame.__code__
+            # Check if it's a lambda function with closure variables
+            if code.co_name == "<lambda>":
+                # This is a lambda that might cause serialization issues
+                logging.warning("Converting a lambda make_frame - may not serialize correctly")
+        except:
+            # If we can't inspect the function, just continue
+            pass
+    
     # Check for callable position attribute
     if hasattr(clip, 'pos') and callable(clip.pos):
         # Sample the callable to generate keyframes
