@@ -5,6 +5,7 @@ import logging.handlers # Import handlers
 from pathlib import Path # for file paths and directory creation
 from dotenv import load_dotenv # for loading environment variables
 import datetime # for timestamp
+from concurrent.futures import ThreadPoolExecutor
 from automation.content_generator import generate_batch_video_queries, generate_batch_image_prompts, generate_comprehensive_content
 from automation.shorts_maker_V import YTShortsCreator_V
 from automation.shorts_maker_I import YTShortsCreator_I
@@ -12,6 +13,11 @@ from automation.youtube_upload import upload_video, get_authenticated_service
 from automation.thumbnail import ThumbnailGenerator
 from helper.news import get_latest_news
 from helper.minor_helper import ensure_output_directory, parse_script_to_cards
+from helper.parallel_tasks import fetch_backgrounds_parallel, generate_audio_clips_parallel, generate_text_clips_parallel
+from helper.video_encoder import VideoEncoder
+import shutil
+import tempfile
+import atexit
 
 load_dotenv()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
@@ -57,6 +63,34 @@ root_logger.addHandler(console_handler)
 # Use the root logger for this module
 logger = logging.getLogger(__name__)
 
+# Create and configure a local temporary directory to save space
+TEMP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'temp')
+os.makedirs(TEMP_DIR, exist_ok=True)
+logger.info(f"Using local temporary directory: {TEMP_DIR}")
+
+# Set the tempfile directory to our local directory
+tempfile.tempdir = TEMP_DIR
+
+# Register cleanup function to remove temp files on exit
+def cleanup_temp_files():
+    """Clean up temporary files on exit"""
+    if os.path.exists(TEMP_DIR):
+        try:
+            logger.info(f"Cleaning up temporary directory: {TEMP_DIR}")
+            # Only remove files, not the directory itself
+            for filename in os.listdir(TEMP_DIR):
+                file_path = os.path.join(TEMP_DIR, filename)
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            logger.info("Temporary files cleaned up successfully")
+        except Exception as e:
+            logger.error(f"Error cleaning up temporary files: {e}")
+
+# Register the cleanup function to run on exit
+atexit.register(cleanup_temp_files)
+
 def get_creator_for_day():
     """Alternate between video and image creators based on day"""
     today = datetime.datetime.now()
@@ -84,6 +118,9 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
         tuple: (video_path, thumbnail_path)
     """
     try:
+        # Set start time to measure overall performance
+        total_start_time = datetime.datetime.now()
+        
         output_dir = ensure_output_directory()
 
         # Generate unique filename with timestamp
@@ -137,20 +174,48 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
         if creator_type is None:
             creator_type = get_creator_for_day()
 
+        # Set temp directory on creator
+        if hasattr(creator_type, 'set_temp_dir'):
+            creator_type.set_temp_dir(TEMP_DIR)
+
         # Generate section-specific queries based on creator type
         card_texts = [card['text'] for card in script_cards]
-
-        # We still need to generate section-specific queries for each section
+        
+        # ==========================================
+        # Parallel preparation of content
+        # ==========================================
+        logger.info("Starting parallel content preparation")
+        content_prep_start = datetime.datetime.now()
+        
+        # Start parallel tasks for processing
+        parallel_results = {}
+        
+        # 1. Generate section-specific queries in parallel
         if isinstance(creator_type, YTShortsCreator_V):
             logger.info("Generating video search queries for each section using AI...")
-            batch_query_results = generate_batch_video_queries(card_texts, overall_topic=topic, model="gpt-4o-mini-2024-07-18")
+            query_future = ThreadPoolExecutor().submit(
+                generate_batch_video_queries, 
+                card_texts, 
+                overall_topic=topic, 
+                model="gpt-4o-mini-2024-07-18"
+            )
         else:
             logger.info("Generating image search prompts for each section using AI...")
-            batch_query_results = generate_batch_image_prompts(card_texts, overall_topic=topic, model="gpt-4o-mini-2024-07-18")
-
+            query_future = ThreadPoolExecutor().submit(
+                generate_batch_image_prompts, 
+                card_texts, 
+                overall_topic=topic, 
+                model="gpt-4o-mini-2024-07-18"
+            )
+            
+        # 2. Start background/audio preparation functions based on creator type
+        
+        # Wait for query generation to complete
+        batch_query_results = query_future.result()
+        
         # Extract queries in order, using a fallback if needed
         default_query = f"abstract {topic}"
-
+        
         section_queries = []
         for i in range(len(script_cards)):
             query = batch_query_results.get(i, default_query) # Get query by index, fallback to default
@@ -158,30 +223,68 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
                  query = default_query
                  logger.warning(f"Query for section {i} was empty, using fallback: '{default_query}'")
             section_queries.append(query)
+            
+        # 3. Fetch backgrounds in parallel
+        logger.info("Fetching backgrounds in parallel...")
+        if isinstance(creator_type, YTShortsCreator_V):
+            # Use video fetching function from creator
+            fetch_func = creator_type.fetch_background_video
+        else:
+            # Use image fetching function from creator
+            fetch_func = creator_type.fetch_background_image
+            
+        background_results = fetch_backgrounds_parallel(fetch_func, section_queries)
+        
+        # 4. Generate audio clips in parallel if creator has appropriate method
+        if hasattr(creator_type, 'generate_single_voiceover'):
+            logger.info("Generating audio clips in parallel...")
+            audio_results = generate_audio_clips_parallel(
+                creator_type.generate_single_voiceover, 
+                script_cards
+            )
+            parallel_results['audio'] = audio_results
+        
+        # 5. Generate text clips in parallel if creator has appropriate method
+        if hasattr(creator_type, 'create_text_clip'):
+            logger.info("Generating text clips in parallel...")
+            text_results = generate_text_clips_parallel(
+                creator_type.create_text_clip,
+                script_cards,
+                font_size=creator_type.font_size, 
+                font_name=creator_type.font,
+                font_color=creator_type.font_color
+            )
+            parallel_results['text'] = text_results
+            
+        # Store results in parallel_results
+        parallel_results['backgrounds'] = background_results
+        parallel_results['queries'] = section_queries
+        
+        content_prep_time = (datetime.datetime.now() - content_prep_start).total_seconds()
+        logger.info(f"Parallel content preparation completed in {content_prep_time:.2f} seconds")
+        # ==========================================
+        # End of parallel preparation
+        # ==========================================
 
-        # Log all section queries at once to avoid duplication
-        logger.info(f"Section queries: {', '.join([f'{i+1}: {q}' for i, q in enumerate(section_queries)])}")
-
-        # Generate a fallback query for the whole script if needed
-        fallback_query = section_queries[0] if section_queries else default_query
-
-        # Video Creation - only log style for image-based creators
+        # Video Creation with prepared content
         if isinstance(creator_type, YTShortsCreator_I):
             logger.info(f"Creating YouTube Short with style: {style}")
         else:
             logger.info(f"Creating YouTube Short")
 
+        # Pass in the parallel processing results to the creator
         video_path = creator_type.create_youtube_short(
             title=title,  # Use the generated title
             script_sections=script_cards,
-            background_query=fallback_query,
+            background_query=section_queries[0] if section_queries else default_query,
             output_filename=output_path,
             style=style,
             voice_style="none",
             max_duration=max_duration,
             background_queries=section_queries,
             blur_background=False,
-            edge_blur=False
+            edge_blur=False,
+            parallel_results=parallel_results  # Pass the prepared content
         )
 
         # Generate thumbnail for the short
@@ -249,6 +352,10 @@ def generate_youtube_short(topic, style="photorealistic", max_duration=25, creat
                 thumbnail_path=thumbnail_path
             )
 
+        # Calculate and log total generation time
+        total_time = (datetime.datetime.now() - total_start_time).total_seconds()
+        logger.info(f"Total YouTube Short generation completed in {total_time:.2f} seconds")
+        
         return video_path, thumbnail_path
 
     except Exception as e:

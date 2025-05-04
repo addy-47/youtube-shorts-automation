@@ -23,6 +23,8 @@ from helper.minor_helper import measure_time
 from helper.text import TextHelper
 from helper.image import _generate_image_from_prompt, _create_still_image_clip
 from automation.shorts_maker_V import YTShortsCreator_V
+from helper.video_encoder import VideoEncoder
+from helper.keyframe_animation import KeyframeTrack, convert_callable_to_keyframes
 
 from moviepy.config import change_settings
 change_settings({"IMAGEMAGICK_BINARY": "magick"}) # for windows users
@@ -253,7 +255,8 @@ class YTShortsCreator_I:
     @measure_time
     def create_youtube_short(self, title, script_sections, background_query="abstract background",
                         output_filename=None, add_captions=False, style="ghibli art", voice_style=None, max_duration=25,
-                        background_queries=None, blur_background=False, edge_blur=False, add_watermark_text=None):
+                        background_queries=None, blur_background=False, edge_blur=False, add_watermark_text=None,
+                        parallel_results=None):
         """
         Create a YouTube Short using AI-generated images for each script section
         Falls back to shorts_maker_V (video-based) if image generation fails
@@ -271,6 +274,7 @@ class YTShortsCreator_I:
             blur_background (bool): Whether to apply blur effect to backgrounds
             edge_blur (bool): Whether to apply edge blur to backgrounds
             add_watermark_text (str): Text to use as watermark (None for no watermark)
+            parallel_results: Pre-processed results from parallel tasks
 
         Returns:
             str: Path to the created video
@@ -331,6 +335,80 @@ class YTShortsCreator_I:
 
             # Middle sections (excluding intro and outro)
             middle_sections = script_sections[1:-1] if len(script_sections) > 2 else []
+
+            # Replace background fetching with parallel results if available
+            if parallel_results and 'backgrounds' in parallel_results:
+                self.logger.info("Using pre-fetched backgrounds from parallel processing")
+                
+                # Check if we have pre-fetched backgrounds for all sections
+                all_backgrounds_available = True
+                for i, section in enumerate(script_sections):
+                    if i not in parallel_results['backgrounds']:
+                        all_backgrounds_available = False
+                        self.logger.warning(f"Missing background for section {i}, will need to fetch it")
+                        
+                if all_backgrounds_available:
+                    # Use pre-fetched backgrounds
+                    background_images = []
+                    for i, section in enumerate(script_sections):
+                        image_file = parallel_results['backgrounds'].get(i)
+                        if image_file:
+                            # Add the image file to our list
+                            background_images.append(image_file)
+                        else:
+                            # Fall back to fetching
+                            section_query = background_queries[i] if background_queries and i < len(background_queries) else background_query
+                            image = _generate_image_from_prompt(section_query, style=style)
+                            background_images.append(image)
+                else:
+                    # Fall back to original fetching
+                    background_images = []
+                    for i, section in enumerate(script_sections):
+                        section_query = background_queries[i] if background_queries and i < len(background_queries) else background_query
+                        image = _generate_image_from_prompt(section_query, style=style)
+                        background_images.append(image)
+            else:
+                # No parallel results, use original fetching
+                background_images = []
+                for i, section in enumerate(script_sections):
+                    section_query = background_queries[i] if background_queries and i < len(background_queries) else background_query
+                    image = _generate_image_from_prompt(section_query, style=style)
+                    background_images.append(image)
+
+            # Replace audio handling with parallel results if available
+            if parallel_results and 'audio' in parallel_results:
+                self.logger.info("Using pre-generated audio from parallel processing")
+                
+                # Check if we have pre-generated audio for all sections
+                all_audio_available = True
+                for i, section in enumerate(script_sections):
+                    if i not in parallel_results['audio']:
+                        all_audio_available = False
+                        self.logger.warning(f"Missing audio for section {i}, will need to generate it")
+                        
+                if all_audio_available:
+                    # Use pre-generated audio
+                    section_audio_clips = []
+                    for i, section in enumerate(script_sections):
+                        audio_file = parallel_results['audio'].get(i)
+                        if audio_file:
+                            # Load the audio file
+                            try:
+                                audio_clip = AudioFileClip(audio_file)
+                                section_audio_clips.append(audio_clip)
+                            except Exception as e:
+                                self.logger.error(f"Error loading pre-generated audio {i}: {e}")
+                                # Fall back to generation
+                                section_audio_clips.append(self._create_tts_audio(section['text'], None, section.get('voice_style', voice_style)))
+                        else:
+                            # Fall back to generation
+                            section_audio_clips.append(self._create_tts_audio(section['text'], None, section.get('voice_style', voice_style)))
+                else:
+                    # Fall back to original generation
+                    section_audio_clips = [self._create_tts_audio(section['text'], None, section.get('voice_style', voice_style)) for section in script_sections]
+            else:
+                # No parallel results, use original generation
+                section_audio_clips = [self._create_tts_audio(section['text'], None, section.get('voice_style', voice_style)) for section in script_sections]
 
             # Generate audio clips with TTS for each section
             tts_start_time = time.time()
@@ -433,7 +511,7 @@ class YTShortsCreator_I:
                 else:
                     intro_image_query = background_query
 
-                intro_image_path = _generate_image_from_prompt(intro_image_query, style=style)
+                intro_image_path = background_images[0] if background_images else _generate_image_from_prompt(intro_image_query, style=style)
                 logger.info(f"Completed image generation for intro in {time.time() - image_start_time:.2f} seconds")
 
                 if not intro_image_path:
@@ -680,7 +758,7 @@ class YTShortsCreator_I:
                 else:
                     outro_image_query = background_query
 
-                outro_image_path = _generate_image_from_prompt(outro_image_query, style=style)
+                outro_image_path = background_images[-1] if background_images else _generate_image_from_prompt(outro_image_query, style=style)
                 logger.info(f"Completed image generation for outro in {time.time() - image_start_time:.2f} seconds")
 
                 if not outro_image_path:
@@ -855,22 +933,14 @@ class YTShortsCreator_I:
                     final_clip = self.add_watermark(final_clip, watermark_text=add_watermark_text)
 
                 # Write the final video with improved settings
-                logger.info(f"Writing video to {output_filename} (duration: {final_clip.duration:.2f}s)")
-
-                final_clip.write_videofile(
-                    output_filename,
-                    fps=self.fps,
-                    codec="libx264",
-                    audio_codec="aac",
-                    threads=4,
-                    preset="veryfast",
-                    ffmpeg_params=[
-                        "-bufsize", "24M",      # Larger buffer
-                        "-maxrate", "8M",       # Higher max rate
-                        "-b:a", "192k",         # Higher audio bitrate
-                        "-ar", "48000",         # Audio sample rate
-                        "-pix_fmt", "yuv420p"   # Compatible pixel format for all players
-                    ]
+                logger.info(f"Rendering final video to {output_filename}")
+                # Use optimized encoder for final output
+                VideoEncoder.write_clip(
+                    final_clip, 
+                    output_filename, 
+                    fps=30, 
+                    is_final=True, 
+                    show_progress=True
                 )
 
                 logger.info(f"Completed video rendering in {time.time() - concat_start_time:.2f} seconds")
@@ -903,6 +973,20 @@ class YTShortsCreator_I:
                     shutil.rmtree(file_path)
         except Exception as e:
             logger.error(f"Error cleaning up temporary files: {e}")
+
+    def set_temp_dir(self, temp_dir):
+        """
+        Set the temporary directory for this creator.
+        
+        Args:
+            temp_dir: Path to temporary directory
+        """
+        self.temp_dir = temp_dir
+        self.logger.info(f"Set temporary directory to: {temp_dir}")
+        
+        # Also set tempfile.tempdir for any modules that use it directly
+        import tempfile
+        tempfile.tempdir = temp_dir
 
 
 
