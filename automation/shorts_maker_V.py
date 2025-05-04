@@ -5,6 +5,7 @@ import textwrap # for wrapping text into lines but most cases being handled by t
 import requests # for making HTTP requests
 import numpy as np # for numerical operations here used for rounding off
 import logging # for logging events
+import psutil # for CPU and memory management
 from PIL import Image, ImageFilter, ImageDraw, ImageFont# for image processing
 from moviepy.editor import ( # for video editing
     VideoFileClip, VideoClip, TextClip, CompositeVideoClip,ImageClip,
@@ -27,6 +28,7 @@ from helper.text import TextHelper
 from helper.process import _process_background_clip
 from helper.video_encoder import VideoEncoder
 from helper.keyframe_animation import KeyframeTrack, convert_callable_to_keyframes
+import gc # for garbage collection
 
 # Configure logging for easier debugging
 # Do NOT initialize basicConfig here - this will be handled by main.py
@@ -49,6 +51,10 @@ class YTShortsCreator_V:
 
         # Initialize TextHelper
         self.text_helper = TextHelper()
+
+        # Performance settings
+        self.cpu_limit = int(os.getenv("CPU_LIMIT", 80))  # CPU usage limit percent
+        self.max_parallel_workers = self._get_optimal_worker_count()
 
         # Check for enhanced rendering capability
         self.has_enhanced_rendering = False
@@ -140,6 +146,41 @@ class YTShortsCreator_V:
             "fade_black": fade_black_transition
         }
         
+    def _get_optimal_worker_count(self):
+        """
+        Determine the optimal number of worker processes based on CPU cores and resource limits
+        
+        Returns:
+            int: Optimal number of worker processes
+        """
+        # Get CPU count
+        cpu_count = psutil.cpu_count(logical=True)
+        
+        # Calculate workers based on CPU limit
+        max_workers = max(1, int(cpu_count * (self.cpu_limit / 100)))
+        
+        # Limit to a reasonable number (leaving some CPU for other tasks)
+        return min(max_workers, cpu_count - 1 or 1)
+        
+    def _check_resources(self):
+        """
+        Check system resources and pause if necessary to prevent overload
+        """
+        cpu_percent = psutil.cpu_percent(interval=0.1)
+        memory_percent = psutil.virtual_memory().percent
+        
+        if cpu_percent > self.cpu_limit:
+            # Calculate pause time - longer pause for higher CPU usage
+            pause_time = (cpu_percent - self.cpu_limit) / 100.0 * 2.0  # Scale to 0-2 seconds
+            logger.debug(f"CPU usage {cpu_percent}% > limit {self.cpu_limit}%, pausing for {pause_time:.2f}s")
+            time.sleep(pause_time)
+        
+        if memory_percent > 90:  # Emergency memory threshold
+            # Force garbage collection and pause
+            gc.collect()
+            logger.warning(f"Memory usage critical: {memory_percent}%, forced GC and pausing")
+            time.sleep(1.0)  # Longer pause for memory issues
+
     def add_watermark(self, clip, watermark_text="LazyCreator"):
         """
         Add a watermark to a video clip
@@ -535,10 +576,12 @@ class YTShortsCreator_V:
                     if bg_clip.duration < section_duration:
                         logger.warning(f"Section duration ({section_duration:.2f}s) exceeds available background ({bg_clip.duration:.2f}s), looping")
                         # Instead of using vfx.loop which causes serialization issues, manually create a looped clip
+                        # Calculate how many loops we need
                         loops_needed = int(np.ceil(section_duration / bg_clip.duration))
                         looped_clips = []
 
                         for _ in range(loops_needed):
+                            # Create a copy of the clip for each loop
                             looped_clips.append(bg_clip.copy())
 
                         # Concatenate the loops
@@ -726,15 +769,26 @@ class YTShortsCreator_V:
                         'section_text': getattr(clip, '_section_text', f'Section {i}')
                     }
 
+                # Set number of processes based on our CPU limit
+                num_processes = self.max_parallel_workers
+
                 # Render all clips in parallel
-                output_filename = render_clips_in_parallel(
-                    validated_section_clips,
-                    output_filename,
-                    fps=self.fps,
-                    logger=logger,
-                    temp_dir=self.temp_dir,
-                    section_info=section_info  # Pass section info for better debugging
-                )
+                try:
+                    output_filename = render_clips_in_parallel(
+                        validated_section_clips,
+                        output_filename,
+                        fps=self.fps,
+                        logger=logger,
+                        temp_dir=self.temp_dir,
+                        section_info=section_info,  # Pass section info for better debugging
+                        num_processes=num_processes  # Pass optimized process count
+                    )
+                except Exception as e:
+                    if "expected 'except' or 'finally' block" in str(e):
+                        logger.error(f"Syntax error in parallel_renderer.py: {e}. Using standard rendering.")
+                        raise Exception("Parallel renderer has syntax errors, please fix parallel_renderer.py")
+                    else:
+                        raise
             except Exception as parallel_error:
                 logger.warning(f"Parallel renderer failed: {parallel_error}. Using standard rendering.")
 
@@ -789,8 +843,43 @@ class YTShortsCreator_V:
     def _cleanup(self):
         """Clean up temporary files"""
         try:
-            shutil.rmtree(self.temp_dir)
+            # Close any existing video or audio clips
+            gc.collect()  # Force garbage collection to release file handles
+            time.sleep(1)  # Wait a moment to ensure files are released
+            
+            # Get list of files to delete before attempting removal
+            to_delete = []
+            for filename in os.listdir(self.temp_dir):
+                file_path = os.path.join(self.temp_dir, filename)
+                to_delete.append(file_path)
+            
+            # Clean up each file individually so one failure doesn't stop the whole process
+            for file_path in to_delete:
+                try:
+                    if os.path.isfile(file_path):
+                        try:
+                            os.unlink(file_path)
+                        except PermissionError:
+                            logger.warning(f"File in use, skipping: {file_path}")
+                        except Exception as e:
+                            logger.warning(f"Error removing file {file_path}: {e}")
+                    elif os.path.isdir(file_path):
+                        try:
+                            shutil.rmtree(file_path, ignore_errors=True)
+                        except Exception as e:
+                            logger.warning(f"Error removing directory {file_path}: {e}")
+                except Exception as e:
+                    logger.warning(f"Error processing path {file_path}: {e}")
+            
+            # Final attempt to remove the temp directory itself
+            try:
+                if os.path.exists(self.temp_dir):
+                    shutil.rmtree(self.temp_dir, ignore_errors=True)
+            except Exception as e:
+                logger.warning(f"Failed to remove temp directory: {e}")
+                
             logger.info("Temporary files cleaned up successfully.")
+            
         except Exception as e:
             logger.warning(f"Error cleaning up temporary files: {str(e)}")
 
@@ -946,6 +1035,9 @@ class YTShortsCreator_V:
         
         # Fetch videos for each section
         for i, section in enumerate(script_sections):
+            # Check system resources before starting a new task
+            self._check_resources()
+            
             # Use section-specific query if available
             query = general_query
             if section_queries and i < len(section_queries) and section_queries[i]:

@@ -8,9 +8,9 @@ import time
 import logging
 import tempfile
 import multiprocessing
+import gc  # For garbage collection
 from tqdm import tqdm
 from moviepy.editor import VideoFileClip, concatenate_videoclips, CompositeVideoClip, AudioFileClip
-import gc
 import shutil
 import subprocess
 import re
@@ -117,7 +117,7 @@ class KeyframeData:
         Create keyframe data by sampling a callable function
         
         Args:
-            func: Callable function that takes a time value
+            func: Function that takes a time value and returns a value for that time
             duration: Duration to sample over
             num_samples: Number of keyframes to generate
             attribute_name: The attribute this keyframe data controls
@@ -133,7 +133,7 @@ class KeyframeData:
             t = i * duration / (num_samples - 1) if num_samples > 1 else 0
             try:
                 keyframes[t] = func(t)
-except Exception as e:
+            except Exception as e:
                 logger.warning(f"Error sampling function at time {t}: {e}")
                 # Use default values based on common attribute types
                 if attribute_name == "position":
@@ -281,7 +281,7 @@ def convert_clip_for_parallel(clip):
             
             # Store keyframe data for reference
             metadata["position_keyframes"] = position_keyframes.to_dict()
-                    except Exception as e:
+        except Exception as e:
             logger.warning(f"Error converting position to keyframes: {e}")
             clip = clip.set_position('center')
             
@@ -331,23 +331,23 @@ def process_clip_for_parallel(task):
         preset = "ultrafast"  # Use ultrafast for intermediate renders
         threads = 2
 
-            logger.info(f"Starting render of clip {task_idx} to {output_path}")
+        logger.info(f"Starting render of clip {task_idx} to {output_path}")
 
         # Handle pre-rendered clips (paths)
-            if isinstance(clip, str) and os.path.exists(clip):
-                try:
-                    clip = VideoFileClip(clip)
-                except Exception as e:
-                    logger.error(f"Error loading pre-rendered clip: {e}")
-                    return None
-
-            # Render the clip
+        if isinstance(clip, str) and os.path.exists(clip):
             try:
-            result = render_clip_segment(clip, output_path, fps, preset, threads)
-                return result
+                clip = VideoFileClip(clip)
             except Exception as e:
-                logger.error(f"Error rendering clip: {e}")
+                logger.error(f"Error loading pre-rendered clip: {e}")
                 return None
+
+        # Render the clip
+        try:
+            result = render_clip_segment(clip, output_path, fps, preset, threads)
+            return result
+        except Exception as e:
+            logger.error(f"Error rendering clip: {e}")
+            return None
     except Exception as e:
         logger.error(f"Error in parallel rendering task: {e}")
         return None
@@ -377,6 +377,22 @@ def render_clip_process(mp_tuple):
         if clip is None:
             logging.error(f"Clip {idx} is None, skipping")
             return None
+
+        # Check system resources
+        try:
+            import psutil
+            # If CPU usage is very high, wait briefly
+            cpu_percent = psutil.cpu_count() * 0.8  # Target 80% of available CPU
+            if psutil.cpu_percent(interval=0.1) > cpu_percent:
+                time.sleep(0.5)  # Brief pause to let system catch up
+                
+            # If memory is critically low, trigger GC
+            if psutil.virtual_memory().percent > 90:
+                gc.collect()
+                time.sleep(1.0)  # Longer pause for memory issues
+        except ImportError:
+            # psutil not available, skip resource check
+            pass
 
         # Different handling based on clip type to optimize performance
         if hasattr(clip, 'write_videofile'):
@@ -494,8 +510,13 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
     if logger is None:
         logger = logging.getLogger(__name__)
 
+    # Use provided process count or calculate it
     if num_processes is None:
+        # Default to leaving at least one core free
         num_processes = max(1, min(multiprocessing.cpu_count() - 1, 8))
+    else:
+        # Ensure it's within reasonable bounds
+        num_processes = max(1, min(num_processes, multiprocessing.cpu_count()))
 
     logger.info(f"Rendering {len(clips)} clips in parallel using {num_processes} processes")
 
@@ -550,54 +571,78 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
         render_paths_list = [path for _, path in rendered_paths]
         
         # Concatenate rendered clips
-            logger.info("Concatenating clips using FFmpeg...")
+        logger.info("Concatenating clips using FFmpeg...")
 
-            # Create a temporary file list for FFmpeg
-            concat_list_path = os.path.join(temp_directory, "concat_list.txt")
+        # Create a temporary file list for FFmpeg
+        concat_list_path = os.path.join(temp_directory, "concat_list.txt")
 
-            # Write the sorted paths to concat list
-            with open(concat_list_path, "w") as f:
+        # Write the sorted paths to concat list
+        with open(concat_list_path, "w") as f:
             for clip_path in render_paths_list:
-                    # Format according to FFmpeg concat protocol
-                    f.write(f"file '{os.path.abspath(clip_path)}'\n")
+                # Format according to FFmpeg concat protocol
+                f.write(f"file '{os.path.abspath(clip_path)}'\n")
 
-            # Detect hardware acceleration capability
-            hw_accel = ""
-            try:
-                # Check for NVIDIA GPU
-                nvidia_check = subprocess.run(
-                    ["nvidia-smi"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False
-                )
-                if nvidia_check.returncode == 0:
-                    hw_accel = "h264_nvenc"
-                    logger.info("Using NVIDIA GPU acceleration for final render")
-            except Exception as e:
-                logger.debug(f"Hardware acceleration check failed: {e}")
+        # Detect hardware acceleration capability
+        hw_accel = ""
+        try:
+            # Check for NVIDIA GPU
+            nvidia_check = subprocess.run(
+                ["nvidia-smi"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False
+            )
+            if nvidia_check.returncode == 0:
+                hw_accel = "h264_nvenc"
+                logger.info("Using NVIDIA GPU acceleration for final render")
+        except Exception as e:
+            logger.debug(f"Hardware acceleration check failed: {e}")
 
         # Set codec and parameters for final render
-            final_codec = hw_accel if hw_accel else codec
+        final_codec = hw_accel if hw_accel else codec
 
         # Build the FFmpeg command for final render
-            ffmpeg_cmd = [
+        ffmpeg_cmd = [
+            "ffmpeg", "-y",
+            "-f", "concat",
+            "-safe", "0",
+            "-i", concat_list_path,
+            "-c:v", final_codec,
+            "-preset", preset,  # Using veryfast for final render
+            "-crf", "23",  # Higher quality for final output
+            "-pix_fmt", "yuv420p",
+            "-max_muxing_queue_size", "9999",  # Prevent muxing queue issues
+            "-c:a", audio_codec,
+            "-b:a", "192k",
+            output_file
+        ]
+
+        logger.info(f"Running FFmpeg concatenation: {' '.join(ffmpeg_cmd)}")
+
+        # Run FFmpeg directly
+        process = subprocess.run(
+            ffmpeg_cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+            text=True
+        )
+
+        if process.returncode != 0:
+            logger.error(f"FFmpeg concatenation failed: {process.stderr}")
+            
+            # Fall back to alternative approach
+            logger.info("Trying alternative FFmpeg approach with copy...")
+            
+            alt_ffmpeg_cmd = [
                 "ffmpeg", "-y",
                 "-f", "concat",
                 "-safe", "0",
                 "-i", concat_list_path,
-                "-c:v", final_codec,
-            "-preset", preset,  # Using veryfast for final render
-                "-crf", "23",  # Higher quality for final output
-                "-pix_fmt", "yuv420p",
-                "-max_muxing_queue_size", "9999",  # Prevent muxing queue issues
-                "-c:a", audio_codec,
-                "-b:a", "192k",
+                "-c", "copy",  # Just copy streams without re-encoding
+                "-max_muxing_queue_size", "9999",
                 output_file
             ]
 
-            logger.info(f"Running FFmpeg concatenation: {' '.join(ffmpeg_cmd)}")
-
-        # Run FFmpeg directly
             process = subprocess.run(
-                ffmpeg_cmd,
+                alt_ffmpeg_cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 check=False,
@@ -605,35 +650,11 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
             )
 
             if process.returncode != 0:
-            logger.error(f"FFmpeg concatenation failed: {process.stderr}")
-            
-            # Fall back to alternative approach
-            logger.info("Trying alternative FFmpeg approach with copy...")
-            
-                alt_ffmpeg_cmd = [
-                    "ffmpeg", "-y",
-                    "-f", "concat",
-                    "-safe", "0",
-                    "-i", concat_list_path,
-                    "-c", "copy",  # Just copy streams without re-encoding
-                    "-max_muxing_queue_size", "9999",
-                    output_file
-                ]
-
-                process = subprocess.run(
-                    alt_ffmpeg_cmd,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    check=False,
-                    text=True
-                )
-
-            if process.returncode != 0:
-                    logger.error(f"Alternative FFmpeg approach failed: {process.stderr}")
+                logger.error(f"Alternative FFmpeg approach failed: {process.stderr}")
                 raise Exception(f"FFmpeg concatenation failed: {process.stderr[:500]}...")
 
         logger.info(f"Successfully concatenated clips to {output_file}")
-            return output_file
+        return output_file
 
     # Use provided temp_dir, or check environment, or create a new one
     if temp_dir:
