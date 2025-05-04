@@ -195,7 +195,8 @@ class YTShortsCreator_V:
             Path to downloaded video file
         """
         logger.info(f"Fetching background video with query: {query}")
-        video_files = _fetch_videos(query, output_dir=self.temp_dir, count=1)
+        # _fetch_videos doesn't accept output_dir parameter, use default temp_dir
+        video_files = _fetch_videos(query, count=1)
         if video_files and len(video_files) > 0:
             return video_files[0]
         else:
@@ -264,26 +265,32 @@ class YTShortsCreator_V:
                 return None
 
     @measure_time
-    def generate_single_voiceover(self, section):
+    def generate_single_voiceover(self, text, voice_style='neutral'):
         """
         Generate a single voiceover audio file - for parallel processing support
         
         Args:
-            section: Script section with text and voice_style
+            text: Text content to convert to speech
+            voice_style: Voice style to use
             
         Returns:
             Path to the generated audio file
         """
+        # Create a mock section dict to pass to generate_section_audio
+        section = {
+            'text': text,
+            'voice_style': voice_style
+        }
         return self.generate_section_audio(section)
         
     @measure_time
-    def create_text_clip(self, text, duration, font_size=None, font_name=None, font_color=None):
+    def create_text_clip(self, text, idx_or_duration=None, font_size=None, font_name=None, font_color=None):
         """
         Create a text clip for parallel processing
         
         Args:
             text: Text content
-            duration: Duration in seconds
+            idx_or_duration: Either the section index or the duration in seconds
             font_size: Font size (optional)
             font_name: Font name (optional)
             font_color: Font color (optional)
@@ -295,6 +302,17 @@ class YTShortsCreator_V:
         font_size = font_size or self.font_size
         font_name = font_name or self.font
         font_color = font_color or self.font_color
+        
+        # Determine duration from script sections if needed
+        # In parallel processing, this will be called with the index
+        duration = 5  # Default duration
+        if isinstance(idx_or_duration, (int, float)):
+            if idx_or_duration > 1000:  # Assume it's a duration if it's large
+                duration = idx_or_duration
+            else:
+                # It's probably an index, so just use default duration
+                # The actual duration will be adjusted later
+                duration = 5
         
         # Create the text clip
         if len(text) > 100:  # Use word-by-word for longer texts
@@ -452,7 +470,7 @@ class YTShortsCreator_V:
                         video_clip = VideoFileClip(video_path)
 
                         # Apply processing to fit duration and style
-                        processed_clip = _process_background_clip(
+                        processed_clip = self._process_background_clip(
                             video_clip,
                             section_duration,
                             blur_background=blur_background,
@@ -775,3 +793,193 @@ class YTShortsCreator_V:
             logger.info("Temporary files cleaned up successfully.")
         except Exception as e:
             logger.warning(f"Error cleaning up temporary files: {str(e)}")
+
+    @measure_time
+    def load_background_clip(self, background_file, target_duration):
+        """
+        Load a background video clip and process it for use
+        
+        Args:
+            background_file: Path to the background video file
+            target_duration: Target duration for the clip
+            
+        Returns:
+            Processed background clip
+        """
+        if not os.path.exists(background_file):
+            raise FileNotFoundError(f"Background file not found: {background_file}")
+            
+        # Load the video clip
+        video_clip = VideoFileClip(background_file)
+        
+        # Process the clip
+        processed_clip = self._process_background_clip(video_clip, target_duration)
+        
+        return processed_clip
+        
+    def _process_background_clip(self, clip, target_duration, blur_background=False, edge_blur=False):
+        """
+        Process a background clip to match requirements
+        
+        Args:
+            clip: Input video clip
+            target_duration: Target duration
+            blur_background: Whether to apply blur effect
+            edge_blur: Whether to apply edge blur effect
+            
+        Returns:
+            Processed clip
+        """
+        # Use helper._process_background_clip if available, otherwise process here
+        try:
+            return _process_background_clip(
+                clip,
+                target_duration,
+                blur_background=blur_background,
+                edge_blur=edge_blur
+            )
+        except Exception as e:
+            logger.warning(f"Error using helper._process_background_clip: {e}. Processing locally.")
+            
+        # Resize to match the resolution if needed
+        if clip.size != self.resolution:
+            # Calculate resize factor to ensure the clip fills the screen
+            width_factor = self.resolution[0] / clip.w
+            height_factor = self.resolution[1] / clip.h
+            resize_factor = max(width_factor, height_factor)
+            
+            # Resize the clip
+            resized_clip = clip.resize(newsize=(int(clip.w * resize_factor), int(clip.h * resize_factor)))
+            
+            # Crop to our exact resolution
+            x_center = resized_clip.w / 2
+            y_center = resized_clip.h / 2
+            x1 = max(0, int(x_center - self.resolution[0] / 2))
+            y1 = max(0, int(y_center - self.resolution[1] / 2))
+            
+            cropped_clip = resized_clip.crop(
+                x1=x1,
+                y1=y1,
+                width=self.resolution[0],
+                height=self.resolution[1]
+            )
+            clip = cropped_clip
+        
+        # Loop the clip if it's shorter than the target duration
+        if clip.duration < target_duration:
+            from moviepy.video.fx.loop import loop
+            clip = loop(clip, duration=target_duration)
+        
+        # Trim if longer than target duration
+        if clip.duration > target_duration:
+            clip = clip.subclip(0, target_duration)
+        
+        # Apply blur if requested
+        if blur_background:
+            try:
+                clip = custom_blur(clip)
+            except Exception as e:
+                logger.warning(f"Error applying blur effect: {e}")
+                
+        # Apply edge blur if requested
+        if edge_blur:
+            try:
+                clip = custom_edge_blur(clip)
+            except Exception as e:
+                logger.warning(f"Error applying edge blur effect: {e}")
+                
+        return clip
+
+    @measure_time
+    def fetch_and_prepare_background(self, query, section, max_clip_duration):
+        """
+        Fetch and prepare a single background clip for a section
+        
+        Args:
+            query: Search query for the background
+            section: Script section
+            max_clip_duration: Maximum clip duration
+            
+        Returns:
+            Processed background clip
+        """
+        # Get target duration
+        section_duration = min(section.get('duration', 5), max_clip_duration)
+        
+        try:
+            # Fetch video
+            video_path = self.fetch_background_video(query)
+            
+            if video_path and os.path.exists(video_path):
+                # Load and process clip
+                video_clip = VideoFileClip(video_path)
+                return self._process_background_clip(
+                    video_clip,
+                    section_duration,
+                    blur_background=False,
+                    edge_blur=False
+                )
+            else:
+                # Create black background as fallback
+                logger.warning(f"Video not found for query '{query}', creating fallback")
+                return ColorClip(size=self.resolution, color=(0, 0, 0), duration=section_duration)
+        except Exception as e:
+            # Create fallback on error
+            logger.error(f"Error fetching/processing background for query '{query}': {e}")
+            return ColorClip(size=self.resolution, color=(0, 0, 0), duration=section_duration)
+
+    @measure_time
+    def fetch_background_clips_for_sections(self, script_sections, general_query, section_queries=None, max_clip_duration=30):
+        """
+        Fetch and prepare background clips for each script section
+        
+        Args:
+            script_sections: List of script sections
+            general_query: General search query to use for all sections
+            section_queries: List of specific queries for each section
+            max_clip_duration: Maximum clip duration
+            
+        Returns:
+            List of processed background clips
+        """
+        background_clips = []
+        
+        # Fetch videos for each section
+        for i, section in enumerate(script_sections):
+            # Use section-specific query if available
+            query = general_query
+            if section_queries and i < len(section_queries) and section_queries[i]:
+                query = section_queries[i]
+                
+            logger.info(f"Fetching background for section {i} with query: {query}")
+            
+            # Get the target duration for this section
+            section_duration = min(section.get('duration', 5), max_clip_duration)
+            
+            # Fetch and prepare clip for this section
+            try:
+                # Get video path
+                video_path = self.fetch_background_video(query)
+                
+                if video_path and os.path.exists(video_path):
+                    # Load and process clip
+                    video_clip = VideoFileClip(video_path)
+                    processed_clip = self._process_background_clip(
+                        video_clip,
+                        section_duration,
+                        blur_background=False,
+                        edge_blur=False
+                    )
+                    background_clips.append(processed_clip)
+                else:
+                    # Create fallback if video not found
+                    logger.warning(f"Video not found for section {i}, creating fallback")
+                    black_bg = ColorClip(size=self.resolution, color=(0, 0, 0), duration=section_duration)
+                    background_clips.append(black_bg)
+            except Exception as e:
+                # Create fallback on error
+                logger.error(f"Error processing background for section {i}: {e}")
+                black_bg = ColorClip(size=self.resolution, color=(0, 0, 0), duration=section_duration)
+                background_clips.append(black_bg)
+                
+        return background_clips
