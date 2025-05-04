@@ -29,6 +29,8 @@ from helper.process import _process_background_clip
 from helper.video_encoder import VideoEncoder
 from helper.keyframe_animation import KeyframeTrack, convert_callable_to_keyframes
 import gc # for garbage collection
+from pathlib import Path
+import string
 
 # Configure logging for easier debugging
 # Do NOT initialize basicConfig here - this will be handled by main.py
@@ -761,6 +763,18 @@ class YTShortsCreator_V:
                     clip._debug_info = f"Section {getattr(clip, '_section_idx', i)}: {getattr(clip, '_section_text', '')}"
                     logger.info(f"Setting clip {i} debug info: {clip._debug_info}")
 
+                    # Remove any callable/lambda functions that can't be pickled
+                    # This addresses serialization issues with lambda in VideoClip.__init__
+                    if hasattr(clip, 'pos') and callable(clip.pos):
+                        # Convert the position function to a static value
+                        try:
+                            mid_time = clip.duration / 2
+                            pos_value = clip.pos(mid_time)
+                            clip = clip.set_position(pos_value)
+                        except Exception as e:
+                            logger.warning(f"Error setting static position for clip {i}: {e}")
+                            clip = clip.set_position('center')
+
                 # Pass source section info to parallel_renderer for better debugging
                 section_info = {}
                 for i, clip in enumerate(validated_section_clips):
@@ -787,6 +801,9 @@ class YTShortsCreator_V:
                     if "expected 'except' or 'finally' block" in str(e):
                         logger.error(f"Syntax error in parallel_renderer.py: {e}. Using standard rendering.")
                         raise Exception("Parallel renderer has syntax errors, please fix parallel_renderer.py")
+                    elif "Can't get local object" in str(e) or "pickle" in str(e).lower():
+                        logger.warning(f"Serialization error in parallel renderer: {e}. Falling back to standard rendering.")
+                        raise Exception("Serialization error in parallel renderer")
                     else:
                         raise
             except Exception as parallel_error:
@@ -849,16 +866,29 @@ class YTShortsCreator_V:
             
             # Get list of files to delete before attempting removal
             to_delete = []
-            for filename in os.listdir(self.temp_dir):
-                file_path = os.path.join(self.temp_dir, filename)
-                to_delete.append(file_path)
+            if os.path.exists(self.temp_dir):
+                for filename in os.listdir(self.temp_dir):
+                    file_path = os.path.join(self.temp_dir, filename)
+                    to_delete.append(file_path)
+            else:
+                logger.warning(f"Temp directory doesn't exist: {self.temp_dir}")
+                return
             
             # Clean up each file individually so one failure doesn't stop the whole process
             for file_path in to_delete:
                 try:
                     if os.path.isfile(file_path):
                         try:
+                            # First try to close any file handles by opening and closing the file
+                            if file_path.endswith('.mp3') or file_path.endswith('.wav'):
+                                try:
+                                    with open(file_path, 'rb') as f:
+                                        pass  # Just open and close to ensure it's not locked
+                                except:
+                                    pass  # Ignore errors here
+                                    
                             os.unlink(file_path)
+                            logger.debug(f"Deleted file: {file_path}")
                         except PermissionError:
                             logger.warning(f"File in use, skipping: {file_path}")
                         except Exception as e:
@@ -866,6 +896,7 @@ class YTShortsCreator_V:
                     elif os.path.isdir(file_path):
                         try:
                             shutil.rmtree(file_path, ignore_errors=True)
+                            logger.debug(f"Deleted directory: {file_path}")
                         except Exception as e:
                             logger.warning(f"Error removing directory {file_path}: {e}")
                 except Exception as e:
@@ -874,7 +905,23 @@ class YTShortsCreator_V:
             # Final attempt to remove the temp directory itself
             try:
                 if os.path.exists(self.temp_dir):
+                    # Wait a moment before trying to remove the directory
+                    time.sleep(0.5)
+                    try:
+                        # Try to release any remaining locks on audio files
+                        for filename in os.listdir(self.temp_dir):
+                            if filename.endswith('.mp3') or filename.endswith('.wav'):
+                                try:
+                                    file_path = os.path.join(self.temp_dir, filename)
+                                    os.chmod(file_path, 0o666)  # Ensure file is writable
+                                except:
+                                    pass
+                    except:
+                        pass
+                        
+                    # Try with ignore_errors to handle any locked files
                     shutil.rmtree(self.temp_dir, ignore_errors=True)
+                    logger.info(f"Removed temp directory: {self.temp_dir}")
             except Exception as e:
                 logger.warning(f"Failed to remove temp directory: {e}")
                 

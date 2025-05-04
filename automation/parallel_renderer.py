@@ -271,16 +271,23 @@ def convert_clip_for_parallel(clip):
     if hasattr(clip, 'pos') and callable(clip.pos):
         # Sample the callable to generate keyframes
         try:
-            position_keyframes = KeyframeData.from_callable(
-                clip.pos, clip.duration, num_samples=20, attribute_name="position"
-            )
-            # Apply a static position at the middle time for now
-            mid_time = clip.duration / 2
-            mid_pos = position_keyframes.get_value_at_time(mid_time)
-            clip = clip.set_position(mid_pos)
-            
-            # Store keyframe data for reference
-            metadata["position_keyframes"] = position_keyframes.to_dict()
+            # Skip conversion for common string position values
+            test_val = clip.pos(0)
+            if isinstance(test_val, str):
+                # Just use the string position directly
+                clip = clip.set_position(test_val)
+                logger.info(f"Using string position: {test_val}")
+            else:
+                position_keyframes = KeyframeData.from_callable(
+                    clip.pos, clip.duration, num_samples=20, attribute_name="position"
+                )
+                # Apply a static position at the middle time for now
+                mid_time = clip.duration / 2
+                mid_pos = position_keyframes.get_value_at_time(mid_time)
+                clip = clip.set_position(mid_pos)
+                
+                # Store keyframe data for reference
+                metadata["position_keyframes"] = position_keyframes.to_dict()
         except Exception as e:
             logger.warning(f"Error converting position to keyframes: {e}")
             clip = clip.set_position('center')
@@ -364,15 +371,21 @@ def render_clip_process(mp_tuple):
     """
     idx, clip, output_dir, fps = mp_tuple
     output_path = None
-
-    # If clip is already a path string (pre-rendered), just return it
-    if isinstance(clip, str) and os.path.exists(clip):
-        return clip
-
-    # Generate a unique output path
-    output_path = os.path.join(output_dir, f"clip_{idx}_{int(time.time() * 1000)}.mp4")
-
+    temp_audio_path = None
+    
     try:
+        # Configure basic logging for this process
+        logging.basicConfig(level=logging.INFO, 
+                            format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+        logging.info(f"Starting render for clip {idx}")
+        
+        # If clip is already a path string (pre-rendered), just return it
+        if isinstance(clip, str) and os.path.exists(clip):
+            return clip
+
+        # Generate a unique output path
+        output_path = os.path.join(output_dir, f"clip_{idx}_{int(time.time() * 1000)}.mp4")
+
         # Ensure the clip is valid
         if clip is None:
             logging.error(f"Clip {idx} is None, skipping")
@@ -382,12 +395,16 @@ def render_clip_process(mp_tuple):
         try:
             import psutil
             # If CPU usage is very high, wait briefly
-            cpu_percent = psutil.cpu_count() * 0.8  # Target 80% of available CPU
-            if psutil.cpu_percent(interval=0.1) > cpu_percent:
+            cpu_percent = psutil.cpu_percent(interval=0.1)
+            cpu_limit = psutil.cpu_count() * 0.8  # Target 80% of available CPU
+            if cpu_percent > cpu_limit:
+                logging.info(f"CPU usage high ({cpu_percent}%), waiting briefly")
                 time.sleep(0.5)  # Brief pause to let system catch up
                 
             # If memory is critically low, trigger GC
-            if psutil.virtual_memory().percent > 90:
+            mem_percent = psutil.virtual_memory().percent
+            if mem_percent > 90:
+                logging.info(f"Memory usage high ({mem_percent}%), collecting garbage")
                 gc.collect()
                 time.sleep(1.0)  # Longer pause for memory issues
         except ImportError:
@@ -408,6 +425,30 @@ def render_clip_process(mp_tuple):
                     logging.info(f"Using NVIDIA GPU acceleration for clip {idx}")
             except:
                 pass
+
+            # Pre-process audio to fix potential issues
+            if hasattr(clip, 'audio') and clip.audio is not None:
+                # Create a unique name for temp audio to avoid conflicts
+                temp_audio_path = os.path.join(output_dir, f"temp_audio_{idx}_{int(time.time() * 1000)}.wav")
+                
+                try:
+                    # Extract audio with high quality settings
+                    clip.audio.write_audiofile(
+                        temp_audio_path,
+                        fps=48000,  # Higher sample rate for better quality
+                        nbytes=4,   # Use 32-bit audio for highest quality
+                        codec='pcm_s32le',  # Uncompressed PCM audio
+                        logger=None  # Disable progress bars
+                    )
+                    
+                    # Load audio back as a clean AudioFileClip
+                    clean_audio = AudioFileClip(temp_audio_path)
+                    clean_audio = clean_audio.set_duration(clip.duration)
+                    clip = clip.set_audio(clean_audio)
+                    logging.info(f"Successfully preprocessed audio for clip {idx}")
+                except Exception as audio_err:
+                    logging.warning(f"Audio preprocessing failed for clip {idx}: {audio_err}")
+                    # Continue without audio preprocessing
 
             # Use optimized settings for intermediate files
             codec = hw_accel if hw_accel else "libx264"
@@ -457,6 +498,18 @@ def render_clip_process(mp_tuple):
             except Exception as e:
                 logging.debug(f"Error closing clip {idx}: {e}")
 
+            # Clean up the temp audio file if it exists
+            if temp_audio_path and os.path.exists(temp_audio_path):
+                try:
+                    # Close any possible handles to the file
+                    gc.collect()  # Force garbage collection
+                    time.sleep(0.1)  # Brief pause
+                    os.unlink(temp_audio_path)
+                    logging.debug(f"Removed temp audio file: {temp_audio_path}")
+                except Exception as e:
+                    logging.warning(f"Failed to remove temp audio file: {e}")
+                    # Continue anyway, not critical
+
             # Force garbage collection
             gc.collect()
 
@@ -475,8 +528,12 @@ def render_clip_process(mp_tuple):
         except:
             pass
 
-        # Force garbage collection
-        gc.collect()
+        # Clean up any temporary files
+        if temp_audio_path and os.path.exists(temp_audio_path):
+            try:
+                os.remove(temp_audio_path)
+            except:
+                pass
 
         # If the output file was created but is invalid, remove it
         if output_path and os.path.exists(output_path):
@@ -485,6 +542,9 @@ def render_clip_process(mp_tuple):
                 logging.debug(f"Removed incomplete output file: {output_path}")
             except:
                 pass
+
+        # Force garbage collection
+        gc.collect()
 
         return None
 
