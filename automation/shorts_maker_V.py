@@ -64,6 +64,14 @@ class YTShortsCreator_V:
         self.fps = fps
         self.audio_sync_offset = 0.0  # Remove audio delay to improve sync
 
+        # Define max clip duration (maximum length for a single video clip)
+        self.max_clip_duration = 30  # 30 seconds is a reasonable default
+
+        # Font settings
+        self.font = "Arial"  # Default font
+        self.font_size = 60  # Default font size
+        self.font_color = 'white'  # Default font color
+
         # Initialize TTS (Text-to-Speech)
         self.azure_tts = None
         self.google_tts = None
@@ -131,11 +139,188 @@ class YTShortsCreator_V:
             "crossfade": crossfade_transition,
             "fade_black": fade_black_transition
         }
+        
+    def add_watermark(self, clip, watermark_text="LazyCreator"):
+        """
+        Add a watermark to a video clip
+        
+        Args:
+            clip: The video clip to add watermark to
+            watermark_text: Text to use as watermark
+            
+        Returns:
+            Clip with watermark added
+        """
+        if not watermark_text:
+            return clip
+            
+        # Create watermark text
+        watermark = TextClip(
+            watermark_text,
+            fontsize=40,
+            color='white',
+            font=self.font,
+            align='East'
+        ).set_opacity(0.5).set_duration(clip.duration)
+        
+        # Position in bottom right corner with padding
+        watermark = watermark.set_position(('right', 'bottom'))
+        
+        # Composite with original clip
+        return CompositeVideoClip([clip, watermark])
+
+    def set_temp_dir(self, temp_dir):
+        """
+        Set the temporary directory for this creator.
+        
+        Args:
+            temp_dir: Path to temporary directory
+        """
+        self.temp_dir = temp_dir
+        logger.info(f"Set temporary directory to: {temp_dir}")
+        
+        # Also set tempfile.tempdir for any modules that use it directly
+        import tempfile
+        tempfile.tempdir = temp_dir
+
+    @measure_time
+    def fetch_background_video(self, query):
+        """
+        Fetch a background video for a section
+        
+        Args:
+            query: Search query for the video
+            
+        Returns:
+            Path to downloaded video file
+        """
+        logger.info(f"Fetching background video with query: {query}")
+        video_files = _fetch_videos(query, output_dir=self.temp_dir, count=1)
+        if video_files and len(video_files) > 0:
+            return video_files[0]
+        else:
+            return None
+            
+    @measure_time
+    def generate_section_audio(self, section):
+        """
+        Generate audio for a section
+        
+        Args:
+            section: Script section with text and voice_style
+            
+        Returns:
+            Path to the generated audio file
+        """
+        text = section['text']
+        voice_style = section.get('voice_style', 'neutral')
+        
+        # Generate unique filename
+        output_filename = os.path.join(self.temp_dir, f"tts_{int(time.time()*1000)}_{hash(text)%10000}.mp3")
+        
+        # Try Google TTS first
+        if self.google_tts:
+            try:
+                logger.info(f"Generating audio with Google TTS: {text[:30]}...")
+                return self.google_tts.generate_speech(text, output_filename=output_filename, voice_style=voice_style)
+            except Exception as e:
+                logger.error(f"Google TTS failed: {e}")
+                
+        # Try Azure TTS if Google fails
+        if self.azure_tts:
+            try:
+                logger.info(f"Generating audio with Azure TTS: {text[:30]}...")
+                return self.azure_tts.generate_speech(text, output_filename=output_filename)
+            except Exception as e:
+                logger.error(f"Azure TTS failed: {e}")
+                
+        # Fall back to gTTS
+        try:
+            logger.info(f"Generating audio with gTTS: {text[:30]}...")
+            tts = gTTS(text=text, lang='en', slow=False)
+            tts.save(output_filename)
+            return output_filename
+        except Exception as e:
+            logger.error(f"gTTS failed: {e}")
+            
+            # Create silent audio as last resort
+            try:
+                from moviepy.audio.AudioClip import AudioClip
+                import numpy as np
+                
+                # Calculate duration based on text length
+                words = text.split()
+                duration = max(3, len(words) / 2.5)  # Minimum 3 seconds
+                
+                def make_frame(t):
+                    return np.zeros(2)  # Stereo silence
+                    
+                silent_clip = AudioClip(make_frame=make_frame, duration=duration)
+                silent_clip.write_audiofile(output_filename, fps=44100, nbytes=2, codec='libmp3lame')
+                
+                return output_filename
+            except Exception as silent_err:
+                logger.error(f"Failed to create silent audio: {silent_err}")
+                return None
+
+    @measure_time
+    def generate_single_voiceover(self, section):
+        """
+        Generate a single voiceover audio file - for parallel processing support
+        
+        Args:
+            section: Script section with text and voice_style
+            
+        Returns:
+            Path to the generated audio file
+        """
+        return self.generate_section_audio(section)
+        
+    @measure_time
+    def create_text_clip(self, text, duration, font_size=None, font_name=None, font_color=None):
+        """
+        Create a text clip for parallel processing
+        
+        Args:
+            text: Text content
+            duration: Duration in seconds
+            font_size: Font size (optional)
+            font_name: Font name (optional)
+            font_color: Font color (optional)
+            
+        Returns:
+            Path to rendered text clip or TextClip object
+        """
+        # Use provided values or defaults
+        font_size = font_size or self.font_size
+        font_name = font_name or self.font
+        font_color = font_color or self.font_color
+        
+        # Create the text clip
+        if len(text) > 100:  # Use word-by-word for longer texts
+            return self.text_helper._create_word_by_word_clip(
+                text=text,
+                duration=duration,
+                font_size=font_size,
+                position=('center', 'center'),
+                text_color=font_color,
+                pill_color=(0, 0, 0, 160)
+            )
+        else:  # Use regular text clip for shorter texts
+            return self.text_helper._create_text_clip(
+                text,
+                duration=duration,
+                animation="fade",
+                with_pill=True,
+                font_size=font_size,
+                position=('center', 'center')
+            )
 
     @measure_time
     def create_youtube_short(self, title, script_sections, background_query, output_filename="yt_short.mp4", 
                             style="photorealistic", voice_style="neutral", max_duration=30, 
-                            background_queries=None, blur_background=False, edge_blur=False, parallel_results=None):
+                            background_queries=None, blur_background=False, edge_blur=False, parallel_results=None,
+                            add_captions=False, add_watermark_text=None):
         """
         Create a YouTube Short with video background.
 
@@ -151,6 +336,8 @@ class YTShortsCreator_V:
             blur_background: Whether to apply blur effect to background
             edge_blur: Whether to apply edge blur effect
             parallel_results: Pre-processed results from parallel tasks
+            add_captions: Whether to add captions to the video
+            add_watermark_text: Text to add as watermark
 
         Returns:
             Path to the generated video
@@ -158,7 +345,7 @@ class YTShortsCreator_V:
         try:
             if not output_filename:
                 date_str = datetime.now().strftime('%Y%m%d_%H%M%S')
-                output_filename = os.path.join(self.output_dir, f"short_{date_str}.mp4")
+                output_filename = os.path.join(self.temp_dir, f"short_{date_str}.mp4")
 
             # Get total duration from script sections
             total_raw_duration = sum(section.get('duration', 5) for section in script_sections)
@@ -177,55 +364,55 @@ class YTShortsCreator_V:
             middle_section_count = max(1, len(script_sections) - 2)
             logger.info(f"Creating video with {middle_section_count} background segments for middle sections")
 
-            # Replace background fetching with parallel results if available
-            if parallel_results and 'backgrounds' in parallel_results:
-                self.logger.info("Using pre-fetched backgrounds from parallel processing")
+            # Fetch background videos based on parallel results or fetch new ones
+            background_videos = []
+            
+            # If we have pre-fetched backgrounds, use them
+            if parallel_results and 'backgrounds' in parallel_results and len(parallel_results['backgrounds']) > 0:
+                logger.info("Using pre-fetched backgrounds from parallel processing")
+                background_videos = [parallel_results['backgrounds'].get(i) for i in range(len(script_sections))]
+                # Filter out any None values
+                background_videos = [bg for bg in background_videos if bg is not None]
+            
+            # If we don't have enough backgrounds, fetch them
+            if not background_videos or len(background_videos) < len(script_sections):
+                logger.info("Fetching background videos")
                 
-                # Check if we have pre-fetched backgrounds for all sections
-                all_backgrounds_available = True
-                for i, section in enumerate(script_sections):
-                    if i not in parallel_results['backgrounds']:
-                        all_backgrounds_available = False
-                        self.logger.warning(f"Missing background for section {i}, will need to fetch it")
-                        
-                if all_backgrounds_available:
-                    # Use pre-fetched backgrounds
-                    background_clips = []
+                # If we have specific queries for each section, use them
+                if background_queries and len(background_queries) >= len(script_sections):
+                    # Fetch a video for each section with its specific query
                     for i, section in enumerate(script_sections):
-                        background_file = parallel_results['backgrounds'].get(i)
-                        if background_file:
-                            # Load the background file
-                            try:
-                                target_duration = min(section['duration'], max_clip_duration)
-                                background_clip = self.load_background_clip(background_file, target_duration)
-                                background_clips.append(background_clip)
-                            except Exception as e:
-                                self.logger.error(f"Error loading pre-fetched background {i}: {e}")
-                                # Fall back to fetching
-                                background_query = background_queries[i] if background_queries and i < len(background_queries) else background_query
-                                background_clips.append(self.fetch_and_prepare_background(background_query, section, max_clip_duration))
-                        else:
-                            # Fall back to fetching
-                            background_query = background_queries[i] if background_queries and i < len(background_queries) else background_query
-                            background_clips.append(self.fetch_and_prepare_background(background_query, section, max_clip_duration))
+                        section_query = background_queries[i]
+                        logger.info(f"Fetching background for section {i} with query: {section_query}")
+                        section_video = self.fetch_background_video(section_query)
+                        if section_video:
+                            background_videos.append(section_video)
                 else:
-                    # Fall back to original fetching
-                    background_clips = self.fetch_background_clips_for_sections(script_sections, background_query, background_queries, max_clip_duration)
-            else:
-                # No parallel results, use original fetching
-                background_clips = self.fetch_background_clips_for_sections(script_sections, background_query, background_queries, max_clip_duration)
+                    # Use the general background query for all sections
+                    logger.info(f"Fetching backgrounds with general query: {background_query}")
+                    for i in range(len(script_sections)):
+                        section_video = self.fetch_background_video(background_query)
+                        if section_video:
+                            background_videos.append(section_video)
+            
+            # Ensure we have enough background videos
+            if len(background_videos) < len(script_sections):
+                logger.warning(f"Not enough background videos found. Using available ones multiple times if needed.")
+                # Duplicate existing videos if needed
+                while len(background_videos) < len(script_sections):
+                    background_videos.append(background_videos[len(background_videos) % len(background_videos)])
 
             # Add for audio handling with parallel results
             # Replace audio generation with parallel results if available
             if parallel_results and 'audio' in parallel_results:
-                self.logger.info("Using pre-generated audio from parallel processing")
+                logger.info("Using pre-generated audio from parallel processing")
                 
                 # Check if we have pre-generated audio for all sections
                 all_audio_available = True
                 for i, section in enumerate(script_sections):
                     if i not in parallel_results['audio']:
                         all_audio_available = False
-                        self.logger.warning(f"Missing audio for section {i}, will need to generate it")
+                        logger.warning(f"Missing audio for section {i}, will need to generate it")
                         
                 if all_audio_available:
                     # Use pre-generated audio
@@ -238,7 +425,7 @@ class YTShortsCreator_V:
                                 audio_clip = AudioFileClip(audio_file)
                                 section_audio_clips.append(audio_clip)
                             except Exception as e:
-                                self.logger.error(f"Error loading pre-generated audio {i}: {e}")
+                                logger.error(f"Error loading pre-generated audio {i}: {e}")
                                 # Fall back to generation
                                 section_audio_clips.append(self.generate_section_audio(section))
                         else:
@@ -291,11 +478,39 @@ class YTShortsCreator_V:
 
             # Create audio and video for each section
             section_clips = []
-
-            for i, (section, audio_path, bg_clip) in enumerate(zip(script_sections, section_audio_clips, background_clips)):
+            
+            # Process audio files to get AudioFileClip objects
+            audio_clips = []
+            for audio_path in section_audio_clips:
                 try:
-                    # Load audio with extra safety check
-                    audio_clip = AudioFileClip(audio_path)
+                    # If it's already an AudioFileClip, use it directly
+                    if isinstance(audio_path, AudioFileClip):
+                        audio_clips.append(audio_path)
+                    # Otherwise, load it from the file path
+                    elif audio_path and os.path.exists(audio_path):
+                        audio_clip = AudioFileClip(audio_path)
+                        audio_clips.append(audio_clip)
+                    else:
+                        # Create silent audio as fallback
+                        from moviepy.audio.AudioClip import AudioClip
+                        import numpy as np
+                        def make_frame(t):
+                            return np.zeros(2)  # Stereo silence
+                        silent_clip = AudioClip(make_frame=make_frame, duration=5)
+                        audio_clips.append(silent_clip)
+                except Exception as e:
+                    logger.error(f"Error loading audio: {e}")
+                    # Create silent audio as fallback
+                    from moviepy.audio.AudioClip import AudioClip
+                    import numpy as np
+                    def make_frame(t):
+                        return np.zeros(2)  # Stereo silence
+                    silent_clip = AudioClip(make_frame=make_frame, duration=5)
+                    audio_clips.append(silent_clip)
+
+            for i, (section, audio_clip, bg_clip) in enumerate(zip(script_sections, audio_clips, background_clips)):
+                try:
+                    # Use actual audio duration
                     section_duration = audio_clip.duration  # Use actual audio duration
 
                     # Ensure background clip is long enough
@@ -379,7 +594,6 @@ class YTShortsCreator_V:
 
                     try:
                         # Try to add audio if possible
-                        audio_clip = AudioFileClip(audio_path)
                         black_bg = black_bg.set_audio(audio_clip)
                     except Exception as audio_err:
                         logger.error(f"Error adding audio to fallback clip: {audio_err}")
@@ -519,7 +733,7 @@ class YTShortsCreator_V:
 
                     # Add watermark if requested
                     if add_watermark_text:
-                        final_clip = self.text_helper.add_watermark(final_clip, watermark_text=add_watermark_text)
+                        final_clip = self.add_watermark(final_clip, watermark_text=add_watermark_text)
 
                     # Write final video
                     logger.info(f"Rendering final video to {output_filename}")
@@ -561,19 +775,3 @@ class YTShortsCreator_V:
             logger.info("Temporary files cleaned up successfully.")
         except Exception as e:
             logger.warning(f"Error cleaning up temporary files: {str(e)}")
-
-    def set_temp_dir(self, temp_dir):
-        """
-        Set the temporary directory for this creator.
-        
-        Args:
-            temp_dir: Path to temporary directory
-        """
-        self.temp_dir = temp_dir
-        self.logger.info(f"Set temporary directory to: {temp_dir}")
-        
-        # Also set tempfile.tempdir for any modules that use it directly
-        import tempfile
-        tempfile.tempdir = temp_dir
-
-
