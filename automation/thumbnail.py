@@ -46,7 +46,7 @@ class ThumbnailGenerator:
 
         # Font settings
         self.fonts_dir = os.path.join(os.path.dirname(__file__), 'fonts')
-        self.title_font_path = r"D:\youtube-shorts-automation\fonts\default_font.ttf"
+        self.title_font_path = r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf"
 
         # Setup API credentials
         self.huggingface_api_key = os.getenv("HUGGINGFACE_API_KEY")

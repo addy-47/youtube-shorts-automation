@@ -15,6 +15,7 @@ __pycache__/
 # Output directories
 ai_shorts_output/
 logs/
+temp/
 
 # Large binary files
 ffmpeg/
