@@ -1,0 +1,13 @@
+2025-05-04 21:15:15,172 - INFO - __main__ - Day 124: Using image-based creator (YTShortsCreator_I)
+2025-05-04 21:15:15,217 - INFO - automation.shorts_maker_I - Enhanced parallel rendering available with dill 0.3.9
+2025-05-04 21:15:15,218 - ERROR - __main__ - Process failed: YTShortsCreator_V.__init__() got an unexpected keyword argument 'output_dir'
+2025-05-04 21:15:15,221 - ERROR - __main__ - Detailed error trace: Traceback (most recent call last):
+  File "D:\youtube-shorts-automation\main.py", line 264, in main
+    creator_type = get_creator_for_day()
+  File "D:\youtube-shorts-automation\main.py", line 68, in get_creator_for_day
+    return YTShortsCreator_I()
+  File "D:\youtube-shorts-automation\automation\shorts_maker_I.py", line 73, in __init__
+    self.v_creator = YTShortsCreator_V(output_dir=output_dir, fps=fps)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: YTShortsCreator_V.__init__() got an unexpected keyword argument 'output_dir'
+

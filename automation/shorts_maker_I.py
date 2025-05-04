@@ -32,18 +32,15 @@ change_settings({"IMAGEMAGICK_BINARY": "magick"}) # for windows users
 logger = logging.getLogger(__name__)
 
 class YTShortsCreator_I:
-    def __init__(self, output_dir="output", fps=30):
+    def __init__(self, fps=30):
         """
         Initialize the YouTube Shorts creator with necessary settings
 
         Args:
-            output_dir (str): Directory to save the output videos
             fps (int): Frames per second for the output video
         """
         # Setup directories
-        self.output_dir = output_dir
         self.temp_dir = tempfile.mkdtemp()  # Create temp directory for intermediate files
-        os.makedirs(output_dir, exist_ok=True)
         os.makedirs(self.temp_dir, exist_ok=True)
 
         # Check for enhanced rendering capability
@@ -70,7 +67,7 @@ class YTShortsCreator_I:
         self.text_helper = TextHelper()
 
         # Create an instance of YTShortsCreator_V to use its text functions
-        self.v_creator = YTShortsCreator_V(output_dir=output_dir, fps=fps)
+        self.v_creator = YTShortsCreator_V(fps=fps)
 
         # Initialize TTS (Text-to-Speech)
         self.azure_tts = None

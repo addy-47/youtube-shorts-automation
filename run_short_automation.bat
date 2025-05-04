@@ -13,6 +13,9 @@ REM Set the PYTHONPATH environment variable to the project directory for local i
 cd "D:\youtube-shorts-automation"
 REM Change the current directory to the project directory
 
+git checkout master
+REM only use stable verion of the code
+
 python main.py
 REM Run the main Python script
 
