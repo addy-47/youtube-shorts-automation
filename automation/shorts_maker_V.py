@@ -6,13 +6,13 @@ import requests # for making HTTP requests
 import numpy as np # for numerical operations here used for rounding off
 import logging # for logging events
 from PIL import Image, ImageFilter, ImageDraw, ImageFont# for image processing
-from moviepy.editor import ( # for video editing
+from moviepy  import ( # for video editing
     VideoFileClip, VideoClip, TextClip, CompositeVideoClip,ImageClip,
     AudioFileClip, concatenate_videoclips, ColorClip, CompositeAudioClip, concatenate_audioclips
 )
-from moviepy.video.fx import all as vfx
-from moviepy.config import change_settings
-change_settings({"IMAGEMAGICK_BINARY": "magick"}) # for windows users
+from moviepy.video.fx import *
+# from moviepy.config import change_settings
+# change_settings({"IMAGEMAGICK_BINARY": "magick"}) # for windows users
 from gtts import gTTS
 from dotenv import load_dotenv
 import shutil # for file operations like moving and deleting files
@@ -97,18 +97,18 @@ class YTShortsCreator_V:
         def slide_left_transition(clip, duration):
             def position_func(t):
                 return ((t/duration) * self.resolution[0] - clip.w if t < duration else 0, 'center')
-            return clip.set_position(position_func)
+            return clip.with_position(position_func)
 
         def zoom_in_transition(clip, duration):
             def size_func(t):
                 return max(1, 1 + 0.5 * min(t/duration, 1))
-            return clip.resize(size_func)
+            return clip.resized(size_func)
 
         # Define video transition effects between background segments
         def crossfade_transition(clip1, clip2, duration):
             return concatenate_videoclips([
-                clip1.set_end(clip1.duration),
-                clip2.set_start(0).crossfadein(duration)
+                clip1.with_end(clip1.duration),
+                clip2.with_start(0).cross_fadein(duration)
             ], padding=-duration, method="compose")
 
         def fade_black_transition(clip1, clip2, duration):
@@ -336,13 +336,13 @@ class YTShortsCreator_V:
                     else:
                         logger.warning(f"Background video {i} not found: {video_path}")
                         # Create a black background as fallback
-                        black_bg = ColorClip(size=self.resolution, color=(0, 0, 0), duration=section_duration)
+                        black_bg = ColorClip(size=self.resolution, color=(0, 0, 0, 0), duration=section_duration)
                         background_clips.append(black_bg)
                 except Exception as e:
                     logger.error(f"Error processing background clip {i}: {e}")
                     # Create a black background as fallback for this section
                     section_duration = section.get('actual_audio_duration', section.get('duration', 5))
-                    black_bg = ColorClip(size=self.resolution, color=(0, 0, 0), duration=section_duration)
+                    black_bg = ColorClip(size=self.resolution, color=(0, 0, 0, 0), duration=section_duration)
                     background_clips.append(black_bg)
 
             end_time = time.time()
@@ -370,10 +370,10 @@ class YTShortsCreator_V:
                         # Concatenate the loops
                         bg_clip = concatenate_videoclips(looped_clips)
                         # Trim to exact duration needed
-                        bg_clip = bg_clip.subclip(0, section_duration)
+                        bg_clip = bg_clip.subclipped(0, section_duration)
 
                     # Set audio to background
-                    bg_with_audio = bg_clip.set_duration(section_duration).set_audio(audio_clip)
+                    bg_with_audio = bg_clip.with_duration(section_duration).with_audio(audio_clip)
 
                     # Add text captions if requested
                     if add_captions:
@@ -400,7 +400,7 @@ class YTShortsCreator_V:
                             )
 
                         # Composite the text over the background
-                        section_clip = CompositeVideoClip([bg_with_audio, text_clip])
+                        section_clip = CompositeVideoClip([bg_with_audio, text_clip], transparent=True)
                     else:
                         # Always add text overlay regardless of add_captions setting
                         # But still respect the intro/middle/outro distinction
@@ -426,7 +426,7 @@ class YTShortsCreator_V:
                             )
 
                         # Composite the text over the background
-                        section_clip = CompositeVideoClip([bg_with_audio, text_clip])
+                        section_clip = CompositeVideoClip([bg_with_audio, text_clip], transparent=True)
 
                     section_clips.append(section_clip)
 
@@ -434,12 +434,12 @@ class YTShortsCreator_V:
                     logger.error(f"Error creating section {i}: {e}")
                     # Create a black clip with text as fallback
                     fallback_duration = section.get('actual_audio_duration', section.get('duration', 5))
-                    black_bg = ColorClip(size=self.resolution, color=(0, 0, 0), duration=fallback_duration)
+                    black_bg = ColorClip(size=self.resolution, color=(0, 0, 0, 0), duration=fallback_duration)
 
                     try:
                         # Try to add audio if possible
                         audio_clip = AudioFileClip(audio_path)
-                        black_bg = black_bg.set_audio(audio_clip)
+                        black_bg = black_bg.with_audio(audio_clip)
                     except Exception as audio_err:
                         logger.error(f"Error adding audio to fallback clip: {audio_err}")
 
@@ -448,12 +448,12 @@ class YTShortsCreator_V:
                         "Error loading section",
                         color='white',
                         size=self.resolution,
-                        fontsize=60,
-                        method='caption',
-                        align='center'
-                    ).set_duration(fallback_duration)
+                        font_size=60,
+                        font=self.text_helper.body_font_path,
+                        method='caption'
+                    ).with_duration(fallback_duration)
 
-                    section_clip = CompositeVideoClip([black_bg, error_text])
+                    section_clip = CompositeVideoClip([black_bg, error_text], transparent=True)
                     section_clips.append(section_clip)
 
             # Process and validate section clips
@@ -471,14 +471,14 @@ class YTShortsCreator_V:
                             logger.warning(f"Audio for section {i} is shorter than clip ({audio_duration}s vs {clip_duration}s), extending")
                             # Create a new audio that exactly matches the clip duration
                             from moviepy.audio.AudioClip import CompositeAudioClip, AudioClip
-                            extended_audio = clip.audio.set_duration(clip_duration)
-                            clip = clip.set_audio(extended_audio)
+                            extended_audio = clip.audio.with_duration(clip_duration)
+                            clip = clip.with_audio(extended_audio)
 
                         # If audio is longer, trim it
                         elif audio_duration > clip_duration:
                             logger.warning(f"Audio for section {i} is longer than clip ({audio_duration}s vs {clip_duration}s), trimming")
-                            trimmed_audio = clip.audio.subclip(0, clip_duration)
-                            clip = clip.set_audio(trimmed_audio)
+                            trimmed_audio = clip.audio.subclipped(0, clip_duration)
+                            clip = clip.with_audio(trimmed_audio)
 
                     # Add the section index as a custom attribute for tracking
                     clip._section_idx = i
@@ -592,7 +592,7 @@ class YTShortsCreator_V:
                         threads=2,
                         preset="veryfast",
                         ffmpeg_params=[
-                            "-pix_fmt", "yuv420p",  # For compatibility with all players
+                            "-pix_fmt", "yuva420p",  # For compatibility with all players
                             "-profile:v", "main",   # Better compatibility with mobile devices
                             "-crf", "22",           # Better quality-to-size ratio
                             "-maxrate", "3M",       # Maximum bitrate for streaming

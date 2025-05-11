@@ -2,15 +2,14 @@ import os
 import random
 import requests
 import concurrent.futures
-from moviepy.editor import VideoFileClip
+from moviepy  import VideoFileClip
 import logging
 import time
 from helper.minor_helper import measure_time
 from dotenv import load_dotenv
 
 load_dotenv()
-
-logging.basicConfig(level=logging.INFO)
+# Set up logging
 logger = logging.getLogger(__name__)
 
 # Load API keys from environment variables

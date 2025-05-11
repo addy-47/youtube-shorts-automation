@@ -1,5 +1,7 @@
 import numpy as np
-from moviepy.editor import *
+from moviepy import *
+from moviepy.video.fx import FadeIn
+from moviepy.video.fx import FadeOut
 from PIL import Image, ImageDraw, ImageFont
 import logging
 import os
@@ -21,13 +23,14 @@ class TextHelper:
       self.title_font_path = r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf"
       self.body_font_path = r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf"
 
+      # Define transitions with proper effects
       self.transitions = {
-          "fade": lambda clip, duration: clip.crossfadein(duration),
-          "fade_out": lambda clip, duration: clip.crossfadeout(duration),
-          "slide": lambda clip, duration: clip.set_position(lambda t: (0, 0 + t * (self.resolution[1] / duration))),
-          "slide_out": lambda clip, duration: clip.set_position(lambda t: (0, self.resolution[1] - t * (self.resolution[1] / duration))),
-          "zoom": lambda clip, duration: clip.resize(lambda t: 1 + t * (0.5 / duration)),
-          "zoom_out": lambda clip, duration: clip.resize(lambda t: 1 - t * (0.5 / duration)),
+          "fade": lambda clip, duration: clip.with_effects([FadeIn(duration)]),
+          "fade_out": lambda clip, duration: clip.with_effects([FadeOut(duration)]),
+          "slide": lambda clip, duration: clip.with_position(lambda t: (0, 0 + t * (self.resolution[1] / duration))),
+          "slide_out": lambda clip, duration: clip.with_position(lambda t: (0, self.resolution[1] - t * (self.resolution[1] / duration))),
+          "zoom": lambda clip, duration: clip.resized(lambda t: 1 + t * (0.5 / duration)),
+          "zoom_out": lambda clip, duration: clip.resized(lambda t: 1 - t * (0.5 / duration)),
       }
 
   @measure_time
@@ -86,46 +89,45 @@ class TextHelper:
           font_path = self.body_font_path
 
       try:
-          txt_clip = TextClip(
-              txt=text,
+          text_clip = TextClip(
+              text=text,
               font=font_path,
-              fontsize=font_size,
+              font_size=font_size,
               color=color,
               method='caption',
-              align='center',
               size=(self.resolution[0] - 100, None)
           )
       except Exception as e:
           logger.warning(f"Text rendering error with custom font: {e}. Using default.")
-          txt_clip = TextClip(
-              txt=text,
-              fontsize=font_size,
+          text_clip = TextClip(
+              text=text,
+              font_size=font_size,
+              font="",  # Empty string as fallback font (using system default)
               color=color,
               method='caption',
-              align='center',
               size=(self.resolution[0] - 100, None)
           )
 
-      txt_clip = txt_clip.set_duration(duration)
+      # Add the section index as a custom attribute for tracking
+      text_clip = text_clip.with_duration(duration)
       clips = []
 
       # Add pill-shaped background if requested
       if with_pill:
-          pill_image = self._create_pill_image(txt_clip.size, color=pill_color, radius=pill_radius)
+          pill_image = self._create_pill_image(text_clip.size, color=pill_color, radius=pill_radius)
           pill_clip = ImageClip(np.array(pill_image), duration=duration)
           clips.append(pill_clip)
 
       # Add shadow effect
       if shadow:
           shadow_clip = TextClip(
-              txt=text,
+              text=text,
               font=font_path,
-              fontsize=font_size,
+              font_size=font_size,
               color='black',
               method='caption',
-              align='center',
               size=(self.resolution[0] - 100, None)
-          ).set_position((5, 5), relative=True).set_opacity(0.7).set_duration(duration)
+          ).with_position((5, 5), relative=True).with_opacity(0.7).with_duration(duration)
           clips.append(shadow_clip)
 
       # Add outline effect
@@ -133,22 +135,21 @@ class TextHelper:
           outline_clips = []
           for dx, dy in [(-1,-1), (-1,1), (1,-1), (1,1)]:
               oc = TextClip(
-                  txt=text,
+                  text=text,
                   font=font_path,
-                  fontsize=font_size,
+                  font_size=font_size,
                   color='black',
                   method='caption',
-                  align='center',
                   size=(self.resolution[0] - 100, None)
-              ).set_position((dx, dy), relative=True).set_opacity(0.5).set_duration(duration)
+              ).with_position((dx, dy), relative=True).with_opacity(0.5).with_duration(duration)
               outline_clips.append(oc)
           clips.extend(outline_clips)
 
-      clips.append(txt_clip)
-      text_composite = CompositeVideoClip(clips)
+      clips.append(text_clip)
+      text_composite = CompositeVideoClip(clips, transparent=True)
 
       # Set the position of the entire composite
-      text_composite = text_composite.set_position(position)
+      text_composite = text_composite.with_position(position)
 
       # Apply animation
       if animation in self.transitions:
@@ -156,8 +157,8 @@ class TextHelper:
           text_composite = anim_func(text_composite, animation_duration)
 
       # Create transparent background for the text
-      bg = ColorClip(size=self.resolution, color=(0,0,0,0)).set_duration(duration)
-      final_clip = CompositeVideoClip([bg, text_composite], size=self.resolution)
+      bg = ColorClip(size=self.resolution, color=(0,0,0,0)).with_duration(duration)
+      final_clip = CompositeVideoClip([bg, text_composite], size=self.resolution, transparent=True)
 
       return final_clip
 
@@ -251,8 +252,8 @@ class TextHelper:
               # For horizontal centering:
               text_x = (img_width - text_width) // 2
               # For vertical centering:
-              offset_y = (descent - ascent) // 4 # This small adjustment often helps
-              text_y = (img_height - text_height) // 2 + offset_y
+              offwith_y = (descent - ascent) // 4 # This small adjustment often helps
+              text_y = (img_height - text_height) // 2 + offwith_y
 
               draw.text((text_x, text_y), word, font=font, fill=text_color)
 
@@ -274,19 +275,19 @@ class TextHelper:
       clips_with_transitions = []
       for i, clip in enumerate(clips):
           if i < len(clips) - 1:  # Not the last clip
-              clip = clip.crossfadein(transition_duration)
+              clip = clip.with_effects([FadeIn(transition_duration)])
           clips_with_transitions.append(clip)
 
       word_sequence = concatenate_videoclips(clips_with_transitions, method="compose")
 
       # Create a transparent background the size of the entire clip
-      bg = ColorClip(size=self.resolution, color=(0,0,0,0)).set_duration(word_sequence.duration)
+      bg = ColorClip(size=self.resolution, color=(0,0,0,0)).with_duration(word_sequence.duration)
 
       # Position the word sequence in the center of the background
-      positioned_sequence = word_sequence.set_position(position)
+      positioned_sequence = word_sequence.with_position(position)
 
       # Combine the background and positioned sequence
-      final_clip = CompositeVideoClip([bg, positioned_sequence], size=self.resolution)
+      final_clip = CompositeVideoClip([bg, positioned_sequence], size=self.resolution, transparent=True)
 
       return final_clip
 
@@ -307,11 +308,11 @@ class TextHelper:
       """
       # Create text clip for watermark
       watermark = TextClip(
-          txt=watermark_text,
-          fontsize=font_size,
-          color='white',
-          align='center'
-      ).set_duration(clip.duration).set_opacity(opacity)
+          text=watermark_text,
+          font_size=font_size,
+          font=self.body_font_path,
+          color='white'
+      ).with_duration(clip.duration).with_opacity(opacity)
 
       # Calculate position
       if position[0] == "right":
@@ -324,7 +325,7 @@ class TextHelper:
       else:
           y_pos = 20
 
-      watermark = watermark.set_position((x_pos, y_pos))
+      watermark = watermark.with_position((x_pos, y_pos))
 
       # Add watermark to video
       return CompositeVideoClip([clip, watermark], size=self.resolution)

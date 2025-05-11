@@ -3,7 +3,7 @@ import random
 import os
 import requests
 import logging
-from moviepy.editor import VideoClip, concatenate_videoclips, ColorClip, CompositeVideoClip, ImageClip, TextClip
+from moviepy  import VideoClip, concatenate_videoclips, ColorClip, CompositeVideoClip, ImageClip, TextClip
 from helper.blur import custom_blur, custom_edge_blur
 from helper.minor_helper import measure_time
 from helper.text import TextHelper
@@ -161,7 +161,7 @@ def _create_still_image_clip(self, image_path, duration, text=None, text_positio
   # Load image
   image = ImageClip(image_path)
 
-  # Resize to fill screen while maintaining aspect ratio
+  # resized to fill screen while maintaining aspect ratio
   img_ratio = image.size[0] / image.size[1]
   target_ratio =  resolution[0] /  resolution[1]
 
@@ -172,7 +172,7 @@ def _create_still_image_clip(self, image_path, duration, text=None, text_positio
       new_width =  resolution[0]
       new_height = int(new_width / img_ratio)
 
-  image = image.resize(newsize=(new_width, new_height))
+  image = image.resized(newsize=(new_width, new_height))
 
   # Center crop if needed
   if new_width >  resolution[0] or new_height >  resolution[1]:
@@ -193,10 +193,10 @@ def _create_still_image_clip(self, image_path, duration, text=None, text_positio
       def zoom_func(t):
           return zoom(t)
 
-      image = image.resize(zoom_func)
+      image = image.resized(zoom_func)
 
   # Set the duration
-  image = image.set_duration(duration)
+  image = image.with_duration(duration)
 
   # Add text if provided
   if text:
@@ -216,24 +216,24 @@ def _create_still_image_clip(self, image_path, duration, text=None, text_positio
           # Fallback to a simple text implementation if the V creator fails
           try:
               # Use the simpler built-in MoviePy TextClip without fancy effects
-              simple_txt_clip = TextClip(
-                  txt=text,
-                  fontsize=font_size,
+              simple_text_clip = TextClip(
+                  text=text,
+                  font_size=font_size,
+                  font=r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf",
                   color='white',
-                  align='center',
                   method='caption',
                   size=(int( resolution[0] * 0.9), None)
-              ).set_position(('center', int( resolution[1] * 0.85))).set_duration(duration)
+              ).with_position(('center', int( resolution[1] * 0.85))).with_duration(duration)
 
               # Create a semi-transparent background for better readability
-              txt_w, txt_h = simple_txt_clip.size
-              bg_width = txt_w + 40
-              bg_height = txt_h + 40
+              text_w, text_h = simple_text_clip.size
+              bg_width = text_w + 40
+              bg_height = text_h + 40
               bg_clip = ColorClip(size=(bg_width, bg_height), color=(0, 0, 0, 128))
-              bg_clip = bg_clip.set_position(('center', int( resolution[1] * 0.85) - 20)).set_duration(duration).set_opacity(0.7)
+              bg_clip = bg_clip.with_position(('center', int( resolution[1] * 0.85) - 20)).with_duration(duration).with_opacity(0.7)
 
               # Combine all elements
-              return CompositeVideoClip([image, bg_clip, simple_txt_clip], size= resolution)
+              return CompositeVideoClip([image, bg_clip, simple_text_clip], size= resolution)
           except Exception as e2:
               logger.error(f"Fallback text clip also failed: {e2}")
               # If all text methods fail, just return the image without text

@@ -37,6 +37,12 @@ logging.getLogger().handlers = []
 # Configure a single root logger
 root_logger = logging.getLogger()
 root_logger.setLevel(LOG_LEVEL)
+# Suppress MoviePy logs to avoid excessive output
+logging.getLogger('moviepy').setLevel(logging.ERROR)
+logging.getLogger('imageio').setLevel(logging.ERROR)
+logging.getLogger('imageio_ffmpeg').setLevel(logging.ERROR)
+# Also suppress PIL warnings (which are common with MoviePy 2.1.2)
+logging.getLogger('PIL').setLevel(logging.ERROR)
 
 # Define log format - simpler format without emojis to avoid encoding issues
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')

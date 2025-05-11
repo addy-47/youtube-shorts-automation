@@ -36,21 +36,21 @@ class AzureVoiceover:
         try:
             # Try to set the RTF threshold to 3.0 - higher than the default 2.0
             if hasattr(speechsdk.PropertyId, "SpeechServiceConnection_SynthesisRealTimeFactorThreshold"):
-                self.speech_config.set_property(
+                self.speech_config.with_property(
                     speechsdk.PropertyId.SpeechServiceConnection_SynthesisRealTimeFactorThreshold, "3.0"
                 )
                 logger.info("Set RTF threshold to 3.0")
 
             # Try to increase timeout from the default 3000 to 5000 milliseconds
             if hasattr(speechsdk.PropertyId, "SpeechServiceConnection_ReceiveFrameIntervalTimeout"):
-                self.speech_config.set_property(
+                self.speech_config.with_property(
                     speechsdk.PropertyId.SpeechServiceConnection_ReceiveFrameIntervalTimeout, "5000"
                 )
                 logger.info("Set receive frame interval timeout to 5000ms")
 
             # Try to increase the initial silence timeout
             if hasattr(speechsdk.PropertyId, "SpeechServiceConnection_InitialSilenceTimeoutMs"):
-                self.speech_config.set_property(
+                self.speech_config.with_property(
                     speechsdk.PropertyId.SpeechServiceConnection_InitialSilenceTimeoutMs, "10000"
                 )
                 logger.info("Set initial silence timeout to 10000ms")
@@ -149,7 +149,7 @@ class AzureVoiceover:
                             raise Exception(f"Failed to synthesize chunk {i}")
 
                     # Combine audio files using moviepy
-                    from moviepy.editor import concatenate_audioclips, AudioFileClip
+                    from moviepy  import concatenate_audioclips, AudioFileClip
 
                     audio_clips = [AudioFileClip(file) for file in temp_files]
                     concatenated = concatenate_audioclips(audio_clips)

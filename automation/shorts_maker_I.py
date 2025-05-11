@@ -8,7 +8,7 @@ import requests # for making HTTP requests
 import numpy as np # for numerical operations here used for rounding off
 import logging # for logging events
 from PIL import Image, ImageFilter, ImageDraw, ImageFont# for image processing
-from moviepy.editor import ( # for video editing
+from moviepy  import ( # for video editing
     VideoFileClip, VideoClip, TextClip, CompositeVideoClip,ImageClip,
     AudioFileClip, concatenate_videoclips, ColorClip, CompositeAudioClip
 )
@@ -24,8 +24,8 @@ from helper.text import TextHelper
 from helper.image import _generate_image_from_prompt, _create_still_image_clip
 from automation.shorts_maker_V import YTShortsCreator_V
 
-from moviepy.config import change_settings
-change_settings({"IMAGEMAGICK_BINARY": "magick"}) # for windows users
+# from moviepy.config import change_settings
+# change_settings({"IMAGEMAGICK_BINARY": "magick"}) # for windows users
 
 # Configure logging for easier debugging
 # Do NOT initialize basicConfig here - this will be handled by main.py
@@ -104,18 +104,18 @@ class YTShortsCreator_I:
         def slide_left_transition(clip, duration):
             def position_func(t):
                 return ((t/duration) * self.resolution[0] - clip.w if t < duration else 0, 'center')
-            return clip.set_position(position_func)
+            return clip.with_position(position_func)
 
         def zoom_in_transition(clip, duration):
             def size_func(t):
                 return max(1, 1 + 0.5 * min(t/duration, 1))
-            return clip.resize(size_func)
+            return clip.resized(size_func)
 
         # Define video transition effects between background segments
         def crossfade_transition(clip1, clip2, duration):
             return concatenate_videoclips([
-                clip1.set_end(clip1.duration),
-                clip2.set_start(0).crossfadein(duration)
+                clip1.with_end(clip1.duration),
+                clip2.with_start(0).cross_fadein(duration)
             ], padding=-duration, method="compose")
 
         def fade_black_transition(clip1, clip2, duration):
@@ -380,7 +380,7 @@ class YTShortsCreator_I:
 
                                     # Use minimum section duration for silent audio
                                     audio_clip = AudioClip(make_frame=make_frame, duration=min_section_duration)
-                                    audio_clip = audio_clip.set_fps(44100)
+                                    audio_clip = audio_clip.with_fps(44100)
                                     actual_duration = min_section_duration
 
                                 # Ensure minimum duration
@@ -497,10 +497,10 @@ class YTShortsCreator_I:
 
                                     # Create silent audio matching the intro duration
                                     silent_audio = AudioClip(make_frame=make_frame, duration=intro_duration)
-                                    silent_audio = silent_audio.set_fps(44100)
-                                    intro_clip = intro_clip.set_audio(silent_audio)
+                                    silent_audio = silent_audio.with_fps(44100)
+                                    intro_clip = intro_clip.with_audio(silent_audio)
                                 else:
-                                    intro_clip = intro_clip.set_audio(audio_clip)
+                                    intro_clip = intro_clip.with_audio(audio_clip)
                             except Exception as e:
                                 logger.error(f"Error setting audio for intro: {e}")
                             break
@@ -626,10 +626,10 @@ class YTShortsCreator_I:
 
                                         # Create silent audio matching the section duration
                                         silent_audio = AudioClip(make_frame=make_frame, duration=section_duration)
-                                        silent_audio = silent_audio.set_fps(44100)
-                                        section_clip = section_clip.set_audio(silent_audio)
+                                        silent_audio = silent_audio.with_fps(44100)
+                                        section_clip = section_clip.with_audio(silent_audio)
                                     else:
-                                        section_clip = section_clip.set_audio(audio_clip)
+                                        section_clip = section_clip.with_audio(audio_clip)
                                 except Exception as e:
                                     logger.error(f"Error setting audio for section {idx}: {e}")
                                 break
@@ -741,10 +741,10 @@ class YTShortsCreator_I:
 
                                 # Create silent audio matching the outro duration
                                 silent_audio = AudioClip(make_frame=make_frame, duration=outro_duration)
-                                silent_audio = silent_audio.set_fps(44100)
-                                outro_clip = outro_clip.set_audio(silent_audio)
+                                silent_audio = silent_audio.with_fps(44100)
+                                outro_clip = outro_clip.with_audio(silent_audio)
                             else:
-                                outro_clip = outro_clip.set_audio(audio_clip)
+                                outro_clip = outro_clip.with_audio(audio_clip)
                         except Exception as e:
                             logger.error(f"Error setting audio for outro: {e}")
                         break
@@ -814,7 +814,7 @@ class YTShortsCreator_I:
                 # Ensure we don't exceed maximum duration
                 if final_clip.duration > max_duration:
                     logger.warning(f"Video exceeds maximum duration ({final_clip.duration}s > {max_duration}s), trimming")
-                    final_clip = final_clip.subclip(0, max_duration)
+                    final_clip = final_clip.subclipped(0, max_duration)
 
                 # Add watermark if requested
                 if add_watermark_text:
@@ -845,7 +845,7 @@ class YTShortsCreator_I:
                 # Ensure we don't exceed maximum duration
                 if final_clip.duration > max_duration:
                     logger.warning(f"Video exceeds maximum duration ({final_clip.duration}s > {max_duration}s), trimming")
-                    final_clip = final_clip.subclip(0, max_duration)
+                    final_clip = final_clip.subclipped(0, max_duration)
 
                 # Add watermark if requested
                 if add_watermark_text:

@@ -9,7 +9,7 @@ import logging
 import tempfile
 import multiprocessing
 from tqdm import tqdm
-from moviepy.editor import VideoFileClip, concatenate_videoclips, CompositeVideoClip, AudioFileClip
+from moviepy  import VideoFileClip, concatenate_videoclips, CompositeVideoClip, AudioFileClip
 from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import gc
@@ -95,10 +95,10 @@ def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2,
                         clean_audio = AudioFileClip(temp_audio_path)
 
                         # Set audio to the exact duration of the clip to avoid sync issues
-                        clean_audio = clean_audio.set_duration(clip.duration)
+                        clean_audio = clean_audio.with_duration(clip.duration)
 
                         # Replace the clip's audio
-                        clip = clip.set_audio(clean_audio)
+                        clip = clip.with_audio(clean_audio)
                         logger.info(f"Successfully preprocessed audio")
                     except Exception as audio_load_err:
                         logger.error(f"Error loading clean audio: {audio_load_err}")
@@ -124,7 +124,7 @@ def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2,
                 "-maxrate", "8M",       # Higher max rate
                 "-b:a", "192k",         # Higher audio bitrate
                 "-ar", "48000",         # Audio sample rate
-                "-pix_fmt", "yuv420p"   # Compatible pixel format for all players
+                "-pix_fmt", "yuva420p"   # Compatible pixel format with alpha channel support
             ],
             logger=logger_setting  # None shows progress bar, "bar" hides it
         )
@@ -173,55 +173,55 @@ def prerender_complex_clip(clip, temp_dir, idx, fps):
         has_callable_pos = hasattr(clip, 'pos') and callable(clip.pos)
         has_callable_size = hasattr(clip, 'size') and callable(clip.size)
 
-        # Check if it's a composite with subclips needing fixes
-        has_complex_subclips = False
-        modified_subclips = []
+        # Check if it's a composite with subclippeds needing fixes
+        has_complex_subclippeds = False
+        modified_subclippeds = []
 
         if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips') and clip.clips:
-            # For each subclip, check if it has callable attributes
-            for subclip in clip.clips:
-                subclip_modified = False
-                fixed_subclip = subclip
+            # For each subclipped, check if it has callable attributes
+            for subclipped in clip.clips:
+                subclipped_modified = False
+                fixed_subclipped = subclipped
 
                 # Check and fix position
-                if hasattr(subclip, 'pos') and callable(subclip.pos):
+                if hasattr(subclipped, 'pos') and callable(subclipped.pos):
                     try:
                         # Sample the position at the middle of the duration
-                        mid_time = subclip.duration / 2
-                        mid_pos = subclip.pos(mid_time)
-                        fixed_subclip = subclip.set_position(mid_pos)
-                        subclip_modified = True
-                        logger.debug(f"Fixed callable position in subclip of clip {idx}")
+                        mid_time = subclipped.duration / 2
+                        mid_pos = subclipped.pos(mid_time)
+                        fixed_subclipped = subclipped.with_position(mid_pos)
+                        subclipped_modified = True
+                        logger.debug(f"Fixed callable position in subclipped of clip {idx}")
                     except Exception as e:
-                        logger.warning(f"Failed to fix callable position in subclip: {e}")
+                        logger.warning(f"Failed to fix callable position in subclipped: {e}")
                         # If fixing fails, use center position
-                        fixed_subclip = subclip.set_position('center')
-                        subclip_modified = True
+                        fixed_subclipped = subclipped.with_position('center')
+                        subclipped_modified = True
 
                 # Check and fix size
-                if hasattr(subclip, 'size') and callable(subclip.size):
+                if hasattr(subclipped, 'size') and callable(subclipped.size):
                     try:
                         # Sample the size at the middle of the duration
-                        mid_time = subclip.duration / 2
-                        mid_size = subclip.size(mid_time)
-                        fixed_subclip = fixed_subclip.resize(mid_size)
-                        subclip_modified = True
-                        logger.debug(f"Fixed callable size in subclip of clip {idx}")
+                        mid_time = subclipped.duration / 2
+                        mid_size = subclipped.size(mid_time)
+                        fixed_subclipped = fixed_subclipped.resized(mid_size)
+                        subclipped_modified = True
+                        logger.debug(f"Fixed callable size in subclipped of clip {idx}")
                     except Exception as e:
-                        logger.warning(f"Failed to fix callable size in subclip: {e}")
+                        logger.warning(f"Failed to fix callable size in subclipped: {e}")
 
-                # Add the subclip to our list (fixed or original)
-                modified_subclips.append(fixed_subclip)
+                # Add the subclipped to our list (fixed or original)
+                modified_subclippeds.append(fixed_subclipped)
 
-                # Track if any subclips were modified
-                has_complex_subclips = has_complex_subclips or subclip_modified
+                # Track if any subclippeds were modified
+                has_complex_subclippeds = has_complex_subclippeds or subclipped_modified
 
-            # Only recreate the composite if any subclips were modified
-            if has_complex_subclips:
+            # Only recreate the composite if any subclippeds were modified
+            if has_complex_subclippeds:
                 needs_cleaning = True
                 try:
-                    modified_clip = CompositeVideoClip(modified_subclips, size=clip.size)
-                    logger.info(f"Created new composite clip with fixed subclips for clip {idx}")
+                    modified_clip = CompositeVideoClip(modified_subclippeds, size=clip.size)
+                    logger.info(f"Created new composite clip with fixed subclippeds for clip {idx}")
                 except Exception as e:
                     logger.warning(f"Failed to recreate composite clip: {e}")
                     modified_clip = None
@@ -238,18 +238,18 @@ def prerender_complex_clip(clip, temp_dir, idx, fps):
                     try:
                         mid_time = base_clip.duration / 2
                         mid_pos = base_clip.pos(mid_time)
-                        base_clip = base_clip.set_position(mid_pos)
+                        base_clip = base_clip.with_position(mid_pos)
                         logger.debug(f"Fixed callable position in main clip {idx}")
                     except Exception as e:
                         logger.warning(f"Failed to fix callable position in main clip: {e}")
-                        base_clip = base_clip.set_position('center')
+                        base_clip = base_clip.with_position('center')
 
                 # Fix size if needed
                 if has_callable_size:
                     try:
                         mid_time = base_clip.duration / 2
                         mid_size = base_clip.size(mid_time)
-                        base_clip = base_clip.resize(mid_size)
+                        base_clip = base_clip.resized(mid_size)
                         logger.debug(f"Fixed callable size in main clip {idx}")
                     except Exception as e:
                         logger.warning(f"Failed to fix callable size in main clip: {e}")
@@ -366,7 +366,7 @@ def process_clip_for_parallel(task):
     try:
         # Handle both old-style and new-style task parameters
         if len(task) >= 7:  # Old style (clip, output_path, fps, preset, threads, idx, is_prerendered)
-            clip, output_path, fps_val, preset_val, threads_val, idx, is_prerendered = task
+            clip, output_path, fps_val, prewith_val, threads_val, idx, is_prerendered = task
             logger.info(f"Starting render of clip {idx} to {output_path}")
 
             # If clip is already pre-rendered, just load and render it
@@ -374,7 +374,7 @@ def process_clip_for_parallel(task):
                 try:
                     if isinstance(clip, str) and os.path.exists(clip):
                         pre_clip = VideoFileClip(clip)
-                        result = render_clip_segment(pre_clip, output_path, fps_val, preset_val, threads_val)
+                        result = render_clip_segment(pre_clip, output_path, fps_val, prewith_val, threads_val)
                         try:
                             pre_clip.close()
                         except:
@@ -385,7 +385,7 @@ def process_clip_for_parallel(task):
                     return None
 
             # For normal clips, render directly
-            return render_clip_segment(clip, output_path, fps_val, preset_val, threads_val)
+            return render_clip_segment(clip, output_path, fps_val, prewith_val, threads_val)
 
         elif len(task) >= 4:  # New style (task_idx, clip, output_path, fps, [results])
             task_idx, clip, output_path, fps = task[:4]
@@ -436,15 +436,15 @@ def create_static_clip_version(clip):
     if hasattr(clip, 'pos') and callable(clip.pos):
         try:
             mid_pos = clip.pos(clip.duration / 2)
-            clip = clip.set_position(mid_pos)
+            clip = clip.with_position(mid_pos)
         except:
-            clip = clip.set_position('center')
+            clip = clip.with_position('center')
 
     # Fix sizes if needed
     if hasattr(clip, 'size') and callable(clip.size):
         try:
             mid_size = clip.size(clip.duration / 2)
-            clip = clip.resize(mid_size)
+            clip = clip.resized(mid_size)
         except:
             pass
 
@@ -473,13 +473,13 @@ def is_complex_clip(clip):
     if hasattr(clip, 'size') and callable(clip.size):
         return True
 
-    # Check if it's a composite clip with subclips
+    # Check if it's a composite clip with subclippeds
     if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips') and clip.clips:
-        # Check each subclip for complexity
-        for subclip in clip.clips:
-            if hasattr(subclip, 'pos') and callable(subclip.pos):
+        # Check each subclipped for complexity
+        for subclipped in clip.clips:
+            if hasattr(subclipped, 'pos') and callable(subclipped.pos):
                 return True
-            if hasattr(subclip, 'size') and callable(subclip.size):
+            if hasattr(subclipped, 'size') and callable(subclipped.size):
                 return True
 
     # Check for custom attributes that might cause serialization issues
@@ -578,15 +578,15 @@ def render_clip_process(mp_tuple):
                     except:
                         pass
 
-                # If it's a composite clip, close subclips
+                # If it's a composite clip, close subclippeds
                 if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips'):
-                    for subclip in clip.clips:
+                    for subclipped in clip.clips:
                         try:
-                            if hasattr(subclip, 'close'):
-                                subclip.close()
-                            # Close audio of subclips too
-                            if hasattr(subclip, 'audio') and subclip.audio is not None:
-                                subclip.audio.close()
+                            if hasattr(subclipped, 'close'):
+                                subclipped.close()
+                            # Close audio of subclippeds too
+                            if hasattr(subclipped, 'audio') and subclipped.audio is not None:
+                                subclipped.audio.close()
                         except:
                             pass
             except Exception as e:
@@ -615,14 +615,14 @@ def render_clip_process(mp_tuple):
                 except:
                     pass
 
-            # If it's a composite clip, close all subclips
+            # If it's a composite clip, close all subclippeds
             if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips'):
-                for subclip in clip.clips:
+                for subclipped in clip.clips:
                     try:
-                        if hasattr(subclip, 'close'):
-                            subclip.close()
-                        if hasattr(subclip, 'audio') and subclip.audio is not None:
-                            subclip.audio.close()
+                        if hasattr(subclipped, 'close'):
+                            subclipped.close()
+                        if hasattr(subclipped, 'audio') and subclipped.audio is not None:
+                            subclipped.audio.close()
                     except:
                         pass
         except:
@@ -898,11 +898,11 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
                 "-i", concat_list_path,
                 "-c:v", final_codec,
                 "-preset", final_preset,
-                "-crf", "23",  # Higher quality for final output
-                "-pix_fmt", "yuv420p",
-                "-max_muxing_queue_size", "9999",  # Prevent muxing queue issues
+                "-crf", "23",  # Default quality (lower is better)
+                "-pix_fmt", "yuva420p",  # Compatibility with alpha channel support
+                "-max_muxing_queue_size", "9999",  # Prevent queue overflow errors
                 "-c:a", audio_codec,
-                "-b:a", "192k",
+                "-b:a", "192k",  # Higher audio bitrate for better quality
                 output_file
             ]
 

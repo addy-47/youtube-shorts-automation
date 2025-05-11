@@ -244,9 +244,9 @@ class ThumbnailGenerator:
             img = Image.open(image_path)
             logger.info(f"Base image size: {img.size}")
 
-            # Resize to YouTube thumbnail dimensions
-            img = img.resize(self.thumbnail_size, Image.LANCZOS)
-            logger.info(f"Resized image to YouTube thumbnail dimensions: {self.thumbnail_size}")
+            # resized to YouTube thumbnail dimensions
+            img = img.resized(self.thumbnail_size, Image.LANCZOS)
+            logger.info(f"resizedd image to YouTube thumbnail dimensions: {self.thumbnail_size}")
 
             # Convert to RGBA to support transparency for overlay
             img = img.convert("RGBA")

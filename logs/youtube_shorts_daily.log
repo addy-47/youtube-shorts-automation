@@ -1,13 +1,437 @@
-2025-05-04 21:15:15,172 - INFO - __main__ - Day 124: Using image-based creator (YTShortsCreator_I)
-2025-05-04 21:15:15,217 - INFO - automation.shorts_maker_I - Enhanced parallel rendering available with dill 0.3.9
-2025-05-04 21:15:15,218 - ERROR - __main__ - Process failed: YTShortsCreator_V.__init__() got an unexpected keyword argument 'output_dir'
-2025-05-04 21:15:15,221 - ERROR - __main__ - Detailed error trace: Traceback (most recent call last):
-  File "D:\youtube-shorts-automation\main.py", line 264, in main
-    creator_type = get_creator_for_day()
-  File "D:\youtube-shorts-automation\main.py", line 68, in get_creator_for_day
-    return YTShortsCreator_I()
-  File "D:\youtube-shorts-automation\automation\shorts_maker_I.py", line 73, in __init__
-    self.v_creator = YTShortsCreator_V(output_dir=output_dir, fps=fps)
-                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-TypeError: YTShortsCreator_V.__init__() got an unexpected keyword argument 'output_dir'
+2025-05-11 22:44:02,761 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-05-11 22:44:02,794 - INFO - automation.shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
+2025-05-11 22:44:03,054 - INFO - automation.shorts_maker_V - Google Cloud TTS initialized successfully
+2025-05-11 22:44:04,757 - INFO - __main__ - Generating comprehensive content for : Amazon is selling a 'reliable' $200 smartwatch for $30, and buyers say it does 'everything' an 'Apple Watch does' - TheStreet
+2025-05-11 22:44:09,500 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-11 22:44:09,519 - INFO - automation.content_generator - Successfully generated comprehensive content package:
+2025-05-11 22:44:09,519 - INFO - automation.content_generator - Title: Unbelievable $30 Smartwatch vs. Apple Watch!
+2025-05-11 22:44:09,519 - INFO - automation.content_generator - Script length: 71 words
+2025-05-11 22:44:09,520 - INFO - automation.content_generator - Thumbnail HF prompt: An eye-catching smartwatch with a vibrant display ...
+2025-05-11 22:44:09,520 - INFO - automation.content_generator - Thumbnail Unsplash query: smartwatch on table
+2025-05-11 22:44:09,520 - INFO - __main__ - Content package generated successfully:
+2025-05-11 22:44:09,520 - INFO - __main__ - Title: LazyCreator presents: Unbelievable $30 Smartwatch vs. Apple Watch!
+2025-05-11 22:44:09,520 - INFO - __main__ - Description length: 140 characters
+2025-05-11 22:44:09,520 - INFO - __main__ - Raw script generated successfully
+2025-05-11 22:44:09,521 - INFO - helper.minor_helper - Parsed script into 7 sentences
+2025-05-11 22:44:09,521 - INFO - helper.minor_helper - Added sentence 0 to cards: 'A $200 smartwatch for just $30...' (duration: 5s)
+2025-05-11 22:44:09,521 - INFO - helper.minor_helper - Added sentence 1 to cards: 'Yes, you heard that right!...' (duration: 3s)
+2025-05-11 22:44:09,521 - INFO - helper.minor_helper - Added sentence 2 to cards: 'Amazon is selling a budget-fri...' (duration: 5s)
+2025-05-11 22:44:09,522 - INFO - helper.minor_helper - Added sentence 3 to cards: 'From tracking your fitness to ...' (duration: 5s)
+2025-05-11 22:44:09,522 - INFO - helper.minor_helper - Added sentence 4 to cards: 'Why pay more when you can get ...' (duration: 5s)
+2025-05-11 22:44:09,522 - INFO - helper.minor_helper - Added sentence 5 to cards: 'Don't miss out on this deal!...' (duration: 3s)
+2025-05-11 22:44:09,523 - INFO - helper.minor_helper - Added sentence 6 to cards: 'Check it out now and see why e...' (duration: 5s)
+2025-05-11 22:44:09,523 - INFO - helper.minor_helper - Created 7 script cards
+2025-05-11 22:44:09,524 - INFO - __main__ - Script parsed into 7 sections
+2025-05-11 22:44:09,524 - INFO - __main__ - Section 1: A $200 smartwatch for just $30... (duration: 5s)
+2025-05-11 22:44:09,525 - INFO - __main__ - Section 2: Yes, you heard that right!... (duration: 3s)
+2025-05-11 22:44:09,525 - INFO - __main__ - Section 3: Amazon is selling a budget-fri... (duration: 5s)
+2025-05-11 22:44:09,526 - INFO - __main__ - Section 4: From tracking your fitness to ... (duration: 5s)
+2025-05-11 22:44:09,526 - INFO - __main__ - Section 5: Why pay more when you can get ... (duration: 5s)
+2025-05-11 22:44:09,526 - INFO - __main__ - Section 6: Don't miss out on this deal!... (duration: 3s)
+2025-05-11 22:44:09,526 - INFO - __main__ - Section 7: Check it out now and see why e... (duration: 5s)
+2025-05-11 22:44:09,527 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Unbelievable $30 Smartwatch vs. Apple Watch!'
+2025-05-11 22:44:09,527 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
+2025-05-11 22:44:09,527 - INFO - __main__ - Section 0: 'LazyCreator presents: Unbeliev...' (duration: 3s)
+2025-05-11 22:44:09,528 - INFO - __main__ - Section 1: 'A $200 smartwatch for just $30...' (duration: 5s)
+2025-05-11 22:44:09,528 - INFO - __main__ - Section 2: 'Yes, you heard that right!...' (duration: 3s)
+2025-05-11 22:44:09,529 - INFO - __main__ - Section 3: 'Amazon is selling a budget-fri...' (duration: 5s)
+2025-05-11 22:44:09,529 - INFO - __main__ - Section 4: 'From tracking your fitness to ...' (duration: 5s)
+2025-05-11 22:44:09,530 - INFO - __main__ - Section 5: 'Why pay more when you can get ...' (duration: 5s)
+2025-05-11 22:44:09,530 - INFO - __main__ - Section 6: 'Don't miss out on this deal!...' (duration: 3s)
+2025-05-11 22:44:09,531 - INFO - __main__ - Section 7: 'Check it out now and see why e...' (duration: 5s)
+2025-05-11 22:44:09,532 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
+2025-05-11 22:44:09,532 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-05-11 22:44:12,080 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-11 22:44:12,082 - INFO - automation.content_generator - Successfully generated batch video queries for 8 sections.
+2025-05-11 22:44:12,082 - INFO - __main__ - Section queries: 1: smartwatch comparison, 2: budget smartwatch deal, 3: surprised reaction, 4: affordable smartwatch features, 5: fitness tracking notifications, 6: cost-effective technology, 7: limited time offer, 8: customer reviews smartwatch
+2025-05-11 22:44:12,083 - INFO - __main__ - Creating YouTube Short
+2025-05-11 22:44:12,083 - INFO - helper.minor_helper - Starting YouTube short creation
+2025-05-11 22:44:12,083 - INFO - automation.shorts_maker_V - Scaling durations by factor 0.74 to fit max duration of 25s
+2025-05-11 22:44:12,084 - INFO - automation.shorts_maker_V - Total video duration: 25.0s
+2025-05-11 22:44:12,084 - INFO - automation.shorts_maker_V - Creating video with 6 background segments for middle sections
+2025-05-11 22:44:12,084 - INFO - automation.shorts_maker_V - Starting background video fetch
+2025-05-11 22:44:12,084 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-11 22:44:14,402 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-11 22:44:18,044 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-11 22:44:21,615 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-11 22:44:23,723 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-11 22:44:28,983 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-11 22:44:32,960 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-11 22:44:36,791 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-11 22:44:41,392 - INFO - automation.shorts_maker_V - Completed background video fetch in 29.31 seconds
+2025-05-11 22:44:41,392 - INFO - automation.shorts_maker_V - Starting TTS audio generation
+2025-05-11 22:44:42,114 - INFO - automation.voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpzb9lneos\section_0.mp3]
+2025-05-11 22:44:42,650 - INFO - automation.voiceover - Speech synthesized for text [A $200 smartwatch fo...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpzb9lneos\section_1.mp3]
+2025-05-11 22:44:43,298 - INFO - automation.voiceover - Speech synthesized for text [Yes, you heard that ...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpzb9lneos\section_2.mp3]
+2025-05-11 22:44:43,758 - INFO - automation.voiceover - Speech synthesized for text [Amazon is selling a ...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpzb9lneos\section_3.mp3]
+2025-05-11 22:44:44,446 - INFO - automation.voiceover - Speech synthesized for text [From tracking your f...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpzb9lneos\section_4.mp3]
+2025-05-11 22:44:45,159 - INFO - automation.voiceover - Speech synthesized for text [Why pay more when yo...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpzb9lneos\section_5.mp3]
+2025-05-11 22:44:45,601 - INFO - automation.voiceover - Speech synthesized for text [Don't miss out on th...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpzb9lneos\section_6.mp3]
+2025-05-11 22:44:45,989 - INFO - automation.voiceover - Speech synthesized for text [Check it out now and...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpzb9lneos\section_7.mp3]
+2025-05-11 22:44:46,138 - INFO - automation.shorts_maker_V - Completed TTS audio generation in 4.74 seconds
+2025-05-11 22:44:46,138 - INFO - automation.shorts_maker_V - Updated total duration: 27.22s
+2025-05-11 22:44:46,139 - INFO - automation.shorts_maker_V - Starting background processing
+2025-05-11 22:44:55,653 - ERROR - automation.shorts_maker_V - Error processing background clip 0: 'VideoFileClip' object has no attribute 'crop'
+2025-05-11 22:45:07,361 - ERROR - automation.shorts_maker_V - Error processing background clip 2: 'VideoFileClip' object has no attribute 'crop'
+2025-05-11 22:45:17,875 - ERROR - automation.shorts_maker_V - Error processing background clip 5: 'VideoFileClip' object has no attribute 'crop'
+2025-05-11 22:45:22,325 - INFO - automation.shorts_maker_V - Completed background processing in 36.18 seconds
+2025-05-11 22:45:22,980 - ERROR - automation.shorts_maker_V - Error creating section 0: 'CompositeVideoClip' object has no attribute 'cross_fadein'
+2025-05-11 22:45:23,439 - ERROR - automation.shorts_maker_V - Error in create_youtube_short: TextClip.__init__() got multiple values for argument 'font'
+2025-05-11 22:45:23,500 - ERROR - __main__ - Error generating YouTube Short: TextClip.__init__() got multiple values for argument 'font'
+2025-05-11 22:45:23,501 - ERROR - __main__ - Error generating YouTube Short: TextClip.__init__() got multiple values for argument 'font'
+2025-05-11 22:45:23,760 - ERROR - __main__ - Detailed error: Traceback (most recent call last):
+  File "D:\youtube-shorts-automation\automation\shorts_maker_V.py", line 409, in create_youtube_short
+    text_clip = self.text_helper._create_text_clip(
+        section['text'],
+    ...<4 lines>...
+        position=('center', 'center')
+    )
+  File "D:\youtube-shorts-automation\helper\minor_helper.py", line 29, in wrapper
+    result = func(*args, **kwargs)
+  File "D:\youtube-shorts-automation\helper\text.py", line 152, in _create_text_clip
+    text_composite = anim_func(text_composite, animation_duration)
+  File "D:\youtube-shorts-automation\helper\text.py", line 25, in <lambda>
+    "fade": lambda clip, duration: clip.cross_fadein(duration),
+                                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'CompositeVideoClip' object has no attribute 'cross_fadein'
 
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\youtube-shorts-automation\main.py", line 279, in main
+    result = generate_youtube_short(
+        topic,
+    ...<2 lines>...
+        creator_type=creator_type
+    )
+  File "D:\youtube-shorts-automation\main.py", line 177, in generate_youtube_short
+    video_path = creator_type.create_youtube_short(
+        title=title,  # Use the generated title
+    ...<8 lines>...
+        edge_blur=False
+    )
+  File "D:\youtube-shorts-automation\helper\minor_helper.py", line 23, in wrapper
+    result = func(*args, **kwargs)
+  File "D:\youtube-shorts-automation\automation\shorts_maker_V.py", line 447, in create_youtube_short
+    error_text = TextClip(
+                 ~~~~~~~~^
+        "Error loading section",
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        method='caption'
+        ^^^^^^^^^^^^^^^^
+    ).with_duration(fallback_duration)
+    ^
+TypeError: TextClip.__init__() got multiple values for argument 'font'
+
+2025-05-11 22:45:23,762 - ERROR - __main__ - Process failed: TextClip.__init__() got multiple values for argument 'font'
+2025-05-11 22:45:23,770 - ERROR - __main__ - Detailed error trace: Traceback (most recent call last):
+  File "D:\youtube-shorts-automation\automation\shorts_maker_V.py", line 409, in create_youtube_short
+    text_clip = self.text_helper._create_text_clip(
+        section['text'],
+    ...<4 lines>...
+        position=('center', 'center')
+    )
+  File "D:\youtube-shorts-automation\helper\minor_helper.py", line 29, in wrapper
+    result = func(*args, **kwargs)
+  File "D:\youtube-shorts-automation\helper\text.py", line 152, in _create_text_clip
+    text_composite = anim_func(text_composite, animation_duration)
+  File "D:\youtube-shorts-automation\helper\text.py", line 25, in <lambda>
+    "fade": lambda clip, duration: clip.cross_fadein(duration),
+                                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'CompositeVideoClip' object has no attribute 'cross_fadein'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\youtube-shorts-automation\main.py", line 279, in main
+    result = generate_youtube_short(
+        topic,
+    ...<2 lines>...
+        creator_type=creator_type
+    )
+  File "D:\youtube-shorts-automation\main.py", line 177, in generate_youtube_short
+    video_path = creator_type.create_youtube_short(
+        title=title,  # Use the generated title
+    ...<8 lines>...
+        edge_blur=False
+    )
+  File "D:\youtube-shorts-automation\helper\minor_helper.py", line 23, in wrapper
+    result = func(*args, **kwargs)
+  File "D:\youtube-shorts-automation\automation\shorts_maker_V.py", line 447, in create_youtube_short
+    error_text = TextClip(
+                 ~~~~~~~~^
+        "Error loading section",
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        method='caption'
+        ^^^^^^^^^^^^^^^^
+    ).with_duration(fallback_duration)
+    ^
+TypeError: TextClip.__init__() got multiple values for argument 'font'
+
+2025-05-11 23:03:15,994 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-05-11 23:03:16,042 - INFO - automation.shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
+2025-05-11 23:03:16,474 - INFO - automation.shorts_maker_V - Google Cloud TTS initialized successfully
+2025-05-11 23:03:17,757 - INFO - __main__ - Generating comprehensive content for : Nintendo Issues Statement On Mario Kart World AI Image Speculation - GameSpot
+2025-05-11 23:03:22,342 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-11 23:03:22,357 - INFO - automation.content_generator - Successfully generated comprehensive content package:
+2025-05-11 23:03:22,357 - INFO - automation.content_generator - Title: Nintendo Clarifies Mario Kart AI Image Rumors!
+2025-05-11 23:03:22,357 - INFO - automation.content_generator - Script length: 66 words
+2025-05-11 23:03:22,357 - INFO - automation.content_generator - Thumbnail HF prompt: A vibrant collage featuring iconic Mario Kart char...
+2025-05-11 23:03:22,357 - INFO - automation.content_generator - Thumbnail Unsplash query: Mario Kart racing
+2025-05-11 23:03:22,358 - INFO - __main__ - Content package generated successfully:
+2025-05-11 23:03:22,358 - INFO - __main__ - Title: LazyCreator presents: Nintendo Clarifies Mario Kart AI Image Rumors!
+2025-05-11 23:03:22,358 - INFO - __main__ - Description length: 147 characters
+2025-05-11 23:03:22,358 - INFO - __main__ - Raw script generated successfully
+2025-05-11 23:03:22,359 - INFO - helper.minor_helper - Parsed script into 6 sentences
+2025-05-11 23:03:22,359 - INFO - helper.minor_helper - Added sentence 0 to cards: 'Nintendo has officially addres...' (duration: 5s)
+2025-05-11 23:03:22,359 - INFO - helper.minor_helper - Added sentence 1 to cards: 'Fans were buzzing about potent...' (duration: 5s)
+2025-05-11 23:03:22,359 - INFO - helper.minor_helper - Added sentence 2 to cards: 'The company clarified that the...' (duration: 5s)
+2025-05-11 23:03:22,360 - INFO - helper.minor_helper - Added sentence 3 to cards: 'So, what does this mean for th...' (duration: 5s)
+2025-05-11 23:03:22,361 - INFO - helper.minor_helper - Added sentence 4 to cards: 'Stay tuned for more updates st...' (duration: 5s)
+2025-05-11 23:03:22,361 - INFO - helper.minor_helper - Added sentence 5 to cards: 'Don't forget to like and subsc...' (duration: 5s)
+2025-05-11 23:03:22,362 - INFO - helper.minor_helper - Created 6 script cards
+2025-05-11 23:03:22,362 - INFO - __main__ - Script parsed into 6 sections
+2025-05-11 23:03:22,363 - INFO - __main__ - Section 1: Nintendo has officially addres... (duration: 5s)
+2025-05-11 23:03:22,364 - INFO - __main__ - Section 2: Fans were buzzing about potent... (duration: 5s)
+2025-05-11 23:03:22,365 - INFO - __main__ - Section 3: The company clarified that the... (duration: 5s)
+2025-05-11 23:03:22,365 - INFO - __main__ - Section 4: So, what does this mean for th... (duration: 5s)
+2025-05-11 23:03:22,365 - INFO - __main__ - Section 5: Stay tuned for more updates st... (duration: 5s)
+2025-05-11 23:03:22,366 - INFO - __main__ - Section 6: Don't forget to like and subsc... (duration: 5s)
+2025-05-11 23:03:22,367 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Nintendo Clarifies Mario Kart AI Image Rumors!'
+2025-05-11 23:03:22,367 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
+2025-05-11 23:03:22,368 - INFO - __main__ - Section 0: 'LazyCreator presents: Nintendo...' (duration: 3s)
+2025-05-11 23:03:22,368 - INFO - __main__ - Section 1: 'Nintendo has officially addres...' (duration: 5s)
+2025-05-11 23:03:22,369 - INFO - __main__ - Section 2: 'Fans were buzzing about potent...' (duration: 5s)
+2025-05-11 23:03:22,369 - INFO - __main__ - Section 3: 'The company clarified that the...' (duration: 5s)
+2025-05-11 23:03:22,369 - INFO - __main__ - Section 4: 'So, what does this mean for th...' (duration: 5s)
+2025-05-11 23:03:22,369 - INFO - __main__ - Section 5: 'Stay tuned for more updates st...' (duration: 5s)
+2025-05-11 23:03:22,370 - INFO - __main__ - Section 6: 'Don't forget to like and subsc...' (duration: 5s)
+2025-05-11 23:03:22,370 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
+2025-05-11 23:03:22,370 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-05-11 23:03:23,980 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-11 23:03:23,982 - INFO - automation.content_generator - Successfully generated batch video queries for 7 sections.
+2025-05-11 23:03:23,983 - INFO - __main__ - Section queries: 1: Nintendo Mario Kart news, 2: AI image speculation, 3: gaming updates excitement, 4: no new releases, 5: future of Mario Kart, 6: Nintendo updates, 7: gaming news subscribe
+2025-05-11 23:03:23,983 - INFO - __main__ - Creating YouTube Short
+2025-05-11 23:03:23,983 - INFO - helper.minor_helper - Starting YouTube short creation
+2025-05-11 23:03:23,983 - INFO - automation.shorts_maker_V - Scaling durations by factor 0.76 to fit max duration of 25s
+2025-05-11 23:03:23,984 - INFO - automation.shorts_maker_V - Total video duration: 25.0s
+2025-05-11 23:03:23,984 - INFO - automation.shorts_maker_V - Creating video with 5 background segments for middle sections
+2025-05-11 23:03:23,984 - INFO - automation.shorts_maker_V - Starting background video fetch
+2025-05-11 23:03:23,984 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-11 23:03:34,707 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-11 23:03:45,715 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-11 23:03:50,110 - INFO - helper.fetch - Fetching 1 videos using pixabay API
+2025-05-11 23:03:57,034 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-11 23:03:59,919 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-11 23:04:02,828 - INFO - helper.fetch - Fetching 1 videos using pexels API
+2025-05-11 23:04:04,864 - INFO - automation.shorts_maker_V - Completed background video fetch in 40.88 seconds
+2025-05-11 23:04:04,864 - INFO - automation.shorts_maker_V - Starting TTS audio generation
+2025-05-11 23:04:05,237 - INFO - automation.voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\section_0.mp3]
+2025-05-11 23:04:05,848 - INFO - automation.voiceover - Speech synthesized for text [Nintendo has officia...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\section_1.mp3]
+2025-05-11 23:04:06,250 - INFO - automation.voiceover - Speech synthesized for text [Fans were buzzing ab...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\section_2.mp3]
+2025-05-11 23:04:06,664 - INFO - automation.voiceover - Speech synthesized for text [The company clarifie...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\section_3.mp3]
+2025-05-11 23:04:07,098 - INFO - automation.voiceover - Speech synthesized for text [So, what does this m...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\section_4.mp3]
+2025-05-11 23:04:07,512 - INFO - automation.voiceover - Speech synthesized for text [Stay tuned for more ...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\section_5.mp3]
+2025-05-11 23:04:07,898 - INFO - automation.voiceover - Speech synthesized for text [Don't forget to like...] and saved to [C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\section_6.mp3]
+2025-05-11 23:04:08,050 - INFO - automation.shorts_maker_V - Completed TTS audio generation in 3.19 seconds
+2025-05-11 23:04:08,050 - INFO - automation.shorts_maker_V - Updated total duration: 27.259999999999998s
+2025-05-11 23:04:08,051 - INFO - automation.shorts_maker_V - Starting background processing
+2025-05-11 23:04:12,067 - ERROR - automation.shorts_maker_V - Error processing background clip 1: 'VideoFileClip' object has no attribute 'crop'
+2025-05-11 23:04:21,300 - ERROR - automation.shorts_maker_V - Error processing background clip 3: 'VideoFileClip' object has no attribute 'crop'
+2025-05-11 23:04:32,311 - ERROR - automation.shorts_maker_V - Error processing background clip 4: 'VideoFileClip' object has no attribute 'crop'
+2025-05-11 23:04:34,651 - INFO - automation.shorts_maker_V - Completed background processing in 26.60 seconds
+2025-05-11 23:04:39,634 - INFO - automation.shorts_maker_V - Adding validated clip 0: 'LazyCreator presents: Nintendo...'
+2025-05-11 23:04:39,636 - INFO - automation.shorts_maker_V - Adding validated clip 1: 'Nintendo has officially addres...'
+2025-05-11 23:04:39,637 - INFO - automation.shorts_maker_V - Adding validated clip 2: 'Fans were buzzing about potent...'
+2025-05-11 23:04:39,637 - INFO - automation.shorts_maker_V - Adding validated clip 3: 'The company clarified that the...'
+2025-05-11 23:04:39,638 - INFO - automation.shorts_maker_V - Adding validated clip 4: 'So, what does this mean for th...'
+2025-05-11 23:04:39,638 - INFO - automation.shorts_maker_V - Adding validated clip 5: 'Stay tuned for more updates st...'
+2025-05-11 23:04:39,639 - INFO - automation.shorts_maker_V - Adding validated clip 6: 'Don't forget to like and subsc...'
+2025-05-11 23:04:39,639 - INFO - automation.shorts_maker_V - === CLIP ORDER BEFORE RENDERING ===
+2025-05-11 23:04:39,639 - INFO - automation.shorts_maker_V - Position 0: Section 0 - 'LazyCreator presents: Nintendo...'
+2025-05-11 23:04:39,640 - INFO - automation.shorts_maker_V - Position 1: Section 1 - 'Nintendo has officially addres...'
+2025-05-11 23:04:39,640 - INFO - automation.shorts_maker_V - Position 2: Section 2 - 'Fans were buzzing about potent...'
+2025-05-11 23:04:39,640 - INFO - automation.shorts_maker_V - Position 3: Section 3 - 'The company clarified that the...'
+2025-05-11 23:04:39,641 - INFO - automation.shorts_maker_V - Position 4: Section 4 - 'So, what does this mean for th...'
+2025-05-11 23:04:39,641 - INFO - automation.shorts_maker_V - Position 5: Section 5 - 'Stay tuned for more updates st...'
+2025-05-11 23:04:39,642 - INFO - automation.shorts_maker_V - Position 6: Section 6 - 'Don't forget to like and subsc...'
+2025-05-11 23:04:39,642 - INFO - automation.shorts_maker_V - === END CLIP ORDER LOG ===
+2025-05-11 23:04:39,766 - INFO - automation.shorts_maker_V - Using parallel renderer for improved performance
+2025-05-11 23:04:39,767 - INFO - automation.shorts_maker_V - Found dill 0.3.9 for improved serialization
+2025-05-11 23:04:39,768 - INFO - automation.shorts_maker_V - Sorting clips by their section index before rendering
+2025-05-11 23:04:39,768 - INFO - automation.shorts_maker_V - === CLIP ORDER AFTER SORTING ===
+2025-05-11 23:04:39,769 - INFO - automation.shorts_maker_V - Position 0: Section 0 - 'LazyCreator presents: Nintendo...'
+2025-05-11 23:04:39,769 - INFO - automation.shorts_maker_V - Position 1: Section 1 - 'Nintendo has officially addres...'
+2025-05-11 23:04:39,769 - INFO - automation.shorts_maker_V - Position 2: Section 2 - 'Fans were buzzing about potent...'
+2025-05-11 23:04:39,770 - INFO - automation.shorts_maker_V - Position 3: Section 3 - 'The company clarified that the...'
+2025-05-11 23:04:39,770 - INFO - automation.shorts_maker_V - Position 4: Section 4 - 'So, what does this mean for th...'
+2025-05-11 23:04:39,771 - INFO - automation.shorts_maker_V - Position 5: Section 5 - 'Stay tuned for more updates st...'
+2025-05-11 23:04:39,771 - INFO - automation.shorts_maker_V - Position 6: Section 6 - 'Don't forget to like and subsc...'
+2025-05-11 23:04:39,771 - INFO - automation.shorts_maker_V - === END SORTED CLIP ORDER LOG ===
+2025-05-11 23:04:39,772 - INFO - automation.shorts_maker_V - Setting clip 0 debug info: Section 0: LazyCreator presents: Nintendo...
+2025-05-11 23:04:39,772 - INFO - automation.shorts_maker_V - Setting clip 1 debug info: Section 1: Nintendo has officially addres...
+2025-05-11 23:04:39,773 - INFO - automation.shorts_maker_V - Setting clip 2 debug info: Section 2: Fans were buzzing about potent...
+2025-05-11 23:04:39,773 - INFO - automation.shorts_maker_V - Setting clip 3 debug info: Section 3: The company clarified that the...
+2025-05-11 23:04:39,774 - INFO - automation.shorts_maker_V - Setting clip 4 debug info: Section 4: So, what does this mean for th...
+2025-05-11 23:04:39,775 - INFO - automation.shorts_maker_V - Setting clip 5 debug info: Section 5: Stay tuned for more updates st...
+2025-05-11 23:04:39,775 - INFO - automation.shorts_maker_V - Setting clip 6 debug info: Section 6: Don't forget to like and subsc...
+2025-05-11 23:04:39,777 - INFO - automation.shorts_maker_V - Rendering 7 clips in parallel using 7 processes with preset: veryfast
+2025-05-11 23:04:39,778 - INFO - automation.shorts_maker_V - === SECTION INFO RECEIVED BY PARALLEL RENDERER ===
+2025-05-11 23:04:39,779 - INFO - automation.shorts_maker_V - Clip 0: Section 0 - 'LazyCreator presents: Nintendo...'
+2025-05-11 23:04:39,779 - INFO - automation.shorts_maker_V - Clip 1: Section 1 - 'Nintendo has officially addres...'
+2025-05-11 23:04:39,779 - INFO - automation.shorts_maker_V - Clip 2: Section 2 - 'Fans were buzzing about potent...'
+2025-05-11 23:04:39,780 - INFO - automation.shorts_maker_V - Clip 3: Section 3 - 'The company clarified that the...'
+2025-05-11 23:04:39,780 - INFO - automation.shorts_maker_V - Clip 4: Section 4 - 'So, what does this mean for th...'
+2025-05-11 23:04:39,781 - INFO - automation.shorts_maker_V - Clip 5: Section 5 - 'Stay tuned for more updates st...'
+2025-05-11 23:04:39,781 - INFO - automation.shorts_maker_V - Clip 6: Section 6 - 'Don't forget to like and subsc...'
+2025-05-11 23:04:39,782 - INFO - automation.shorts_maker_V - === END SECTION INFO ===
+2025-05-11 23:04:39,782 - INFO - automation.shorts_maker_V - Pre-processing complex clips...
+2025-05-11 23:04:39,783 - INFO - automation.shorts_maker_V - Processing clip 0: Section 0: LazyCreator presents: Nintendo...
+2025-05-11 23:04:39,783 - INFO - automation.shorts_maker_V - Clip 0 is complex, pre-rendering: Section 0: LazyCreator presents: Nintendo...
+2025-05-11 23:04:39,858 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 0
+2025-05-11 23:04:39,859 - INFO - automation.parallel_renderer - Pre-rendering clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_0_1746984879.mp4
+2025-05-11 23:06:34,944 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 0 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_0_1746984879.mp4
+2025-05-11 23:06:34,957 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 0: Section 0: LazyCreator presents: Nintendo...
+2025-05-11 23:06:34,959 - INFO - automation.shorts_maker_V - Processing clip 1: Section 1: Nintendo has officially addres...
+2025-05-11 23:06:34,959 - INFO - automation.shorts_maker_V - Clip 1 is complex, pre-rendering: Section 1: Nintendo has officially addres...
+2025-05-11 23:06:35,036 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 1
+2025-05-11 23:06:35,036 - INFO - automation.parallel_renderer - Pre-rendering clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_1_1746984994.mp4
+2025-05-11 23:07:50,310 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 1 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_1_1746984994.mp4
+2025-05-11 23:07:50,329 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 1: Section 1: Nintendo has officially addres...
+2025-05-11 23:07:50,331 - INFO - automation.shorts_maker_V - Processing clip 2: Section 2: Fans were buzzing about potent...
+2025-05-11 23:07:50,332 - INFO - automation.shorts_maker_V - Clip 2 is complex, pre-rendering: Section 2: Fans were buzzing about potent...
+2025-05-11 23:07:50,421 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 2
+2025-05-11 23:07:50,422 - INFO - automation.parallel_renderer - Pre-rendering clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_2_1746985070.mp4
+2025-05-11 23:09:12,220 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 2 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_2_1746985070.mp4
+2025-05-11 23:09:12,233 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 2: Section 2: Fans were buzzing about potent...
+2025-05-11 23:09:12,236 - INFO - automation.shorts_maker_V - Processing clip 3: Section 3: The company clarified that the...
+2025-05-11 23:09:12,236 - INFO - automation.shorts_maker_V - Clip 3 is complex, pre-rendering: Section 3: The company clarified that the...
+2025-05-11 23:09:12,313 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 3
+2025-05-11 23:09:12,314 - INFO - automation.parallel_renderer - Pre-rendering clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_3_1746985152.mp4
+2025-05-11 23:10:20,063 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 3 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_3_1746985152.mp4
+2025-05-11 23:10:20,076 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 3: Section 3: The company clarified that the...
+2025-05-11 23:10:20,078 - INFO - automation.shorts_maker_V - Processing clip 4: Section 4: So, what does this mean for th...
+2025-05-11 23:10:20,079 - INFO - automation.shorts_maker_V - Clip 4 is complex, pre-rendering: Section 4: So, what does this mean for th...
+2025-05-11 23:10:20,157 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 4
+2025-05-11 23:10:20,158 - INFO - automation.parallel_renderer - Pre-rendering clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_4_1746985220.mp4
+2025-05-11 23:11:12,532 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 4 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_4_1746985220.mp4
+2025-05-11 23:11:12,545 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 4: Section 4: So, what does this mean for th...
+2025-05-11 23:11:12,549 - INFO - automation.shorts_maker_V - Processing clip 5: Section 5: Stay tuned for more updates st...
+2025-05-11 23:11:12,550 - INFO - automation.shorts_maker_V - Clip 5 is complex, pre-rendering: Section 5: Stay tuned for more updates st...
+2025-05-11 23:11:12,627 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 5
+2025-05-11 23:11:12,628 - INFO - automation.parallel_renderer - Pre-rendering clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_5_1746985272.mp4
+2025-05-11 23:12:01,377 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 5 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_5_1746985272.mp4
+2025-05-11 23:12:01,400 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 5: Section 5: Stay tuned for more updates st...
+2025-05-11 23:12:01,409 - INFO - automation.shorts_maker_V - Processing clip 6: Section 6: Don't forget to like and subsc...
+2025-05-11 23:12:01,409 - INFO - automation.shorts_maker_V - Clip 6 is complex, pre-rendering: Section 6: Don't forget to like and subsc...
+2025-05-11 23:12:01,494 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 6
+2025-05-11 23:12:01,494 - INFO - automation.parallel_renderer - Pre-rendering clip 6 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_6_1746985321.mp4
+2025-05-11 23:13:20,708 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 6 to C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_6_1746985321.mp4
+2025-05-11 23:13:20,721 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 6: Section 6: Don't forget to like and subsc...
+2025-05-11 23:13:20,723 - INFO - automation.shorts_maker_V - === CLIPS BEFORE PARALLEL RENDERING ===
+2025-05-11 23:13:20,724 - INFO - automation.shorts_maker_V - Position 0: Clip 0 (Section 0) - Section 0: LazyCreator presents: Nintendo...
+2025-05-11 23:13:20,724 - INFO - automation.shorts_maker_V - Position 1: Clip 1 (Section 1) - Section 1: Nintendo has officially addres...
+2025-05-11 23:13:20,725 - INFO - automation.shorts_maker_V - Position 2: Clip 2 (Section 2) - Section 2: Fans were buzzing about potent...
+2025-05-11 23:13:20,725 - INFO - automation.shorts_maker_V - Position 3: Clip 3 (Section 3) - Section 3: The company clarified that the...
+2025-05-11 23:13:20,725 - INFO - automation.shorts_maker_V - Position 4: Clip 4 (Section 4) - Section 4: So, what does this mean for th...
+2025-05-11 23:13:20,726 - INFO - automation.shorts_maker_V - Position 5: Clip 5 (Section 5) - Section 5: Stay tuned for more updates st...
+2025-05-11 23:13:20,726 - INFO - automation.shorts_maker_V - Position 6: Clip 6 (Section 6) - Section 6: Don't forget to like and subsc...
+2025-05-11 23:13:20,727 - INFO - automation.shorts_maker_V - === END CLIPS BEFORE PARALLEL RENDERING ===
+2025-05-11 23:13:20,727 - INFO - automation.shorts_maker_V - Rendering clips in parallel...
+2025-05-11 23:13:20,728 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 0 to parallel processing: Section 0: LazyCreator presents: Nintendo...
+2025-05-11 23:13:20,728 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 1 to parallel processing: Section 1: Nintendo has officially addres...
+2025-05-11 23:13:20,729 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 2 to parallel processing: Section 2: Fans were buzzing about potent...
+2025-05-11 23:13:20,729 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 3 to parallel processing: Section 3: The company clarified that the...
+2025-05-11 23:13:20,729 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 4 to parallel processing: Section 4: So, what does this mean for th...
+2025-05-11 23:13:20,730 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 5 to parallel processing: Section 5: Stay tuned for more updates st...
+2025-05-11 23:13:20,730 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 6 to parallel processing: Section 6: Don't forget to like and subsc...
+2025-05-11 23:13:32,892 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_3_1746985152.mp4
+2025-05-11 23:13:32,893 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_5_1746985272.mp4
+2025-05-11 23:13:32,893 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_2_1746985070.mp4
+2025-05-11 23:13:32,894 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_4_1746985220.mp4
+2025-05-11 23:13:32,894 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_1_1746984994.mp4
+2025-05-11 23:13:33,519 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_6_1746985321.mp4
+2025-05-11 23:13:33,520 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\prerender_0_1746984879.mp4
+2025-05-11 23:13:33,572 - INFO - automation.shorts_maker_V - === RENDERED PATHS WITH INDICES ===
+2025-05-11 23:13:33,573 - INFO - automation.shorts_maker_V - === END RENDERED PATHS ===
+2025-05-11 23:13:33,672 - INFO - automation.shorts_maker_V - Successfully rendered 7 out of 7 clips
+2025-05-11 23:13:33,673 - INFO - automation.shorts_maker_V - Concatenating clips using FFmpeg...
+2025-05-11 23:13:33,674 - INFO - automation.shorts_maker_V - Extracted index 3 from prerender filename: prerender_3_1746985152.mp4
+2025-05-11 23:13:33,674 - INFO - automation.shorts_maker_V - Extracted index 5 from prerender filename: prerender_5_1746985272.mp4
+2025-05-11 23:13:33,675 - INFO - automation.shorts_maker_V - Extracted index 2 from prerender filename: prerender_2_1746985070.mp4
+2025-05-11 23:13:33,675 - INFO - automation.shorts_maker_V - Extracted index 4 from prerender filename: prerender_4_1746985220.mp4
+2025-05-11 23:13:33,676 - INFO - automation.shorts_maker_V - Extracted index 1 from prerender filename: prerender_1_1746984994.mp4
+2025-05-11 23:13:33,676 - INFO - automation.shorts_maker_V - Extracted index 6 from prerender filename: prerender_6_1746985321.mp4
+2025-05-11 23:13:33,677 - INFO - automation.shorts_maker_V - Extracted index 0 from prerender filename: prerender_0_1746984879.mp4
+2025-05-11 23:13:33,677 - INFO - automation.shorts_maker_V - Concatenating 7 clips in correct order
+2025-05-11 23:13:33,678 - INFO - automation.shorts_maker_V - === CLIPS ORDER FOR CONCATENATION ===
+2025-05-11 23:13:33,678 - INFO - automation.shorts_maker_V - Position 0: Clip 0 (Section 0) - Section 0: LazyCreator presents: Nintendo...
+2025-05-11 23:13:33,679 - INFO - automation.shorts_maker_V - Position 1: Clip 1 (Section 1) - Section 1: Nintendo has officially addres...
+2025-05-11 23:13:33,679 - INFO - automation.shorts_maker_V - Position 2: Clip 2 (Section 2) - Section 2: Fans were buzzing about potent...
+2025-05-11 23:13:33,679 - INFO - automation.shorts_maker_V - Position 3: Clip 3 (Section 3) - Section 3: The company clarified that the...
+2025-05-11 23:13:33,680 - INFO - automation.shorts_maker_V - Position 4: Clip 4 (Section 4) - Section 4: So, what does this mean for th...
+2025-05-11 23:13:33,680 - INFO - automation.shorts_maker_V - Position 5: Clip 5 (Section 5) - Section 5: Stay tuned for more updates st...
+2025-05-11 23:13:33,681 - INFO - automation.shorts_maker_V - Position 6: Clip 6 (Section 6) - Section 6: Don't forget to like and subsc...
+2025-05-11 23:13:33,681 - INFO - automation.shorts_maker_V - === END CLIPS ORDER FOR CONCATENATION ===
+2025-05-11 23:13:33,684 - INFO - automation.shorts_maker_V - Running FFmpeg concatenation: ffmpeg -y -f concat -safe 0 -i C:\Users\adhbu\AppData\Local\Temp\tmpxnb5q7aq\concat_list.txt -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -max_muxing_queue_size 9999 -c:a aac -b:a 192k ai_shorts_output\yt_shorts_LazyCreator_presents_Nintendo__20250511_230316.mp4
+2025-05-11 23:13:47,445 - INFO - automation.shorts_maker_V - Successfully concatenated clips to ai_shorts_output\yt_shorts_LazyCreator_presents_Nintendo__20250511_230316.mp4
+2025-05-11 23:13:47,462 - INFO - automation.shorts_maker_V - Temporary files cleaned up successfully.
+2025-05-11 23:13:47,593 - INFO - helper.minor_helper - Completed YouTube short creation in 623.61 seconds
+2025-05-11 23:13:47,593 - INFO - __main__ - Generating thumbnail for the short
+2025-05-11 23:13:47,598 - INFO - automation.thumbnail - STARTING generate_thumbnail at 23:13:47.598
+2025-05-11 23:13:47,598 - INFO - automation.thumbnail - Using thumbnail prompt: A vibrant collage featuring iconic Mario Kart characters racing through a colorful track, with question marks floating above, symbolizing speculation and excitement.
+2025-05-11 23:13:47,598 - INFO - automation.thumbnail - STARTING generate_image_huggingface at 23:13:47.598
+2025-05-11 23:13:47,599 - INFO - automation.thumbnail - Hugging Face prompt: A vibrant collage featuring iconic Mario Kart characters racing through a c...
+2025-05-11 23:13:47,906 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
+2025-05-11 23:14:03,650 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
+2025-05-11 23:14:33,652 - ERROR - automation.thumbnail - Failed to generate image with Hugging Face API after multiple attempts
+2025-05-11 23:14:33,653 - INFO - automation.thumbnail - COMPLETED generate_image_huggingface in 46.06 seconds
+2025-05-11 23:14:33,654 - INFO - automation.thumbnail - Falling back to Unsplash for thumbnail image
+2025-05-11 23:14:33,654 - INFO - automation.thumbnail - STARTING fetch_image_unsplash at 23:14:33.654
+2025-05-11 23:14:33,655 - INFO - automation.thumbnail - Searching Unsplash with query: A vibrant collage featuring iconic Mario Kart characters racing through a colorful track, with question marks floating above, symbolizing speculation and excitement.
+2025-05-11 23:14:34,517 - INFO - automation.thumbnail - Unsplash image downloaded to C:\Users\adhbu\AppData\Local\Temp\tmpne1xopqj\thumbnail_unsplash_1746985473_3213.jpg
+2025-05-11 23:14:34,517 - INFO - automation.thumbnail - Image attribution: Photo by Greyson Joralemon on Unsplash
+2025-05-11 23:14:34,518 - INFO - automation.thumbnail - COMPLETED fetch_image_unsplash in 0.86 seconds
+2025-05-11 23:14:34,519 - INFO - automation.thumbnail - STARTING create_thumbnail at 23:14:34.519
+2025-05-11 23:14:34,519 - INFO - automation.thumbnail - Creating thumbnail for title: 'LazyCreator presents: Nintendo Clarifies Mario Kart AI Image Rumors!'
+2025-05-11 23:14:34,519 - INFO - automation.thumbnail - Using base image: C:\Users\adhbu\AppData\Local\Temp\tmpne1xopqj\thumbnail_unsplash_1746985473_3213.jpg
+2025-05-11 23:14:34,520 - INFO - automation.thumbnail - Output path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250511_230316.jpg
+2025-05-11 23:14:34,676 - INFO - automation.thumbnail - Base image size: (1080, 810)
+2025-05-11 23:14:34,677 - ERROR - automation.thumbnail - Error creating thumbnail: 'JpegImageFile' object has no attribute 'resized'
+2025-05-11 23:14:34,681 - ERROR - automation.thumbnail - Thumbnail creation traceback: Traceback (most recent call last):
+  File "D:\youtube-shorts-automation\automation\thumbnail.py", line 248, in create_thumbnail
+    img = img.resized(self.thumbnail_size, Image.LANCZOS)
+          ^^^^^^^^^^^
+AttributeError: 'JpegImageFile' object has no attribute 'resized'. Did you mean: 'resize'?
+
+2025-05-11 23:14:34,682 - INFO - automation.thumbnail - COMPLETED create_thumbnail in 0.16 seconds
+2025-05-11 23:14:34,683 - ERROR - automation.thumbnail - Failed to generate thumbnail
+2025-05-11 23:14:34,683 - INFO - automation.thumbnail - COMPLETED generate_thumbnail in 47.09 seconds
+2025-05-11 23:14:34,684 - INFO - __main__ - Attempting with Unsplash query: Mario Kart racing
+2025-05-11 23:14:34,684 - INFO - automation.thumbnail - STARTING fetch_image_unsplash at 23:14:34.684
+2025-05-11 23:14:34,685 - INFO - automation.thumbnail - Searching Unsplash with query: Mario Kart racing
+2025-05-11 23:14:35,396 - INFO - automation.thumbnail - Unsplash image downloaded to C:\Users\adhbu\AppData\Local\Temp\tmpne1xopqj\thumbnail_unsplash_1746985474_9909.jpg
+2025-05-11 23:14:35,397 - INFO - automation.thumbnail - Image attribution: Photo by Mark Rohan on Unsplash
+2025-05-11 23:14:35,398 - INFO - automation.thumbnail - COMPLETED fetch_image_unsplash in 0.71 seconds
+2025-05-11 23:14:35,398 - INFO - automation.thumbnail - STARTING create_thumbnail at 23:14:35.398
+2025-05-11 23:14:35,398 - INFO - automation.thumbnail - Creating thumbnail for title: 'LazyCreator presents: Nintendo Clarifies Mario Kart AI Image Rumors!'
+2025-05-11 23:14:35,399 - INFO - automation.thumbnail - Using base image: C:\Users\adhbu\AppData\Local\Temp\tmpne1xopqj\thumbnail_unsplash_1746985474_9909.jpg
+2025-05-11 23:14:35,399 - INFO - automation.thumbnail - Output path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250511_230316.jpg
+2025-05-11 23:14:35,414 - INFO - automation.thumbnail - Base image size: (1080, 720)
+2025-05-11 23:14:35,415 - ERROR - automation.thumbnail - Error creating thumbnail: 'JpegImageFile' object has no attribute 'resized'
+2025-05-11 23:14:35,417 - ERROR - automation.thumbnail - Thumbnail creation traceback: Traceback (most recent call last):
+  File "D:\youtube-shorts-automation\automation\thumbnail.py", line 248, in create_thumbnail
+    img = img.resized(self.thumbnail_size, Image.LANCZOS)
+          ^^^^^^^^^^^
+AttributeError: 'JpegImageFile' object has no attribute 'resized'. Did you mean: 'resize'?
+
+2025-05-11 23:14:35,418 - INFO - automation.thumbnail - COMPLETED create_thumbnail in 0.02 seconds
+2025-05-11 23:14:35,418 - INFO - __main__ - Thumbnail generated at: None
+2025-05-11 23:14:35,420 - INFO - __main__ - Uploading to YouTube
+2025-05-11 23:14:35,742 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
+2025-05-11 23:14:35,867 - INFO - automation.youtube_upload - Uploading video: Nintendo Clarifies Mario Kart AI Image Rumors!
+2025-05-11 23:14:41,870 - INFO - automation.youtube_upload - ✅ Video upload successful! Video ID: H-jfWlEnEZY
+2025-05-11 23:14:41,870 - INFO - __main__ - Process completed successfully!
+2025-05-11 23:14:41,871 - INFO - __main__ - Video path: ai_shorts_output\yt_shorts_LazyCreator_presents_Nintendo__20250511_230316.mp4

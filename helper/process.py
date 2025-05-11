@@ -3,7 +3,7 @@ import time
 import random
 import logging
 import numpy as np
-from moviepy.editor import VideoClip, concatenate_videoclips, ColorClip, CompositeVideoClip
+from moviepy  import VideoClip, concatenate_videoclips, ColorClip, CompositeVideoClip
 from helper.blur import custom_blur, custom_edge_blur
 from helper.minor_helper import measure_time
 
@@ -37,7 +37,7 @@ def _process_background_clip(clip, target_duration, blur_background=False, edge_
                 # For the last segment, only take what we need
                 remaining_needed = target_duration - (loop * clip.duration)
                 if remaining_needed > 0:
-                    segment = clip.subclip(0, min(remaining_needed, clip.duration))
+                    segment = clip.subclipped(0, min(remaining_needed, clip.duration))
                     looped_clips.append(segment)
             else:
                 looped_clips.append(clip.copy())
@@ -48,13 +48,13 @@ def _process_background_clip(clip, target_duration, blur_background=False, edge_
         if clip.duration > target_duration + 1:
             max_start = clip.duration - target_duration - 0.5
             start_time = random.uniform(0, max_start)
-            clip = clip.subclip(start_time, start_time + target_duration)
+            clip = clip.subclipped(start_time, start_time + target_duration)
         else:
             # Just take from the beginning if not much longer
-            clip = clip.subclip(0, target_duration)
+            clip = clip.subclipped(0, target_duration)
 
-    # Resize to match height
-    clip = clip.resize(height=  resolution[1])
+    # resized to match height
+    clip = clip.resized(height=  resolution[1])
 
     # Apply blur effect only if requested
     if blur_background and not edge_blur:
@@ -64,16 +64,17 @@ def _process_background_clip(clip, target_duration, blur_background=False, edge_
 
     # Center the video if it's not wide enough
     if clip.w < resolution[0]:
-        bg = ColorClip(size=  resolution, color=(0, 0, 0)).set_duration(clip.duration)
-        x_pos = (  resolution[0] - clip.w) // 2
-        clip = CompositeVideoClip([bg, clip.set_position((x_pos, 0))], size=  resolution)
+        # Use a transparent background instead of black
+        bg = ColorClip(size=resolution, color=(0, 0, 0, 0)).with_duration(clip.duration)
+        x_pos = (resolution[0] - clip.w) // 2
+        clip = CompositeVideoClip([bg, clip.with_position((x_pos, 0))], size=resolution)
 
     # Crop width if wider than needed
-    elif clip.w >   resolution[0]:
-        x_centering = (clip.w -   resolution[0]) // 2
-        clip = clip.crop(x1=x_centering, x2=x_centering +   resolution[0])
+    elif clip.w > resolution[0]:
+        x_centering = (clip.w - resolution[0]) // 2
+        clip = clip.crop(x1=x_centering, x2=x_centering + resolution[0])
 
     # Make sure we have exact duration to prevent timing issues
-    clip = clip.set_duration(target_duration)
+    clip = clip.with_duration(target_duration)
 
     return clip

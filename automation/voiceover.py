@@ -160,7 +160,7 @@ class GoogleVoiceover:
                         temp_files.append(temp_file)
 
                     # Combine audio files using moviepy
-                    from moviepy.editor import concatenate_audioclips, AudioFileClip
+                    from moviepy  import concatenate_audioclips, AudioFileClip
 
                     audio_clips = [AudioFileClip(file) for file in temp_files]
                     concatenated = concatenate_audioclips(audio_clips)
