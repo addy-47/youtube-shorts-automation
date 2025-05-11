@@ -9,6 +9,10 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from dotenv import load_dotenv
 from datetime import datetime
 import numpy as np
+import shutil
+
+# Custom helpers
+from helper.minor_helper import measure_time, cleanup_temp_directories
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -27,6 +31,11 @@ def measure_time(func):
         return result
     return wrapper
 
+# Get temp directory from environment variable or use default
+TEMP_DIR = os.getenv("TEMP_DIR", "D:\\youtube-shorts-automation\\temp")
+# Ensure temp directory exists
+os.makedirs(TEMP_DIR, exist_ok=True)
+
 class ThumbnailGenerator:
     def __init__(self, output_dir="output"):
         """
@@ -40,7 +49,7 @@ class ThumbnailGenerator:
 
         # Setup directories
         self.output_dir = output_dir
-        self.temp_dir = tempfile.mkdtemp()
+        self.temp_dir = os.path.join(TEMP_DIR, f"thumbnail_{int(time.time())}")
         os.makedirs(output_dir, exist_ok=True)
         os.makedirs(self.temp_dir, exist_ok=True)
 
@@ -444,13 +453,11 @@ class ThumbnailGenerator:
 
     def cleanup(self):
         """Clean up temporary files"""
-        try:
-            for filename in os.listdir(self.temp_dir):
-                file_path = os.path.join(self.temp_dir, filename)
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-        except Exception as e:
-            logger.error(f"Error cleaning up temporary files: {e}")
+        from helper.minor_helper import cleanup_temp_directories
+
+        if hasattr(self, 'temp_dir') and self.temp_dir:
+            logger.info(f"Cleaning up thumbnail temporary directory: {self.temp_dir}")
+            cleanup_temp_directories(specific_dir=self.temp_dir)
 
 
 # Simple test function

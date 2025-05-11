@@ -108,7 +108,6 @@ class TextHelper:
               size=(self.resolution[0] - 100, None)
           )
 
-      # Add the section index as a custom attribute for tracking
       text_clip = text_clip.with_duration(duration)
       clips = []
 
@@ -146,7 +145,7 @@ class TextHelper:
           clips.extend(outline_clips)
 
       clips.append(text_clip)
-      text_composite = CompositeVideoClip(clips, transparent=True)
+      text_composite = CompositeVideoClip(clips)
 
       # Set the position of the entire composite
       text_composite = text_composite.with_position(position)
@@ -158,7 +157,7 @@ class TextHelper:
 
       # Create transparent background for the text
       bg = ColorClip(size=self.resolution, color=(0,0,0,0)).with_duration(duration)
-      final_clip = CompositeVideoClip([bg, text_composite], size=self.resolution, transparent=True)
+      final_clip = CompositeVideoClip([bg, text_composite], size=self.resolution)
 
       return final_clip
 
@@ -287,7 +286,7 @@ class TextHelper:
       positioned_sequence = word_sequence.with_position(position)
 
       # Combine the background and positioned sequence
-      final_clip = CompositeVideoClip([bg, positioned_sequence], size=self.resolution, transparent=True)
+      final_clip = CompositeVideoClip([bg, positioned_sequence], size=self.resolution)
 
       return final_clip
 

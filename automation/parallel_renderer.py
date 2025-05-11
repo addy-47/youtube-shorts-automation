@@ -124,7 +124,7 @@ def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2,
                 "-maxrate", "8M",       # Higher max rate
                 "-b:a", "192k",         # Higher audio bitrate
                 "-ar", "48000",         # Audio sample rate
-                "-pix_fmt", "yuva420p"   # Compatible pixel format with alpha channel support
+                "-pix_fmt", "yuv420p"   # Compatible pixel format for all players
             ],
             logger=logger_setting  # None shows progress bar, "bar" hides it
         )
@@ -898,11 +898,11 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
                 "-i", concat_list_path,
                 "-c:v", final_codec,
                 "-preset", final_preset,
-                "-crf", "23",  # Default quality (lower is better)
-                "-pix_fmt", "yuva420p",  # Compatibility with alpha channel support
-                "-max_muxing_queue_size", "9999",  # Prevent queue overflow errors
+                "-crf", "23",  # Higher quality for final output
+                "-pix_fmt", "yuv420p",
+                "-max_muxing_queue_size", "9999",  # Prevent muxing queue issues
                 "-c:a", audio_codec,
-                "-b:a", "192k",  # Higher audio bitrate for better quality
+                "-b:a", "192k",
                 output_file
             ]
 

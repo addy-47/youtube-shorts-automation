@@ -15,8 +15,12 @@ logger = logging.getLogger(__name__)
 # Load API keys from environment variables
 pexels_api_key = os.getenv("PEXELS_API_KEY")
 pixabay_api_key = os.getenv("PIXABAY_API_KEY")
-temp_dir = os.path.join(os.path.dirname(__file__), "temp")
-os.makedirs(temp_dir, exist_ok=True)  # Create temp directory if it doesn't exist
+
+# Get temp directory from environment variable or use default
+TEMP_DIR = os.getenv("TEMP_DIR", "D:\\youtube-shorts-automation\\temp")
+# Create video downloads subdirectory
+video_temp_dir = os.path.join(TEMP_DIR, "video_downloads")
+os.makedirs(video_temp_dir, exist_ok=True)  # Create temp directory if it doesn't exist
 
 @measure_time
 def _fetch_videos(query, count=5, min_duration=5):
@@ -98,7 +102,7 @@ def _fetch_from_pixabay(query, count, min_duration):
             def download_and_check_video(video):
                 try:
                     video_url = video["videos"]["large"]["url"]
-                    video_path = os.path.join(temp_dir, f"pixabay_{video['id']}.mp4") # create a path for the video
+                    video_path = os.path.join(video_temp_dir, f"pixabay_{video['id']}.mp4") # create a path for the video
                     with requests.get(video_url, stream=True) as r:  # get the video from the url
                         r.raise_for_status() # raise an error if the request is not successful
                         with open(video_path, 'wb') as f: # open the video file in write binary mode
@@ -176,7 +180,7 @@ def _fetch_from_pexels(query, count=5, min_duration=15):
                     if not video_url:
                         return None
 
-                    video_path = os.path.join(temp_dir, f"pexels_{video['id']}.mp4")
+                    video_path = os.path.join(video_temp_dir, f"pexels_{video['id']}.mp4")
                     with requests.get(video_url, stream=True) as r:
                         r.raise_for_status()
                         with open(video_path, 'wb') as f:

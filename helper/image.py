@@ -19,10 +19,15 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 resolution = (1080, 1920)  # Assuming a standard resolution for YouTube Shorts
-temp_dir = "temp_images"  # Temporary directory for generated images
+
+# Get temp directory from environment variable or use default
+TEMP_DIR = os.getenv("TEMP_DIR", "D:\\youtube-shorts-automation\\temp")
+# Create images subdirectory
+temp_dir = os.path.join(TEMP_DIR, "generated_images")
+os.makedirs(temp_dir, exist_ok=True)  # Create temp directory if it doesn't exist
 
 @measure_time
-def _generate_image_from_prompt(self, prompt, style="photorealistic", file_path=None):
+def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None):
   """
   Generate an image using Hugging Face Diffusion API based on prompt
 
@@ -141,7 +146,7 @@ def _generate_image_from_prompt(self, prompt, style="photorealistic", file_path=
   return file_path
 
 @measure_time
-def _create_still_image_clip(self, image_path, duration, text=None, text_position=('center','center'),
+def _create_still_image_clip(image_path, duration, text=None, text_position=('center','center'),
                           font_size=60, with_zoom=True, zoom_factor=0.05):
   """
   Create a still image clip with optional text and zoom effect

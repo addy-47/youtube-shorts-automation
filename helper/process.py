@@ -64,15 +64,14 @@ def _process_background_clip(clip, target_duration, blur_background=False, edge_
 
     # Center the video if it's not wide enough
     if clip.w < resolution[0]:
-        # Use a transparent background instead of black
-        bg = ColorClip(size=resolution, color=(0, 0, 0, 0)).with_duration(clip.duration)
-        x_pos = (resolution[0] - clip.w) // 2
-        clip = CompositeVideoClip([bg, clip.with_position((x_pos, 0))], size=resolution)
+        bg = ColorClip(size=  resolution, color=(0, 0, 0)).with_duration(clip.duration)
+        x_pos = (  resolution[0] - clip.w) // 2
+        clip = CompositeVideoClip([bg, clip.with_position((x_pos, 0))], size=  resolution)
 
     # Crop width if wider than needed
     elif clip.w > resolution[0]:
         x_centering = (clip.w - resolution[0]) // 2
-        clip = clip.crop(x1=x_centering, x2=x_centering + resolution[0])
+        clip = clip.cropped(x1=x_centering, x2=x_centering + resolution[0])
 
     # Make sure we have exact duration to prevent timing issues
     clip = clip.with_duration(target_duration)

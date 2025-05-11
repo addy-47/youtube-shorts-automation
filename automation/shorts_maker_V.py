@@ -20,7 +20,7 @@ import tempfile # for creating temporary files
 from datetime import datetime # for more detailed time tracking
 import concurrent.futures
 from functools import wraps
-from helper.minor_helper import measure_time
+from helper.minor_helper import measure_time, cleanup_temp_directories
 from helper.fetch import _fetch_videos
 from helper.blur import custom_blur, custom_edge_blur
 from helper.text import TextHelper
@@ -32,6 +32,11 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()  # Load environment variables from .env file
 
+# Get temp directory from environment variable or use default
+TEMP_DIR = os.getenv("TEMP_DIR", "D:\\youtube-shorts-automation\\temp")
+# Ensure temp directory exists
+os.makedirs(TEMP_DIR, exist_ok=True)
+
 class YTShortsCreator_V:
     def __init__(self, fps=30):
         """
@@ -42,7 +47,7 @@ class YTShortsCreator_V:
             fps (int): Frames per second for the output video
         """
         # Setup directories
-        self.temp_dir = tempfile.mkdtemp()  # Create temp directory for intermediate files
+        self.temp_dir = os.path.join(TEMP_DIR, f"shorts_v_{int(time.time())}")
         os.makedirs(self.temp_dir, exist_ok=True)
 
         # Initialize TextHelper
@@ -196,6 +201,12 @@ class YTShortsCreator_V:
                         fallback_videos = _fetch_videos(background_query, count=1, min_duration=int(script_sections[i]['duration']) + 2)
                         if fallback_videos:
                             section_backgrounds.append(fallback_videos[0])
+                        else:
+                            # Create a black background if no video can be found
+                            logger.warning(f"Could not find any videos for section {i}. Creating black background.")
+                            section_duration = script_sections[i].get('duration', 5)
+                            # We'll add a placeholder path here and create the actual black ColorClip when processing backgrounds
+                            section_backgrounds.append("BLACK_BACKGROUND_PLACEHOLDER")
 
                 # Add backgrounds for first and last sections
                 first_section_videos = _fetch_videos(background_queries[0], count=1, min_duration=int(script_sections[0]['duration']) + 2)
@@ -206,6 +217,10 @@ class YTShortsCreator_V:
                     first_generic = _fetch_videos(background_query, count=1, min_duration=int(script_sections[0]['duration']) + 2)
                     if first_generic:
                         section_backgrounds.insert(0, first_generic[0])
+                    else:
+                        # Create a black background if no video can be found
+                        logger.warning("Could not find any videos for intro section. Creating black background.")
+                        section_backgrounds.insert(0, "BLACK_BACKGROUND_PLACEHOLDER")
 
                 last_section_videos = _fetch_videos(background_queries[-1], count=1, min_duration=int(script_sections[-1]['duration']) + 2)
                 if last_section_videos:
@@ -215,11 +230,15 @@ class YTShortsCreator_V:
                     last_generic = _fetch_videos(background_query, count=1, min_duration=int(script_sections[-1]['duration']) + 2)
                     if last_generic:
                         section_backgrounds.append(last_generic[0])
+                    else:
+                        # Create a black background if no video can be found
+                        logger.warning("Could not find any videos for outro section. Creating black background.")
+                        section_backgrounds.append("BLACK_BACKGROUND_PLACEHOLDER")
 
                 # Ensure we have enough backgrounds
                 while len(section_backgrounds) < len(script_sections):
                     # Add generic backgrounds if needed
-                    generic_videos = self._fetch_videos(background_query, count=1, min_duration=5)
+                    generic_videos = _fetch_videos(background_query, count=1, min_duration=5)
                     if generic_videos:
                         section_backgrounds.append(generic_videos[0])
 
@@ -233,6 +252,24 @@ class YTShortsCreator_V:
                 background_videos = _fetch_videos(background_query, count=len(script_sections), min_duration=5)
                 end_time = time.time()
                 logger.info(f"Completed background video fetch in {end_time - start_time:.2f} seconds")
+
+            # Make sure we have enough background videos
+            if len(background_videos) < len(script_sections):
+                # Fetch more background videos if needed
+                logger.info(f"Fetching {len(script_sections) - len(background_videos)} more background videos")
+                more_videos = _fetch_videos(
+                    background_query,
+                    count=len(script_sections) - len(background_videos),
+                    min_duration=5
+                )
+
+                # If we couldn't fetch any more videos, add placeholders for black backgrounds
+                if not more_videos:
+                    logger.warning("Could not fetch additional background videos. Using black backgrounds.")
+                    for _ in range(len(script_sections) - len(background_videos)):
+                        background_videos.append("BLACK_BACKGROUND_PLACEHOLDER")
+                else:
+                    background_videos.extend(more_videos)
 
             # Generate TTS for each section
             logger.info("Starting TTS audio generation")
@@ -299,17 +336,6 @@ class YTShortsCreator_V:
             total_actual_duration = sum(audio_durations)
             logger.info(f"Updated total duration: {total_actual_duration}s")
 
-            # Make sure we have enough background videos
-            if len(background_videos) < len(script_sections):
-                # Fetch more background videos if needed
-                logger.info(f"Fetching {len(script_sections) - len(background_videos)} more background videos")
-                more_videos = _fetch_videos(
-                    background_query,
-                    count=len(script_sections) - len(background_videos),
-                    min_duration=5
-                )
-                background_videos.extend(more_videos)
-
             # Process background videos
             logger.info("Starting background processing")
             start_time = time.time()
@@ -319,6 +345,13 @@ class YTShortsCreator_V:
                 try:
                     # Get the actual audio duration instead of planned duration
                     section_duration = section.get('actual_audio_duration', section.get('duration', 5))
+
+                    # Handle the placeholder value we added for cases when no video could be found
+                    if video_path == "BLACK_BACKGROUND_PLACEHOLDER":
+                        logger.info(f"Creating black background for section {i} as requested")
+                        black_bg = ColorClip(size=self.resolution, color=(0, 0, 0), duration=section_duration)
+                        background_clips.append(black_bg)
+                        continue
 
                     if os.path.exists(video_path):
                         video_clip = VideoFileClip(video_path)
@@ -336,13 +369,13 @@ class YTShortsCreator_V:
                     else:
                         logger.warning(f"Background video {i} not found: {video_path}")
                         # Create a black background as fallback
-                        black_bg = ColorClip(size=self.resolution, color=(0, 0, 0, 0), duration=section_duration)
+                        black_bg = ColorClip(size=self.resolution, color=(0, 0, 0), duration=section_duration)
                         background_clips.append(black_bg)
                 except Exception as e:
                     logger.error(f"Error processing background clip {i}: {e}")
                     # Create a black background as fallback for this section
                     section_duration = section.get('actual_audio_duration', section.get('duration', 5))
-                    black_bg = ColorClip(size=self.resolution, color=(0, 0, 0, 0), duration=section_duration)
+                    black_bg = ColorClip(size=self.resolution, color=(0, 0, 0), duration=section_duration)
                     background_clips.append(black_bg)
 
             end_time = time.time()
@@ -400,7 +433,7 @@ class YTShortsCreator_V:
                             )
 
                         # Composite the text over the background
-                        section_clip = CompositeVideoClip([bg_with_audio, text_clip], transparent=True)
+                        section_clip = CompositeVideoClip([bg_with_audio, text_clip])
                     else:
                         # Always add text overlay regardless of add_captions setting
                         # But still respect the intro/middle/outro distinction
@@ -426,7 +459,7 @@ class YTShortsCreator_V:
                             )
 
                         # Composite the text over the background
-                        section_clip = CompositeVideoClip([bg_with_audio, text_clip], transparent=True)
+                        section_clip = CompositeVideoClip([bg_with_audio, text_clip])
 
                     section_clips.append(section_clip)
 
@@ -434,7 +467,7 @@ class YTShortsCreator_V:
                     logger.error(f"Error creating section {i}: {e}")
                     # Create a black clip with text as fallback
                     fallback_duration = section.get('actual_audio_duration', section.get('duration', 5))
-                    black_bg = ColorClip(size=self.resolution, color=(0, 0, 0, 0), duration=fallback_duration)
+                    black_bg = ColorClip(size=self.resolution, color=(0, 0, 0), duration=fallback_duration)
 
                     try:
                         # Try to add audio if possible
@@ -453,7 +486,7 @@ class YTShortsCreator_V:
                         method='caption'
                     ).with_duration(fallback_duration)
 
-                    section_clip = CompositeVideoClip([black_bg, error_text], transparent=True)
+                    section_clip = CompositeVideoClip([black_bg, error_text])
                     section_clips.append(section_clip)
 
             # Process and validate section clips
@@ -592,7 +625,7 @@ class YTShortsCreator_V:
                         threads=2,
                         preset="veryfast",
                         ffmpeg_params=[
-                            "-pix_fmt", "yuva420p",  # For compatibility with all players
+                            "-pix_fmt", "yuv420p",  # For compatibility with all players
                             "-profile:v", "main",   # Better compatibility with mobile devices
                             "-crf", "22",           # Better quality-to-size ratio
                             "-maxrate", "3M",       # Maximum bitrate for streaming
@@ -607,27 +640,10 @@ class YTShortsCreator_V:
                         except:
                             pass
 
-            # Final cleanup
-            self._cleanup()
-
             return output_filename
 
         except Exception as e:
             logger.error(f"Error in create_youtube_short: {e}")
-            # If there's a temp directory, clean it up
-            if hasattr(self, 'temp_dir') and os.path.exists(self.temp_dir):
-                try:
-                    shutil.rmtree(self.temp_dir)
-                except Exception as cleanup_error:
-                    logger.error(f"Error cleaning up temp directory: {cleanup_error}")
-            raise
 
-    def _cleanup(self):
-        """Clean up temporary files"""
-        try:
-            shutil.rmtree(self.temp_dir)
-            logger.info("Temporary files cleaned up successfully.")
-        except Exception as e:
-            logger.warning(f"Error cleaning up temporary files: {str(e)}")
 
 

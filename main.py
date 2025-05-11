@@ -11,7 +11,7 @@ from automation.shorts_maker_I import YTShortsCreator_I
 from automation.youtube_upload import upload_video, get_authenticated_service
 from automation.thumbnail import ThumbnailGenerator
 from helper.news import get_latest_news
-from helper.minor_helper import ensure_output_directory, parse_script_to_cards
+from helper.minor_helper import ensure_output_directory, parse_script_to_cards, cleanup_temp_directories
 
 load_dotenv()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
@@ -310,6 +310,13 @@ def main(creator_type=None):
         import traceback
         logger.error(f"Detailed error trace: {traceback.format_exc()}")
         return None
+    finally:
+        # Always run cleanup at the end regardless of success or failure
+        try:
+            logger.info("Running global cleanup of temporary files")
+            cleanup_temp_directories(max_age_hours=24)
+        except Exception as cleanup_error:
+            logger.error(f"Error during final cleanup: {cleanup_error}")
 
 if __name__ == "__main__":
     # Add ability to override creator type from command line
@@ -325,5 +332,10 @@ if __name__ == "__main__":
             logger.info("Manually selected image-based creator (YTShortsCreator_I)")
             creator_type = YTShortsCreator_I()
 
-    # Call main with the selected creator type (or None for day-based selection)
-    main(creator_type)
+    try:
+        # Call main with the selected creator type (or None for day-based selection)
+        main(creator_type)
+    finally:
+        # One final cleanup to ensure everything is removed
+        logger.info("Performing final cleanup of all temporary files")
+        cleanup_temp_directories(max_age_hours=24, force_all=True)

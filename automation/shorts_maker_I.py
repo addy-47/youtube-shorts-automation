@@ -19,7 +19,7 @@ import tempfile # for creating temporary files
 # Import text clip functions from shorts_maker_V
 from datetime import datetime # for more detailed time tracking
 import concurrent.futures # for multithreading
-from helper.minor_helper import measure_time
+from helper.minor_helper import measure_time, cleanup_temp_directories
 from helper.text import TextHelper
 from helper.image import _generate_image_from_prompt, _create_still_image_clip
 from automation.shorts_maker_V import YTShortsCreator_V
@@ -31,6 +31,13 @@ from automation.shorts_maker_V import YTShortsCreator_V
 # Do NOT initialize basicConfig here - this will be handled by main.py
 logger = logging.getLogger(__name__)
 
+load_dotenv()  # Load environment variables from .env file
+
+# Get temp directory from environment variable or use default
+TEMP_DIR = os.getenv("TEMP_DIR", "D:\\youtube-shorts-automation\\temp")
+# Ensure temp directory exists
+os.makedirs(TEMP_DIR, exist_ok=True)
+
 class YTShortsCreator_I:
     def __init__(self, fps=30):
         """
@@ -40,7 +47,7 @@ class YTShortsCreator_I:
             fps (int): Frames per second for the output video
         """
         # Setup directories
-        self.temp_dir = tempfile.mkdtemp()  # Create temp directory for intermediate files
+        self.temp_dir = os.path.join(TEMP_DIR, f"shorts_i_{int(time.time())}")
         os.makedirs(self.temp_dir, exist_ok=True)
 
         # Check for enhanced rendering capability
@@ -138,7 +145,6 @@ class YTShortsCreator_I:
         }
 
         # Load Pexels API ke for background videos
-        load_dotenv()
         self.pexels_api_key = os.getenv("PEXELS_API_KEY")  # for fallback images
         self.huggingface_api_key = os.getenv("HUGGINGFACE_API_KEY")
         self.hf_model = os.getenv("HF_MODEL", "stabilityai/stable-diffusion-2-1")
@@ -806,6 +812,18 @@ class YTShortsCreator_I:
 
                 # Create temp directory for parallel rendering
                 parallel_temp_dir = os.path.join(self.temp_dir, "parallel_render")
+                if os.path.exists(parallel_temp_dir):
+                    # Clean up any existing files in the parallel_temp_dir
+                    for file in os.listdir(parallel_temp_dir):
+                        try:
+                            file_path = os.path.join(parallel_temp_dir, file)
+                            if os.path.isfile(file_path):
+                                os.unlink(file_path)
+                            elif os.path.isdir(file_path):
+                                shutil.rmtree(file_path)
+                        except Exception as e:
+                            logger.warning(f"Error pre-cleaning parallel render directory: {e}")
+
                 os.makedirs(parallel_temp_dir, exist_ok=True)
 
                 # Concatenate all clips
@@ -877,9 +895,6 @@ class YTShortsCreator_I:
             logger.info(f"YouTube short creation completed in {overall_duration:.2f} seconds")
             logger.info(f"Video saved to: {output_filename}")
 
-            # Clean up temporary files
-            self._cleanup()
-
             return output_filename
 
         except Exception as e:
@@ -887,19 +902,6 @@ class YTShortsCreator_I:
             import traceback
             logger.error(traceback.format_exc())
             raise
-
-    @measure_time
-    def _cleanup(self):
-        """Clean up temporary files"""
-        try:
-            for filename in os.listdir(self.temp_dir):
-                file_path = os.path.join(self.temp_dir, filename)
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-        except Exception as e:
-            logger.error(f"Error cleaning up temporary files: {e}")
 
 
 
