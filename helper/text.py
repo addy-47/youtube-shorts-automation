@@ -1,14 +1,55 @@
 import numpy as np
+import concurrent.futures
+import os
+import time
+import logging
 from moviepy import *
 from moviepy.video.fx import FadeIn
 from moviepy.video.fx import FadeOut
 from PIL import Image, ImageDraw, ImageFont
-import logging
-import os
 from helper.minor_helper import measure_time
+from functools import partial
+
+# Try to import dill for better serialization
+try:
+    import dill
+    HAS_DILL = True
+except ImportError:
+    HAS_DILL = False
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Define a standalone function for process_section that will work with multiprocessing
+def _process_text_section_standalone(section, helper_resolution, helper_body_font_path, create_text_clip_func,
+                                    animation="fade", font_size=60, font_path=None, with_pill=True, position='center'):
+    """
+    Standalone function to process a text section, used for parallel processing.
+
+    This function is defined outside of any class to make it properly serializable.
+    """
+    try:
+        text = section.get('text', '')
+        duration = section.get('duration', 5)
+        section_position = section.get('position', position)
+        section_font_size = section.get('font_size', font_size)
+
+        if not font_path:
+            font_path = helper_body_font_path
+
+        # Create text clip with the provided parameters
+        return create_text_clip_func(
+            text=text,
+            duration=duration,
+            font_size=section_font_size,
+            font_path=font_path,
+            position=section_position,
+            animation=animation,
+            with_pill=with_pill
+        )
+    except Exception as e:
+        logger.error(f"Error creating text clip: {e}")
+        return None
 
 class TextHelper:
 
@@ -161,6 +202,125 @@ class TextHelper:
 
       return final_clip
 
+  # Move process_section outside of the method
+  def _process_text_section(self, section, animation="fade", font_size=60, font_path=None, with_pill=True, position='center'):
+      try:
+          text = section.get('text', '')
+          duration = section.get('duration', 5)
+          section_position = section.get('position', position)
+          section_font_size = section.get('font_size', font_size)
+
+          return self._create_text_clip(
+              text=text,
+              duration=duration,
+              font_size=section_font_size,
+              font_path=font_path,
+              position=section_position,
+              animation=animation,
+              with_pill=with_pill
+          )
+      except Exception as e:
+          logger.error(f"Error creating text clip: {e}")
+          return None
+
+  @measure_time
+  def generate_text_clips_parallel(self, script_sections, max_workers=None,
+                                 animation="fade", font_size=60, font_path=None,
+                                 with_pill=True, position='center'):
+      """
+      Generate text clips for all script sections in parallel
+
+      Args:
+          script_sections (list): List of script sections with 'text' and 'duration' keys
+          max_workers (int): Maximum number of concurrent workers
+          animation (str): Animation type (fade, slide, etc.)
+          font_size (int): Font size
+          font_path (str): Path to font file
+          with_pill (bool): Whether to add pill background
+          position (str): Position of text
+
+      Returns:
+          list: List of text clips
+      """
+      start_time = time.time()
+      logger.info(f"Generating {len(script_sections)} text clips in parallel")
+
+      if not max_workers:
+          max_workers = min(len(script_sections), os.cpu_count())
+
+      # Check if we have dill for advanced serialization
+      if HAS_DILL:
+          # Use ThreadPoolExecutor instead of ProcessPoolExecutor with dill
+          logger.info("Using ThreadPoolExecutor with dill for text generation")
+          with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+              # Process in threads with direct method calls
+              futures = []
+              for section in script_sections:
+                  futures.append(
+                      executor.submit(
+                          self._process_text_section,
+                          section,
+                          animation=animation,
+                          font_size=font_size,
+                          font_path=font_path,
+                          with_pill=with_pill,
+                          position=position
+                      )
+                  )
+
+              # Collect results
+              text_clips = []
+              for future in concurrent.futures.as_completed(futures):
+                  try:
+                      clip = future.result()
+                      if clip is not None:
+                          text_clips.append(clip)
+                  except Exception as e:
+                      logger.error(f"Error in parallel text clip generation: {e}")
+      else:
+          # Use ProcessPoolExecutor with the standalone function for better serialization
+          logger.info("Using ProcessPoolExecutor with standalone function for text generation")
+          # Create a serializable function for the creation
+          def create_text_clip_wrapper(text, duration, font_size, font_path, position, animation, with_pill):
+              return self._create_text_clip(
+                  text=text, duration=duration, font_size=font_size,
+                  font_path=font_path, position=position,
+                  animation=animation, with_pill=with_pill
+              )
+
+          text_clips = []
+          with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+              futures = []
+              for section in script_sections:
+                  futures.append(
+                      executor.submit(
+                          _process_text_section_standalone,
+                          section,
+                          self.resolution,
+                          self.body_font_path,
+                          create_text_clip_wrapper,
+                          animation=animation,
+                          font_size=font_size,
+                          font_path=font_path,
+                          with_pill=with_pill,
+                          position=position
+                      )
+                  )
+
+              # Collect results
+              for future in concurrent.futures.as_completed(futures):
+                  try:
+                      clip = future.result()
+                      if clip is not None:
+                          text_clips.append(clip)
+                  except Exception as e:
+                      logger.error(f"Error in parallel text clip generation: {e}")
+
+      total_time = time.time() - start_time
+      logger.info(f"Generated {len(text_clips)} text clips in {total_time:.2f} seconds")
+
+      return text_clips
+
   @measure_time
   def _create_word_by_word_clip(self, text, duration, font_size=60, font_path=None,
                             text_color=(255, 255, 255, 255),
@@ -199,132 +359,187 @@ class TextHelper:
           word_time = min_word_time + (effective_duration - min_word_time * len(words)) * char_ratio
           word_durations.append(word_time)
 
-      # Adjust durations to match total duration
-      actual_sum = sum(word_durations) + total_transition_time
-      if abs(actual_sum - duration) > 0.01:
-          adjust_factor = (duration - total_transition_time) / sum(word_durations)
-          word_durations = [d * adjust_factor for d in word_durations]
-
-      clips = []
-      current_time = 0
-
-      for i, (word, word_duration) in enumerate(zip(words, word_durations)):
-          # Create a function to draw the frame with the word on a pill background
-          def make_frame_with_pill(word=word, font_size=font_size, font_path=font_path,
+      def make_frame_with_pill(word=word, font_size=font_size, font_path=font_path,
                                   text_color=text_color, pill_color=pill_color):
               # Load font
-              font = ImageFont.truetype(font_path, font_size)
+              try:
+                  font = ImageFont.truetype(font_path, font_size)
+              except Exception:
+                  # Fallback to default font
+                  font = ImageFont.load_default()
 
-              # Calculate text size
-              dummy_img = Image.new('RGBA', (1, 1))
-              dummy_draw = ImageDraw.Draw(dummy_img)
-              text_bbox = dummy_draw.textbbox((0, 0), word, font=font)
-              text_width = text_bbox[2] - text_bbox[0]
-              text_height = text_bbox[3] - text_bbox[1]
-
-              # Get ascent and descent for more precise vertical positioning
-              ascent, descent = font.getmetrics()
-
-              # Add padding for the pill
-              padding_x = int(font_size * 0.7)  # Horizontal padding
-              padding_y = int(font_size * 0.35)  # Vertical padding
-
-              # Create image
-              img_width = text_width + padding_x * 2
-              img_height = text_height + padding_y * 2
-
-              # Create a transparent image
-              img = Image.new('RGBA', (img_width, img_height), (0, 0, 0, 0))
+              # Get text size
+              img = Image.new('RGBA', (1, 1), (0, 0, 0, 0))
               draw = ImageDraw.Draw(img)
+              text_width, text_height = draw.textsize(word, font=font)
 
-              # Create the pill shape (rounded rectangle)
-              radius = img_height // 2
+              # Add padding
+              padding_w = int(text_width * 0.2)
+              padding_h = int(text_height * 0.3)
+              width = text_width + padding_w * 2
+              height = text_height + padding_h * 2
 
-              # Draw the pill
-              # Draw the center rectangle
-              draw.rectangle([(radius, 0), (img_width - radius, img_height)], fill=pill_color)
-              # Draw the left semicircle
-              draw.ellipse([(0, 0), (radius * 2, img_height)], fill=pill_color)
-              # Draw the right semicircle
-              draw.ellipse([(img_width - radius * 2, 0), (img_width, img_height)], fill=pill_color)
+              # Create pill background
+              radius = height // 3
+              pill_img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+              draw = ImageDraw.Draw(pill_img)
 
-              # For horizontal centering:
-              text_x = (img_width - text_width) // 2
-              # For vertical centering:
-              offwith_y = (descent - ascent) // 4 # This small adjustment often helps
-              text_y = (img_height - text_height) // 2 + offwith_y
+              # Draw the rounded rectangle
+              draw.rectangle([(radius, 0), (width - radius, height)], fill=pill_color)
+              draw.rectangle([(0, radius), (width, height - radius)], fill=pill_color)
+              draw.ellipse([(0, 0), (radius * 2, radius * 2)], fill=pill_color)
+              draw.ellipse([(width - radius * 2, 0), (width, radius * 2)], fill=pill_color)
+              draw.ellipse([(0, height - radius * 2), (radius * 2, height)], fill=pill_color)
+              draw.ellipse([(width - radius * 2, height - radius * 2), (width, height)], fill=pill_color)
 
-              draw.text((text_x, text_y), word, font=font, fill=text_color)
+              # Draw text on the pill
+              draw.text((padding_w, padding_h), word, font=font, fill=text_color)
 
-              return img
+              # Convert PIL Image to numpy array for MoviePy
+              return np.array(pill_img)
 
-          # Create the frame with the word on a pill
-          word_image = make_frame_with_pill()
+      # Create a video clip for each word with its own pill background
+      word_clips = []
+      current_time = 0
 
-          # Convert to clip
-          word_clip = ImageClip(np.array(word_image), duration=word_duration)
+      for i, word in enumerate(words):
+          # Make a function to generate frames for this specific word
+          make_frame = lambda t, word=word: make_frame_with_pill(word)
 
-          # Add to clips list
-          clips.append(word_clip)
+          # Create a clip for this word
+          clip = VideoClip(make_frame, duration=word_durations[i])
 
-          # Update current time
-          current_time += word_duration + transition_duration
+          # Set start time
+          clip = clip.with_start(current_time)
 
-      # Concatenate clips
-      clips_with_transitions = []
-      for i, clip in enumerate(clips):
-          if i < len(clips) - 1:  # Not the last clip
-              clip = clip.with_effects([FadeIn(transition_duration)])
-          clips_with_transitions.append(clip)
+          # Update current time for next word
+          current_time += word_durations[i] + transition_duration
 
-      word_sequence = concatenate_videoclips(clips_with_transitions, method="compose")
+          word_clips.append(clip)
 
-      # Create a transparent background the size of the entire clip
-      bg = ColorClip(size=self.resolution, color=(0,0,0,0)).with_duration(word_sequence.duration)
+      # Combine all word clips
+      combined_clip = CompositeVideoClip(word_clips)
 
-      # Position the word sequence in the center of the background
-      positioned_sequence = word_sequence.with_position(position)
+      # Calculate center position for the clip in the frame
+      def get_position(t):
+          return position
 
-      # Combine the background and positioned sequence
-      final_clip = CompositeVideoClip([bg, positioned_sequence], size=self.resolution)
+      # Apply center positioning
+      combined_clip = combined_clip.with_position(get_position)
+
+      # Create a transparent background
+      bg = ColorClip(size=self.resolution, color=(0,0,0,0)).with_duration(duration)
+
+      # Overlay text on background
+      final_clip = CompositeVideoClip([bg, combined_clip], size=self.resolution)
 
       return final_clip
 
+  # Also apply the same fix to word_by_word generation
+  def _process_word_by_word_section(self, section, font_size=60, font_path=None):
+      try:
+          text = section.get('text', '')
+          duration = section.get('duration', 5)
+          position = section.get('position', ('center', 'center'))
+          section_font_size = section.get('font_size', font_size)
+
+          return self._create_word_by_word_clip(
+              text=text,
+              duration=duration,
+              font_size=section_font_size,
+              font_path=font_path,
+              position=position
+          )
+      except Exception as e:
+          logger.error(f"Error creating word-by-word clip: {e}")
+          return None
+
   @measure_time
-  def add_watermark(self, clip, watermark_text="Lazycreator", position=("right", "top"), opacity=0.7, font_size=30):
+  def generate_word_by_word_clips_parallel(self, script_sections, max_workers=None,
+                                           font_size=60, font_path=None):
       """
-      Add a watermark to a video clip
+      Generate word-by-word text clips for all script sections in parallel
 
       Args:
-          clip (VideoClip): Video clip to add watermark to
-          watermark_text (str): Text to display as watermark
-          position (tuple): Position of watermark ('left'/'right', 'top'/'bottom')
-          opacity (float): Opacity of watermark (0-1)
-          font_size (int): Font size for watermark
+          script_sections (list): List of script sections with 'text' and 'duration' keys
+          max_workers (int): Maximum number of concurrent workers
+          font_size (int): Font size
+          font_path (str): Path to font file
 
       Returns:
-          VideoClip: Clip with watermark added
+          list: List of text clips
       """
-      # Create text clip for watermark
-      watermark = TextClip(
-          text=watermark_text,
-          font_size=font_size,
-          font=self.body_font_path,
-          color='white'
-      ).with_duration(clip.duration).with_opacity(opacity)
+      start_time = time.time()
+      logger.info(f"Generating {len(script_sections)} word-by-word text clips in parallel")
 
-      # Calculate position
-      if position[0] == "right":
-          x_pos = clip.w - watermark.w - 20
-      else:
-          x_pos = 20
+      if not max_workers:
+          max_workers = min(len(script_sections), os.cpu_count())
 
-      if position[1] == "bottom":
-          y_pos = clip.h - watermark.h - 20
-      else:
-          y_pos = 20
+      # Use ThreadPoolExecutor for simpler serialization
+      with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+          futures = []
+          for section in script_sections:
+              futures.append(
+                  executor.submit(
+                      self._process_word_by_word_section,
+                      section,
+                      font_size=font_size,
+                      font_path=font_path
+                  )
+              )
 
-      watermark = watermark.with_position((x_pos, y_pos))
+          # Collect results
+          text_clips = []
+          for future in concurrent.futures.as_completed(futures):
+              try:
+                  clip = future.result()
+                  if clip is not None:
+                      text_clips.append(clip)
+              except Exception as e:
+                  logger.error(f"Error in parallel word-by-word clip generation: {e}")
 
-      # Add watermark to video
-      return CompositeVideoClip([clip, watermark], size=self.resolution)
+      total_time = time.time() - start_time
+      logger.info(f"Generated {len(text_clips)} word-by-word text clips in {total_time:.2f} seconds")
+
+      return text_clips
+
+  @measure_time
+  def add_watermark(self, clip, watermark_text="Lazycreator", position=("right", "top"), opacity=0.7, font_size=30):
+      """Add a text watermark to a video clip
+
+      Args:
+          clip (VideoClip): The video clip to add watermark to
+          watermark_text (str): Text to use as watermark
+          position (tuple): Position of watermark (combination of "left"/"right"/"center" and "top"/"bottom"/"center")
+          opacity (float): Opacity of the watermark
+          font_size (int): Font size for the watermark
+
+      Returns:
+          VideoClip: Video clip with watermark
+      """
+      # Create a text clip for the watermark
+      txt_clip = TextClip(watermark_text, font=self.body_font_path, font_size=font_size, color='white',
+                        stroke_color='gray', stroke_width=1)
+      txt_clip = txt_clip.with_duration(clip.duration).with_opacity(opacity)
+
+      # Calculate the margin (relative to resolution)
+      margin_x = int(self.resolution[0] * 0.03)
+      margin_y = int(self.resolution[1] * 0.02)
+
+      # Determine the position
+      if position[0] == "left":
+          x_pos = margin_x
+      elif position[0] == "right":
+          x_pos = self.resolution[0] - txt_clip.w - margin_x
+      else:  # center
+          x_pos = (self.resolution[0] - txt_clip.w) // 2
+
+      if position[1] == "top":
+          y_pos = margin_y
+      elif position[1] == "bottom":
+          y_pos = self.resolution[1] - txt_clip.h - margin_y
+      else:  # center
+          y_pos = (self.resolution[1] - txt_clip.h) // 2
+
+      # Add the text clip to the main clip
+      return CompositeVideoClip([clip, txt_clip.with_position((x_pos, y_pos))])

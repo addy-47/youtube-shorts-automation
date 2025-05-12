@@ -2,6 +2,9 @@ import os # for interacting with the operating system
 import logging # for logging messages
 import re # for regular expressions
 import time # for handling retries
+import concurrent.futures # for parallel processing
+from helper.audio import AudioHelper
+from helper.minor_helper import measure_time
 
 logger = logging.getLogger(__name__)
 
@@ -238,3 +241,53 @@ class GoogleVoiceover:
                     raise Exception(f"Google TTS error: {e}")
 
         return output_filename
+
+    @measure_time
+    def generate_audio_for_script(self, script_sections, voice_style=None, max_workers=None):
+        """
+        Generate audio for all script sections in parallel
+
+        Args:
+            script_sections (list): List of sections with text
+            voice_style (str): Voice style to use
+            max_workers (int): Maximum number of concurrent workers
+
+        Returns:
+            list: Audio file information with durations
+        """
+        # Use AudioHelper to process all sections in parallel
+        audio_helper = AudioHelper(self.output_dir)
+        return audio_helper.process_audio_for_script(
+            script_sections, voice_style, max_workers
+        )
+
+# Helper function for parallel processing multiple scripts
+@measure_time
+def generate_voiceovers_parallel(script_sections, voice_style=None, max_workers=None, temp_dir=None):
+    """
+    Generate voiceovers for script sections in parallel
+
+    Args:
+        script_sections (list): List of script sections with text
+        voice_style (str): Voice style to use
+        max_workers (int): Maximum number of concurrent workers
+        temp_dir (str): Directory for temporary files
+
+    Returns:
+        list: Audio data with paths and durations
+    """
+    logger.info(f"Generating voiceovers for {len(script_sections)} sections in parallel")
+    start_time = time.time()
+
+    # Create AudioHelper instance
+    audio_helper = AudioHelper(temp_dir)
+
+    # Process all script sections in parallel
+    audio_data = audio_helper.process_audio_for_script(
+        script_sections, voice_style, max_workers
+    )
+
+    total_time = time.time() - start_time
+    logger.info(f"Generated {len(audio_data)} voiceovers in {total_time:.2f} seconds")
+
+    return audio_data

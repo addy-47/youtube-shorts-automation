@@ -3,6 +3,7 @@ import random
 import os
 import requests
 import logging
+import concurrent.futures
 from moviepy  import VideoClip, concatenate_videoclips, ColorClip, CompositeVideoClip, ImageClip, TextClip
 from helper.blur import custom_blur, custom_edge_blur
 from helper.minor_helper import measure_time
@@ -27,6 +28,51 @@ temp_dir = os.path.join(TEMP_DIR, "generated_images")
 os.makedirs(temp_dir, exist_ok=True)  # Create temp directory if it doesn't exist
 
 @measure_time
+def generate_images_parallel(prompts, style="photorealistic", max_workers=None):
+    """
+    Generate multiple images in parallel based on prompts
+
+    Args:
+        prompts (list): List of image generation prompts
+        style (str): Style to apply to the images
+        max_workers (int): Maximum number of concurrent workers
+
+    Returns:
+        list: List of paths to generated images
+    """
+    start_time = time.time()
+    logger.info(f"Generating {len(prompts)} images in parallel")
+
+    def generate_single_image(prompt):
+        try:
+            return _generate_image_from_prompt(prompt, style)
+        except Exception as e:
+            logger.error(f"Error generating image: {e}")
+            return None
+
+    if not max_workers:
+        # Use fewer workers for API calls to avoid rate limiting
+        max_workers = min(len(prompts), 4)
+
+    # Image generation is I/O bound (API calls), so use ThreadPoolExecutor
+    image_paths = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(generate_single_image, prompt) for prompt in prompts]
+
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                image_path = future.result()
+                if image_path:
+                    image_paths.append(image_path)
+            except Exception as e:
+                logger.error(f"Failed to get result from image generation: {e}")
+
+    total_time = time.time() - start_time
+    logger.info(f"Generated {len(image_paths)} images in {total_time:.2f} seconds")
+
+    return image_paths
+
+@measure_time
 def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None):
   """
   Generate an image using Hugging Face Diffusion API based on prompt
@@ -40,7 +86,7 @@ def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None):
       str: Path to the generated image or None if failed
   """
   if not file_path:
-      file_path = os.path.join( temp_dir, f"gen_img_{int(time.time())}_{random.randint(1000, 9999)}.png")
+      file_path = os.path.join(temp_dir, f"gen_img_{int(time.time())}_{random.randint(1000, 9999)}.png")
 
   # Remove any existing style descriptors from the prompt
   style_keywords = ["digital art", "photorealistic", "oil painting", "realistic", "anime",
@@ -75,7 +121,7 @@ def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None):
   initial_wait_time = 20  # Starting wait time in seconds
 
   # Check if Hugging Face API key is available
-  if not  huggingface_api_key:
+  if not huggingface_api_key:
       logger.error("No Hugging Face API key provided. Will fall back to shorts_maker_V.")
       return None
 
@@ -83,8 +129,8 @@ def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None):
       try:
           # Make request to Hugging Face API
           response = requests.post(
-               hf_api_url,
-              headers= hf_headers,
+              hf_api_url,
+              headers=hf_headers,
               json={"inputs": enhanced_prompt},
               timeout=30  # Add timeout to prevent hanging indefinitely
           )
@@ -146,6 +192,69 @@ def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None):
   return file_path
 
 @measure_time
+def create_image_clips_parallel(image_paths, durations, texts=None, with_zoom=True, max_workers=None):
+    """
+    Create still image clips in parallel
+
+    Args:
+        image_paths (list): List of paths to images
+        durations (list): List of durations for each clip
+        texts (list): Optional list of text overlays
+        with_zoom (bool): Whether to add zoom effect
+        max_workers (int): Maximum number of concurrent workers
+
+    Returns:
+        list: List of video clips
+    """
+    start_time = time.time()
+    logger.info(f"Creating {len(image_paths)} image clips in parallel")
+
+    if not texts:
+        texts = [None] * len(image_paths)
+
+    # Make sure all lists have the same length
+    if len(durations) != len(image_paths):
+        logger.warning(f"Duration list length {len(durations)} doesn't match image paths length {len(image_paths)}")
+        # Pad or truncate durations list
+        if len(durations) < len(image_paths):
+            durations.extend([5.0] * (len(image_paths) - len(durations)))
+        else:
+            durations = durations[:len(image_paths)]
+
+    if len(texts) != len(image_paths):
+        texts = [None] * len(image_paths)
+
+    def create_clip(args):
+        image_path, duration, text = args
+        try:
+            return _create_still_image_clip(image_path, duration, text, with_zoom=with_zoom)
+        except Exception as e:
+            logger.error(f"Error creating image clip: {e}")
+            return None
+
+    if not max_workers:
+        max_workers = min(len(image_paths), os.cpu_count())
+
+    # Image clip creation is CPU bound, so use ProcessPoolExecutor
+    clips = []
+    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(create_clip, (img, dur, txt))
+                  for img, dur, txt in zip(image_paths, durations, texts)]
+
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                clip = future.result()
+                if clip:
+                    clips.append(clip)
+            except Exception as e:
+                logger.error(f"Failed to get result from image clip creation: {e}")
+
+    total_time = time.time() - start_time
+    logger.info(f"Created {len(clips)} image clips in {total_time:.2f} seconds")
+
+    return clips
+
+@measure_time
 def _create_still_image_clip(image_path, duration, text=None, text_position=('center','center'),
                           font_size=60, with_zoom=True, zoom_factor=0.05):
   """
@@ -168,24 +277,24 @@ def _create_still_image_clip(image_path, duration, text=None, text_position=('ce
 
   # resized to fill screen while maintaining aspect ratio
   img_ratio = image.size[0] / image.size[1]
-  target_ratio =  resolution[0] /  resolution[1]
+  target_ratio = resolution[0] / resolution[1]
 
   if img_ratio > target_ratio:  # Image is wider
-      new_height =  resolution[1]
+      new_height = resolution[1]
       new_width = int(new_height * img_ratio)
   else:  # Image is taller
-      new_width =  resolution[0]
+      new_width = resolution[0]
       new_height = int(new_width / img_ratio)
 
   image = image.resized(newsize=(new_width, new_height))
 
   # Center crop if needed
-  if new_width >  resolution[0] or new_height >  resolution[1]:
+  if new_width > resolution[0] or new_height > resolution[1]:
       x_center = new_width // 2
       y_center = new_height // 2
-      x1 = max(0, x_center -  resolution[0] // 2)
-      y1 = max(0, y_center -  resolution[1] // 2)
-      image = image.crop(x1=x1, y1=y1, width= resolution[0], height= resolution[1])
+      x1 = max(0, x_center - resolution[0] // 2)
+      y1 = max(0, y_center - resolution[1] // 2)
+      image = image.crop(x1=x1, y1=y1, width=resolution[0], height=resolution[1])
 
   # Add zoom effect if requested
   if with_zoom:
@@ -200,48 +309,37 @@ def _create_still_image_clip(image_path, duration, text=None, text_position=('ce
 
       image = image.resized(zoom_func)
 
-  # Set the duration
+  # Make sure the image is the right duration
   image = image.with_duration(duration)
 
   # Add text if provided
   if text:
-      try:
-          # Try using the text clip function from YTShortsCreator_V
-          txt_clip = TextHelper._create_text_clip(
-              text,
-              duration=duration,
-              font_size=font_size,
-              position=text_position,
-              with_pill=True
-          )
-          # Combine image and text
-          return CompositeVideoClip([image, txt_clip], size= resolution)
-      except Exception as e:
-          logger.error(f"Error creating text clip using V creator: {e}")
-          # Fallback to a simple text implementation if the V creator fails
-          try:
-              # Use the simpler built-in MoviePy TextClip without fancy effects
-              simple_text_clip = TextClip(
-                  text=text,
-                  font_size=font_size,
-                  font=r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf",
-                  color='white',
-                  method='caption',
-                  size=(int( resolution[0] * 0.9), None)
-              ).with_position(('center', int( resolution[1] * 0.85))).with_duration(duration)
+      txt = TextClip(
+          text=text,
+          font_size=font_size,
+          color='white',
+          font=r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf",
+          stroke_color='black',
+          stroke_width=1,
+          method='caption',
+          size=(resolution[0] - 100, None)
+      ).with_duration(duration)
 
-              # Create a semi-transparent background for better readability
-              text_w, text_h = simple_text_clip.size
-              bg_width = text_w + 40
-              bg_height = text_h + 40
-              bg_clip = ColorClip(size=(bg_width, bg_height), color=(0, 0, 0, 128))
-              bg_clip = bg_clip.with_position(('center', int( resolution[1] * 0.85) - 20)).with_duration(duration).with_opacity(0.7)
+      # Add shadow for text
+      txt_shadow = TextClip(
+          text=text,
+          font_size=font_size,
+          color='black',
+          font=r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf",
+          method='caption',
+          size=(resolution[0] - 100, None)
+      ).with_position((2, 2), relative=True).with_opacity(0.6).with_duration(duration)
 
-              # Combine all elements
-              return CompositeVideoClip([image, bg_clip, simple_text_clip], size= resolution)
-          except Exception as e2:
-              logger.error(f"Fallback text clip also failed: {e2}")
-              # If all text methods fail, just return the image without text
-              logger.warning("Returning image without text overlay due to text rendering failures")
-              return image
-  return image
+      # Position the text
+      txt = txt.with_position(text_position)
+      txt_shadow = txt_shadow.with_position(text_position)
+
+      # Composite all together
+      return CompositeVideoClip([image, txt_shadow, txt], size=resolution)
+  else:
+      return image
