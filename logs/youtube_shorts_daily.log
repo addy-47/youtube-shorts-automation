@@ -1,272 +1,136 @@
-2025-05-12 01:11:42,580 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
-2025-05-12 01:11:42,622 - INFO - automation.shorts_maker_V - Enhanced parallel rendering available with dill 0.3.9
-2025-05-12 01:11:43,077 - INFO - automation.shorts_maker_V - Google Cloud TTS initialized successfully
-2025-05-12 01:11:43,807 - INFO - __main__ - Generating comprehensive content for : Rockstar Released Way More ‘GTA 6’ Story Details Than We Realized - Forbes
-2025-05-12 01:11:48,445 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-05-12 01:11:48,457 - INFO - automation.content_generator - Successfully generated comprehensive content package:
-2025-05-12 01:11:48,457 - INFO - automation.content_generator - Title: GTA 6 Story Details You Missed! 🚨
-2025-05-12 01:11:48,458 - INFO - automation.content_generator - Script length: 63 words
-2025-05-12 01:11:48,458 - INFO - automation.content_generator - Thumbnail HF prompt: An eye-catching thumbnail featuring the iconic GTA...
-2025-05-12 01:11:48,458 - INFO - automation.content_generator - Thumbnail Unsplash query: GTA gaming elements
-2025-05-12 01:11:48,458 - INFO - __main__ - Content package generated successfully:
-2025-05-12 01:11:48,459 - INFO - __main__ - Title: LazyCreator presents: GTA 6 Story Details You Missed! 🚨
-2025-05-12 01:11:48,459 - INFO - __main__ - Description length: 123 characters
-2025-05-12 01:11:48,459 - INFO - __main__ - Raw script generated successfully
-2025-05-12 01:11:48,460 - INFO - helper.minor_helper - Parsed script into 6 sentences
-2025-05-12 01:11:48,460 - INFO - helper.minor_helper - Added sentence 0 to cards: 'Did you know Rockstar has drop...' (duration: 5s)
-2025-05-12 01:11:48,461 - INFO - helper.minor_helper - Added sentence 1 to cards: 'Recent leaks reveal a complex ...' (duration: 5s)
-2025-05-12 01:11:48,461 - INFO - helper.minor_helper - Added sentence 2 to cards: 'Fans are buzzing about the ret...' (duration: 5s)
-2025-05-12 01:11:48,461 - INFO - helper.minor_helper - Added sentence 3 to cards: 'It’s shaping up to be a game-c...' (duration: 5s)
-2025-05-12 01:11:48,462 - INFO - helper.minor_helper - Added sentence 4 to cards: 'Are you ready for all the surp...' (duration: 5s)
-2025-05-12 01:11:48,462 - INFO - helper.minor_helper - Added sentence 5 to cards: 'Hit that like button and subsc...' (duration: 5s)
-2025-05-12 01:11:48,462 - INFO - helper.minor_helper - Created 6 script cards
-2025-05-12 01:11:48,463 - INFO - __main__ - Script parsed into 6 sections
-2025-05-12 01:11:48,463 - INFO - __main__ - Section 1: Did you know Rockstar has drop... (duration: 5s)
-2025-05-12 01:11:48,463 - INFO - __main__ - Section 2: Recent leaks reveal a complex ... (duration: 5s)
-2025-05-12 01:11:48,464 - INFO - __main__ - Section 3: Fans are buzzing about the ret... (duration: 5s)
-2025-05-12 01:11:48,464 - INFO - __main__ - Section 4: It’s shaping up to be a game-c... (duration: 5s)
-2025-05-12 01:11:48,465 - INFO - __main__ - Section 5: Are you ready for all the surp... (duration: 5s)
-2025-05-12 01:11:48,465 - INFO - __main__ - Section 6: Hit that like button and subsc... (duration: 5s)
-2025-05-12 01:11:48,465 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: GTA 6 Story Details You Missed! 🚨'
-2025-05-12 01:11:48,466 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
-2025-05-12 01:11:48,466 - INFO - __main__ - Section 0: 'LazyCreator presents: GTA 6 St...' (duration: 3s)
-2025-05-12 01:11:48,466 - INFO - __main__ - Section 1: 'Did you know Rockstar has drop...' (duration: 5s)
-2025-05-12 01:11:48,466 - INFO - __main__ - Section 2: 'Recent leaks reveal a complex ...' (duration: 5s)
-2025-05-12 01:11:48,467 - INFO - __main__ - Section 3: 'Fans are buzzing about the ret...' (duration: 5s)
-2025-05-12 01:11:48,467 - INFO - __main__ - Section 4: 'It’s shaping up to be a game-c...' (duration: 5s)
-2025-05-12 01:11:48,467 - INFO - __main__ - Section 5: 'Are you ready for all the surp...' (duration: 5s)
-2025-05-12 01:11:48,467 - INFO - __main__ - Section 6: 'Hit that like button and subsc...' (duration: 5s)
-2025-05-12 01:11:48,468 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
-2025-05-12 01:11:48,469 - INFO - __main__ - Generating video search queries for each section using AI...
-2025-05-12 01:11:51,512 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-05-12 01:11:51,513 - INFO - automation.content_generator - Successfully generated batch video queries for 7 sections.
-2025-05-12 01:11:51,514 - INFO - __main__ - Section queries: 1: GTA 6 story details, 2: Rockstar game leaks, 3: multiple protagonists narrative, 4: classic characters return, 5: game-changer announcement, 6: surprise game elements, 7: subscribe for updates
-2025-05-12 01:11:51,514 - INFO - __main__ - Creating YouTube Short
-2025-05-12 01:11:51,515 - INFO - helper.minor_helper - Starting YouTube short creation
-2025-05-12 01:11:51,515 - INFO - automation.shorts_maker_V - Scaling durations by factor 0.76 to fit max duration of 25s
-2025-05-12 01:11:51,515 - INFO - automation.shorts_maker_V - Total video duration: 25.0s
-2025-05-12 01:11:51,515 - INFO - automation.shorts_maker_V - Creating video with 5 background segments for middle sections
-2025-05-12 01:11:51,516 - INFO - automation.shorts_maker_V - Starting background video fetch
-2025-05-12 01:11:51,516 - INFO - helper.fetch - Fetching 1 videos using pexels API
-2025-05-12 01:11:53,509 - INFO - helper.fetch - Fetching 1 videos using pixabay API
-2025-05-12 01:12:01,350 - INFO - helper.fetch - Fetching 1 videos using pixabay API
-2025-05-12 01:12:02,900 - INFO - helper.fetch - Fetching 1 videos using pixabay API
-2025-05-12 01:12:05,101 - INFO - helper.fetch - Fetching 1 videos using pexels API
-2025-05-12 01:12:08,355 - INFO - helper.fetch - Fetching 1 videos using pexels API
-2025-05-12 01:12:10,504 - INFO - helper.fetch - Fetching 1 videos using pixabay API
-2025-05-12 01:12:12,415 - INFO - automation.shorts_maker_V - Completed background video fetch in 20.90 seconds
-2025-05-12 01:12:12,416 - INFO - automation.shorts_maker_V - Starting TTS audio generation
-2025-05-12 01:12:12,998 - INFO - automation.voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\section_0.mp3]
-2025-05-12 01:12:13,506 - INFO - automation.voiceover - Speech synthesized for text [Did you know Rocksta...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\section_1.mp3]
-2025-05-12 01:12:13,942 - INFO - automation.voiceover - Speech synthesized for text [Recent leaks reveal ...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\section_2.mp3]
-2025-05-12 01:12:14,426 - INFO - automation.voiceover - Speech synthesized for text [Fans are buzzing abo...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\section_3.mp3]
-2025-05-12 01:12:14,826 - INFO - automation.voiceover - Speech synthesized for text [It’s shaping up to b...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\section_4.mp3]
-2025-05-12 01:12:15,222 - INFO - automation.voiceover - Speech synthesized for text [Are you ready for al...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\section_5.mp3]
-2025-05-12 01:12:15,630 - INFO - automation.voiceover - Speech synthesized for text [Hit that like button...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\section_6.mp3]
-2025-05-12 01:12:15,776 - INFO - automation.shorts_maker_V - Completed TTS audio generation in 3.36 seconds
-2025-05-12 01:12:15,777 - INFO - automation.shorts_maker_V - Updated total duration: 25.13s
-2025-05-12 01:12:15,777 - INFO - automation.shorts_maker_V - Starting background processing
-2025-05-12 01:12:59,758 - INFO - automation.shorts_maker_V - Completed background processing in 43.98 seconds
-2025-05-12 01:13:05,101 - INFO - automation.shorts_maker_V - Adding validated clip 0: 'LazyCreator presents: GTA 6 St...'
-2025-05-12 01:13:05,104 - INFO - automation.shorts_maker_V - Adding validated clip 1: 'Did you know Rockstar has drop...'
-2025-05-12 01:13:05,105 - INFO - automation.shorts_maker_V - Adding validated clip 2: 'Recent leaks reveal a complex ...'
-2025-05-12 01:13:05,105 - INFO - automation.shorts_maker_V - Adding validated clip 3: 'Fans are buzzing about the ret...'
-2025-05-12 01:13:05,107 - INFO - automation.shorts_maker_V - Adding validated clip 4: 'It’s shaping up to be a game-c...'
-2025-05-12 01:13:05,110 - INFO - automation.shorts_maker_V - Adding validated clip 5: 'Are you ready for all the surp...'
-2025-05-12 01:13:05,110 - INFO - automation.shorts_maker_V - Adding validated clip 6: 'Hit that like button and subsc...'
-2025-05-12 01:13:05,112 - INFO - automation.shorts_maker_V - === CLIP ORDER BEFORE RENDERING ===
-2025-05-12 01:13:05,113 - INFO - automation.shorts_maker_V - Position 0: Section 0 - 'LazyCreator presents: GTA 6 St...'
-2025-05-12 01:13:05,114 - INFO - automation.shorts_maker_V - Position 1: Section 1 - 'Did you know Rockstar has drop...'
-2025-05-12 01:13:05,115 - INFO - automation.shorts_maker_V - Position 2: Section 2 - 'Recent leaks reveal a complex ...'
-2025-05-12 01:13:05,115 - INFO - automation.shorts_maker_V - Position 3: Section 3 - 'Fans are buzzing about the ret...'
-2025-05-12 01:13:05,116 - INFO - automation.shorts_maker_V - Position 4: Section 4 - 'It’s shaping up to be a game-c...'
-2025-05-12 01:13:05,116 - INFO - automation.shorts_maker_V - Position 5: Section 5 - 'Are you ready for all the surp...'
-2025-05-12 01:13:05,116 - INFO - automation.shorts_maker_V - Position 6: Section 6 - 'Hit that like button and subsc...'
-2025-05-12 01:13:05,117 - INFO - automation.shorts_maker_V - === END CLIP ORDER LOG ===
-2025-05-12 01:13:05,965 - INFO - automation.shorts_maker_V - Using parallel renderer for improved performance
-2025-05-12 01:13:05,965 - INFO - automation.shorts_maker_V - Found dill 0.3.9 for improved serialization
-2025-05-12 01:13:05,966 - INFO - automation.shorts_maker_V - Sorting clips by their section index before rendering
-2025-05-12 01:13:05,967 - INFO - automation.shorts_maker_V - === CLIP ORDER AFTER SORTING ===
-2025-05-12 01:13:05,967 - INFO - automation.shorts_maker_V - Position 0: Section 0 - 'LazyCreator presents: GTA 6 St...'
-2025-05-12 01:13:05,968 - INFO - automation.shorts_maker_V - Position 1: Section 1 - 'Did you know Rockstar has drop...'
-2025-05-12 01:13:05,968 - INFO - automation.shorts_maker_V - Position 2: Section 2 - 'Recent leaks reveal a complex ...'
-2025-05-12 01:13:05,969 - INFO - automation.shorts_maker_V - Position 3: Section 3 - 'Fans are buzzing about the ret...'
-2025-05-12 01:13:05,970 - INFO - automation.shorts_maker_V - Position 4: Section 4 - 'It’s shaping up to be a game-c...'
-2025-05-12 01:13:05,970 - INFO - automation.shorts_maker_V - Position 5: Section 5 - 'Are you ready for all the surp...'
-2025-05-12 01:13:05,971 - INFO - automation.shorts_maker_V - Position 6: Section 6 - 'Hit that like button and subsc...'
-2025-05-12 01:13:05,971 - INFO - automation.shorts_maker_V - === END SORTED CLIP ORDER LOG ===
-2025-05-12 01:13:05,972 - INFO - automation.shorts_maker_V - Setting clip 0 debug info: Section 0: LazyCreator presents: GTA 6 St...
-2025-05-12 01:13:05,973 - INFO - automation.shorts_maker_V - Setting clip 1 debug info: Section 1: Did you know Rockstar has drop...
-2025-05-12 01:13:05,974 - INFO - automation.shorts_maker_V - Setting clip 2 debug info: Section 2: Recent leaks reveal a complex ...
-2025-05-12 01:13:05,974 - INFO - automation.shorts_maker_V - Setting clip 3 debug info: Section 3: Fans are buzzing about the ret...
-2025-05-12 01:13:05,975 - INFO - automation.shorts_maker_V - Setting clip 4 debug info: Section 4: It’s shaping up to be a game-c...
-2025-05-12 01:13:05,976 - INFO - automation.shorts_maker_V - Setting clip 5 debug info: Section 5: Are you ready for all the surp...
-2025-05-12 01:13:05,976 - INFO - automation.shorts_maker_V - Setting clip 6 debug info: Section 6: Hit that like button and subsc...
-2025-05-12 01:13:05,978 - INFO - automation.shorts_maker_V - Rendering 7 clips in parallel using 7 processes with preset: veryfast
-2025-05-12 01:13:05,979 - INFO - automation.shorts_maker_V - === SECTION INFO RECEIVED BY PARALLEL RENDERER ===
-2025-05-12 01:13:05,980 - INFO - automation.shorts_maker_V - Clip 0: Section 0 - 'LazyCreator presents: GTA 6 St...'
-2025-05-12 01:13:05,982 - INFO - automation.shorts_maker_V - Clip 1: Section 1 - 'Did you know Rockstar has drop...'
-2025-05-12 01:13:05,983 - INFO - automation.shorts_maker_V - Clip 2: Section 2 - 'Recent leaks reveal a complex ...'
-2025-05-12 01:13:05,984 - INFO - automation.shorts_maker_V - Clip 3: Section 3 - 'Fans are buzzing about the ret...'
-2025-05-12 01:13:05,984 - INFO - automation.shorts_maker_V - Clip 4: Section 4 - 'It’s shaping up to be a game-c...'
-2025-05-12 01:13:05,985 - INFO - automation.shorts_maker_V - Clip 5: Section 5 - 'Are you ready for all the surp...'
-2025-05-12 01:13:05,985 - INFO - automation.shorts_maker_V - Clip 6: Section 6 - 'Hit that like button and subsc...'
-2025-05-12 01:13:05,986 - INFO - automation.shorts_maker_V - === END SECTION INFO ===
-2025-05-12 01:13:05,987 - INFO - automation.shorts_maker_V - Pre-processing complex clips...
-2025-05-12 01:13:05,987 - INFO - automation.shorts_maker_V - Processing clip 0: Section 0: LazyCreator presents: GTA 6 St...
-2025-05-12 01:13:05,988 - INFO - automation.shorts_maker_V - Clip 0 is complex, pre-rendering: Section 0: LazyCreator presents: GTA 6 St...
-2025-05-12 01:13:06,096 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 0
-2025-05-12 01:13:06,097 - INFO - automation.parallel_renderer - Pre-rendering clip 0 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_0_1746992585.mp4
-2025-05-12 01:16:09,563 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 0 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_0_1746992585.mp4
-2025-05-12 01:16:09,579 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 0: Section 0: LazyCreator presents: GTA 6 St...
-2025-05-12 01:16:09,582 - INFO - automation.shorts_maker_V - Processing clip 1: Section 1: Did you know Rockstar has drop...
-2025-05-12 01:16:09,583 - INFO - automation.shorts_maker_V - Clip 1 is complex, pre-rendering: Section 1: Did you know Rockstar has drop...
-2025-05-12 01:16:09,670 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 1
-2025-05-12 01:16:09,671 - INFO - automation.parallel_renderer - Pre-rendering clip 1 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_1_1746992769.mp4
-2025-05-12 01:17:21,533 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 1 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_1_1746992769.mp4
-2025-05-12 01:17:21,546 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 1: Section 1: Did you know Rockstar has drop...
-2025-05-12 01:17:21,547 - INFO - automation.shorts_maker_V - Processing clip 2: Section 2: Recent leaks reveal a complex ...
-2025-05-12 01:17:21,548 - INFO - automation.shorts_maker_V - Clip 2 is complex, pre-rendering: Section 2: Recent leaks reveal a complex ...
-2025-05-12 01:17:21,625 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 2
-2025-05-12 01:17:21,625 - INFO - automation.parallel_renderer - Pre-rendering clip 2 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_2_1746992841.mp4
-2025-05-12 01:20:14,869 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 2 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_2_1746992841.mp4
-2025-05-12 01:20:14,884 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 2: Section 2: Recent leaks reveal a complex ...
-2025-05-12 01:20:14,886 - INFO - automation.shorts_maker_V - Processing clip 3: Section 3: Fans are buzzing about the ret...
-2025-05-12 01:20:14,887 - INFO - automation.shorts_maker_V - Clip 3 is complex, pre-rendering: Section 3: Fans are buzzing about the ret...
-2025-05-12 01:20:14,959 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 3
-2025-05-12 01:20:14,959 - INFO - automation.parallel_renderer - Pre-rendering clip 3 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_3_1746993014.mp4
-2025-05-12 01:22:31,130 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 3 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_3_1746993014.mp4
-2025-05-12 01:22:31,146 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 3: Section 3: Fans are buzzing about the ret...
-2025-05-12 01:22:31,149 - INFO - automation.shorts_maker_V - Processing clip 4: Section 4: It’s shaping up to be a game-c...
-2025-05-12 01:22:31,151 - INFO - automation.shorts_maker_V - Clip 4 is complex, pre-rendering: Section 4: It’s shaping up to be a game-c...
-2025-05-12 01:22:31,236 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 4
-2025-05-12 01:22:31,236 - INFO - automation.parallel_renderer - Pre-rendering clip 4 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_4_1746993151.mp4
-2025-05-12 01:23:41,969 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 4 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_4_1746993151.mp4
-2025-05-12 01:23:41,996 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 4: Section 4: It’s shaping up to be a game-c...
-2025-05-12 01:23:42,002 - INFO - automation.shorts_maker_V - Processing clip 5: Section 5: Are you ready for all the surp...
-2025-05-12 01:23:42,003 - INFO - automation.shorts_maker_V - Clip 5 is complex, pre-rendering: Section 5: Are you ready for all the surp...
-2025-05-12 01:23:42,093 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 5
-2025-05-12 01:23:42,094 - INFO - automation.parallel_renderer - Pre-rendering clip 5 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_5_1746993222.mp4
-2025-05-12 01:24:49,194 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 5 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_5_1746993222.mp4
-2025-05-12 01:24:49,204 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 5: Section 5: Are you ready for all the surp...
-2025-05-12 01:24:49,207 - INFO - automation.shorts_maker_V - Processing clip 6: Section 6: Hit that like button and subsc...
-2025-05-12 01:24:49,207 - INFO - automation.shorts_maker_V - Clip 6 is complex, pre-rendering: Section 6: Hit that like button and subsc...
-2025-05-12 01:24:49,270 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 6
-2025-05-12 01:24:49,271 - INFO - automation.parallel_renderer - Pre-rendering clip 6 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_6_1746993289.mp4
-2025-05-12 01:26:32,871 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 6 to D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_6_1746993289.mp4
-2025-05-12 01:26:32,886 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 6: Section 6: Hit that like button and subsc...
-2025-05-12 01:26:32,889 - INFO - automation.shorts_maker_V - === CLIPS BEFORE PARALLEL RENDERING ===
-2025-05-12 01:26:32,890 - INFO - automation.shorts_maker_V - Position 0: Clip 0 (Section 0) - Section 0: LazyCreator presents: GTA 6 St...
-2025-05-12 01:26:32,892 - INFO - automation.shorts_maker_V - Position 1: Clip 1 (Section 1) - Section 1: Did you know Rockstar has drop...
-2025-05-12 01:26:32,892 - INFO - automation.shorts_maker_V - Position 2: Clip 2 (Section 2) - Section 2: Recent leaks reveal a complex ...
-2025-05-12 01:26:32,892 - INFO - automation.shorts_maker_V - Position 3: Clip 3 (Section 3) - Section 3: Fans are buzzing about the ret...
-2025-05-12 01:26:32,892 - INFO - automation.shorts_maker_V - Position 4: Clip 4 (Section 4) - Section 4: It’s shaping up to be a game-c...
-2025-05-12 01:26:32,893 - INFO - automation.shorts_maker_V - Position 5: Clip 5 (Section 5) - Section 5: Are you ready for all the surp...
-2025-05-12 01:26:32,894 - INFO - automation.shorts_maker_V - Position 6: Clip 6 (Section 6) - Section 6: Hit that like button and subsc...
-2025-05-12 01:26:32,894 - INFO - automation.shorts_maker_V - === END CLIPS BEFORE PARALLEL RENDERING ===
-2025-05-12 01:26:32,894 - INFO - automation.shorts_maker_V - Rendering clips in parallel...
-2025-05-12 01:26:32,895 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 0 to parallel processing: Section 0: LazyCreator presents: GTA 6 St...
-2025-05-12 01:26:32,895 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 1 to parallel processing: Section 1: Did you know Rockstar has drop...
-2025-05-12 01:26:32,896 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 2 to parallel processing: Section 2: Recent leaks reveal a complex ...
-2025-05-12 01:26:32,896 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 3 to parallel processing: Section 3: Fans are buzzing about the ret...
-2025-05-12 01:26:32,897 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 4 to parallel processing: Section 4: It’s shaping up to be a game-c...
-2025-05-12 01:26:32,897 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 5 to parallel processing: Section 5: Are you ready for all the surp...
-2025-05-12 01:26:32,898 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 6 to parallel processing: Section 6: Hit that like button and subsc...
-2025-05-12 01:26:52,281 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_1_1746992769.mp4
-2025-05-12 01:26:52,285 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_5_1746993222.mp4
-2025-05-12 01:26:52,286 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_6_1746993289.mp4
-2025-05-12 01:26:52,286 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_0_1746992585.mp4
-2025-05-12 01:26:52,287 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_2_1746992841.mp4
-2025-05-12 01:26:53,688 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_3_1746993014.mp4
-2025-05-12 01:26:53,689 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\prerender_4_1746993151.mp4
-2025-05-12 01:26:53,774 - INFO - automation.shorts_maker_V - === RENDERED PATHS WITH INDICES ===
-2025-05-12 01:26:53,774 - INFO - automation.shorts_maker_V - === END RENDERED PATHS ===
-2025-05-12 01:26:53,872 - INFO - automation.shorts_maker_V - Successfully rendered 7 out of 7 clips
-2025-05-12 01:26:53,873 - INFO - automation.shorts_maker_V - Concatenating clips using FFmpeg...
-2025-05-12 01:26:53,873 - INFO - automation.shorts_maker_V - Extracted index 1 from prerender filename: prerender_1_1746992769.mp4
-2025-05-12 01:26:53,873 - INFO - automation.shorts_maker_V - Extracted index 5 from prerender filename: prerender_5_1746993222.mp4
-2025-05-12 01:26:53,874 - INFO - automation.shorts_maker_V - Extracted index 6 from prerender filename: prerender_6_1746993289.mp4
-2025-05-12 01:26:53,874 - INFO - automation.shorts_maker_V - Extracted index 0 from prerender filename: prerender_0_1746992585.mp4
-2025-05-12 01:26:53,874 - INFO - automation.shorts_maker_V - Extracted index 2 from prerender filename: prerender_2_1746992841.mp4
-2025-05-12 01:26:53,875 - INFO - automation.shorts_maker_V - Extracted index 3 from prerender filename: prerender_3_1746993014.mp4
-2025-05-12 01:26:53,875 - INFO - automation.shorts_maker_V - Extracted index 4 from prerender filename: prerender_4_1746993151.mp4
-2025-05-12 01:26:53,875 - INFO - automation.shorts_maker_V - Concatenating 7 clips in correct order
-2025-05-12 01:26:53,876 - INFO - automation.shorts_maker_V - === CLIPS ORDER FOR CONCATENATION ===
-2025-05-12 01:26:53,876 - INFO - automation.shorts_maker_V - Position 0: Clip 0 (Section 0) - Section 0: LazyCreator presents: GTA 6 St...
-2025-05-12 01:26:53,877 - INFO - automation.shorts_maker_V - Position 1: Clip 1 (Section 1) - Section 1: Did you know Rockstar has drop...
-2025-05-12 01:26:53,877 - INFO - automation.shorts_maker_V - Position 2: Clip 2 (Section 2) - Section 2: Recent leaks reveal a complex ...
-2025-05-12 01:26:53,877 - INFO - automation.shorts_maker_V - Position 3: Clip 3 (Section 3) - Section 3: Fans are buzzing about the ret...
-2025-05-12 01:26:53,877 - INFO - automation.shorts_maker_V - Position 4: Clip 4 (Section 4) - Section 4: It’s shaping up to be a game-c...
-2025-05-12 01:26:53,878 - INFO - automation.shorts_maker_V - Position 5: Clip 5 (Section 5) - Section 5: Are you ready for all the surp...
-2025-05-12 01:26:53,878 - INFO - automation.shorts_maker_V - Position 6: Clip 6 (Section 6) - Section 6: Hit that like button and subsc...
-2025-05-12 01:26:53,879 - INFO - automation.shorts_maker_V - === END CLIPS ORDER FOR CONCATENATION ===
-2025-05-12 01:26:53,883 - INFO - automation.shorts_maker_V - Running FFmpeg concatenation: ffmpeg -y -f concat -safe 0 -i D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502\concat_list.txt -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -max_muxing_queue_size 9999 -c:a aac -b:a 192k ai_shorts_output\yt_shorts_LazyCreator_presents_GTA_6_Sto_20250512_011143.mp4
-2025-05-12 01:27:06,874 - INFO - automation.shorts_maker_V - Successfully concatenated clips to ai_shorts_output\yt_shorts_LazyCreator_presents_GTA_6_Sto_20250512_011143.mp4
-2025-05-12 01:27:06,961 - INFO - helper.minor_helper - Completed YouTube short creation in 915.45 seconds
-2025-05-12 01:27:06,962 - INFO - __main__ - Generating thumbnail for the short
-2025-05-12 01:27:06,969 - INFO - automation.thumbnail - STARTING generate_thumbnail at 01:27:06.969
-2025-05-12 01:27:06,970 - INFO - automation.thumbnail - Using thumbnail prompt: An eye-catching thumbnail featuring the iconic GTA logo, scattered game elements like cars and characters, with a bold text overlay that says 'GTA 6 Revealed!'
-2025-05-12 01:27:06,970 - INFO - automation.thumbnail - STARTING generate_image_huggingface at 01:27:06.970
-2025-05-12 01:27:06,971 - INFO - automation.thumbnail - Hugging Face prompt: An eye-catching thumbnail featuring the iconic GTA logo, scattered game ele...
-2025-05-12 01:27:07,335 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
-2025-05-12 01:28:46,524 - ERROR - automation.thumbnail - Exception during Hugging Face API call: HTTPSConnectionPool(host='api-inference.huggingface.co', port=443): Max retries exceeded with url: /models/stabilityai/stable-diffusion-2-1 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000017B10C3F610>, 'Connection to api-inference.huggingface.co timed out. (connect timeout=30)'))
-2025-05-12 01:29:01,525 - ERROR - automation.thumbnail - Failed to generate image with Hugging Face API after multiple attempts
-2025-05-12 01:29:01,525 - INFO - automation.thumbnail - COMPLETED generate_image_huggingface in 114.56 seconds
-2025-05-12 01:29:01,526 - INFO - automation.thumbnail - Falling back to Unsplash for thumbnail image
-2025-05-12 01:29:01,526 - INFO - automation.thumbnail - STARTING fetch_image_unsplash at 01:29:01.526
-2025-05-12 01:29:01,526 - INFO - automation.thumbnail - Searching Unsplash with query: An featuring the iconic GTA logo, scattered game elements like cars and characters, with a bold text overlay that says 'GTA 6 Revealed!'
-2025-05-12 01:29:02,410 - INFO - automation.thumbnail - Unsplash image downloaded to D:\youtube-shorts-automation\automation\temp\thumbnail_1746993426\thumbnail_unsplash_1746993541_4059.jpg
-2025-05-12 01:29:02,411 - INFO - automation.thumbnail - Image attribution: Photo by Ksenia Makagonova on Unsplash
-2025-05-12 01:29:02,414 - INFO - automation.thumbnail - COMPLETED fetch_image_unsplash in 0.89 seconds
-2025-05-12 01:29:02,414 - INFO - automation.thumbnail - STARTING create_thumbnail at 01:29:02.414
-2025-05-12 01:29:02,415 - INFO - automation.thumbnail - Creating thumbnail for title: 'LazyCreator presents: GTA 6 Story Details You Missed! 🚨'
-2025-05-12 01:29:02,415 - INFO - automation.thumbnail - Using base image: D:\youtube-shorts-automation\automation\temp\thumbnail_1746993426\thumbnail_unsplash_1746993541_4059.jpg
-2025-05-12 01:29:02,415 - INFO - automation.thumbnail - Output path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250512_011143.jpg
-2025-05-12 01:29:02,724 - INFO - automation.thumbnail - Base image size: (1080, 720)
-2025-05-12 01:29:02,725 - ERROR - automation.thumbnail - Error creating thumbnail: 'JpegImageFile' object has no attribute 'resized'
-2025-05-12 01:29:02,729 - ERROR - automation.thumbnail - Thumbnail creation traceback: Traceback (most recent call last):
+2025-05-15 21:54:38,485 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 2 to D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_2_1747326069.mp4
+2025-05-15 21:54:38,512 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 2: Section 2: The iPhone 18 Pro is rumored t...
+2025-05-15 21:54:38,515 - INFO - automation.shorts_maker_V - Processing clip 3: Section 3: Imagine unlocking your phone w...
+2025-05-15 21:54:38,516 - INFO - automation.shorts_maker_V - Clip 3 is complex, pre-rendering: Section 3: Imagine unlocking your phone w...
+2025-05-15 21:54:38,653 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 3
+2025-05-15 21:54:38,655 - INFO - automation.parallel_renderer - Pre-rendering clip 3 to D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_3_1747326278.mp4
+2025-05-15 21:57:50,561 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 3 to D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_3_1747326278.mp4
+2025-05-15 21:57:50,590 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 3: Section 3: Imagine unlocking your phone w...
+2025-05-15 21:57:50,594 - INFO - automation.shorts_maker_V - Processing clip 4: Section 4: This innovation could change h...
+2025-05-15 21:57:50,595 - INFO - automation.shorts_maker_V - Clip 4 is complex, pre-rendering: Section 4: This innovation could change h...
+2025-05-15 21:57:50,681 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 4
+2025-05-15 21:57:50,682 - INFO - automation.parallel_renderer - Pre-rendering clip 4 to D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_4_1747326470.mp4
+2025-05-15 22:00:13,012 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 4 to D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_4_1747326470.mp4
+2025-05-15 22:00:13,054 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 4: Section 4: This innovation could change h...
+2025-05-15 22:00:13,060 - INFO - automation.shorts_maker_V - Processing clip 5: Section 5: Are you ready for this game-ch...
+2025-05-15 22:00:13,061 - INFO - automation.shorts_maker_V - Clip 5 is complex, pre-rendering: Section 5: Are you ready for this game-ch...
+2025-05-15 22:00:13,209 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 5
+2025-05-15 22:00:13,210 - INFO - automation.parallel_renderer - Pre-rendering clip 5 to D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_5_1747326613.mp4
+2025-05-15 22:02:02,656 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 5 to D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_5_1747326613.mp4
+2025-05-15 22:02:02,697 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 5: Section 5: Are you ready for this game-ch...
+2025-05-15 22:02:02,703 - INFO - automation.shorts_maker_V - Processing clip 6: Section 6: Hit that like button and subsc...
+2025-05-15 22:02:02,704 - INFO - automation.shorts_maker_V - Clip 6 is complex, pre-rendering: Section 6: Hit that like button and subsc...
+2025-05-15 22:02:02,872 - INFO - automation.parallel_renderer - Created new composite clip with fixed subclippeds for clip 6
+2025-05-15 22:02:02,873 - INFO - automation.parallel_renderer - Pre-rendering clip 6 to D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_6_1747326722.mp4
+2025-05-15 22:03:45,868 - INFO - automation.parallel_renderer - Successfully pre-rendered clip 6 to D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_6_1747326722.mp4
+2025-05-15 22:03:45,884 - INFO - automation.shorts_maker_V - Successfully pre-rendered complex clip 6: Section 6: Hit that like button and subsc...
+2025-05-15 22:03:45,888 - INFO - automation.shorts_maker_V - === CLIPS BEFORE PARALLEL RENDERING ===
+2025-05-15 22:03:45,888 - INFO - automation.shorts_maker_V - Position 0: Clip 0 (Section 0) - Section 0: LazyCreator presents: iPhone 1...
+2025-05-15 22:03:45,890 - INFO - automation.shorts_maker_V - Position 1: Clip 1 (Section 1) - Section 1: The future of iPhones just got...
+2025-05-15 22:03:45,891 - INFO - automation.shorts_maker_V - Position 2: Clip 2 (Section 2) - Section 2: The iPhone 18 Pro is rumored t...
+2025-05-15 22:03:45,891 - INFO - automation.shorts_maker_V - Position 3: Clip 3 (Section 3) - Section 3: Imagine unlocking your phone w...
+2025-05-15 22:03:45,891 - INFO - automation.shorts_maker_V - Position 4: Clip 4 (Section 4) - Section 4: This innovation could change h...
+2025-05-15 22:03:45,891 - INFO - automation.shorts_maker_V - Position 5: Clip 5 (Section 5) - Section 5: Are you ready for this game-ch...
+2025-05-15 22:03:45,892 - INFO - automation.shorts_maker_V - Position 6: Clip 6 (Section 6) - Section 6: Hit that like button and subsc...
+2025-05-15 22:03:45,892 - INFO - automation.shorts_maker_V - === END CLIPS BEFORE PARALLEL RENDERING ===
+2025-05-15 22:03:45,892 - INFO - automation.shorts_maker_V - Rendering clips in parallel...
+2025-05-15 22:03:45,892 - INFO - automation.shorts_maker_V - Adding clip 0 to parallel processing: Section 0: LazyCreator presents: iPhone 1...
+2025-05-15 22:03:45,893 - INFO - automation.shorts_maker_V - Adding clip 1 to parallel processing: Section 1: The future of iPhones just got...
+2025-05-15 22:03:45,893 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 2 to parallel processing: Section 2: The iPhone 18 Pro is rumored t...
+2025-05-15 22:03:45,893 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 3 to parallel processing: Section 3: Imagine unlocking your phone w...
+2025-05-15 22:03:45,893 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 4 to parallel processing: Section 4: This innovation could change h...
+2025-05-15 22:03:45,894 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 5 to parallel processing: Section 5: Are you ready for this game-ch...
+2025-05-15 22:03:45,894 - INFO - automation.shorts_maker_V - Adding pre-rendered clip 6 to parallel processing: Section 6: Hit that like button and subsc...
+2025-05-15 22:03:59,512 - ERROR - root - Clip 1 doesn't have write_videofile method, skipping
+2025-05-15 22:03:59,552 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_4_1747326470.mp4
+2025-05-15 22:03:59,556 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_6_1747326722.mp4
+2025-05-15 22:03:59,557 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_3_1747326278.mp4
+2025-05-15 22:03:59,557 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_2_1747326069.mp4
+2025-05-15 22:03:59,565 - WARNING - automation.shorts_maker_V - Could not extract index from rendered path: D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\prerender_5_1747326613.mp4
+2025-05-15 22:04:01,403 - INFO - automation.shorts_maker_V - === RENDERED PATHS WITH INDICES ===
+2025-05-15 22:04:01,404 - INFO - automation.shorts_maker_V - === END RENDERED PATHS ===
+2025-05-15 22:04:01,505 - INFO - automation.shorts_maker_V - Successfully rendered 5 out of 7 clips
+2025-05-15 22:04:01,505 - INFO - automation.shorts_maker_V - Concatenating clips using FFmpeg...
+2025-05-15 22:04:01,506 - INFO - automation.shorts_maker_V - Extracted index 4 from prerender filename: prerender_4_1747326470.mp4
+2025-05-15 22:04:01,507 - INFO - automation.shorts_maker_V - Extracted index 6 from prerender filename: prerender_6_1747326722.mp4
+2025-05-15 22:04:01,507 - INFO - automation.shorts_maker_V - Extracted index 3 from prerender filename: prerender_3_1747326278.mp4
+2025-05-15 22:04:01,508 - INFO - automation.shorts_maker_V - Extracted index 2 from prerender filename: prerender_2_1747326069.mp4
+2025-05-15 22:04:01,508 - INFO - automation.shorts_maker_V - Extracted index 5 from prerender filename: prerender_5_1747326613.mp4
+2025-05-15 22:04:01,508 - INFO - automation.shorts_maker_V - Concatenating 5 clips in correct order
+2025-05-15 22:04:01,508 - INFO - automation.shorts_maker_V - === CLIPS ORDER FOR CONCATENATION ===
+2025-05-15 22:04:01,509 - INFO - automation.shorts_maker_V - Position 0: Clip 2 (Section 2) - Section 2: The iPhone 18 Pro is rumored t...
+2025-05-15 22:04:01,509 - INFO - automation.shorts_maker_V - Position 1: Clip 3 (Section 3) - Section 3: Imagine unlocking your phone w...
+2025-05-15 22:04:01,509 - INFO - automation.shorts_maker_V - Position 2: Clip 4 (Section 4) - Section 4: This innovation could change h...
+2025-05-15 22:04:01,509 - INFO - automation.shorts_maker_V - Position 3: Clip 5 (Section 5) - Section 5: Are you ready for this game-ch...
+2025-05-15 22:04:01,509 - INFO - automation.shorts_maker_V - Position 4: Clip 6 (Section 6) - Section 6: Hit that like button and subsc...
+2025-05-15 22:04:01,509 - INFO - automation.shorts_maker_V - === END CLIPS ORDER FOR CONCATENATION ===
+2025-05-15 22:04:01,531 - INFO - automation.shorts_maker_V - Running FFmpeg concatenation: ffmpeg -y -f concat -safe 0 -i D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559\concat_list.txt -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p -max_muxing_queue_size 9999 -c:a aac -b:a 192k ai_shorts_output\yt_shorts_LazyCreator_presents_iPhone_18_20250515_214241.mp4
+2025-05-15 22:04:13,116 - INFO - automation.shorts_maker_V - Successfully concatenated clips to ai_shorts_output\yt_shorts_LazyCreator_presents_iPhone_18_20250515_214241.mp4
+2025-05-15 22:04:13,181 - INFO - helper.minor_helper - Completed YouTube short creation in 1277.04 seconds
+2025-05-15 22:04:13,181 - INFO - __main__ - Generating thumbnail for the short
+2025-05-15 22:04:13,185 - INFO - automation.thumbnail - STARTING generate_thumbnail at 22:04:13.184
+2025-05-15 22:04:13,185 - INFO - automation.thumbnail - Using thumbnail prompt: A sleek iPhone 18 Pro displaying an in-display Face ID feature, with a futuristic background and glowing tech elements, emphasizing innovation and modern design.
+2025-05-15 22:04:13,185 - INFO - automation.thumbnail - STARTING generate_image_huggingface at 22:04:13.185
+2025-05-15 22:04:13,185 - INFO - automation.thumbnail - Hugging Face prompt: A sleek iPhone 18 Pro displaying an in-display Face ID feature, with a futu...
+2025-05-15 22:04:13,976 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
+2025-05-15 22:04:29,715 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
+2025-05-15 22:04:59,719 - ERROR - automation.thumbnail - Failed to generate image with Hugging Face API after multiple attempts
+2025-05-15 22:04:59,720 - INFO - automation.thumbnail - COMPLETED generate_image_huggingface in 46.54 seconds
+2025-05-15 22:04:59,721 - INFO - automation.thumbnail - Falling back to Unsplash for thumbnail image
+2025-05-15 22:04:59,721 - INFO - automation.thumbnail - STARTING fetch_image_unsplash at 22:04:59.721
+2025-05-15 22:04:59,722 - INFO - automation.thumbnail - Searching Unsplash with query: A sleek iPhone 18 Pro displaying an in-display Face ID feature, with a futuristic background and glowing tech elements, emphasizing innovation and modern design.
+2025-05-15 22:05:01,050 - INFO - automation.thumbnail - Unsplash image downloaded to D:\youtube-shorts-automation\automation\temp\thumbnail_1747326853\thumbnail_unsplash_1747326899_5906.jpg
+2025-05-15 22:05:01,051 - INFO - automation.thumbnail - Image attribution: Photo by thomas heintz on Unsplash
+2025-05-15 22:05:01,052 - INFO - automation.thumbnail - COMPLETED fetch_image_unsplash in 1.33 seconds
+2025-05-15 22:05:01,053 - INFO - automation.thumbnail - STARTING create_thumbnail at 22:05:01.053
+2025-05-15 22:05:01,053 - INFO - automation.thumbnail - Creating thumbnail for title: 'LazyCreator presents: iPhone 18 Pro: In-Display Face ID Confirmed?'
+2025-05-15 22:05:01,053 - INFO - automation.thumbnail - Using base image: D:\youtube-shorts-automation\automation\temp\thumbnail_1747326853\thumbnail_unsplash_1747326899_5906.jpg
+2025-05-15 22:05:01,053 - INFO - automation.thumbnail - Output path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250515_214241.jpg
+2025-05-15 22:05:02,806 - INFO - automation.thumbnail - Base image size: (1080, 721)
+2025-05-15 22:05:02,810 - ERROR - automation.thumbnail - Error creating thumbnail: 'JpegImageFile' object has no attribute 'resized'
+2025-05-15 22:05:02,876 - ERROR - automation.thumbnail - Thumbnail creation traceback: Traceback (most recent call last):
   File "D:\youtube-shorts-automation\automation\thumbnail.py", line 257, in create_thumbnail
     img = img.resized(self.thumbnail_size, Image.LANCZOS)
           ^^^^^^^^^^^
 AttributeError: 'JpegImageFile' object has no attribute 'resized'. Did you mean: 'resize'?
 
-2025-05-12 01:29:02,730 - INFO - automation.thumbnail - COMPLETED create_thumbnail in 0.32 seconds
-2025-05-12 01:29:02,730 - ERROR - automation.thumbnail - Failed to generate thumbnail
-2025-05-12 01:29:02,731 - INFO - automation.thumbnail - COMPLETED generate_thumbnail in 115.76 seconds
-2025-05-12 01:29:02,731 - INFO - __main__ - Attempting with Unsplash query: GTA gaming elements
-2025-05-12 01:29:02,731 - INFO - automation.thumbnail - STARTING fetch_image_unsplash at 01:29:02.731
-2025-05-12 01:29:02,732 - INFO - automation.thumbnail - Searching Unsplash with query: GTA gaming elements
-2025-05-12 01:29:03,319 - INFO - automation.thumbnail - Unsplash image downloaded to D:\youtube-shorts-automation\automation\temp\thumbnail_1746993426\thumbnail_unsplash_1746993542_5730.jpg
-2025-05-12 01:29:03,320 - INFO - automation.thumbnail - Image attribution: Photo by Eugene Chystiakov on Unsplash
-2025-05-12 01:29:03,321 - INFO - automation.thumbnail - COMPLETED fetch_image_unsplash in 0.59 seconds
-2025-05-12 01:29:03,321 - INFO - automation.thumbnail - STARTING create_thumbnail at 01:29:03.321
-2025-05-12 01:29:03,322 - INFO - automation.thumbnail - Creating thumbnail for title: 'LazyCreator presents: GTA 6 Story Details You Missed! 🚨'
-2025-05-12 01:29:03,322 - INFO - automation.thumbnail - Using base image: D:\youtube-shorts-automation\automation\temp\thumbnail_1746993426\thumbnail_unsplash_1746993542_5730.jpg
-2025-05-12 01:29:03,322 - INFO - automation.thumbnail - Output path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250512_011143.jpg
-2025-05-12 01:29:03,336 - INFO - automation.thumbnail - Base image size: (1080, 720)
-2025-05-12 01:29:03,336 - ERROR - automation.thumbnail - Error creating thumbnail: 'JpegImageFile' object has no attribute 'resized'
-2025-05-12 01:29:03,339 - ERROR - automation.thumbnail - Thumbnail creation traceback: Traceback (most recent call last):
+2025-05-15 22:05:02,901 - INFO - automation.thumbnail - COMPLETED create_thumbnail in 1.85 seconds
+2025-05-15 22:05:02,903 - ERROR - automation.thumbnail - Failed to generate thumbnail
+2025-05-15 22:05:02,906 - INFO - automation.thumbnail - COMPLETED generate_thumbnail in 49.72 seconds
+2025-05-15 22:05:02,909 - INFO - __main__ - Attempting with Unsplash query: iphone technology
+2025-05-15 22:05:02,912 - INFO - automation.thumbnail - STARTING fetch_image_unsplash at 22:05:02.912
+2025-05-15 22:05:02,914 - INFO - automation.thumbnail - Searching Unsplash with query: iphone technology
+2025-05-15 22:05:03,985 - INFO - automation.thumbnail - Unsplash image downloaded to D:\youtube-shorts-automation\automation\temp\thumbnail_1747326853\thumbnail_unsplash_1747326902_1294.jpg
+2025-05-15 22:05:03,986 - INFO - automation.thumbnail - Image attribution: Photo by Yang Deng on Unsplash
+2025-05-15 22:05:03,987 - INFO - automation.thumbnail - COMPLETED fetch_image_unsplash in 1.08 seconds
+2025-05-15 22:05:03,988 - INFO - automation.thumbnail - STARTING create_thumbnail at 22:05:03.988
+2025-05-15 22:05:03,988 - INFO - automation.thumbnail - Creating thumbnail for title: 'LazyCreator presents: iPhone 18 Pro: In-Display Face ID Confirmed?'
+2025-05-15 22:05:03,989 - INFO - automation.thumbnail - Using base image: D:\youtube-shorts-automation\automation\temp\thumbnail_1747326853\thumbnail_unsplash_1747326902_1294.jpg
+2025-05-15 22:05:03,989 - INFO - automation.thumbnail - Output path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250515_214241.jpg
+2025-05-15 22:05:04,009 - INFO - automation.thumbnail - Base image size: (1080, 720)
+2025-05-15 22:05:04,009 - ERROR - automation.thumbnail - Error creating thumbnail: 'JpegImageFile' object has no attribute 'resized'
+2025-05-15 22:05:04,012 - ERROR - automation.thumbnail - Thumbnail creation traceback: Traceback (most recent call last):
   File "D:\youtube-shorts-automation\automation\thumbnail.py", line 257, in create_thumbnail
     img = img.resized(self.thumbnail_size, Image.LANCZOS)
           ^^^^^^^^^^^
 AttributeError: 'JpegImageFile' object has no attribute 'resized'. Did you mean: 'resize'?
 
-2025-05-12 01:29:03,339 - INFO - automation.thumbnail - COMPLETED create_thumbnail in 0.02 seconds
-2025-05-12 01:29:03,340 - INFO - __main__ - Thumbnail generated at: None
-2025-05-12 01:29:03,340 - INFO - automation.thumbnail - Cleaning up thumbnail temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1746993426
-2025-05-12 01:29:03,341 - INFO - helper.minor_helper - Cleaning specific temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1746993426
-2025-05-12 01:29:03,343 - INFO - helper.minor_helper - Successfully removed directory tree: D:\youtube-shorts-automation\automation\temp\thumbnail_1746993426
-2025-05-12 01:29:03,343 - INFO - __main__ - Uploading to YouTube
-2025-05-12 01:29:03,649 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
-2025-05-12 01:29:03,761 - INFO - automation.youtube_upload - Uploading video: GTA 6 Story Details You Missed! 🚨
-2025-05-12 01:29:09,116 - INFO - automation.youtube_upload - ✅ Video upload successful! Video ID: qQBCvrC_4Io
-2025-05-12 01:29:09,116 - INFO - __main__ - Process completed successfully!
-2025-05-12 01:29:09,117 - INFO - __main__ - Video path: ai_shorts_output\yt_shorts_LazyCreator_presents_GTA_6_Sto_20250512_011143.mp4
-2025-05-12 01:29:09,117 - INFO - __main__ - Running global cleanup of temporary files
-2025-05-12 01:29:09,117 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
-2025-05-12 01:29:09,119 - INFO - __main__ - Performing final cleanup of all temporary files
-2025-05-12 01:29:09,119 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
-2025-05-12 01:29:09,120 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\generated_images
-2025-05-12 01:29:09,121 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\shorts_v_1746992502
-2025-05-12 01:29:09,133 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\video_downloads
-2025-05-12 01:29:09,134 - WARNING - helper.minor_helper - Failed to remove directory D:\youtube-shorts-automation\automation\temp\video_downloads: [WinError 32] The process cannot access the file because it is being used by another process: 'D:\\youtube-shorts-automation\\automation\\temp\\video_downloads\\pexels_31967480.mp4'
+2025-05-15 22:05:04,013 - INFO - automation.thumbnail - COMPLETED create_thumbnail in 0.03 seconds
+2025-05-15 22:05:04,013 - INFO - __main__ - Thumbnail generated at: None
+2025-05-15 22:05:04,013 - INFO - automation.thumbnail - Cleaning up thumbnail temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1747326853
+2025-05-15 22:05:04,014 - INFO - helper.minor_helper - Cleaning specific temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1747326853
+2025-05-15 22:05:04,016 - INFO - helper.minor_helper - Successfully removed directory tree: D:\youtube-shorts-automation\automation\temp\thumbnail_1747326853
+2025-05-15 22:05:04,016 - INFO - __main__ - Uploading to YouTube
+2025-05-15 22:05:04,451 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
+2025-05-15 22:05:04,644 - INFO - automation.youtube_upload - Uploading video: iPhone 18 Pro: In-Display Face ID Confirmed?
+2025-05-15 22:05:14,666 - INFO - automation.youtube_upload - ✅ Video upload successful! Video ID: -6bmQplco7I
+2025-05-15 22:05:14,666 - INFO - __main__ - Process completed successfully!
+2025-05-15 22:05:14,667 - INFO - __main__ - Video path: ai_shorts_output\yt_shorts_LazyCreator_presents_iPhone_18_20250515_214241.mp4
+2025-05-15 22:05:14,667 - INFO - __main__ - Running global cleanup of temporary files
+2025-05-15 22:05:14,667 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
+2025-05-15 22:05:14,668 - INFO - __main__ - Performing final cleanup of all temporary files
+2025-05-15 22:05:14,668 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
+2025-05-15 22:05:14,669 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\generated_images
+2025-05-15 22:05:14,670 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\shorts_v_1747325559
+2025-05-15 22:05:14,674 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\video_downloads
+2025-05-15 22:05:14,675 - WARNING - helper.minor_helper - Failed to remove directory D:\youtube-shorts-automation\automation\temp\video_downloads: [WinError 32] The process cannot access the file because it is being used by another process: 'D:\\youtube-shorts-automation\\automation\\temp\\video_downloads\\pexels_31954079.mp4'
