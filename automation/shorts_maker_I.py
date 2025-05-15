@@ -20,16 +20,16 @@ import tempfile # for creating temporary files
 from datetime import datetime # for more detailed time tracking
 import concurrent.futures
 from functools import wraps
+import traceback  # Import traceback at the module level
 from helper.minor_helper import measure_time, cleanup_temp_directories
 from helper.image import generate_images_parallel, create_image_clips_parallel
 from helper.blur import custom_blur, custom_edge_blur
 from helper.text import TextHelper
 from helper.audio import AudioHelper
 from automation.shorts_maker_V import YTShortsCreator_V
-from automation.parallel_renderer import render_clips_in_parallel, configure_multiprocessing
+from automation.parallel_renderer import render_clips_in_parallel, configure_multiprocessing, SERIALIZER
 from automation.sequential_renderer import render_clips_with_threads
 import multiprocessing
-import traceback
 
 # from moviepy.config import change_settings
 # change_settings({"IMAGEMAGICK_BINARY": "magick"}) # for windows users
@@ -45,44 +45,9 @@ TEMP_DIR = os.getenv("TEMP_DIR", "D:\\youtube-shorts-automation\\temp")
 # Ensure temp directory exists
 os.makedirs(TEMP_DIR, exist_ok=True)
 
-# Configure multiprocessing for better compatibility
-try:
-    # Set the start method for better cross-platform compatibility
-    if not multiprocessing.get_start_method(allow_none=True):
-        multiprocessing.set_start_method('spawn', force=True)
-        logger.info("Set multiprocessing start method to 'spawn'")
-    
-    # Check if dill supports advanced serialization
-    try:
-        import dill
-        dill_version = dill.__version__
-        logger.info(f"Enhanced parallel rendering available with dill {dill_version}")
-
-        # Configure dill settings for better serialization
-        dill.settings['recurse'] = True
-        dill.settings['byref'] = True  # Better handling of complex objects
-
-        # Configure dill for multiprocessing
-        try:
-            # Replace the default pickle methods with dill methods
-            original_reduction_dumps = multiprocessing.reduction.dumps
-            
-            def safe_dill_dumps(obj):
-                try:
-                    return dill.dumps(obj)
-                except Exception as e:
-                    logger.warning(f"Dill serialization failed: {e}, falling back to standard pickle")
-                    return original_reduction_dumps(obj)
-            
-            multiprocessing.reduction.dumps = safe_dill_dumps
-            multiprocessing.reduction.loads = dill.loads
-            logger.info("Successfully configured dill for multiprocessing")
-        except (ImportError, AttributeError) as e:
-            logger.warning(f"Could not fully configure dill as the default serializer: {e}")
-    except ImportError:
-        logger.warning("Advanced serialization unavailable - dill not installed")
-except Exception as e:
-    logger.warning(f"Error configuring multiprocessing: {e}")
+# We don't need to configure multiprocessing here anymore
+# Import and use the configuration from parallel_renderer.py instead
+logger.info(f"Using serialization method: {SERIALIZER}")
 
 class YTShortsCreator_I:
     def __init__(self, fps=30):
@@ -103,13 +68,11 @@ class YTShortsCreator_I:
         self.audio_helper = AudioHelper(self.temp_dir)
 
         # Check for enhanced rendering capability
-        self.has_enhanced_rendering = False
-        try:
-            import dill
-            self.has_enhanced_rendering = True
-            logger.info(f"Enhanced parallel rendering available with dill {dill.__version__}")
-        except ImportError:
-            logger.info("Basic rendering capability only (install dill for enhanced parallel rendering)")
+        self.has_enhanced_rendering = SERIALIZER != "pickle"
+        if self.has_enhanced_rendering:
+            logger.info(f"Enhanced parallel rendering available with {SERIALIZER}")
+        else:
+            logger.info("Basic rendering capability only (using standard pickle)")
 
         # Video settings
         self.resolution = (1080, 1920)  # Portrait mode for shorts (width, height)
@@ -385,7 +348,7 @@ class YTShortsCreator_I:
                 section_clips.append(composite)
 
             # Use parallel rendering for final video
-            logger.info(f"Rendering final video using parallel renderer")
+            logger.info(f"Rendering final video using parallel renderer (serializer: {SERIALIZER})")
 
             preset = "ultrafast"
             
@@ -400,7 +363,7 @@ class YTShortsCreator_I:
                     os.makedirs(parallel_render_dir, exist_ok=True)
 
                     # Use fewer processes for Windows to avoid handle exhaustion
-                    num_processes = max(1, min(multiprocessing.cpu_count() - 1, 4))
+                    num_processes = max(1, min(multiprocessing.cpu_count() - 1, 3))
                     
                     logger.info(f"Starting parallel rendering with {num_processes} processes")
                     

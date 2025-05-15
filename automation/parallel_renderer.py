@@ -9,19 +9,27 @@ import re
 import gc
 import shutil
 from tqdm import tqdm
+import pickle
+import traceback
 
 logger = logging.getLogger(__name__)
 
+# Setup serialization - try multiple options in order
+SERIALIZER = "pickle"  # Default fallback
 try:
     import dill
-    USING_DILL = True
     dill.settings['recurse'] = True
-    # Enable byref for better handling of complex objects
-    dill.settings['byref'] = True
+    dill.settings['byref'] = True  # Better handling of complex objects
+    SERIALIZER = "dill"
     logger.info("Using dill for serialization")
 except ImportError:
-    USING_DILL = False
-    logger.info("Dill not available, using standard pickle")
+    logger.warning("Dill not available, checking for cloudpickle")
+    try:
+        import cloudpickle
+        SERIALIZER = "cloudpickle"
+        logger.info("Using cloudpickle for serialization")
+    except ImportError:
+        logger.warning("Cloudpickle not available, using standard pickle")
 
 # Configure multiprocessing start method to 'spawn' for better compatibility
 # This addresses Windows-specific issues with handle inheritance
@@ -33,20 +41,38 @@ def configure_multiprocessing():
             multiprocessing.set_start_method('spawn', force=True)
             logger.info("Set multiprocessing start method to 'spawn'")
         
-        # If dill is available, patch multiprocessing's serialization
-        if USING_DILL:
-            # Patch multiprocessing's serialization methods
-            original_dumps = multiprocessing.reduction.dumps
-            
-            def patched_dumps(obj):
-                try:
-                    return dill.dumps(obj)
-                except Exception as e:
-                    logger.warning(f"Dill serialization failed: {e}, falling back to standard pickle")
-                    return original_dumps(obj)
-            
-            multiprocessing.reduction.dumps = patched_dumps
-            logger.info("Patched multiprocessing serialization with dill")
+        # Try to patch multiprocessing's serialization methods
+        if SERIALIZER != "pickle":
+            try:
+                # Create patched version of pickle's dumps and loads
+                def patched_dumps(obj):
+                    try:
+                        if SERIALIZER == "dill":
+                            return dill.dumps(obj)
+                        elif SERIALIZER == "cloudpickle":
+                            return cloudpickle.dumps(obj)
+                    except Exception as e:
+                        logger.warning(f"{SERIALIZER} serialization failed: {e}, falling back to standard pickle")
+                        return pickle.dumps(obj)
+                
+                def patched_loads(buf):
+                    try:
+                        if SERIALIZER == "dill":
+                            return dill.loads(buf)
+                        elif SERIALIZER == "cloudpickle":
+                            return cloudpickle.loads(buf)
+                    except Exception as e:
+                        logger.warning(f"{SERIALIZER} deserialization failed: {e}, falling back to standard pickle")
+                        return pickle.loads(buf)
+                
+                # Patch ForkingPickler in multiprocessing directly
+                import multiprocessing.reduction
+                multiprocessing.reduction.ForkingPickler = pickle.Pickler
+                multiprocessing.reduction.dumps = patched_dumps
+                multiprocessing.reduction.loads = patched_loads
+                logger.info(f"Patched multiprocessing serialization with {SERIALIZER}")
+            except Exception as e:
+                logger.warning(f"Could not configure custom serialization: {e}")
     except Exception as e:
         logger.warning(f"Could not configure multiprocessing: {e}")
 
@@ -188,11 +214,11 @@ def prerender_clip(idx, clip, temp_dir, fps):
     """Pre-render a complex clip to a file to avoid serialization issues."""
     temp_path = os.path.join(temp_dir, f"prerender_{idx}.mp4")
     try:
-        # Always sanitize the clip first, regardless of whether USING_DILL is True
+        # Always sanitize the clip first, regardless of whether we have enhanced serialization
         clip = sanitize_clip_for_serialization(clip)
         
-        # For genuinely complex clips or when not using dill, pre-render
-        if not USING_DILL or is_complex_clip(clip):
+        # For genuinely complex clips or when not using enhanced serialization, pre-render
+        if SERIALIZER == "pickle" or is_complex_clip(clip):
             logger.debug(f"Pre-rendering clip {idx} with attributes: {dir(clip)}")
             
             # Handle composite clips
@@ -266,7 +292,7 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
         logger = logging.getLogger(__name__)
     if num_processes is None:
         # Use fewer processes to avoid Windows handle issues
-        num_processes = max(1, min(multiprocessing.cpu_count() - 1, 4))  # Reduced from 8 to 4
+        num_processes = max(1, min(multiprocessing.cpu_count() - 1, 3))  # Further reduced from 4 to 3
 
     logger.info(f"Rendering {len(clips)} clips with {num_processes} processes")
 
@@ -289,28 +315,36 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
         sanitized_clips.append(sanitize_clip_for_serialization(clip))
     clips = sanitized_clips
 
-    # Pre-render complex clips in parallel if not using dill or if prerender_all is True
+    # Pre-render complex clips in parallel if no enhanced serialization or if prerender_all is True
     rendered_paths = []
-    if not USING_DILL or prerender_all:
+    if SERIALIZER == "pickle" or prerender_all:
         complex_clips = [(i, c) for i, c in enumerate(clips) if prerender_all or is_complex_clip(c)]
         if complex_clips:
             logger.info(f"Pre-rendering {len(complex_clips)} clips in parallel")
             with ProcessPoolExecutor(max_workers=num_processes) as executor:
                 futures = [executor.submit(prerender_clip, i, c, temp_dir, fps) for i, c in complex_clips]
                 for future in as_completed(futures):
-                    idx, path = future.result()
-                    if path:
-                        clips[idx] = path
-                        rendered_paths.append((idx, path))
+                    try:
+                        idx, path = future.result()
+                        if path:
+                            clips[idx] = path
+                            rendered_paths.append((idx, path))
+                    except Exception as e:
+                        logger.error(f"Error in pre-rendering: {e}")
+                        logger.error(traceback.format_exc())
 
     # Render all clips in parallel
     logger.info("Rendering clips in parallel")
     with ProcessPoolExecutor(max_workers=num_processes) as executor:
         futures = [executor.submit(render_clip, i, c, temp_dir, fps) for i, c in enumerate(clips)]
         for future in tqdm(as_completed(futures), total=len(clips), desc="Rendering clips"):
-            idx, path = future.result()
-            if path:
-                rendered_paths.append((idx, path))
+            try:
+                idx, path = future.result()
+                if path:
+                    rendered_paths.append((idx, path))
+            except Exception as e:
+                logger.error(f"Error in rendering: {e}")
+                logger.error(traceback.format_exc())
 
     if not rendered_paths:
         raise ValueError("No clips were successfully rendered")
