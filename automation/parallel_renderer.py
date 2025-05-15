@@ -1,353 +1,420 @@
 import os
 import logging
 import tempfile
-import multiprocessing
-from concurrent.futures import ProcessPoolExecutor, as_completed
-from moviepy import VideoFileClip, CompositeVideoClip, concatenate_videoclips, AudioFileClip
-import subprocess
-import re
-import gc
+import json
 import shutil
-from tqdm import tqdm
-import pickle
+import subprocess
+import time
+import uuid
 import traceback
+from typing import List, Dict, Tuple, Any, Optional, Union
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
+
+# MoviePy imports
+from moviepy.editor import VideoFileClip, AudioFileClip, CompositeVideoClip, concatenate_videoclips
+
+# Import our memory helper
+try:
+    from helper.memory import optimize_workers_for_rendering
+except ImportError:
+    # Fallback if helper module is not available
+    def optimize_workers_for_rendering(memory_per_task_gb=2.0):
+        """Fallback function if memory helper is not available."""
+        import multiprocessing
+        cpu_count = multiprocessing.cpu_count()
+        return {
+            'worker_count': max(1, min(4, cpu_count - 1)),
+            'ffmpeg_threads': 2
+        }
 
 logger = logging.getLogger(__name__)
 
-# Setup serialization - try multiple options in order
-SERIALIZER = "pickle"  # Default fallback
-try:
-    import dill
-    dill.settings['recurse'] = True
-    dill.settings['byref'] = True  # Better handling of complex objects
-    SERIALIZER = "dill"
-    logger.info("Using dill for serialization")
-except ImportError:
-    logger.warning("Dill not available, checking for cloudpickle")
-    try:
-        import cloudpickle
-        SERIALIZER = "cloudpickle"
-        logger.info("Using cloudpickle for serialization")
-    except ImportError:
-        logger.warning("Cloudpickle not available, using standard pickle")
+# ==================== DIRECT FFMPEG UTILITIES ====================
 
-# Configure multiprocessing start method to 'spawn' for better compatibility
-# This addresses Windows-specific issues with handle inheritance
-def configure_multiprocessing():
-    """Configure multiprocessing for maximum compatibility"""
+def ffmpeg_version() -> str:
+    """Get the FFmpeg version to ensure compatibility."""
     try:
-        # Set start method if it hasn't been set yet
-        if not multiprocessing.get_start_method(allow_none=True):
-            multiprocessing.set_start_method('spawn', force=True)
-            logger.info("Set multiprocessing start method to 'spawn'")
+        result = subprocess.run(
+            ["ffmpeg", "-version"], 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE, 
+            text=True, 
+            check=True
+        )
+        version_line = result.stdout.split('\n')[0]
+        return version_line
+    except Exception as e:
+        logger.warning(f"Could not determine FFmpeg version: {e}")
+        return "Unknown"
+
+def clean_temp_files(file_paths: List[str]) -> None:
+    """Clean up temporary files."""
+    for path in file_paths:
+        try:
+            if os.path.isdir(path):
+                shutil.rmtree(path, ignore_errors=True)
+            elif os.path.exists(path):
+                os.remove(path)
+        except Exception as e:
+            logger.debug(f"Could not remove temporary file {path}: {e}")
+
+def extract_clip_info(clip) -> Dict[str, Any]:
+    """Extract essential information from a MoviePy clip."""
+    clip_info = {
+        'duration': getattr(clip, 'duration', 0),
+        'size': getattr(clip, 'size', (0, 0)),
+        'fps': getattr(clip, 'fps', 30),
+        'has_audio': hasattr(clip, 'audio') and clip.audio is not None,
+        'is_file': False,
+        'filepath': None,
+        'type': type(clip).__name__
+    }
+    
+    # Check if this is a file-based clip
+    if hasattr(clip, 'filename') and clip.filename and os.path.exists(clip.filename):
+        clip_info['is_file'] = True
+        clip_info['filepath'] = clip.filename
+    
+    return clip_info
+
+def export_audio_from_clip(clip, output_path: str) -> Optional[str]:
+    """Export audio from a MoviePy clip to a WAV file."""
+    if not hasattr(clip, 'audio') or clip.audio is None:
+        return None
+    
+    try:
+        audio_path = output_path.replace('.mp4', '.wav')
+        clip.audio.write_audiofile(
+            audio_path,
+            fps=48000,
+            nbytes=4,
+            codec='pcm_s32le',
+            ffmpeg_params=['-ac', '2', '-ar', '48000', '-sample_fmt', 's32', '-bufsize', '8192k']
+        )
+        return audio_path
+    except Exception as e:
+        logger.error(f"Failed to export audio: {e}")
+        return None
+
+def is_direct_renderable(clip) -> bool:
+    """Check if a clip can be directly rendered by FFmpeg without preprocessing."""
+    # Simple file-based clips can be directly rendered
+    if hasattr(clip, 'filename') and clip.filename and os.path.exists(clip.filename):
+        return True
+    
+    # Check for common callable attributes that would prevent direct rendering
+    for attr_name in ['pos', 'size', 'mask']:
+        if hasattr(clip, attr_name) and callable(getattr(clip, attr_name)):
+            return False
+    
+    # Check if composite clip - must check subclips
+    if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips'):
+        return all(is_direct_renderable(subclip) for subclip in clip.clips)
+    
+    return False
+
+# ==================== CLIP RENDERING ====================
+
+def render_clip_with_ffmpeg(
+    idx: int, 
+    clip, 
+    temp_dir: str, 
+    fps: int = 30,
+    preset: str = "veryfast",
+    threads: int = 2
+) -> Tuple[int, Optional[str]]:
+    """
+    Render a clip using FFmpeg or MoviePy as needed.
+    
+    Args:
+        idx: Clip index
+        clip: MoviePy clip
+        temp_dir: Temporary directory
+        fps: Frames per second
+        preset: FFmpeg preset
+        threads: Number of threads
         
-        # Try to patch multiprocessing's serialization methods
-        if SERIALIZER != "pickle":
-            try:
-                # Create patched version of pickle's dumps and loads
-                def patched_dumps(obj):
-                    try:
-                        if SERIALIZER == "dill":
-                            return dill.dumps(obj)
-                        elif SERIALIZER == "cloudpickle":
-                            return cloudpickle.dumps(obj)
-                    except Exception as e:
-                        logger.warning(f"{SERIALIZER} serialization failed: {e}, falling back to standard pickle")
-                        return pickle.dumps(obj)
-                
-                def patched_loads(buf):
-                    try:
-                        if SERIALIZER == "dill":
-                            return dill.loads(buf)
-                        elif SERIALIZER == "cloudpickle":
-                            return cloudpickle.loads(buf)
-                    except Exception as e:
-                        logger.warning(f"{SERIALIZER} deserialization failed: {e}, falling back to standard pickle")
-                        return pickle.loads(buf)
-                
-                # Patch ForkingPickler in multiprocessing directly
-                import multiprocessing.reduction
-                multiprocessing.reduction.ForkingPickler = pickle.Pickler
-                multiprocessing.reduction.dumps = patched_dumps
-                multiprocessing.reduction.loads = patched_loads
-                logger.info(f"Patched multiprocessing serialization with {SERIALIZER}")
-            except Exception as e:
-                logger.warning(f"Could not configure custom serialization: {e}")
-    except Exception as e:
-        logger.warning(f"Could not configure multiprocessing: {e}")
-
-# Call this at import time
-configure_multiprocessing()
-
-def close_clip(clip):
-    """Close a clip and its subcomponents to free memory."""
+    Returns:
+        Tuple of (clip index, output file path or None if failed)
+    """
+    output_path = os.path.join(temp_dir, f"clip_{idx}_{uuid.uuid4().hex[:8]}.mp4")
+    temp_files = []  # List of temporary files to clean up
+    
     try:
-        if hasattr(clip, 'close'):
-            clip.close()
-        if hasattr(clip, 'audio') and clip.audio:
-            clip.audio.close()
-        if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips'):
-            for subclip in clip.clips:
-                close_clip(subclip)
-    except Exception as e:
-        logger.debug(f"Error closing clip: {e}")
-    finally:
-        gc.collect()
-
-def render_clip_segment(clip, output_path, fps=30, preset="veryfast", threads=2):
-    """Render a single clip to a file with optimized settings."""
-    logger.info(f"Rendering segment to {output_path}")
-    temp_audio_path = output_path.replace('.mp4', '_temp_audio.wav')
-
-    try:
-        # Pre-process audio to avoid stuttering
-        if clip.audio:
-            clip.audio.write_audiofile(
-                temp_audio_path,
-                fps=48000,
-                nbytes=4,
-                codec='pcm_s32le',
-                ffmpeg_params=['-ac', '2', '-ar', '48000', '-sample_fmt', 's32', '-bufsize', '8192k']
-            )
-            if os.path.exists(temp_audio_path) and os.path.getsize(temp_audio_path) > 0:
-                clean_audio = AudioFileClip(temp_audio_path).with_duration(clip.duration)
-                clip = clip.with_audio(clean_audio)
-                clean_audio.close()
-
+        # Extract clip information
+        clip_info = extract_clip_info(clip)
+        logger.debug(f"Rendering clip {idx}: duration={clip_info['duration']:.2f}s, " 
+                    f"size={clip_info['size']}, has_audio={clip_info['has_audio']}")
+        
+        # Handle different types of clips
+        if isinstance(clip, str) and os.path.exists(clip):
+            # This is already a file path, just return it
+            return idx, clip
+        
+        # Use MoviePy to render the clip
         clip.write_videofile(
             output_path,
             fps=fps,
             codec="libx264",
-            audio_codec="aac",
-            threads=threads,
+            audio_codec="aac" if clip_info['has_audio'] else None,
             preset=preset,
-            ffmpeg_params=['-bufsize', '24M', '-maxrate', '8M', '-b:a', '192k', '-ar', '48000', '-pix_fmt', 'yuv420p'],
+            threads=threads,
+            ffmpeg_params=['-bufsize', '24M', '-maxrate', '8M', '-b:a', '192k', 
+                          '-ar', '48000', '-pix_fmt', 'yuv420p'],
             logger=None
         )
-        return output_path
-    except Exception as e:
-        logger.error(f"Error rendering segment {output_path}: {e}")
-        raise
-    finally:
-        if os.path.exists(temp_audio_path):
-            try:
-                os.remove(temp_audio_path)
-            except:
-                logger.debug(f"Failed to clean up {temp_audio_path}")
-        close_clip(clip)
-
-def is_complex_clip(clip):
-    """Check if a clip has callable attributes or complex subclips requiring pre-rendering."""
-    if isinstance(clip, str):
-        return False
-    # Check for callable pos and size attributes
-    if hasattr(clip, 'pos') and callable(clip.pos):
-        logger.debug(f"Clip has callable pos attribute")
-        return True
-    if hasattr(clip, 'size') and callable(clip.size):
-        logger.debug(f"Clip has callable size attribute")
-        return True
-    # Check all attributes for callables
-    for attr_name in dir(clip):
-        if attr_name.startswith('__') or attr_name.startswith('_'):
-            continue
-        try:
-            attr = getattr(clip, attr_name)
-            if callable(attr) and not hasattr(attr, '__self__'):
-                logger.debug(f"Clip has callable attribute: {attr_name}")
-                return True
-        except:
-            pass
-    # Recursively check subclips in composite clips
-    if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips'):
-        return any(is_complex_clip(subclip) for subclip in clip.clips)
-    return False
-
-def sanitize_clip_for_serialization(clip):
-    """Make a clip safely serializable by converting callable attributes to static values."""
-    if isinstance(clip, str):
-        return clip
         
-    # Create a copy to avoid modifying the original
-    try:
-        # Handle problematic attributes that are commonly lambdas
-        problematic_attrs = ['pos', 'size', 'mask']
-        for attr_name in problematic_attrs:
-            if hasattr(clip, attr_name) and callable(getattr(clip, attr_name)):
-                # Try to evaluate the callable at midpoint
-                try:
-                    value = getattr(clip, attr_name)(clip.duration / 2)
-                    # Create a new method that returns this fixed value
-                    if attr_name == 'pos':
-                        clip = clip.with_position(value if value else 'center')
-                    elif attr_name == 'size':
-                        clip = clip.resized(value)
-                    elif attr_name == 'mask' and value is not None:
-                        # Handle mask by pre-rendering if needed
-                        # For now, we'll just remove it if it's a lambda
-                        if callable(value):
-                            setattr(clip, 'mask', None)
-                except Exception as e:
-                    logger.warning(f"Could not evaluate {attr_name}: {e}")
-                    # Set to None or a default value
-                    if attr_name == 'pos':
-                        clip = clip.with_position('center')
-                    elif attr_name == 'size':
-                        pass  # Keep original size
-                    elif attr_name == 'mask':
-                        setattr(clip, 'mask', None)
-        
-        # Handle CompositeVideoClip recursively
-        if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips'):
-            sanitized_clips = [sanitize_clip_for_serialization(subclip) for subclip in clip.clips]
-            # Recreate with sanitized clips
-            clip = CompositeVideoClip(sanitized_clips, size=clip.size).with_duration(clip.duration)
-            if hasattr(clip, 'audio') and clip.audio:
-                clip = clip.with_audio(clip.audio)
-    
-    except Exception as e:
-        logger.error(f"Error sanitizing clip: {e}")
-    
-    return clip
-
-def prerender_clip(idx, clip, temp_dir, fps):
-    """Pre-render a complex clip to a file to avoid serialization issues."""
-    temp_path = os.path.join(temp_dir, f"prerender_{idx}.mp4")
-    try:
-        # Always sanitize the clip first, regardless of whether we have enhanced serialization
-        clip = sanitize_clip_for_serialization(clip)
-        
-        # For genuinely complex clips or when not using enhanced serialization, pre-render
-        if SERIALIZER == "pickle" or is_complex_clip(clip):
-            logger.debug(f"Pre-rendering clip {idx} with attributes: {dir(clip)}")
+        if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
+            return idx, output_path
+        else:
+            raise ValueError(f"Output file {output_path} was not created or is empty")
             
-            # Handle composite clips
-            if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips'):
-                fixed_clips = []
-                for i, subclip in enumerate(clip.clips):
-                    sub_idx = f"{idx}_{i}"
-                    _, fixed_subclip = prerender_clip(sub_idx, subclip, temp_dir, fps)
-                    fixed_clips.append(VideoFileClip(fixed_subclip) if isinstance(fixed_subclip, str) else fixed_subclip)
-                clip = CompositeVideoClip(fixed_clips, size=clip.size).with_duration(clip.duration)
-                
-            render_clip_segment(clip, temp_path, fps, preset="ultrafast")
-            return idx, temp_path
-        
-        return idx, clip
-    except Exception as e:
-        logger.error(f"Error pre-rendering clip {idx}: {e}")
-        return idx, None
-    finally:
-        close_clip(clip)
-
-def render_clip(idx, clip, temp_dir, fps):
-    """Render a clip (pre-rendered or direct) to a file."""
-    output_path = os.path.join(temp_dir, f"clip_{idx}.mp4")
-    try:
-        if isinstance(clip, str) and os.path.exists(clip):
-            return idx, clip
-        return idx, render_clip_segment(clip, output_path, fps)
     except Exception as e:
         logger.error(f"Error rendering clip {idx}: {e}")
+        logger.error(traceback.format_exc())
         return idx, None
     finally:
-        if not isinstance(clip, str):
-            close_clip(clip)
+        # Clean up any temporary files
+        clean_temp_files(temp_files)
+        
+        # Close MoviePy clip to free memory
+        try:
+            if hasattr(clip, 'close'):
+                clip.close()
+            if hasattr(clip, 'audio') and clip.audio:
+                clip.audio.close()
+        except:
+            pass
 
-def concatenate_clips(rendered_paths, output_file, codec="libx264", audio_codec="aac", preset="veryfast"):
-    """Concatenate rendered clips using FFmpeg, with MoviePy fallback."""
+def concatenate_clips_with_ffmpeg(
+    rendered_paths: List[Tuple[int, str]], 
+    output_file: str,
+    preset: str = "veryfast"
+) -> str:
+    """
+    Concatenate rendered clips using FFmpeg.
+    
+    Args:
+        rendered_paths: List of (clip index, file path) tuples
+        output_file: Output file path
+        preset: FFmpeg preset
+        
+    Returns:
+        Output file path
+    """
+    if not rendered_paths:
+        raise ValueError("No paths to concatenate")
+    
+    # Create a temporary directory for the concat list
     temp_dir = os.path.dirname(rendered_paths[0][1])
-    concat_list_path = os.path.join(temp_dir, "concat_list.txt")
+    concat_list_path = os.path.join(temp_dir, f"concat_list_{uuid.uuid4().hex[:8]}.txt")
 
+    # Create the concat list file
     with open(concat_list_path, "w") as f:
         for _, path in sorted(rendered_paths, key=lambda x: x[0]):
             f.write(f"file '{os.path.abspath(path)}'\n")
 
+    # Create the FFmpeg command for concatenation
     ffmpeg_cmd = [
         "ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", concat_list_path,
-        "-c:v", codec, "-preset", preset, "-crf", "23", "-pix_fmt", "yuv420p",
-        "-max_muxing_queue_size", "9999", "-c:a", audio_codec, "-b:a", "192k", output_file
+        "-c", "copy",  # Use stream copy for faster concatenation
+        "-movflags", "+faststart",  # Optimize for web streaming
+        output_file
     ]
 
     try:
-        result = subprocess.run(ffmpeg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True)
-        logger.info(f"Concatenated clips to {output_file}")
+        # Run the FFmpeg command
+        subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        logger.info(f"Concatenated {len(rendered_paths)} clips to {output_file}")
         return output_file
-    except subprocess.CalledProcessError as e:
-        logger.error(f"FFmpeg concatenation failed: {e.stderr[:500]}")
+    except Exception as e:
+        logger.error(f"FFmpeg concatenation failed: {e}")
+        
+        # Fallback to standard MoviePy concatenation
+        try:
+            logger.info("Falling back to MoviePy concatenation")
+            clips = [VideoFileClip(path) for _, path in sorted(rendered_paths, key=lambda x: x[0])]
+            final_clip = concatenate_videoclips(clips)
+            final_clip.write_videofile(
+                output_file, 
+                fps=30, 
+                codec="libx264",
+                audio_codec="aac", 
+                preset="ultrafast"
+            )
+            
+            # Close clips to free memory
+            for clip in clips:
+                if hasattr(clip, 'close'):
+                    clip.close()
+            if hasattr(final_clip, 'close'):
+                final_clip.close()
+            
+            return output_file
+        except Exception as e:
+            logger.error(f"MoviePy concatenation also failed: {e}")
+            raise ValueError("Failed to concatenate clips")
 
-        # Fallback to MoviePy
-        logger.info("Falling back to MoviePy concatenation")
-        clips = [VideoFileClip(path) for _, path in sorted(rendered_paths, key=lambda x: x[0])]
-        final_clip = concatenate_videoclips(clips)
-        final_clip.write_videofile(output_file, fps=30, codec=codec, audio_codec=audio_codec, preset="ultrafast")
-        for clip in clips:
-            close_clip(clip)
-        final_clip.close()
-        return output_file
+# ==================== MAIN RENDERING FUNCTION ====================
 
-def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, logger=None, temp_dir=None, preset="veryfast", codec="libx264", audio_codec="aac", section_info=None, prerender_all=False):
-    """Render clips in parallel and concatenate them into a final video."""
+def render_clips_parallel(
+    clips: List[Any], 
+    output_file: str, 
+    fps: int = 30, 
+    logger=None, 
+    temp_dir: str = None, 
+    preset: str = "veryfast",
+    resource_config: Dict[str, Any] = None,
+    clean_temp: bool = True
+) -> str:
+    """
+    Render clips in parallel using threads and FFmpeg.
+    
+    Args:
+        clips: List of MoviePy clips
+        output_file: Output file path
+        fps: Frames per second
+        logger: Logger (if None, a new one will be created)
+        temp_dir: Temporary directory (if None, a new one will be created)
+        preset: FFmpeg preset
+        resource_config: System resource configuration (if None, will be determined automatically)
+        clean_temp: Whether to clean up temporary files
+        
+    Returns:
+        Output file path
+    """
     if logger is None:
         logger = logging.getLogger(__name__)
-    if num_processes is None:
-        # Use fewer processes to avoid Windows handle issues
-        num_processes = max(1, min(multiprocessing.cpu_count() - 1, 3))  # Further reduced from 4 to 3
+    
+    start_time = time.time()
+    
+    # Get system resource configuration
+    if resource_config is None:
+        # Estimate memory requirements (very rough estimate)
+        estimated_memory_gb = 2.0  # Base memory per worker
+        resource_config = optimize_workers_for_rendering(memory_per_task_gb=estimated_memory_gb)
+    
+    num_workers = resource_config.get('worker_count', 4)
+    ffmpeg_threads = resource_config.get('ffmpeg_threads', 2)
+    
+    logger.info(f"Rendering {len(clips)} clips with {num_workers} workers and {ffmpeg_threads} FFmpeg threads each")
+    logger.info(f"Using FFmpeg: {ffmpeg_version()}")
 
-    logger.info(f"Rendering {len(clips)} clips with {num_processes} processes")
-
+    # Create temporary directory if needed
     if temp_dir is None:
-        temp_dir = tempfile.mkdtemp(prefix="parallel_render_")
-        logger.info(f"Created temp directory: {temp_dir}")
+        temp_dir = tempfile.mkdtemp(prefix="ffmpeg_render_")
+        logger.debug(f"Created temporary directory: {temp_dir}")
     else:
         os.makedirs(temp_dir, exist_ok=True)
 
+    # Create output directory if needed
     os.makedirs(os.path.dirname(output_file) or '.', exist_ok=True)
-
-    if section_info:
-        logger.info("=== Section Info ===")
-        for idx, info in section_info.items():
-            logger.info(f"Clip {idx}: Section {info.get('section_idx', '?')} - '{info.get('section_text', 'Unknown')}'")
-
-    # Sanitize all clips before preprocessing to address lambda serialization issues
-    sanitized_clips = []
-    for i, clip in enumerate(clips):
-        sanitized_clips.append(sanitize_clip_for_serialization(clip))
-    clips = sanitized_clips
-
-    # Pre-render complex clips in parallel if no enhanced serialization or if prerender_all is True
+    
+    # Render all clips in parallel using thread pool
     rendered_paths = []
-    if SERIALIZER == "pickle" or prerender_all:
-        complex_clips = [(i, c) for i, c in enumerate(clips) if prerender_all or is_complex_clip(c)]
-        if complex_clips:
-            logger.info(f"Pre-rendering {len(complex_clips)} clips in parallel")
-            with ProcessPoolExecutor(max_workers=num_processes) as executor:
-                futures = [executor.submit(prerender_clip, i, c, temp_dir, fps) for i, c in complex_clips]
-                for future in as_completed(futures):
-                    try:
-                        idx, path = future.result()
-                        if path:
-                            clips[idx] = path
-                            rendered_paths.append((idx, path))
-                    except Exception as e:
-                        logger.error(f"Error in pre-rendering: {e}")
-                        logger.error(traceback.format_exc())
-
-    # Render all clips in parallel
-    logger.info("Rendering clips in parallel")
-    with ProcessPoolExecutor(max_workers=num_processes) as executor:
-        futures = [executor.submit(render_clip, i, c, temp_dir, fps) for i, c in enumerate(clips)]
+    
+    with ThreadPoolExecutor(max_workers=num_workers) as executor:
+        # Submit all rendering tasks
+        futures = [
+            executor.submit(
+                render_clip_with_ffmpeg, 
+                i, clip, temp_dir, fps, preset, ffmpeg_threads
+            ) 
+            for i, clip in enumerate(clips)
+        ]
+        
+        # Process results as they complete
         for future in tqdm(as_completed(futures), total=len(clips), desc="Rendering clips"):
             try:
                 idx, path = future.result()
                 if path:
                     rendered_paths.append((idx, path))
+                    logger.debug(f"Clip {idx} rendered successfully: {path}")
+                else:
+                    logger.error(f"Failed to render clip {idx}")
             except Exception as e:
-                logger.error(f"Error in rendering: {e}")
+                logger.error(f"Error processing render result: {e}")
                 logger.error(traceback.format_exc())
-
+    
     if not rendered_paths:
         raise ValueError("No clips were successfully rendered")
+    
+    logger.info(f"Successfully rendered {len(rendered_paths)}/{len(clips)} clips")
+    
+    # Concatenate the rendered clips
+    output_path = concatenate_clips_with_ffmpeg(rendered_paths, output_file, preset)
+    
+    # Clean up temporary files if requested
+    if clean_temp and temp_dir and os.path.exists(temp_dir) and temp_dir.startswith(tempfile.gettempdir()):
+        try:
+            # Clean up individual clip files
+            for _, path in rendered_paths:
+                if os.path.exists(path):
+                    os.remove(path)
+            
+            # Remove the temporary directory
+            if os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir, ignore_errors=True)
+        except Exception as e:
+            logger.warning(f"Failed to clean up temporary files: {e}")
+    
+    total_time = time.time() - start_time
+    logger.info(f"Total rendering time: {total_time:.2f} seconds")
+    
+    return output_path
 
-    logger.info(f"Rendered {len(rendered_paths)} clips")
-    return concatenate_clips(rendered_paths, output_file, codec, audio_codec, preset)
+# Fallback function that renders sequentially for compatibility
+def render_clips_sequential(
+    clips: List[Any], 
+    output_file: str, 
+    fps: int = 30, 
+    logger=None, 
+    temp_dir: str = None, 
+    preset: str = "veryfast"
+) -> str:
+    """
+    Simple fallback function that renders clips sequentially.
+    
+    Args:
+        clips: List of MoviePy clips
+        output_file: Output file path
+        fps: Frames per second
+        logger: Logger
+        temp_dir: Temporary directory
+        preset: FFmpeg preset
+        
+    Returns:
+        Output file path
+    """
+    if logger is None:
+        logger = logging.getLogger(__name__)
+    
+    logger.info("Using sequential rendering")
+    
+    # Create a temporary directory if needed
+    if temp_dir is None:
+        temp_dir = tempfile.mkdtemp(prefix="sequential_render_")
+        logger.debug(f"Created temporary directory: {temp_dir}")
+    else:
+        os.makedirs(temp_dir, exist_ok=True)
+    
+    # Render clips sequentially
+    rendered_paths = []
+    
+    for i, clip in enumerate(tqdm(clips, desc="Rendering clips sequentially")):
+        try:
+            idx, path = render_clip_with_ffmpeg(i, clip, temp_dir, fps, preset, 4)
+            if path:
+                rendered_paths.append((idx, path))
+                logger.debug(f"Clip {idx} rendered successfully: {path}")
+            else:
+                logger.error(f"Failed to render clip {idx}")
+        except Exception as e:
+            logger.error(f"Error rendering clip {i}: {e}")
+    
+    if not rendered_paths:
+        raise ValueError("No clips were successfully rendered")
+    
+    # Concatenate the rendered clips
+    return concatenate_clips_with_ffmpeg(rendered_paths, output_file, preset) 

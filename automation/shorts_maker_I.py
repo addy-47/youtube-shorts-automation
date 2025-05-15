@@ -27,8 +27,7 @@ from helper.blur import custom_blur, custom_edge_blur
 from helper.text import TextHelper
 from helper.audio import AudioHelper
 from automation.shorts_maker_V import YTShortsCreator_V
-from automation.parallel_renderer import render_clips_in_parallel, configure_multiprocessing, SERIALIZER
-from automation.sequential_renderer import render_clips_with_threads
+from automation.renderer import render_video
 import multiprocessing
 
 # from moviepy.config import change_settings
@@ -44,10 +43,6 @@ load_dotenv()  # Load environment variables from .env file
 TEMP_DIR = os.getenv("TEMP_DIR", "D:\\youtube-shorts-automation\\temp")
 # Ensure temp directory exists
 os.makedirs(TEMP_DIR, exist_ok=True)
-
-# We don't need to configure multiprocessing here anymore
-# Import and use the configuration from parallel_renderer.py instead
-logger.info(f"Using serialization method: {SERIALIZER}")
 
 class YTShortsCreator_I:
     def __init__(self, fps=30):
@@ -66,13 +61,6 @@ class YTShortsCreator_I:
 
         # Initialize AudioHelper
         self.audio_helper = AudioHelper(self.temp_dir)
-
-        # Check for enhanced rendering capability
-        self.has_enhanced_rendering = SERIALIZER != "pickle"
-        if self.has_enhanced_rendering:
-            logger.info(f"Enhanced parallel rendering available with {SERIALIZER}")
-        else:
-            logger.info("Basic rendering capability only (using standard pickle)")
 
         # Video settings
         self.resolution = (1080, 1920)  # Portrait mode for shorts (width, height)
@@ -333,7 +321,7 @@ class YTShortsCreator_I:
                 if audio:
                     composite = composite.with_audio(AudioFileClip(audio['path']))
 
-                # Add debugging info to the clip for parallel renderer
+                # Add debugging info to the clip
                 section_text = script_sections[i].get('text', '')[:30] + '...' if len(script_sections[i].get('text', '')) > 30 else script_sections[i].get('text', '')
                 composite._debug_info = f"Section {i}: {section_text}"
                 composite._section_idx = i
@@ -347,113 +335,42 @@ class YTShortsCreator_I:
 
                 section_clips.append(composite)
 
-            # Use parallel rendering for final video
-            logger.info(f"Rendering final video using parallel renderer (serializer: {SERIALIZER})")
-
-            preset = "ultrafast"
+            # Use our unified renderer
+            logger.info("Rendering final video using optimized renderer")
             
-            # Attempt multi-step rendering approach with fallbacks
-            output_success = False
+            # Ensure rendering temp directory exists
+            render_temp_dir = os.path.join(self.temp_dir, "render")
+            os.makedirs(render_temp_dir, exist_ok=True)
             
-            # Step 1: Try process-based parallel rendering (fastest but most complex)
-            if not output_success:
-                try:
-                    # Ensure parallel rendering temp directory exists
-                    parallel_render_dir = os.path.join(self.temp_dir, "parallel_render")
-                    os.makedirs(parallel_render_dir, exist_ok=True)
-
-                    # Use fewer processes for Windows to avoid handle exhaustion
-                    num_processes = max(1, min(multiprocessing.cpu_count() - 1, 3))
-                    
-                    logger.info(f"Starting parallel rendering with {num_processes} processes")
-                    
-                    # Pre-render all clips to avoid serialization issues
-                    prerender_all = True
-                    
-                    render_clips_in_parallel(
-                        section_clips,
-                        output_filename,
-                        fps=self.fps,
-                        preset=preset,
-                        codec="libx264",
-                        audio_codec="aac",
-                        temp_dir=parallel_render_dir,
-                        section_info=section_info,
-                        num_processes=num_processes,
-                        prerender_all=prerender_all
-                    )
-                    logger.info(f"Successfully rendered video to {output_filename}")
-                    output_success = True
-                except Exception as e:
-                    logger.error(f"Error in process-based parallel rendering: {e}")
-                    logger.error(f"Detailed error: {traceback.format_exc()}")
+            # Use the unified rendering interface
+            output_path = render_video(
+                clips=section_clips,
+                output_file=output_filename,
+                fps=self.fps,
+                temp_dir=render_temp_dir,
+                preset="ultrafast",
+                parallel=True,
+                memory_per_worker_gb=2.0,
+                options={
+                    'clean_temp': True,
+                    'section_info': section_info
+                }
+            )
             
-            # Step 2: Try thread-based rendering (slower but more robust)
-            if not output_success:
-                try:
-                    logger.info("Attempting thread-based rendering as fallback...")
-                    thread_render_dir = os.path.join(self.temp_dir, "thread_render")
-                    os.makedirs(thread_render_dir, exist_ok=True)
-                    
-                    # Use threads instead of processes (avoids serialization issues)
-                    num_threads = min(len(section_clips), 4)  # Limit to 4 threads
-                    
-                    render_clips_with_threads(
-                        section_clips,
-                        output_filename,
-                        fps=self.fps,
-                        preset=preset,
-                        codec="libx264",
-                        audio_codec="aac",
-                        temp_dir=thread_render_dir,
-                        section_info=section_info,
-                        num_threads=num_threads
-                    )
-                    logger.info(f"Successfully rendered video with thread-based approach to {output_filename}")
-                    output_success = True
-                except Exception as e:
-                    logger.error(f"Error in thread-based rendering: {e}")
-                    logger.error(f"Detailed error: {traceback.format_exc()}")
+            logger.info(f"Successfully rendered video to {output_path}")
 
-            # Step 3: Fallback to traditional sequential rendering
-            if not output_success:
-                logger.info("Falling back to traditional sequential rendering method")
-                try:
-                    # Concatenate all section clips
-                    final_video = concatenate_videoclips(section_clips)
-
-                    # Add watermark if requested
-                    if add_watermark_text:
-                        final_video = self.text_helper.add_watermark(final_video, watermark_text=add_watermark_text)
-
-                    # Write the final video with standard method
-                    final_video.write_videofile(
-                        output_filename,
-                        fps=self.fps,
-                        codec="libx264",
-                        audio_codec="aac",
-                        preset=preset
-                    )
-                    final_video.close()
-                    output_success = True
-                    logger.info(f"Successfully rendered video with sequential method to {output_filename}")
-                except Exception as fallback_error:
-                    logger.error(f"All rendering methods failed. Final error: {fallback_error}")
-                    logger.error(f"Detailed fallback error: {traceback.format_exc()}")
-                    return None
-
-            # Add watermark as a post-process if requested and not already added in fallback
-            if output_success and add_watermark_text and os.path.exists(output_filename):
+            # Add watermark as a post-process if requested
+            if add_watermark_text and os.path.exists(output_path):
                 logger.info("Adding watermark to final video")
                 try:
                     # Load the rendered video
-                    final_video = VideoFileClip(output_filename)
+                    final_video = VideoFileClip(output_path)
 
                     # Add watermark
                     final_with_watermark = self.text_helper.add_watermark(final_video, watermark_text=add_watermark_text)
 
                     # Determine watermarked output filename
-                    watermarked_output = output_filename.replace('.mp4', '_watermarked.mp4')
+                    watermarked_output = output_path.replace('.mp4', '_watermarked.mp4')
 
                     # Write the watermarked video
                     final_with_watermark.write_videofile(
@@ -465,7 +382,7 @@ class YTShortsCreator_I:
                     )
 
                     # Replace original with watermarked version
-                    os.replace(watermarked_output, output_filename)
+                    os.replace(watermarked_output, output_path)
 
                     # Clean up
                     final_video.close()
@@ -474,7 +391,7 @@ class YTShortsCreator_I:
                     logger.error(f"Error adding watermark: {watermark_error}")
                     logger.error(f"Detailed watermark error: {traceback.format_exc()}")
             
-            return output_filename
+            return output_path
 
         except Exception as e:
             logger.error(f"Error creating video: {e}")
