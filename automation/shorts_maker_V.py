@@ -27,8 +27,10 @@ from helper.text import TextHelper
 from helper.process import process_background_clips_parallel
 from helper.audio import AudioHelper
 from automation.parallel_tasks import ParallelTaskExecutor
-from automation.parallel_renderer import render_clips_in_parallel
-import dill
+from automation.parallel_renderer import render_clips_in_parallel, configure_multiprocessing
+from automation.sequential_renderer import render_clips_with_threads
+import multiprocessing
+import traceback
 
 # Configure logging for easier debugging
 # Do NOT initialize basicConfig here - this will be handled by main.py
@@ -41,25 +43,44 @@ TEMP_DIR = os.getenv("TEMP_DIR", "D:\\youtube-shorts-automation\\temp")
 # Ensure temp directory exists
 os.makedirs(TEMP_DIR, exist_ok=True)
 
-# Check if dill supports advanced serialization
+# Configure multiprocessing for better compatibility
 try:
-    import dill
-    dill_version = dill.__version__
-    logger.info(f"Enhanced parallel rendering available with dill {dill_version}")
-
-    # Configure dill for multiprocessing - correct approach
+    # Set the start method for better cross-platform compatibility
+    if not multiprocessing.get_start_method(allow_none=True):
+        multiprocessing.set_start_method('spawn', force=True)
+        logger.info("Set multiprocessing start method to 'spawn'")
+    
+    # Check if dill supports advanced serialization
     try:
-        import multiprocessing
-        # Replace the default pickle methods with dill methods
-        multiprocessing.reduction.dump = dill.dump
-        multiprocessing.reduction.dumps = dill.dumps
-        multiprocessing.reduction.load = dill.load
-        multiprocessing.reduction.loads = dill.loads
-        logger.info("Successfully configured dill for multiprocessing")
-    except (ImportError, AttributeError) as e:
-        logger.warning(f"Could not fully configure dill as the default serializer: {e}")
-except ImportError:
-    logger.warning("Advanced serialization unavailable - dill not installed")
+        import dill
+        dill_version = dill.__version__
+        logger.info(f"Enhanced parallel rendering available with dill {dill_version}")
+
+        # Configure dill settings for better serialization
+        dill.settings['recurse'] = True
+        dill.settings['byref'] = True  # Better handling of complex objects
+
+        # Configure dill for multiprocessing
+        try:
+            # Replace the default pickle methods with dill methods
+            original_reduction_dumps = multiprocessing.reduction.dumps
+            
+            def safe_dill_dumps(obj):
+                try:
+                    return dill.dumps(obj)
+                except Exception as e:
+                    logger.warning(f"Dill serialization failed: {e}, falling back to standard pickle")
+                    return original_reduction_dumps(obj)
+            
+            multiprocessing.reduction.dumps = safe_dill_dumps
+            multiprocessing.reduction.loads = dill.loads
+            logger.info("Successfully configured dill for multiprocessing")
+        except (ImportError, AttributeError) as e:
+            logger.warning(f"Could not fully configure dill as the default serializer: {e}")
+    except ImportError:
+        logger.warning("Advanced serialization unavailable - dill not installed")
+except Exception as e:
+    logger.warning(f"Error configuring multiprocessing: {e}")
 
 class YTShortsCreator_V:
     def __init__(self, fps=30):
@@ -318,28 +339,73 @@ class YTShortsCreator_V:
             logger.info(f"Rendering final video using parallel renderer")
 
             preset = "ultrafast"
-            # Use render_clips_in_parallel instead of concatenate and write_videofile
-            try:
-                # Ensure parallel rendering temp directory exists
-                parallel_render_dir = os.path.join(self.temp_dir, "parallel_render")
-                os.makedirs(parallel_render_dir, exist_ok=True)
+            
+            # Attempt multi-step rendering approach with fallbacks
+            output_success = False
+            
+            # Step 1: Try process-based parallel rendering (fastest but most complex)
+            if not output_success:
+                try:
+                    # Ensure parallel rendering temp directory exists
+                    parallel_render_dir = os.path.join(self.temp_dir, "parallel_render")
+                    os.makedirs(parallel_render_dir, exist_ok=True)
 
-                render_clips_in_parallel(
-                    section_clips,
-                    output_filename,
-                    fps=self.fps,
-                    preset=preset,
-                    codec="libx264",
-                    audio_codec="aac",
-                    temp_dir=parallel_render_dir,
-                    section_info=section_info
-                )
-                logger.info(f"Successfully rendered video to {output_filename}")
-            except Exception as e:
-                logger.error(f"Error in parallel rendering: {e}")
+                    # Use fewer processes for Windows to avoid handle exhaustion
+                    num_processes = max(1, min(multiprocessing.cpu_count() - 1, 4))
+                    
+                    logger.info(f"Starting parallel rendering with {num_processes} processes")
+                    
+                    # Pre-render all clips to avoid serialization issues
+                    prerender_all = True
+                    
+                    render_clips_in_parallel(
+                        section_clips,
+                        output_filename,
+                        fps=self.fps,
+                        preset=preset,
+                        codec="libx264",
+                        audio_codec="aac",
+                        temp_dir=parallel_render_dir,
+                        section_info=section_info,
+                        num_processes=num_processes,
+                        prerender_all=prerender_all
+                    )
+                    logger.info(f"Successfully rendered video to {output_filename}")
+                    output_success = True
+                except Exception as e:
+                    logger.error(f"Error in process-based parallel rendering: {e}")
+                    logger.error(f"Detailed error: {traceback.format_exc()}")
+            
+            # Step 2: Try thread-based rendering (slower but more robust)
+            if not output_success:
+                try:
+                    logger.info("Attempting thread-based rendering as fallback...")
+                    thread_render_dir = os.path.join(self.temp_dir, "thread_render")
+                    os.makedirs(thread_render_dir, exist_ok=True)
+                    
+                    # Use threads instead of processes (avoids serialization issues)
+                    num_threads = min(len(section_clips), 4)  # Limit to 4 threads
+                    
+                    render_clips_with_threads(
+                        section_clips,
+                        output_filename,
+                        fps=self.fps,
+                        preset=preset,
+                        codec="libx264",
+                        audio_codec="aac",
+                        temp_dir=thread_render_dir,
+                        section_info=section_info,
+                        num_threads=num_threads
+                    )
+                    logger.info(f"Successfully rendered video with thread-based approach to {output_filename}")
+                    output_success = True
+                except Exception as e:
+                    logger.error(f"Error in thread-based rendering: {e}")
+                    logger.error(f"Detailed error: {traceback.format_exc()}")
 
-                # Fallback to traditional rendering if parallel rendering fails
-                logger.info("Falling back to traditional rendering method")
+            # Step 3: Fallback to traditional sequential rendering
+            if not output_success:
+                logger.info("Falling back to traditional sequential rendering method")
                 try:
                     # Concatenate all section clips
                     final_video = concatenate_videoclips(section_clips)
@@ -357,14 +423,19 @@ class YTShortsCreator_V:
                         preset=preset
                     )
                     final_video.close()
+                    output_success = True
+                    logger.info(f"Successfully rendered video with sequential method to {output_filename}")
                 except Exception as fallback_error:
-                    logger.error(f"Fallback rendering also failed: {fallback_error}")
+                    logger.error(f"All rendering methods failed. Final error: {fallback_error}")
+                    logger.error(f"Detailed fallback error: {traceback.format_exc()}")
                     return None
 
             return output_filename
 
         except Exception as e:
             logger.error(f"Error creating video: {e}")
+            import traceback
+            logger.error(f"Detailed error trace: {traceback.format_exc()}")
             # If we encounter an error, try to clean up temp files
             cleanup_temp_directories([self.temp_dir])
 

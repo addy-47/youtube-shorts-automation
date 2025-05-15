@@ -16,10 +16,42 @@ try:
     import dill
     USING_DILL = True
     dill.settings['recurse'] = True
+    # Enable byref for better handling of complex objects
+    dill.settings['byref'] = True
     logger.info("Using dill for serialization")
 except ImportError:
     USING_DILL = False
     logger.info("Dill not available, using standard pickle")
+
+# Configure multiprocessing start method to 'spawn' for better compatibility
+# This addresses Windows-specific issues with handle inheritance
+def configure_multiprocessing():
+    """Configure multiprocessing for maximum compatibility"""
+    try:
+        # Set start method if it hasn't been set yet
+        if not multiprocessing.get_start_method(allow_none=True):
+            multiprocessing.set_start_method('spawn', force=True)
+            logger.info("Set multiprocessing start method to 'spawn'")
+        
+        # If dill is available, patch multiprocessing's serialization
+        if USING_DILL:
+            # Patch multiprocessing's serialization methods
+            original_dumps = multiprocessing.reduction.dumps
+            
+            def patched_dumps(obj):
+                try:
+                    return dill.dumps(obj)
+                except Exception as e:
+                    logger.warning(f"Dill serialization failed: {e}, falling back to standard pickle")
+                    return original_dumps(obj)
+            
+            multiprocessing.reduction.dumps = patched_dumps
+            logger.info("Patched multiprocessing serialization with dill")
+    except Exception as e:
+        logger.warning(f"Could not configure multiprocessing: {e}")
+
+# Call this at import time
+configure_multiprocessing()
 
 def close_clip(clip):
     """Close a clip and its subcomponents to free memory."""
@@ -105,46 +137,64 @@ def is_complex_clip(clip):
         return any(is_complex_clip(subclip) for subclip in clip.clips)
     return False
 
+def sanitize_clip_for_serialization(clip):
+    """Make a clip safely serializable by converting callable attributes to static values."""
+    if isinstance(clip, str):
+        return clip
+        
+    # Create a copy to avoid modifying the original
+    try:
+        # Handle problematic attributes that are commonly lambdas
+        problematic_attrs = ['pos', 'size', 'mask']
+        for attr_name in problematic_attrs:
+            if hasattr(clip, attr_name) and callable(getattr(clip, attr_name)):
+                # Try to evaluate the callable at midpoint
+                try:
+                    value = getattr(clip, attr_name)(clip.duration / 2)
+                    # Create a new method that returns this fixed value
+                    if attr_name == 'pos':
+                        clip = clip.with_position(value if value else 'center')
+                    elif attr_name == 'size':
+                        clip = clip.resized(value)
+                    elif attr_name == 'mask' and value is not None:
+                        # Handle mask by pre-rendering if needed
+                        # For now, we'll just remove it if it's a lambda
+                        if callable(value):
+                            setattr(clip, 'mask', None)
+                except Exception as e:
+                    logger.warning(f"Could not evaluate {attr_name}: {e}")
+                    # Set to None or a default value
+                    if attr_name == 'pos':
+                        clip = clip.with_position('center')
+                    elif attr_name == 'size':
+                        pass  # Keep original size
+                    elif attr_name == 'mask':
+                        setattr(clip, 'mask', None)
+        
+        # Handle CompositeVideoClip recursively
+        if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips'):
+            sanitized_clips = [sanitize_clip_for_serialization(subclip) for subclip in clip.clips]
+            # Recreate with sanitized clips
+            clip = CompositeVideoClip(sanitized_clips, size=clip.size).with_duration(clip.duration)
+            if hasattr(clip, 'audio') and clip.audio:
+                clip = clip.with_audio(clip.audio)
+    
+    except Exception as e:
+        logger.error(f"Error sanitizing clip: {e}")
+    
+    return clip
+
 def prerender_clip(idx, clip, temp_dir, fps):
     """Pre-render a complex clip to a file to avoid serialization issues."""
     temp_path = os.path.join(temp_dir, f"prerender_{idx}.mp4")
     try:
-        if not USING_DILL and is_complex_clip(clip):
+        # Always sanitize the clip first, regardless of whether USING_DILL is True
+        clip = sanitize_clip_for_serialization(clip)
+        
+        # For genuinely complex clips or when not using dill, pre-render
+        if not USING_DILL or is_complex_clip(clip):
             logger.debug(f"Pre-rendering clip {idx} with attributes: {dir(clip)}")
-            # Fix callable pos attribute
-            if hasattr(clip, 'pos') and callable(clip.pos):
-                try:
-                    pos = clip.pos(clip.duration / 2)
-                    clip = clip.with_position(pos if pos else 'center')
-                    logger.debug(f"Fixed pos for clip {idx}")
-                except Exception as e:
-                    logger.warning(f"Failed to fix pos for clip {idx}: {e}")
-                    clip = clip.with_position('center')
-            # Fix callable size attribute
-            if hasattr(clip, 'size') and callable(clip.size):
-                try:
-                    size = clip.size(clip.duration / 2)
-                    clip = clip.resized(size)
-                    logger.debug(f"Fixed size for clip {idx}")
-                except Exception as e:
-                    logger.warning(f"Failed to fix size for clip {idx}: {e}")
-            # Handle all callable attributes
-            for attr_name in dir(clip):
-                if attr_name.startswith('__') or attr_name.startswith('_'):
-                    continue
-                try:
-                    attr = getattr(clip, attr_name)
-                    if callable(attr) and not hasattr(attr, '__self__'):
-                        logger.debug(f"Found callable attribute {attr_name} in clip {idx}")
-                        # Attempt to sample the attribute
-                        try:
-                            value = attr(clip.duration / 2)
-                            setattr(clip, attr_name, value)
-                            logger.debug(f"Fixed callable attribute {attr_name} for clip {idx}")
-                        except:
-                            logger.warning(f"Could not fix callable attribute {attr_name} for clip {idx}")
-                except:
-                    pass
+            
             # Handle composite clips
             if isinstance(clip, CompositeVideoClip) and hasattr(clip, 'clips'):
                 fixed_clips = []
@@ -153,8 +203,11 @@ def prerender_clip(idx, clip, temp_dir, fps):
                     _, fixed_subclip = prerender_clip(sub_idx, subclip, temp_dir, fps)
                     fixed_clips.append(VideoFileClip(fixed_subclip) if isinstance(fixed_subclip, str) else fixed_subclip)
                 clip = CompositeVideoClip(fixed_clips, size=clip.size).with_duration(clip.duration)
-        render_clip_segment(clip, temp_path, fps, preset="ultrafast")
-        return idx, temp_path
+                
+            render_clip_segment(clip, temp_path, fps, preset="ultrafast")
+            return idx, temp_path
+        
+        return idx, clip
     except Exception as e:
         logger.error(f"Error pre-rendering clip {idx}: {e}")
         return idx, None
@@ -212,7 +265,8 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
     if logger is None:
         logger = logging.getLogger(__name__)
     if num_processes is None:
-        num_processes = max(1, min(multiprocessing.cpu_count() - 1, 8))
+        # Use fewer processes to avoid Windows handle issues
+        num_processes = max(1, min(multiprocessing.cpu_count() - 1, 4))  # Reduced from 8 to 4
 
     logger.info(f"Rendering {len(clips)} clips with {num_processes} processes")
 
@@ -228,6 +282,12 @@ def render_clips_in_parallel(clips, output_file, fps=30, num_processes=None, log
         logger.info("=== Section Info ===")
         for idx, info in section_info.items():
             logger.info(f"Clip {idx}: Section {info.get('section_idx', '?')} - '{info.get('section_text', 'Unknown')}'")
+
+    # Sanitize all clips before preprocessing to address lambda serialization issues
+    sanitized_clips = []
+    for i, clip in enumerate(clips):
+        sanitized_clips.append(sanitize_clip_for_serialization(clip))
+    clips = sanitized_clips
 
     # Pre-render complex clips in parallel if not using dill or if prerender_all is True
     rendered_paths = []
