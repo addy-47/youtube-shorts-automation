@@ -202,40 +202,32 @@ class YTShortsCreator_V:
             # 5. Process background videos
             logger.info("Processing background videos")
             video_paths = []
-            
+
             # Make background clips from videos
             for i, section in enumerate(script_sections):
                 query = background_queries[i]
                 target_duration = section.get('duration', 5)
-                
+
                 # Find the video for this section
                 if query in videos_by_query and videos_by_query[query]:
                     video_paths.append({
                         'path': videos_by_query[query][0],
+                        'target_duration': target_duration,
                         'section_idx': i,
-                        'duration': target_duration,
                         'query': query
                     })
 
             # Process videos in parallel
             background_clips = process_background_clips_parallel(
                 video_info=video_paths,
-                blur=blur_background,
+                blur_background=blur_background,
                 edge_blur=edge_blur,
-                output_resolution=self.resolution
             )
-            
+
             # Make sure we have all the components
-            if not background_clips:
-                logger.error("No background clips generated")
+            if not background_clips or not audio_data or not text_clips:
+                logger.error("a component is missing")
                 return None
-
-            if not audio_data:
-                logger.error("No audio generated")
-                return None
-
-            if not text_clips:
-                logger.warning("No text clips generated")
 
             # Create section clips (background + audio + text)
             section_clips = []
@@ -268,11 +260,11 @@ class YTShortsCreator_V:
 
             # Use our unified renderer
             logger.info("Rendering final video using optimized renderer")
-            
+
             # Ensure rendering temp directory exists
             render_temp_dir = os.path.join(self.temp_dir, "render")
             os.makedirs(render_temp_dir, exist_ok=True)
-            
+
             # Use the unified rendering interface
             output_path = render_video(
                 clips=section_clips,
@@ -287,7 +279,7 @@ class YTShortsCreator_V:
                     'section_info': section_info
                 }
             )
-            
+
             logger.info(f"Successfully rendered video to {output_path}")
 
             # Add watermark if requested

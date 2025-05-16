@@ -8,20 +8,20 @@ logger = logging.getLogger(__name__)
 
 class SystemResources:
     """System resource analyzer for optimal parallel processing configuration."""
-    
+
     def __init__(self):
         self.memory_info = self.get_memory_info()
         self.cpu_info = self.get_cpu_info()
         self.io_info = self.get_io_info()
-        
+
         logger.info(f"System resources detected: {self.cpu_info['logical_cores']} CPU cores, "
                    f"{self.memory_info['total_gb']:.1f}GB RAM")
-    
+
     def get_memory_info(self) -> Dict[str, Any]:
         """Get memory information."""
         mem = psutil.virtual_memory()
         swap = psutil.swap_memory()
-        
+
         return {
             'total': mem.total,
             'total_gb': mem.total / (1024**3),
@@ -33,7 +33,7 @@ class SystemResources:
             'swap_free': swap.free,
             'swap_percent': swap.percent
         }
-    
+
     def get_cpu_info(self) -> Dict[str, Any]:
         """Get CPU information."""
         return {
@@ -42,7 +42,7 @@ class SystemResources:
             'current_load': psutil.cpu_percent(interval=0.1),
             'per_cpu_load': psutil.cpu_percent(interval=0.1, percpu=True)
         }
-    
+
     def get_io_info(self) -> Dict[str, Any]:
         """Get I/O information for disk performance estimation."""
         try:
@@ -50,7 +50,7 @@ class SystemResources:
             disk_io = psutil.disk_io_counters()
             # Get disk usage for the main disk
             disk_usage = psutil.disk_usage('/')
-            
+
             return {
                 'read_bytes': disk_io.read_bytes,
                 'write_bytes': disk_io.write_bytes,
@@ -69,51 +69,51 @@ class SystemResources:
                 'read_count': 0,
                 'write_count': 0
             }
-    
-    def optimize_workers(self, task_type='video_rendering', memory_per_worker_gb=2.0, 
-                         cpu_per_worker=2, reserved_memory_gb=2.0, 
+
+    def optimize_workers(self, task_type='video_rendering', memory_per_worker_gb=1.0,
+                         cpu_per_worker=1, reserved_memory_gb=1.0,
                          reserved_cpu_cores=1) -> Dict[str, Any]:
         """
         Calculate optimal number of workers based on available system resources.
-        
+
         Args:
             task_type: Type of task ('video_rendering', 'audio_processing', etc.)
-            memory_per_worker_gb: Estimated memory required per worker in GB
+            memory_per_worker_gb: Estimated memory required pexr worker in GB
             cpu_per_worker: Number of CPU cores required per worker
             reserved_memory_gb: Memory to reserve for system in GB
             reserved_cpu_cores: CPU cores to reserve for system
-            
+
         Returns:
             Dictionary with optimized settings
         """
         # Update real-time system resource information
         self.memory_info = self.get_memory_info()
         self.cpu_info = self.get_cpu_info()
-        
+
         # Calculate memory-based worker limit
         available_memory_gb = self.memory_info['available_gb'] - reserved_memory_gb
         memory_based_limit = max(1, int(available_memory_gb / memory_per_worker_gb))
-        
+
         # Calculate CPU-based worker limit
         available_cpu_cores = self.cpu_info['logical_cores'] - reserved_cpu_cores
         cpu_based_limit = max(1, int(available_cpu_cores / cpu_per_worker))
-        
+
         # Calculate IO-based adjustments (reduce workers on high IO load or low disk space)
         io_adjustment = 1.0
         if self.io_info['disk_usage_percent'] > 90:
             io_adjustment = 0.5  # Reduce workers if disk nearly full
-        
+
         # Take the minimum of memory and CPU constraints
         worker_count = min(memory_based_limit, cpu_based_limit)
         worker_count = max(1, int(worker_count * io_adjustment))  # Apply IO adjustment
-        
+
         # Task-specific optimizations
         if task_type == 'video_rendering':
             # For video rendering, configure FFmpeg thread allocation
             ffmpeg_threads = max(1, min(4, int(available_cpu_cores / worker_count)))
-            
+
             logger.info(f"Optimized for video rendering: {worker_count} workers with {ffmpeg_threads} FFmpeg threads each")
-            
+
             return {
                 'worker_count': worker_count,
                 'ffmpeg_threads': ffmpeg_threads,
@@ -135,13 +135,13 @@ def get_system_resources():
     """Get system resource information."""
     return SystemResources()
 
-def optimize_workers_for_rendering(memory_per_task_gb=2.0):
+def optimize_workers_for_rendering(memory_per_task_gb=1.0):
     """Get optimized worker configuration for video rendering."""
     system = SystemResources()
     return system.optimize_workers(
         task_type='video_rendering',
         memory_per_worker_gb=memory_per_task_gb,
-        cpu_per_worker=2,
-        reserved_memory_gb=2.0,
+        cpu_per_worker=1,
+        reserved_memory_gb=1.0,
         reserved_cpu_cores=1
-    ) 
+    )

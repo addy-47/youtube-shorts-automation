@@ -5,7 +5,7 @@ import logging
 import numpy as np
 import concurrent.futures
 import os
-from moviepy  import VideoClip, concatenate_videoclips, ColorClip, CompositeVideoClip
+from moviepy  import VideoClip, concatenate_videoclips, ColorClip, CompositeVideoClip,VideoFileClip
 from helper.blur import custom_blur, custom_edge_blur
 from helper.minor_helper import measure_time
 from functools import partial
@@ -88,13 +88,12 @@ def _process_background_clip(clip, target_duration, blur_background=False, edge_
 
     return clip
 
-# Move the process_clip function outside of process_background_clips_parallel
 def _process_background_clip_wrapper(clip_info, blur_background=False, edge_blur=False):
     """
     Process a single background clip (wrapper for _process_background_clip)
 
     Args:
-        clip_info (dict): Dictionary with 'clip' and 'target_duration'
+        clip_info (dict): Dictionary with either 'clip' (VideoClip) or 'path' (str)
         blur_background (bool): Whether to apply blur effect
         edge_blur (bool): Whether to apply edge blur effect
 
@@ -102,23 +101,34 @@ def _process_background_clip_wrapper(clip_info, blur_background=False, edge_blur
         VideoClip: Processed clip
     """
     try:
+        # Handle both path strings and VideoClip objects
+        if 'clip' in clip_info:
+            clip = clip_info['clip']
+        elif 'path' in clip_info:
+            clip = VideoFileClip(clip_info['path'])
+        else:
+            raise ValueError("clip_info must contain either 'clip' or 'path'")
+
+        target_duration = clip_info.get('duration', clip_info.get('target_duration', 5))
+
         return _process_background_clip(
-            clip_info['clip'],
-            clip_info['target_duration'],
+            clip,
+            target_duration,
             blur_background,
             edge_blur
         )
     except Exception as e:
         logger.error(f"Error processing background clip: {e}")
+        logger.error(f"Clip info: {clip_info}")
         return None
 
 @measure_time
-def process_background_clips_parallel(clip_info_list, blur_background=False, edge_blur=False, max_workers=None):
+def process_background_clips_parallel(video_info , blur_background=False, edge_blur=False, max_workers=3):
     """
     Process multiple background clips in parallel
 
     Args:
-        clip_info_list (list): List of dictionaries with 'clip' and 'target_duration' keys
+        video_info  (list): List of dictionaries with 'clip' and 'target_duration' keys
         blur_background (bool): Whether to apply blur effect
         edge_blur (bool): Whether to apply edge blur effect
         max_workers (int): Maximum number of concurrent workers
@@ -127,11 +137,11 @@ def process_background_clips_parallel(clip_info_list, blur_background=False, edg
         list: List of processed background clips
     """
     start_time = time.time()
-    logger.info(f"Processing {len(clip_info_list)} background clips in parallel")
+    logger.info(f"Processing {len(video_info )} background clips in parallel")
 
     # Determine number of workers based on CPU cores
     if not max_workers:
-        max_workers = min(len(clip_info_list), os.cpu_count())
+        max_workers = min(len(video_info ), os.cpu_count())
 
     # Choose executor based on dill availability
     if HAS_DILL:
@@ -146,7 +156,7 @@ def process_background_clips_parallel(clip_info_list, blur_background=False, edg
     with executor_class(max_workers=max_workers) as executor:
         # Submit all tasks to the executor
         futures = []
-        for clip_info in clip_info_list:
+        for clip_info in video_info :
             futures.append(
                 executor.submit(
                     _process_background_clip_wrapper,
@@ -162,7 +172,7 @@ def process_background_clips_parallel(clip_info_list, blur_background=False, edg
                 processed_clip = future.result()
                 if processed_clip:
                     processed_clips.append(processed_clip)
-                    logger.info(f"Processed background clip {i+1}/{len(clip_info_list)}")
+                    logger.info(f"Processed background clip {i+1}/{len(video_info )}")
             except Exception as e:
                 logger.error(f"Failed to process background clip: {e}")
 
