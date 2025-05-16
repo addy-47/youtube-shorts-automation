@@ -1,630 +1,199 @@
-2025-05-16 01:53:51,468 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
-2025-05-16 01:53:52,052 - INFO - helper.audio - Google Cloud TTS initialized successfully
-2025-05-16 01:53:52,057 - INFO - automation.shorts_maker_V - Google Cloud TTS initialized successfully
-2025-05-16 01:53:53,659 - INFO - __main__ - Generating comprehensive content for : Nintendo Switch 2: final tech specs and system reservations confirmed - Eurogamer
-2025-05-16 01:53:57,081 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-05-16 01:53:57,099 - INFO - automation.content_generator - Successfully generated comprehensive content package:
-2025-05-16 01:53:57,099 - INFO - automation.content_generator - Title: Nintendo Switch 2: Specs & Reservations Confirmed!
-2025-05-16 01:53:57,099 - INFO - automation.content_generator - Script length: 58 words
-2025-05-16 01:53:57,100 - INFO - automation.content_generator - Thumbnail HF prompt: A dynamic composition featuring the Nintendo Switc...
-2025-05-16 01:53:57,100 - INFO - automation.content_generator - Thumbnail Unsplash query: Nintendo gaming console
-2025-05-16 01:53:57,100 - INFO - __main__ - Content package generated successfully:
-2025-05-16 01:53:57,100 - INFO - __main__ - Title: LazyCreator presents: Nintendo Switch 2: Specs & Reservations Confirmed!
-2025-05-16 01:53:57,101 - INFO - __main__ - Description length: 138 characters
-2025-05-16 01:53:57,101 - INFO - __main__ - Raw script generated successfully
-2025-05-16 01:53:57,102 - INFO - helper.minor_helper - Parsed script into 8 sentences
-2025-05-16 01:53:57,102 - INFO - helper.minor_helper - Added sentence 0 to cards: 'Big news for gamers!...' (duration: 3s)
-2025-05-16 01:53:57,102 - INFO - helper.minor_helper - Added sentence 1 to cards: 'The Nintendo Switch 2 is final...' (duration: 5s)
-2025-05-16 01:53:57,102 - INFO - helper.minor_helper - Added sentence 2 to cards: 'Tech specs have been revealed,...' (duration: 5s)
-2025-05-16 01:53:57,102 - INFO - helper.minor_helper - Added sentence 3 to cards: 'Expect enhanced graphics, fast...' (duration: 5s)
-2025-05-16 01:53:57,103 - INFO - helper.minor_helper - Added sentence 4 to cards: 'Plus, system reservations are ...' (duration: 5s)
-2025-05-16 01:53:57,103 - INFO - helper.minor_helper - Added sentence 5 to cards: 'Don’t miss your chance to secu...' (duration: 5s)
-2025-05-16 01:53:57,103 - INFO - helper.minor_helper - Added sentence 6 to cards: 'Are you excited?...' (duration: 3s)
-2025-05-16 01:53:57,104 - INFO - helper.minor_helper - Added sentence 7 to cards: 'Let us know in the comments an...' (duration: 5s)
-2025-05-16 01:53:57,104 - INFO - helper.minor_helper - Created 8 script cards
-2025-05-16 01:53:57,104 - INFO - __main__ - Script parsed into 8 sections
-2025-05-16 01:53:57,105 - INFO - __main__ - Section 1: Big news for gamers!... (duration: 3s)
-2025-05-16 01:53:57,105 - INFO - __main__ - Section 2: The Nintendo Switch 2 is final... (duration: 5s)
-2025-05-16 01:53:57,106 - INFO - __main__ - Section 3: Tech specs have been revealed,... (duration: 5s)
-2025-05-16 01:53:57,106 - INFO - __main__ - Section 4: Expect enhanced graphics, fast... (duration: 5s)
-2025-05-16 01:53:57,106 - INFO - __main__ - Section 5: Plus, system reservations are ... (duration: 5s)
-2025-05-16 01:53:57,107 - INFO - __main__ - Section 6: Don’t miss your chance to secu... (duration: 5s)
-2025-05-16 01:53:57,107 - INFO - __main__ - Section 7: Are you excited?... (duration: 3s)
-2025-05-16 01:53:57,107 - INFO - __main__ - Section 8: Let us know in the comments an... (duration: 5s)
-2025-05-16 01:53:57,108 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Nintendo Switch 2: Specs & Reservations Confirmed!'
-2025-05-16 01:53:57,108 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
-2025-05-16 01:53:57,109 - INFO - __main__ - Section 0: 'LazyCreator presents: Nintendo...' (duration: 3s)
-2025-05-16 01:53:57,109 - INFO - __main__ - Section 1: 'Big news for gamers!...' (duration: 3s)
-2025-05-16 01:53:57,110 - INFO - __main__ - Section 2: 'The Nintendo Switch 2 is final...' (duration: 5s)
-2025-05-16 01:53:57,110 - INFO - __main__ - Section 3: 'Tech specs have been revealed,...' (duration: 5s)
-2025-05-16 01:53:57,111 - INFO - __main__ - Section 4: 'Expect enhanced graphics, fast...' (duration: 5s)
-2025-05-16 01:53:57,111 - INFO - __main__ - Section 5: 'Plus, system reservations are ...' (duration: 5s)
-2025-05-16 01:53:57,112 - INFO - __main__ - Section 6: 'Don’t miss your chance to secu...' (duration: 5s)
-2025-05-16 01:53:57,112 - INFO - __main__ - Section 7: 'Are you excited?...' (duration: 3s)
-2025-05-16 01:53:57,113 - INFO - __main__ - Section 8: 'Let us know in the comments an...' (duration: 5s)
-2025-05-16 01:53:57,113 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
-2025-05-16 01:53:57,114 - INFO - __main__ - Generating video search queries for each section using AI...
-2025-05-16 01:53:59,982 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-05-16 01:53:59,983 - INFO - automation.content_generator - Successfully generated batch video queries for 9 sections.
-2025-05-16 01:53:59,984 - INFO - __main__ - Section queries: 1: Nintendo Switch logo, 2: excited gamers, 3: new gaming console, 4: high-tech specifications, 5: enhanced graphics, 6: console reservations, 7: next-gen gaming, 8: gaming excitement, 9: comments and likes
-2025-05-16 01:53:59,984 - INFO - __main__ - Creating YouTube Short
-2025-05-16 01:53:59,984 - INFO - helper.minor_helper - Starting YouTube short creation
-2025-05-16 01:53:59,985 - INFO - automation.shorts_maker_V - Scaling durations by factor 0.64 to fit max duration of 25s
-2025-05-16 01:53:59,985 - INFO - automation.shorts_maker_V - Starting parallel execution of major steps
-2025-05-16 01:53:59,985 - INFO - automation.parallel_tasks - Starting task: generate_audio
-2025-05-16 01:53:59,986 - INFO - automation.shorts_maker_V - Generating audio clips in parallel
-2025-05-16 01:53:59,986 - INFO - automation.parallel_tasks - Starting task: fetch_videos
-2025-05-16 01:53:59,987 - INFO - helper.audio - Generating 9 audio clips in parallel
-2025-05-16 01:53:59,988 - INFO - automation.shorts_maker_V - Fetching background videos in parallel
-2025-05-16 01:53:59,988 - INFO - automation.parallel_tasks - Starting task: generate_text_clips
-2025-05-16 01:53:59,989 - INFO - helper.fetch - Fetching videos for 9 queries in parallel
-2025-05-16 01:53:59,992 - INFO - automation.shorts_maker_V - Generating text clips in parallel
-2025-05-16 01:53:59,993 - INFO - helper.text - Generating 9 text clips in parallel
-2025-05-16 01:53:59,994 - INFO - helper.text - Using ThreadPoolExecutor with dill for text generation
-2025-05-16 01:53:59,994 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 01:53:59,997 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 01:54:00,003 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 01:54:00,024 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 01:54:00,036 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 01:54:00,088 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 01:54:00,115 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 01:54:00,135 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 01:54:00,156 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 01:54:00,353 - INFO - automation.voiceover - Speech synthesized for text [The Nintendo Switch ...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747340631\audio_section_2_1747340639.mp3]
-2025-05-16 01:54:00,361 - INFO - automation.voiceover - Speech synthesized for text [Big news for gamers!...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747340631\audio_section_1_1747340639.mp3]
-2025-05-16 01:54:00,398 - INFO - automation.voiceover - Speech synthesized for text [Tech specs have been...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747340631\audio_section_3_1747340639.mp3]
-2025-05-16 01:54:00,401 - INFO - automation.voiceover - Speech synthesized for text [Expect enhanced grap...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747340631\audio_section_4_1747340639.mp3]
-2025-05-16 01:54:00,415 - INFO - automation.voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747340631\audio_section_0_1747340639.mp3]
-2025-05-16 01:54:00,532 - INFO - automation.voiceover - Speech synthesized for text [Plus, system reserva...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747340631\audio_section_5_1747340639.mp3]
-2025-05-16 01:54:00,647 - INFO - automation.voiceover - Speech synthesized for text [Are you excited?...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747340631\audio_section_7_1747340639.mp3]
-2025-05-16 01:54:00,695 - INFO - automation.voiceover - Speech synthesized for text [Let us know in the c...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747340631\audio_section_8_1747340639.mp3]
-2025-05-16 01:54:00,700 - INFO - automation.voiceover - Speech synthesized for text [Don’t miss your chan...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747340631\audio_section_6_1747340639.mp3]
-2025-05-16 01:54:00,758 - INFO - helper.audio - Generated 9 audio clips in 0.77 seconds
-2025-05-16 01:54:01,838 - INFO - helper.text - Generated 9 text clips in 1.84 seconds
-2025-05-16 01:54:01,840 - INFO - automation.parallel_tasks - Completed task: generate_text_clips
-2025-05-16 01:54:03,210 - INFO - helper.fetch - Fetched 1 videos for query 'comments and likes'
-2025-05-16 01:54:03,619 - INFO - automation.parallel_tasks - Completed task: generate_audio
-2025-05-16 01:54:04,604 - INFO - helper.fetch - Fetched 1 videos for query 'gaming excitement'
-2025-05-16 01:54:06,635 - INFO - helper.fetch - Fetched 1 videos for query 'Nintendo Switch logo'
-2025-05-16 01:54:07,255 - INFO - helper.fetch - Fetched 1 videos for query 'excited gamers'
-2025-05-16 01:54:08,873 - INFO - helper.fetch - Fetched 1 videos for query 'console reservations'
-2025-05-16 01:54:09,894 - INFO - helper.fetch - Fetched 1 videos for query 'next-gen gaming'
-2025-05-16 01:54:10,390 - INFO - helper.fetch - Fetched 1 videos for query 'high-tech specifications'
-2025-05-16 01:54:13,678 - INFO - helper.fetch - Fetched 1 videos for query 'enhanced graphics'
-2025-05-16 01:54:19,908 - INFO - helper.fetch - Fetched 1 videos for query 'new gaming console'
-2025-05-16 01:54:19,911 - INFO - helper.fetch - Fetched videos for 9 queries in 19.92 seconds
-2025-05-16 01:54:19,912 - INFO - automation.parallel_tasks - Completed task: fetch_videos
-2025-05-16 01:54:19,914 - INFO - automation.parallel_tasks - All tasks executed in 19.93 seconds
-2025-05-16 01:54:19,914 - INFO - automation.shorts_maker_V - Processing background videos
-2025-05-16 01:54:19,915 - ERROR - automation.shorts_maker_V - Error creating video: process_background_clips_parallel() got an unexpected keyword argument 'video_info'
-2025-05-16 01:54:19,923 - ERROR - automation.shorts_maker_V - Detailed error trace: Traceback (most recent call last):
-  File "D:\youtube-shorts-automation\automation\shorts_maker_V.py", line 221, in create_youtube_short
-    background_clips = process_background_clips_parallel(
-        video_info=video_paths,
-    ...<2 lines>...
-        output_resolution=self.resolution
-    )
-  File "D:\youtube-shorts-automation\helper\minor_helper.py", line 37, in wrapper
-    result = func(*args, **kwargs)
-TypeError: process_background_clips_parallel() got an unexpected keyword argument 'video_info'
-
-2025-05-16 01:54:19,923 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
-2025-05-16 01:54:19,924 - WARNING - helper.minor_helper - Error checking age of directory D:\youtube-shorts-automation\automation\temp\shorts_v_1747340631: '<=' not supported between instances of 'float' and 'list'
-2025-05-16 01:54:19,925 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\shorts_v_1747340631
-2025-05-16 01:54:20,082 - INFO - helper.minor_helper - Completed YouTube short creation in 20.10 seconds
-2025-05-16 01:54:20,082 - INFO - __main__ - Generating thumbnail for the short
-2025-05-16 01:54:20,086 - INFO - automation.thumbnail - STARTING generate_thumbnail at 01:54:20.086
-2025-05-16 01:54:20,087 - INFO - automation.thumbnail - Using thumbnail prompt: A dynamic composition featuring the Nintendo Switch 2 console and controllers prominently displayed, with bold text overlay announcing 'Specs & Reservations!' in vibrant colors, set against a gaming backdrop.
-2025-05-16 01:54:20,087 - INFO - automation.thumbnail - STARTING generate_image_huggingface at 01:54:20.087
-2025-05-16 01:54:20,088 - INFO - automation.thumbnail - Hugging Face prompt: A dynamic composition featuring the Nintendo Switch 2 console and controlle...
-2025-05-16 01:54:20,833 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
-2025-05-16 01:54:35,235 - INFO - __main__ - Running global cleanup of temporary files
-2025-05-16 01:54:35,236 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
-2025-05-16 01:54:35,237 - INFO - __main__ - Performing final cleanup of all temporary files
-2025-05-16 01:54:35,237 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
-2025-05-16 01:54:35,238 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\audio_clips
-2025-05-16 01:54:35,239 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\generated_images
-2025-05-16 01:54:35,240 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1747340660
-2025-05-16 01:54:35,240 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\video_downloads
-2025-05-16 18:33:47,258 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
-2025-05-16 18:33:48,306 - INFO - helper.audio - Google Cloud TTS initialized successfully
-2025-05-16 18:33:48,313 - INFO - automation.shorts_maker_V - Google Cloud TTS initialized successfully
-2025-05-16 18:33:51,223 - INFO - __main__ - Generating comprehensive content for : Mortal Kombat 1 Looks To Be Winding Down Support With The 'Definitive Edition' - Nintendo Life
-2025-05-16 18:33:58,883 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-05-16 18:33:58,907 - INFO - automation.content_generator - Successfully generated comprehensive content package:
-2025-05-16 18:33:58,908 - INFO - automation.content_generator - Title: Mortal Kombat 1: 'Definitive Edition' Support Ending Soon!
-2025-05-16 18:33:58,909 - INFO - automation.content_generator - Script length: 49 words
-2025-05-16 18:33:58,910 - INFO - automation.content_generator - Thumbnail HF prompt: An intense Mortal Kombat scene showcasing iconic c...
-2025-05-16 18:33:58,911 - INFO - automation.content_generator - Thumbnail Unsplash query: Mortal Kombat characters
-2025-05-16 18:33:58,912 - INFO - __main__ - Content package generated successfully:
-2025-05-16 18:33:58,913 - INFO - __main__ - Title: LazyCreator presents: Mortal Kombat 1: 'Definitive Edition' Support Ending Soon!
-2025-05-16 18:33:58,913 - INFO - __main__ - Description length: 147 characters
-2025-05-16 18:33:58,914 - INFO - __main__ - Raw script generated successfully
-2025-05-16 18:33:58,915 - INFO - helper.minor_helper - Parsed script into 4 sentences
-2025-05-16 18:33:58,916 - INFO - helper.minor_helper - Added sentence 0 to cards: 'Mortal Kombat fans, exciting n...' (duration: 5s)
-2025-05-16 18:33:58,917 - INFO - helper.minor_helper - Added sentence 1 to cards: 'Mortal Kombat 1 is wrapping up...' (duration: 5s)
-2025-05-16 18:33:58,919 - INFO - helper.minor_helper - Added sentence 2 to cards: 'Are you ready to dive back in?...' (duration: 3s)
-2025-05-16 18:33:58,920 - INFO - helper.minor_helper - Added sentence 3 to cards: 'Don’t miss out on the action a...' (duration: 5s)
-2025-05-16 18:33:58,921 - INFO - helper.minor_helper - Created 4 script cards
-2025-05-16 18:33:58,922 - INFO - __main__ - Script parsed into 4 sections
-2025-05-16 18:33:58,923 - INFO - __main__ - Section 1: Mortal Kombat fans, exciting n... (duration: 5s)
-2025-05-16 18:33:58,923 - INFO - __main__ - Section 2: Mortal Kombat 1 is wrapping up... (duration: 5s)
-2025-05-16 18:33:58,924 - INFO - __main__ - Section 3: Are you ready to dive back in?... (duration: 3s)
-2025-05-16 18:33:58,925 - INFO - __main__ - Section 4: Don’t miss out on the action a... (duration: 5s)
-2025-05-16 18:33:58,926 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Mortal Kombat 1: 'Definitive Edition' Support Ending Soon!'
-2025-05-16 18:33:58,928 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
-2025-05-16 18:33:58,928 - INFO - __main__ - Section 0: 'LazyCreator presents: Mortal K...' (duration: 3s)
-2025-05-16 18:33:58,929 - INFO - __main__ - Section 1: 'Mortal Kombat fans, exciting n...' (duration: 5s)
-2025-05-16 18:33:58,930 - INFO - __main__ - Section 2: 'Mortal Kombat 1 is wrapping up...' (duration: 5s)
-2025-05-16 18:33:58,930 - INFO - __main__ - Section 3: 'Are you ready to dive back in?...' (duration: 3s)
-2025-05-16 18:33:58,930 - INFO - __main__ - Section 4: 'Don’t miss out on the action a...' (duration: 5s)
-2025-05-16 18:33:58,931 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
-2025-05-16 18:33:58,931 - INFO - __main__ - Generating video search queries for each section using AI...
-2025-05-16 18:34:01,386 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-05-16 18:34:01,389 - INFO - automation.content_generator - Successfully generated batch video queries for 5 sections.
-2025-05-16 18:34:01,390 - INFO - __main__ - Section queries: 1: Mortal Kombat logo, 2: excited gaming fans, 3: game updates DLC, 4: gaming action, 5: video game promotion
-2025-05-16 18:34:01,391 - INFO - __main__ - Creating YouTube Short
-2025-05-16 18:34:01,391 - INFO - helper.minor_helper - Starting YouTube short creation
-2025-05-16 18:34:01,392 - INFO - automation.shorts_maker_V - Starting parallel execution of major steps
-2025-05-16 18:34:01,392 - INFO - automation.parallel_tasks - Starting task: generate_text_clips
-2025-05-16 18:34:01,396 - INFO - automation.shorts_maker_V - Generating text clips in parallel
-2025-05-16 18:34:01,396 - INFO - automation.parallel_tasks - Starting task: generate_audio
-2025-05-16 18:34:01,397 - INFO - helper.text - Generating 5 text clips in parallel
-2025-05-16 18:34:01,398 - INFO - helper.text - Using ThreadPoolExecutor with dill for text generation
-2025-05-16 18:34:01,401 - INFO - automation.shorts_maker_V - Generating audio clips in parallel
-2025-05-16 18:34:01,401 - INFO - automation.parallel_tasks - Starting task: fetch_videos
-2025-05-16 18:34:01,404 - INFO - helper.audio - Generating 5 audio clips in parallel
-2025-05-16 18:34:01,419 - INFO - automation.shorts_maker_V - Fetching background videos in parallel
-2025-05-16 18:34:01,431 - INFO - helper.fetch - Fetching videos for 5 queries in parallel
-2025-05-16 18:34:01,474 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 18:34:01,521 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 18:34:01,617 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 18:34:01,647 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 18:34:01,653 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 18:34:01,864 - INFO - automation.voiceover - Speech synthesized for text [Mortal Kombat fans, ...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400627\audio_section_1_1747400641.mp3]
-2025-05-16 18:34:01,953 - INFO - automation.voiceover - Speech synthesized for text [Are you ready to div...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400627\audio_section_3_1747400641.mp3]
-2025-05-16 18:34:01,960 - INFO - automation.voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400627\audio_section_0_1747400641.mp3]
-2025-05-16 18:34:01,976 - INFO - automation.voiceover - Speech synthesized for text [Don’t miss out on th...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400627\audio_section_4_1747400641.mp3]
-2025-05-16 18:34:02,236 - INFO - automation.voiceover - Speech synthesized for text [Mortal Kombat 1 is w...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400627\audio_section_2_1747400641.mp3]
-2025-05-16 18:34:02,277 - INFO - helper.audio - Generated 5 audio clips in 0.87 seconds
-2025-05-16 18:34:04,492 - INFO - helper.text - Generated 5 text clips in 3.09 seconds
-2025-05-16 18:34:04,500 - INFO - automation.parallel_tasks - Completed task: generate_text_clips
-2025-05-16 18:34:06,063 - INFO - automation.parallel_tasks - Completed task: generate_audio
-2025-05-16 18:34:09,331 - INFO - helper.fetch - Fetched 1 videos for query 'video game promotion'
-2025-05-16 18:34:22,489 - INFO - helper.fetch - Fetched 1 videos for query 'gaming action'
-2025-05-16 18:34:23,480 - INFO - helper.fetch - Fetched 1 videos for query 'excited gaming fans'
-2025-05-16 18:34:24,828 - INFO - helper.fetch - Fetched 1 videos for query 'game updates DLC'
-2025-05-16 18:34:32,953 - INFO - helper.fetch - Fetched 1 videos for query 'Mortal Kombat logo'
-2025-05-16 18:34:32,961 - INFO - helper.fetch - Fetched videos for 5 queries in 31.53 seconds
-2025-05-16 18:34:32,963 - INFO - automation.parallel_tasks - Completed task: fetch_videos
-2025-05-16 18:34:32,969 - INFO - automation.parallel_tasks - All tasks executed in 31.58 seconds
-2025-05-16 18:34:32,972 - INFO - automation.shorts_maker_V - Processing background videos
-2025-05-16 18:34:32,976 - ERROR - automation.shorts_maker_V - Error creating video: process_background_clips_parallel() got an unexpected keyword argument 'blur'
-2025-05-16 18:34:33,011 - ERROR - automation.shorts_maker_V - Detailed error trace: Traceback (most recent call last):
-  File "D:\youtube-shorts-automation\automation\shorts_maker_V.py", line 221, in create_youtube_short
-    background_clips = process_background_clips_parallel(
-        video_info=video_paths,
-        blur=blur_background,
-        edge_blur=edge_blur,
-    )
-  File "D:\youtube-shorts-automation\helper\minor_helper.py", line 37, in wrapper
-    result = func(*args, **kwargs)
-TypeError: process_background_clips_parallel() got an unexpected keyword argument 'blur'
-
-2025-05-16 18:34:33,013 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
-2025-05-16 18:34:33,018 - WARNING - helper.minor_helper - Error checking age of directory D:\youtube-shorts-automation\automation\temp\shorts_v_1747400627: '<=' not supported between instances of 'float' and 'list'
-2025-05-16 18:34:33,019 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\shorts_v_1747400627
-2025-05-16 18:34:33,085 - INFO - helper.minor_helper - Completed YouTube short creation in 31.69 seconds
-2025-05-16 18:34:33,087 - INFO - __main__ - Generating thumbnail for the short
-2025-05-16 18:34:33,104 - INFO - automation.thumbnail - STARTING generate_thumbnail at 18:34:33.103
-2025-05-16 18:34:33,107 - INFO - automation.thumbnail - Using thumbnail prompt: An intense Mortal Kombat scene showcasing iconic characters like Scorpion and Sub-Zero in battle, with bold text overlay announcing 'Definitive Edition Ending!'
-2025-05-16 18:34:33,108 - INFO - automation.thumbnail - STARTING generate_image_huggingface at 18:34:33.108
-2025-05-16 18:34:33,110 - INFO - automation.thumbnail - Hugging Face prompt: An intense Mortal Kombat scene showcasing iconic characters like Scorpion a...
-2025-05-16 18:34:34,033 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
-2025-05-16 18:34:49,752 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
-2025-05-16 18:34:51,149 - INFO - __main__ - Running global cleanup of temporary files
-2025-05-16 18:34:51,150 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
-2025-05-16 18:34:51,152 - INFO - __main__ - Performing final cleanup of all temporary files
-2025-05-16 18:34:51,153 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
-2025-05-16 18:34:51,154 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\audio_clips
-2025-05-16 18:34:51,158 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\generated_images
-2025-05-16 18:34:51,161 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1747400673
-2025-05-16 18:34:51,163 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\video_downloads
-2025-05-16 18:36:49,193 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
-2025-05-16 18:36:49,975 - INFO - helper.audio - Google Cloud TTS initialized successfully
-2025-05-16 18:36:49,982 - INFO - automation.shorts_maker_V - Google Cloud TTS initialized successfully
-2025-05-16 18:36:52,856 - INFO - __main__ - Generating comprehensive content for : Microsoft starts testing ‘Hey, Copilot!’ in Windows - The Verge
-2025-05-16 18:36:57,391 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-05-16 18:36:57,412 - INFO - automation.content_generator - Successfully generated comprehensive content package:
-2025-05-16 18:36:57,413 - INFO - automation.content_generator - Title: Microsoft Tests ‘Hey, Copilot!’ in Windows - What You Need to Know!
-2025-05-16 18:36:57,414 - INFO - automation.content_generator - Script length: 73 words
-2025-05-16 18:36:57,414 - INFO - automation.content_generator - Thumbnail HF prompt: A close-up of a computer screen displaying the ‘He...
-2025-05-16 18:36:57,415 - INFO - automation.content_generator - Thumbnail Unsplash query: computer voice assistant
-2025-05-16 18:36:57,415 - INFO - __main__ - Content package generated successfully:
-2025-05-16 18:36:57,416 - INFO - __main__ - Title: LazyCreator presents: Microsoft Tests ‘Hey, Copilot!’ in Windows - What You Need to Know!
-2025-05-16 18:36:57,417 - INFO - __main__ - Description length: 122 characters
-2025-05-16 18:36:57,417 - INFO - __main__ - Raw script generated successfully
-2025-05-16 18:36:57,418 - INFO - helper.minor_helper - Parsed script into 7 sentences
-2025-05-16 18:36:57,419 - INFO - helper.minor_helper - Added sentence 0 to cards: 'Microsoft is shaking things up...' (duration: 5s)
-2025-05-16 18:36:57,419 - INFO - helper.minor_helper - Added sentence 1 to cards: 'They’ve started testing ‘Hey, ...' (duration: 5s)
-2025-05-16 18:36:57,419 - INFO - helper.minor_helper - Added sentence 2 to cards: 'This exciting feature could re...' (duration: 5s)
-2025-05-16 18:36:57,419 - INFO - helper.minor_helper - Added sentence 3 to cards: 'It’s designed to make your wor...' (duration: 5s)
-2025-05-16 18:36:57,420 - INFO - helper.minor_helper - Added sentence 4 to cards: 'Are you ready for a hands-free...' (duration: 5s)
-2025-05-16 18:36:57,420 - INFO - helper.minor_helper - Added sentence 5 to cards: 'Stay tuned for more updates as...' (duration: 5s)
-2025-05-16 18:36:57,420 - INFO - helper.minor_helper - Added sentence 6 to cards: 'Don’t forget to like and subsc...' (duration: 5s)
-2025-05-16 18:36:57,420 - INFO - helper.minor_helper - Created 7 script cards
-2025-05-16 18:36:57,421 - INFO - __main__ - Script parsed into 7 sections
-2025-05-16 18:36:57,422 - INFO - __main__ - Section 1: Microsoft is shaking things up... (duration: 5s)
-2025-05-16 18:36:57,423 - INFO - __main__ - Section 2: They’ve started testing ‘Hey, ... (duration: 5s)
-2025-05-16 18:36:57,425 - INFO - __main__ - Section 3: This exciting feature could re... (duration: 5s)
-2025-05-16 18:36:57,426 - INFO - __main__ - Section 4: It’s designed to make your wor... (duration: 5s)
-2025-05-16 18:36:57,427 - INFO - __main__ - Section 5: Are you ready for a hands-free... (duration: 5s)
-2025-05-16 18:36:57,429 - INFO - __main__ - Section 6: Stay tuned for more updates as... (duration: 5s)
-2025-05-16 18:36:57,434 - INFO - __main__ - Section 7: Don’t forget to like and subsc... (duration: 5s)
-2025-05-16 18:36:57,435 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Microsoft Tests ‘Hey, Copilot!’ in Windows - What You Need to Know!'
-2025-05-16 18:36:57,436 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
-2025-05-16 18:36:57,438 - INFO - __main__ - Section 0: 'LazyCreator presents: Microsof...' (duration: 3s)
-2025-05-16 18:36:57,438 - INFO - __main__ - Section 1: 'Microsoft is shaking things up...' (duration: 5s)
-2025-05-16 18:36:57,440 - INFO - __main__ - Section 2: 'They’ve started testing ‘Hey, ...' (duration: 5s)
-2025-05-16 18:36:57,442 - INFO - __main__ - Section 3: 'This exciting feature could re...' (duration: 5s)
-2025-05-16 18:36:57,443 - INFO - __main__ - Section 4: 'It’s designed to make your wor...' (duration: 5s)
-2025-05-16 18:36:57,444 - INFO - __main__ - Section 5: 'Are you ready for a hands-free...' (duration: 5s)
-2025-05-16 18:36:57,445 - INFO - __main__ - Section 6: 'Stay tuned for more updates as...' (duration: 5s)
-2025-05-16 18:36:57,445 - INFO - __main__ - Section 7: 'Don’t forget to like and subsc...' (duration: 5s)
-2025-05-16 18:36:57,447 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
-2025-05-16 18:36:57,449 - INFO - __main__ - Generating video search queries for each section using AI...
-2025-05-16 18:37:00,298 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-05-16 18:37:00,302 - INFO - automation.content_generator - Successfully generated batch video queries for 8 sections.
-2025-05-16 18:37:00,302 - INFO - __main__ - Section queries: 1: Microsoft Copilot announcement, 2: Microsoft innovation, 3: Hey Copilot testing, 4: voice interaction technology, 5: workflow enhancement, 6: hands-free computing, 7: feature rollout updates, 8: tech news subscription
-2025-05-16 18:37:00,303 - INFO - __main__ - Creating YouTube Short
-2025-05-16 18:37:00,304 - INFO - helper.minor_helper - Starting YouTube short creation
-2025-05-16 18:37:00,305 - INFO - automation.shorts_maker_V - Scaling durations by factor 0.66 to fit max duration of 25s
-2025-05-16 18:37:00,306 - INFO - automation.shorts_maker_V - Starting parallel execution of major steps
-2025-05-16 18:37:00,307 - INFO - automation.parallel_tasks - Starting task: generate_audio
-2025-05-16 18:37:00,310 - INFO - automation.shorts_maker_V - Generating audio clips in parallel
-2025-05-16 18:37:00,310 - INFO - automation.parallel_tasks - Starting task: generate_text_clips
-2025-05-16 18:37:00,311 - INFO - helper.audio - Generating 8 audio clips in parallel
-2025-05-16 18:37:00,315 - INFO - automation.shorts_maker_V - Generating text clips in parallel
-2025-05-16 18:37:00,316 - INFO - automation.parallel_tasks - Starting task: fetch_videos
-2025-05-16 18:37:00,317 - INFO - helper.text - Generating 8 text clips in parallel
-2025-05-16 18:37:00,323 - INFO - helper.text - Using ThreadPoolExecutor with dill for text generation
-2025-05-16 18:37:00,324 - INFO - automation.shorts_maker_V - Fetching background videos in parallel
-2025-05-16 18:37:00,326 - INFO - helper.fetch - Fetching videos for 8 queries in parallel
-2025-05-16 18:37:00,342 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 18:37:00,366 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 18:37:00,395 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 18:37:00,425 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 18:37:00,528 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 18:37:00,571 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 18:37:00,636 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 18:37:00,671 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 18:37:00,938 - INFO - automation.voiceover - Speech synthesized for text [Are you ready for a ...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400809\audio_section_5_1747400820.mp3]
-2025-05-16 18:37:00,996 - INFO - automation.voiceover - Speech synthesized for text [Microsoft is shaking...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400809\audio_section_1_1747400820.mp3]
-2025-05-16 18:37:00,998 - INFO - automation.voiceover - Speech synthesized for text [Don’t forget to like...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400809\audio_section_7_1747400820.mp3]
-2025-05-16 18:37:01,018 - INFO - automation.voiceover - Speech synthesized for text [They’ve started test...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400809\audio_section_2_1747400820.mp3]
-2025-05-16 18:37:01,147 - INFO - automation.voiceover - Speech synthesized for text [This exciting featur...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400809\audio_section_3_1747400820.mp3]
-2025-05-16 18:37:01,236 - INFO - automation.voiceover - Speech synthesized for text [It’s designed to mak...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400809\audio_section_4_1747400820.mp3]
-2025-05-16 18:37:01,281 - INFO - automation.voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400809\audio_section_0_1747400820.mp3]
-2025-05-16 18:37:01,357 - INFO - automation.voiceover - Speech synthesized for text [Stay tuned for more ...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747400809\audio_section_6_1747400820.mp3]
-2025-05-16 18:37:01,475 - INFO - helper.audio - Generated 8 audio clips in 1.16 seconds
-2025-05-16 18:37:04,390 - INFO - helper.text - Generated 8 text clips in 4.07 seconds
-2025-05-16 18:37:04,395 - INFO - automation.parallel_tasks - Completed task: generate_text_clips
-2025-05-16 18:37:09,857 - INFO - helper.fetch - Fetched 1 videos for query 'hands-free computing'
-2025-05-16 18:37:11,809 - INFO - helper.fetch - Fetched 1 videos for query 'feature rollout updates'
-2025-05-16 18:37:16,560 - INFO - automation.parallel_tasks - Completed task: generate_audio
-2025-05-16 18:37:27,080 - INFO - helper.fetch - Fetched 1 videos for query 'Microsoft innovation'
-2025-05-16 18:37:29,704 - INFO - helper.fetch - Fetched 1 videos for query 'tech news subscription'
-2025-05-16 18:37:30,102 - INFO - helper.fetch - Fetched 1 videos for query 'Microsoft Copilot announcement'
-2025-05-16 18:37:30,806 - INFO - helper.fetch - Fetched 1 videos for query 'workflow enhancement'
-2025-05-16 18:37:35,287 - INFO - helper.fetch - Fetched 1 videos for query 'Hey Copilot testing'
-2025-05-16 18:37:35,398 - INFO - helper.fetch - Fetched 1 videos for query 'voice interaction technology'
-2025-05-16 18:37:35,410 - INFO - helper.fetch - Fetched videos for 8 queries in 35.08 seconds
-2025-05-16 18:37:35,413 - INFO - automation.parallel_tasks - Completed task: fetch_videos
-2025-05-16 18:37:35,421 - INFO - automation.parallel_tasks - All tasks executed in 35.11 seconds
-2025-05-16 18:37:35,425 - INFO - automation.shorts_maker_V - Processing background videos
-2025-05-16 18:37:35,429 - INFO - helper.process - Processing 8 background clips in parallel
-2025-05-16 18:37:35,430 - INFO - helper.process - Using ThreadPoolExecutor with dill for background processing
-2025-05-16 18:37:35,437 - ERROR - helper.process - Error processing background clip: 'clip'
-2025-05-16 18:37:35,439 - ERROR - helper.process - Error processing background clip: 'clip'
-2025-05-16 18:37:35,440 - ERROR - helper.process - Error processing background clip: 'clip'
-2025-05-16 18:37:35,443 - ERROR - helper.process - Error processing background clip: 'clip'
-2025-05-16 18:37:35,443 - ERROR - helper.process - Error processing background clip: 'clip'
-2025-05-16 18:37:35,444 - ERROR - helper.process - Error processing background clip: 'clip'
-2025-05-16 18:37:35,444 - ERROR - helper.process - Error processing background clip: 'clip'
-2025-05-16 18:37:35,445 - ERROR - helper.process - Error processing background clip: 'clip'
-2025-05-16 18:37:35,454 - INFO - helper.process - Processed 0 background clips in 0.03 seconds
-2025-05-16 18:37:35,455 - ERROR - automation.shorts_maker_V - a component is missing
-2025-05-16 18:37:35,598 - INFO - helper.minor_helper - Completed YouTube short creation in 35.29 seconds
-2025-05-16 18:37:35,608 - INFO - __main__ - Generating thumbnail for the short
-2025-05-16 18:37:35,741 - INFO - automation.thumbnail - STARTING generate_thumbnail at 18:37:35.737
-2025-05-16 18:37:35,748 - INFO - automation.thumbnail - Using thumbnail prompt: A close-up of a computer screen displaying the ‘Hey, Copilot!’ interface, with a user speaking to the screen, vibrant colors, and tech-themed elements in the background.
-2025-05-16 18:37:35,755 - INFO - automation.thumbnail - STARTING generate_image_huggingface at 18:37:35.755
-2025-05-16 18:37:35,770 - INFO - automation.thumbnail - Hugging Face prompt: A close-up of a computer screen displaying the ‘Hey, Copilot!’ interface, w...
-2025-05-16 18:37:36,664 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
-2025-05-16 18:37:52,440 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
-2025-05-16 18:38:22,441 - ERROR - automation.thumbnail - Failed to generate image with Hugging Face API after multiple attempts
-2025-05-16 18:38:22,444 - INFO - automation.thumbnail - COMPLETED generate_image_huggingface in 46.69 seconds
-2025-05-16 18:38:22,445 - INFO - automation.thumbnail - Falling back to Unsplash for thumbnail image
-2025-05-16 18:38:22,445 - INFO - automation.thumbnail - STARTING fetch_image_unsplash at 18:38:22.445
-2025-05-16 18:38:22,447 - INFO - automation.thumbnail - Searching Unsplash with query: A close-up of a computer screen displaying the ‘Hey, Copilot!’ interface, with a user speaking to the screen, vibrant colors, and tech-themed elements in the background.
-2025-05-16 18:38:23,628 - INFO - automation.thumbnail - Unsplash image downloaded to D:\youtube-shorts-automation\automation\temp\thumbnail_1747400855\thumbnail_unsplash_1747400902_7364.jpg
-2025-05-16 18:38:23,629 - INFO - automation.thumbnail - Image attribution: Photo by Tim Mossholder on Unsplash
-2025-05-16 18:38:23,632 - INFO - automation.thumbnail - COMPLETED fetch_image_unsplash in 1.19 seconds
-2025-05-16 18:38:23,633 - INFO - automation.thumbnail - STARTING create_thumbnail at 18:38:23.633
-2025-05-16 18:38:23,634 - INFO - automation.thumbnail - Creating thumbnail for title: 'LazyCreator presents: Microsoft Tests ‘Hey, Copilot!’ in Windows - What You Need to Know!'
-2025-05-16 18:38:23,635 - INFO - automation.thumbnail - Using base image: D:\youtube-shorts-automation\automation\temp\thumbnail_1747400855\thumbnail_unsplash_1747400902_7364.jpg
-2025-05-16 18:38:23,636 - INFO - automation.thumbnail - Output path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_183649.jpg
-2025-05-16 18:38:24,405 - INFO - automation.thumbnail - Base image size: (1080, 720)
-2025-05-16 18:38:24,524 - INFO - automation.thumbnail - resized image to YouTube thumbnail dimensions: (1080, 1920)
-2025-05-16 18:38:24,581 - INFO - automation.thumbnail - Added gradient overlay to thumbnail
-2025-05-16 18:38:24,582 - INFO - automation.thumbnail - Selected font size: 50 based on title length: 89
-2025-05-16 18:38:24,593 - INFO - automation.thumbnail - Loaded custom font from: D:\youtube-shorts-automation\packages\fonts\default_font.ttf
-2025-05-16 18:38:24,595 - INFO - automation.thumbnail - Wrapped text: 'LazyCreator presents:
-Microsoft Tests ‘Hey,
-Copilot!’ in Windows - What
-You Need to Know!'
-2025-05-16 18:38:24,601 - INFO - automation.thumbnail - Text position calculated: x=221, y=1658, width=637, height=212
-2025-05-16 18:38:24,700 - INFO - automation.thumbnail - Added text shadow/outline for visibility
-2025-05-16 18:38:24,709 - INFO - automation.thumbnail - Added main title text
-2025-05-16 18:38:24,711 - INFO - automation.thumbnail - SHORTS label dimensions: width=113, height=21
-2025-05-16 18:38:24,712 - INFO - automation.thumbnail - SHORTS label position: x=927, y=20, height=31
-2025-05-16 18:38:24,712 - INFO - automation.thumbnail - Added rectangle background for SHORTS label
-2025-05-16 18:38:24,713 - INFO - automation.thumbnail - SHORTS text position: (937, 25), y_offset=5
-2025-05-16 18:38:24,716 - INFO - automation.thumbnail - Added SHORTS text label
-2025-05-16 18:38:24,768 - INFO - automation.thumbnail - Thumbnail created and saved to ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_183649.jpg
-2025-05-16 18:38:24,779 - INFO - automation.thumbnail - COMPLETED create_thumbnail in 1.15 seconds
-2025-05-16 18:38:24,780 - INFO - automation.thumbnail - Successfully generated thumbnail at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_183649.jpg
-2025-05-16 18:38:24,780 - INFO - automation.thumbnail - COMPLETED generate_thumbnail in 49.05 seconds
-2025-05-16 18:38:24,781 - INFO - __main__ - Thumbnail generated at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_183649.jpg
-2025-05-16 18:38:24,782 - INFO - automation.thumbnail - Cleaning up thumbnail temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1747400855
-2025-05-16 18:38:24,783 - INFO - helper.minor_helper - Cleaning specific temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1747400855
-2025-05-16 18:38:24,790 - INFO - helper.minor_helper - Successfully removed directory tree: D:\youtube-shorts-automation\automation\temp\thumbnail_1747400855
-2025-05-16 18:38:24,792 - INFO - __main__ - Uploading to YouTube
-2025-05-16 18:38:25,289 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
-2025-05-16 18:38:25,646 - ERROR - __main__ - Error generating YouTube Short: _path_exists: path should be string, bytes, os.PathLike or integer, not NoneType
-2025-05-16 18:38:25,647 - ERROR - __main__ - Error generating YouTube Short: _path_exists: path should be string, bytes, os.PathLike or integer, not NoneType
-2025-05-16 18:38:25,699 - ERROR - __main__ - Detailed error: Traceback (most recent call last):
-  File "D:\youtube-shorts-automation\main.py", line 282, in main
-    result = generate_youtube_short(
-        topic,
-    ...<2 lines>...
-        creator_type=creator_type
-    )
-  File "D:\youtube-shorts-automation\main.py", line 249, in generate_youtube_short
-    upload_video(
-    ~~~~~~~~~~~~^
-        youtube,
-        ^^^^^^^^
-    ...<4 lines>...
-        thumbnail_path=thumbnail_path
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "D:\youtube-shorts-automation\automation\youtube_upload.py", line 36, in upload_video
-    if not os.path.exists(file_path):
-           ~~~~~~~~~~~~~~^^^^^^^^^^^
-TypeError: _path_exists: path should be string, bytes, os.PathLike or integer, not NoneType
-
-2025-05-16 18:38:25,701 - ERROR - __main__ - Process failed: _path_exists: path should be string, bytes, os.PathLike or integer, not NoneType
-2025-05-16 18:38:25,706 - ERROR - __main__ - Detailed error trace: Traceback (most recent call last):
-  File "D:\youtube-shorts-automation\main.py", line 282, in main
-    result = generate_youtube_short(
-        topic,
-    ...<2 lines>...
-        creator_type=creator_type
-    )
-  File "D:\youtube-shorts-automation\main.py", line 249, in generate_youtube_short
-    upload_video(
-    ~~~~~~~~~~~~^
-        youtube,
-        ^^^^^^^^
-    ...<4 lines>...
-        thumbnail_path=thumbnail_path
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "D:\youtube-shorts-automation\automation\youtube_upload.py", line 36, in upload_video
-    if not os.path.exists(file_path):
-           ~~~~~~~~~~~~~~^^^^^^^^^^^
-TypeError: _path_exists: path should be string, bytes, os.PathLike or integer, not NoneType
-
-2025-05-16 18:38:25,708 - INFO - __main__ - Running global cleanup of temporary files
-2025-05-16 18:38:25,711 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
-2025-05-16 18:38:25,715 - INFO - __main__ - Performing final cleanup of all temporary files
-2025-05-16 18:38:25,716 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
-2025-05-16 18:38:25,717 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\audio_clips
-2025-05-16 18:38:25,720 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\generated_images
-2025-05-16 18:38:25,723 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\shorts_v_1747400809
-2025-05-16 18:38:25,740 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\video_downloads
-2025-05-16 18:55:26,223 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
-2025-05-16 18:55:27,526 - INFO - helper.audio - Google Cloud TTS initialized successfully
-2025-05-16 18:55:27,543 - INFO - automation.shorts_maker_V - Google Cloud TTS initialized successfully
-2025-05-16 18:55:30,540 - INFO - __main__ - Generating comprehensive content for : Talking Point: Are You Ghosting Switch 1 To Save Yourself For Switch 2? - Nintendo Life
-2025-05-16 18:55:37,072 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-05-16 18:55:37,100 - INFO - automation.content_generator - Successfully generated comprehensive content package:
-2025-05-16 18:55:37,101 - INFO - automation.content_generator - Title: Are You Ghosting Switch 1 for Switch 2? Let's Discuss!
-2025-05-16 18:55:37,101 - INFO - automation.content_generator - Script length: 54 words
-2025-05-16 18:55:37,102 - INFO - automation.content_generator - Thumbnail HF prompt: A split image showing a gamer looking conflicted, ...
-2025-05-16 18:55:37,102 - INFO - automation.content_generator - Thumbnail Unsplash query: video game conflict
-2025-05-16 18:55:37,103 - INFO - __main__ - Content package generated successfully:
-2025-05-16 18:55:37,104 - INFO - __main__ - Title: LazyCreator presents: Are You Ghosting Switch 1 for Switch 2? Let's Discuss!
-2025-05-16 18:55:37,104 - INFO - __main__ - Description length: 131 characters
-2025-05-16 18:55:37,104 - INFO - __main__ - Raw script generated successfully
-2025-05-16 18:55:37,106 - INFO - helper.minor_helper - Parsed script into 9 sentences
-2025-05-16 18:55:37,107 - INFO - helper.minor_helper - Added sentence 0 to cards: 'Are you ghosting Switch 1 to s...' (duration: 5s)
-2025-05-16 18:55:37,107 - INFO - helper.minor_helper - Added sentence 1 to cards: 'With the hype around the new c...' (duration: 5s)
-2025-05-16 18:55:37,108 - INFO - helper.minor_helper - Added sentence 2 to cards: 'Are you abandoning your favori...' (duration: 5s)
-2025-05-16 18:55:37,108 - INFO - helper.minor_helper - Added sentence 3 to cards: 'Remember, nostalgia matters!...' (duration: 3s)
-2025-05-16 18:55:37,109 - INFO - helper.minor_helper - Added sentence 4 to cards: 'Don’t forget those epic advent...' (duration: 5s)
-2025-05-16 18:55:37,109 - INFO - helper.minor_helper - Added sentence 5 to cards: 'It’s okay to enjoy both....' (duration: 3s)
-2025-05-16 18:55:37,110 - INFO - helper.minor_helper - Added sentence 6 to cards: 'Share your thoughts in the com...' (duration: 5s)
-2025-05-16 18:55:37,110 - INFO - helper.minor_helper - Added sentence 7 to cards: 'Are you switching loyalties?...' (duration: 3s)
-2025-05-16 18:55:37,111 - INFO - helper.minor_helper - Added sentence 8 to cards: 'Let's talk!...' (duration: 3s)
-2025-05-16 18:55:37,115 - INFO - helper.minor_helper - Created 9 script cards
-2025-05-16 18:55:37,116 - INFO - __main__ - Script parsed into 9 sections
-2025-05-16 18:55:37,117 - INFO - __main__ - Section 1: Are you ghosting Switch 1 to s... (duration: 5s)
-2025-05-16 18:55:37,118 - INFO - __main__ - Section 2: With the hype around the new c... (duration: 5s)
-2025-05-16 18:55:37,119 - INFO - __main__ - Section 3: Are you abandoning your favori... (duration: 5s)
-2025-05-16 18:55:37,120 - INFO - __main__ - Section 4: Remember, nostalgia matters!... (duration: 3s)
-2025-05-16 18:55:37,121 - INFO - __main__ - Section 5: Don’t forget those epic advent... (duration: 5s)
-2025-05-16 18:55:37,122 - INFO - __main__ - Section 6: It’s okay to enjoy both.... (duration: 3s)
-2025-05-16 18:55:37,123 - INFO - __main__ - Section 7: Share your thoughts in the com... (duration: 5s)
-2025-05-16 18:55:37,123 - INFO - __main__ - Section 8: Are you switching loyalties?... (duration: 3s)
-2025-05-16 18:55:37,124 - INFO - __main__ - Section 9: Let's talk!... (duration: 3s)
-2025-05-16 18:55:37,125 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Are You Ghosting Switch 1 for Switch 2? Let's Discuss!'
-2025-05-16 18:55:37,126 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
-2025-05-16 18:55:37,127 - INFO - __main__ - Section 0: 'LazyCreator presents: Are You ...' (duration: 3s)
-2025-05-16 18:55:37,128 - INFO - __main__ - Section 1: 'Are you ghosting Switch 1 to s...' (duration: 5s)
-2025-05-16 18:55:37,130 - INFO - __main__ - Section 2: 'With the hype around the new c...' (duration: 5s)
-2025-05-16 18:55:37,132 - INFO - __main__ - Section 3: 'Are you abandoning your favori...' (duration: 5s)
-2025-05-16 18:55:37,133 - INFO - __main__ - Section 4: 'Remember, nostalgia matters!...' (duration: 3s)
-2025-05-16 18:55:37,134 - INFO - __main__ - Section 5: 'Don’t forget those epic advent...' (duration: 5s)
-2025-05-16 18:55:37,135 - INFO - __main__ - Section 6: 'It’s okay to enjoy both....' (duration: 3s)
-2025-05-16 18:55:37,136 - INFO - __main__ - Section 7: 'Share your thoughts in the com...' (duration: 5s)
-2025-05-16 18:55:37,137 - INFO - __main__ - Section 8: 'Are you switching loyalties?...' (duration: 3s)
-2025-05-16 18:55:37,137 - INFO - __main__ - Section 9: 'Let's talk!...' (duration: 3s)
-2025-05-16 18:55:37,138 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
-2025-05-16 18:55:37,139 - INFO - __main__ - Generating video search queries for each section using AI...
-2025-05-16 18:55:39,938 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-05-16 18:55:39,942 - INFO - automation.content_generator - Successfully generated batch video queries for 10 sections.
-2025-05-16 18:55:39,943 - INFO - __main__ - Section queries: 1: Nintendo Switch discussion, 2: ghosting gaming consoles, 3: new console hype, 4: abandoning favorite games, 5: nostalgia in gaming, 6: epic gaming adventures, 7: enjoying multiple consoles, 8: comments and feedback, 9: switching gaming loyalties, 10: gaming conversation
-2025-05-16 18:55:39,943 - INFO - __main__ - Creating YouTube Short
-2025-05-16 18:55:39,944 - INFO - helper.minor_helper - Starting YouTube short creation
-2025-05-16 18:55:39,945 - INFO - automation.shorts_maker_V - Scaling durations by factor 0.62 to fit max duration of 25s
-2025-05-16 18:55:39,948 - INFO - automation.shorts_maker_V - Starting parallel execution of major steps
-2025-05-16 18:55:39,950 - INFO - automation.parallel_tasks - Starting task: generate_text_clips
-2025-05-16 18:55:39,952 - INFO - automation.shorts_maker_V - Generating text clips in parallel
-2025-05-16 18:55:39,952 - INFO - automation.parallel_tasks - Starting task: fetch_videos
-2025-05-16 18:55:39,953 - INFO - helper.text - Generating 10 text clips in parallel
-2025-05-16 18:55:39,955 - INFO - helper.text - Using ThreadPoolExecutor with dill for text generation
-2025-05-16 18:55:39,956 - INFO - automation.shorts_maker_V - Fetching background videos in parallel
-2025-05-16 18:55:39,956 - INFO - automation.parallel_tasks - Starting task: generate_audio
-2025-05-16 18:55:39,959 - INFO - helper.fetch - Fetching videos for 10 queries in parallel
-2025-05-16 18:55:39,993 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 18:55:40,009 - INFO - automation.shorts_maker_V - Generating audio clips in parallel
-2025-05-16 18:55:40,010 - INFO - helper.audio - Generating 10 audio clips in parallel
-2025-05-16 18:55:40,027 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 18:55:40,059 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 18:55:40,114 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 18:55:40,209 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 18:55:40,244 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 18:55:40,302 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 18:55:40,339 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 18:55:40,394 - INFO - helper.fetch - Fetching 2 videos using pixabay API
-2025-05-16 18:55:40,420 - INFO - helper.fetch - Fetching 2 videos using pexels API
-2025-05-16 18:55:40,550 - INFO - automation.voiceover - Speech synthesized for text [Are you abandoning y...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747401926\audio_section_3_1747401939.mp3]
-2025-05-16 18:55:40,552 - INFO - automation.voiceover - Speech synthesized for text [Are you ghosting Swi...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747401926\audio_section_1_1747401939.mp3]
-2025-05-16 18:55:40,587 - INFO - automation.voiceover - Speech synthesized for text [With the hype around...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747401926\audio_section_2_1747401939.mp3]
-2025-05-16 18:55:40,609 - INFO - automation.voiceover - Speech synthesized for text [Remember, nostalgia ...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747401926\audio_section_4_1747401939.mp3]
-2025-05-16 18:55:40,654 - INFO - automation.voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747401926\audio_section_0_1747401939.mp3]
-2025-05-16 18:55:40,714 - INFO - automation.voiceover - Speech synthesized for text [Don’t forget those e...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747401926\audio_section_5_1747401939.mp3]
-2025-05-16 18:55:40,734 - INFO - automation.voiceover - Speech synthesized for text [Are you switching lo...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747401926\audio_section_8_1747401939.mp3]
-2025-05-16 18:55:40,765 - INFO - automation.voiceover - Speech synthesized for text [Let's talk!...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747401926\audio_section_9_1747401939.mp3]
-2025-05-16 18:55:40,933 - INFO - automation.voiceover - Speech synthesized for text [It’s okay to enjoy b...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747401926\audio_section_6_1747401939.mp3]
-2025-05-16 18:55:40,958 - INFO - automation.voiceover - Speech synthesized for text [Share your thoughts ...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747401926\audio_section_7_1747401939.mp3]
-2025-05-16 18:55:41,031 - INFO - helper.audio - Generated 10 audio clips in 1.02 seconds
-2025-05-16 18:55:43,208 - ERROR - helper.text - Error creating text clip: y1 must be greater than or equal to y0
-2025-05-16 18:55:46,026 - INFO - helper.text - Generated 9 text clips in 6.07 seconds
-2025-05-16 18:55:46,219 - INFO - automation.parallel_tasks - Completed task: generate_text_clips
-2025-05-16 18:55:51,094 - INFO - helper.fetch - Fetched 1 videos for query 'abandoning favorite games'
-2025-05-16 18:55:52,952 - INFO - helper.fetch - Fetched 1 videos for query 'epic gaming adventures'
-2025-05-16 18:55:53,000 - INFO - helper.fetch - Fetched 1 videos for query 'ghosting gaming consoles'
-2025-05-16 18:55:57,001 - INFO - helper.fetch - Fetched 1 videos for query 'new console hype'
-2025-05-16 18:55:57,152 - INFO - helper.fetch - Fetched 1 videos for query 'gaming conversation'
-2025-05-16 18:55:57,863 - INFO - helper.fetch - Fetched 1 videos for query 'comments and feedback'
-2025-05-16 18:55:58,319 - INFO - helper.fetch - Fetched 1 videos for query 'Nintendo Switch discussion'
-2025-05-16 18:55:58,551 - INFO - helper.fetch - Fetched 1 videos for query 'nostalgia in gaming'
-2025-05-16 18:56:03,042 - INFO - helper.fetch - Fetched 1 videos for query 'switching gaming loyalties'
-2025-05-16 18:56:03,626 - INFO - automation.parallel_tasks - Completed task: generate_audio
-2025-05-16 18:56:03,928 - INFO - helper.fetch - Fetched 1 videos for query 'enjoying multiple consoles'
-2025-05-16 18:56:03,944 - INFO - helper.fetch - Fetched videos for 10 queries in 23.99 seconds
-2025-05-16 18:56:03,946 - INFO - automation.parallel_tasks - Completed task: fetch_videos
-2025-05-16 18:56:03,955 - INFO - automation.parallel_tasks - All tasks executed in 24.00 seconds
-2025-05-16 18:56:03,958 - INFO - automation.shorts_maker_V - Processing background videos
-2025-05-16 18:56:03,961 - INFO - helper.process - Processing 10 background clips in parallel
-2025-05-16 18:56:03,962 - INFO - helper.process - Using ThreadPoolExecutor with dill for background processing
-2025-05-16 18:56:06,122 - INFO - helper.process - Processed background clip 1/10
-2025-05-16 18:56:06,306 - INFO - helper.process - Processed background clip 2/10
-2025-05-16 18:56:06,307 - INFO - helper.process - Processed background clip 3/10
-2025-05-16 18:56:07,331 - INFO - helper.process - Processed background clip 4/10
-2025-05-16 18:56:07,776 - INFO - helper.process - Processed background clip 5/10
-2025-05-16 18:56:07,779 - INFO - helper.process - Processed background clip 6/10
-2025-05-16 18:56:11,506 - INFO - helper.process - Processed background clip 7/10
-2025-05-16 18:56:15,303 - INFO - helper.process - Processed background clip 8/10
-2025-05-16 18:56:15,613 - INFO - helper.process - Processed background clip 9/10
-2025-05-16 18:56:18,051 - INFO - helper.process - Processed background clip 10/10
-2025-05-16 18:56:18,055 - INFO - helper.process - Processed 10 background clips in 14.10 seconds
-2025-05-16 18:56:23,258 - INFO - automation.shorts_maker_V - Rendering final video using optimized renderer
-2025-05-16 18:56:23,341 - INFO - automation.renderer - Using optimized FFmpeg-based renderer
-2025-05-16 18:56:31,075 - INFO - helper.memory - System resources detected: 8 CPU cores, 5.9GB RAM
-2025-05-16 18:56:31,321 - INFO - helper.memory - Optimized for video rendering: 1 workers with 4 FFmpeg threads each
-2025-05-16 18:56:31,323 - INFO - automation.renderer - Rendering 9 clips with 1 workers and 4 FFmpeg threads each
-2025-05-16 18:56:31,418 - INFO - automation.renderer - Using FFmpeg: ffmpeg version N-118586-g629e8a2425-20250301 Copyright (c) 2000-2025 the FFmpeg developers
-2025-05-16 19:11:26,945 - INFO - automation.renderer - Successfully rendered 9/9 clips
-2025-05-16 19:11:27,222 - INFO - automation.parallel_renderer - Concatenated 9 clips to ai_shorts_output\yt_shorts_LazyCreator_presents_Are_You_G_20250516_185527.mp4
-2025-05-16 19:11:27,224 - INFO - automation.renderer - Total rendering time: 895.90 seconds
-2025-05-16 19:11:27,226 - INFO - automation.shorts_maker_V - Successfully rendered video to ai_shorts_output\yt_shorts_LazyCreator_presents_Are_You_G_20250516_185527.mp4
-2025-05-16 19:11:27,398 - INFO - helper.minor_helper - Completed YouTube short creation in 947.45 seconds
-2025-05-16 19:11:27,400 - INFO - __main__ - Generating thumbnail for the short
-2025-05-16 19:11:27,420 - INFO - automation.thumbnail - STARTING generate_thumbnail at 19:11:27.419
-2025-05-16 19:11:27,423 - INFO - automation.thumbnail - Using thumbnail prompt: A split image showing a gamer looking conflicted, with the original Nintendo Switch on one side and the new Switch 2 on the other, vibrant colors, emotional expressions, game characters in the background.
-2025-05-16 19:11:27,423 - INFO - automation.thumbnail - STARTING generate_image_huggingface at 19:11:27.423
-2025-05-16 19:11:27,426 - INFO - automation.thumbnail - Hugging Face prompt: A split image showing a gamer looking conflicted, with the original Nintend...
-2025-05-16 19:11:28,342 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
-2025-05-16 19:11:44,203 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
-2025-05-16 19:12:14,204 - ERROR - automation.thumbnail - Failed to generate image with Hugging Face API after multiple attempts
-2025-05-16 19:12:14,205 - INFO - automation.thumbnail - COMPLETED generate_image_huggingface in 46.78 seconds
-2025-05-16 19:12:14,206 - INFO - automation.thumbnail - Falling back to Unsplash for thumbnail image
-2025-05-16 19:12:14,206 - INFO - automation.thumbnail - STARTING fetch_image_unsplash at 19:12:14.206
-2025-05-16 19:12:14,208 - INFO - automation.thumbnail - Searching Unsplash with query: A split image showing a gamer looking conflicted, with the original Nintendo Switch on one side and the new Switch 2 on the other, vibrant colors, emotional expressions, game characters in the background.
-2025-05-16 19:12:15,268 - INFO - automation.thumbnail - Unsplash image downloaded to D:\youtube-shorts-automation\automation\temp\thumbnail_1747402887\thumbnail_unsplash_1747402934_4753.jpg
-2025-05-16 19:12:15,269 - INFO - automation.thumbnail - Image attribution: Photo by sydney Rae on Unsplash
-2025-05-16 19:12:15,270 - INFO - automation.thumbnail - COMPLETED fetch_image_unsplash in 1.06 seconds
-2025-05-16 19:12:15,270 - INFO - automation.thumbnail - STARTING create_thumbnail at 19:12:15.270
-2025-05-16 19:12:15,271 - INFO - automation.thumbnail - Creating thumbnail for title: 'LazyCreator presents: Are You Ghosting Switch 1 for Switch 2? Let's Discuss!'
-2025-05-16 19:12:15,272 - INFO - automation.thumbnail - Using base image: D:\youtube-shorts-automation\automation\temp\thumbnail_1747402887\thumbnail_unsplash_1747402934_4753.jpg
-2025-05-16 19:12:15,272 - INFO - automation.thumbnail - Output path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_185527.jpg
-2025-05-16 19:12:15,452 - INFO - automation.thumbnail - Base image size: (1080, 810)
-2025-05-16 19:12:15,501 - INFO - automation.thumbnail - resized image to YouTube thumbnail dimensions: (1080, 1920)
-2025-05-16 19:12:15,530 - INFO - automation.thumbnail - Added gradient overlay to thumbnail
-2025-05-16 19:12:15,531 - INFO - automation.thumbnail - Selected font size: 50 based on title length: 76
-2025-05-16 19:12:15,538 - INFO - automation.thumbnail - Loaded custom font from: D:\youtube-shorts-automation\packages\fonts\default_font.ttf
-2025-05-16 19:12:15,538 - INFO - automation.thumbnail - Wrapped text: 'LazyCreator presents: Are You
-Ghosting Switch 1 for Switch
-2? Let's Discuss!'
-2025-05-16 19:12:15,541 - INFO - automation.thumbnail - Text position calculated: x=188, y=1716, width=703, height=154
-2025-05-16 19:12:15,582 - INFO - automation.thumbnail - Added text shadow/outline for visibility
-2025-05-16 19:12:15,586 - INFO - automation.thumbnail - Added main title text
-2025-05-16 19:12:15,587 - INFO - automation.thumbnail - SHORTS label dimensions: width=113, height=21
-2025-05-16 19:12:15,588 - INFO - automation.thumbnail - SHORTS label position: x=927, y=20, height=31
-2025-05-16 19:12:15,588 - INFO - automation.thumbnail - Added rectangle background for SHORTS label
-2025-05-16 19:12:15,589 - INFO - automation.thumbnail - SHORTS text position: (937, 25), y_offset=5
-2025-05-16 19:12:15,589 - INFO - automation.thumbnail - Added SHORTS text label
-2025-05-16 19:12:15,612 - INFO - automation.thumbnail - Thumbnail created and saved to ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_185527.jpg
-2025-05-16 19:12:15,615 - INFO - automation.thumbnail - COMPLETED create_thumbnail in 0.34 seconds
-2025-05-16 19:12:15,615 - INFO - automation.thumbnail - Successfully generated thumbnail at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_185527.jpg
-2025-05-16 19:12:15,616 - INFO - automation.thumbnail - COMPLETED generate_thumbnail in 48.20 seconds
-2025-05-16 19:12:15,616 - INFO - __main__ - Thumbnail generated at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_185527.jpg
-2025-05-16 19:12:15,616 - INFO - automation.thumbnail - Cleaning up thumbnail temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1747402887
-2025-05-16 19:12:15,617 - INFO - helper.minor_helper - Cleaning specific temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1747402887
-2025-05-16 19:12:15,620 - INFO - helper.minor_helper - Successfully removed directory tree: D:\youtube-shorts-automation\automation\temp\thumbnail_1747402887
-2025-05-16 19:12:15,620 - INFO - __main__ - Uploading to YouTube
-2025-05-16 19:12:15,662 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
-2025-05-16 19:12:15,971 - INFO - automation.youtube_upload - Uploading video: Are You Ghosting Switch 1 for Switch 2? Let's Discuss!
-2025-05-16 19:12:21,541 - INFO - automation.youtube_upload - ✅ Video upload successful! Video ID: SgAwhwdpFgU
-2025-05-16 19:12:21,542 - INFO - automation.youtube_upload - Uploading thumbnail for video ID: SgAwhwdpFgU
-2025-05-16 19:12:23,152 - WARNING - googleapiclient.http - Encountered 403 Forbidden with reason "forbidden"
-2025-05-16 19:12:23,153 - ERROR - automation.youtube_upload - Thumbnail upload failed: <HttpError 403 when requesting https://youtube.googleapis.com/upload/youtube/v3/thumbnails/set?videoId=SgAwhwdpFgU&alt=json&uploadType=resumable returned "The thumbnail can't be set for the specified video. The request might not be properly authorized.". Details: "[{'message': "The thumbnail can't be set for the specified video. The request might not be properly authorized.", 'domain': 'youtube.thumbnail', 'reason': 'forbidden', 'location': 'videoId', 'locationType': 'parameter'}]">
-2025-05-16 19:12:23,153 - INFO - automation.youtube_upload - Attempting alternative thumbnail upload method...
-2025-05-16 19:12:27,471 - INFO - automation.youtube_upload - ✅ Thumbnail upload successful with alternative method!
-2025-05-16 19:12:27,473 - INFO - __main__ - Process completed successfully!
-2025-05-16 19:12:27,474 - INFO - __main__ - Video path: ai_shorts_output\yt_shorts_LazyCreator_presents_Are_You_G_20250516_185527.mp4
-2025-05-16 19:12:27,474 - INFO - __main__ - Thumbnail path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_185527.jpg
-2025-05-16 19:12:27,475 - INFO - __main__ - Running global cleanup of temporary files
-2025-05-16 19:12:27,475 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
-2025-05-16 19:12:27,477 - INFO - __main__ - Performing final cleanup of all temporary files
-2025-05-16 19:12:27,477 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
-2025-05-16 19:12:27,478 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\audio_clips
-2025-05-16 19:12:27,480 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\generated_images
-2025-05-16 19:12:27,482 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\shorts_v_1747401926
-2025-05-16 19:12:27,497 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\video_downloads
+2025-05-16 19:45:44,348 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-05-16 19:45:44,735 - INFO - helper.audio - Google Cloud TTS initialized successfully
+2025-05-16 19:45:44,739 - INFO - automation.shorts_maker_V - Google Cloud TTS initialized successfully
+2025-05-16 19:45:45,926 - INFO - __main__ - Generating comprehensive content for : PS5 welcomes free new-gen upgrade, no PS Plus needed - GAMINGbible
+2025-05-16 19:45:50,633 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-16 19:45:50,659 - INFO - automation.content_generator - Successfully generated comprehensive content package:
+2025-05-16 19:45:50,659 - INFO - automation.content_generator - Title: PS5 Offers Free Next-Gen Upgrades – No PS Plus Required!
+2025-05-16 19:45:50,660 - INFO - automation.content_generator - Script length: 57 words
+2025-05-16 19:45:50,660 - INFO - automation.content_generator - Thumbnail HF prompt: A PS5 console with vibrant next-gen game graphics ...
+2025-05-16 19:45:50,660 - INFO - automation.content_generator - Thumbnail Unsplash query: PS5 gaming upgrade
+2025-05-16 19:45:50,661 - INFO - __main__ - Content package generated successfully:
+2025-05-16 19:45:50,661 - INFO - __main__ - Title: LazyCreator presents: PS5 Offers Free Next-Gen Upgrades – No PS Plus Required!
+2025-05-16 19:45:50,661 - INFO - __main__ - Description length: 126 characters
+2025-05-16 19:45:50,661 - INFO - __main__ - Raw script generated successfully
+2025-05-16 19:45:50,662 - INFO - helper.minor_helper - Parsed script into 6 sentences
+2025-05-16 19:45:50,662 - INFO - helper.minor_helper - Added sentence 0 to cards: 'Exciting news for PS5 gamers!...' (duration: 3s)
+2025-05-16 19:45:50,662 - INFO - helper.minor_helper - Added sentence 1 to cards: 'Starting now, you can upgrade ...' (duration: 5s)
+2025-05-16 19:45:50,662 - INFO - helper.minor_helper - Added sentence 2 to cards: 'No need for a PS Plus subscrip...' (duration: 5s)
+2025-05-16 19:45:50,663 - INFO - helper.minor_helper - Added sentence 3 to cards: 'This means more players can en...' (duration: 5s)
+2025-05-16 19:45:50,663 - INFO - helper.minor_helper - Added sentence 4 to cards: 'Don’t miss out on this opportu...' (duration: 5s)
+2025-05-16 19:45:50,663 - INFO - helper.minor_helper - Added sentence 5 to cards: 'Check your library and start u...' (duration: 5s)
+2025-05-16 19:45:50,663 - INFO - helper.minor_helper - Created 6 script cards
+2025-05-16 19:45:50,663 - INFO - __main__ - Script parsed into 6 sections
+2025-05-16 19:45:50,664 - INFO - __main__ - Section 1: Exciting news for PS5 gamers!... (duration: 3s)
+2025-05-16 19:45:50,664 - INFO - __main__ - Section 2: Starting now, you can upgrade ... (duration: 5s)
+2025-05-16 19:45:50,665 - INFO - __main__ - Section 3: No need for a PS Plus subscrip... (duration: 5s)
+2025-05-16 19:45:50,666 - INFO - __main__ - Section 4: This means more players can en... (duration: 5s)
+2025-05-16 19:45:50,667 - INFO - __main__ - Section 5: Don’t miss out on this opportu... (duration: 5s)
+2025-05-16 19:45:50,668 - INFO - __main__ - Section 6: Check your library and start u... (duration: 5s)
+2025-05-16 19:45:50,669 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: PS5 Offers Free Next-Gen Upgrades – No PS Plus Required!'
+2025-05-16 19:45:50,669 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
+2025-05-16 19:45:50,670 - INFO - __main__ - Section 0: 'LazyCreator presents: PS5 Offe...' (duration: 3s)
+2025-05-16 19:45:50,670 - INFO - __main__ - Section 1: 'Exciting news for PS5 gamers!...' (duration: 3s)
+2025-05-16 19:45:50,670 - INFO - __main__ - Section 2: 'Starting now, you can upgrade ...' (duration: 5s)
+2025-05-16 19:45:50,671 - INFO - __main__ - Section 3: 'No need for a PS Plus subscrip...' (duration: 5s)
+2025-05-16 19:45:50,671 - INFO - __main__ - Section 4: 'This means more players can en...' (duration: 5s)
+2025-05-16 19:45:50,671 - INFO - __main__ - Section 5: 'Don’t miss out on this opportu...' (duration: 5s)
+2025-05-16 19:45:50,672 - INFO - __main__ - Section 6: 'Check your library and start u...' (duration: 5s)
+2025-05-16 19:45:50,673 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
+2025-05-16 19:45:50,673 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-05-16 19:45:53,068 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-16 19:45:53,070 - INFO - automation.content_generator - Successfully generated batch video queries for 7 sections.
+2025-05-16 19:45:53,071 - INFO - __main__ - Section queries: 1: PS5 next-gen upgrades, 2: exciting gaming news, 3: free game upgrades, 4: no PS Plus needed, 5: enhanced graphics gameplay, 6: elevate gaming experience, 7: upgrade game library
+2025-05-16 19:45:53,071 - INFO - __main__ - Creating YouTube Short
+2025-05-16 19:45:53,071 - INFO - helper.minor_helper - Starting YouTube short creation
+2025-05-16 19:45:53,072 - INFO - automation.shorts_maker_V - Scaling durations by factor 0.81 to fit max duration of 25s
+2025-05-16 19:45:53,072 - INFO - automation.shorts_maker_V - Starting parallel execution of major steps
+2025-05-16 19:45:53,073 - INFO - automation.parallel_tasks - Starting task: generate_audio
+2025-05-16 19:45:53,074 - INFO - automation.shorts_maker_V - Generating audio clips in parallel
+2025-05-16 19:45:53,074 - INFO - automation.parallel_tasks - Starting task: generate_text_clips
+2025-05-16 19:45:53,075 - INFO - helper.audio - Generating 7 audio clips in parallel
+2025-05-16 19:45:53,076 - INFO - automation.shorts_maker_V - Generating text clips in parallel
+2025-05-16 19:45:53,076 - INFO - automation.parallel_tasks - Starting task: fetch_videos
+2025-05-16 19:45:53,077 - INFO - helper.text - Generating 7 text clips in parallel
+2025-05-16 19:45:53,080 - INFO - helper.text - Using ThreadPoolExecutor with dill for text generation
+2025-05-16 19:45:53,082 - INFO - automation.shorts_maker_V - Fetching background videos in parallel
+2025-05-16 19:45:53,084 - INFO - helper.fetch - Fetching videos for 7 queries in parallel
+2025-05-16 19:45:53,094 - INFO - helper.fetch - Fetching 2 videos using pexels API
+2025-05-16 19:45:53,113 - INFO - helper.fetch - Fetching 2 videos using pexels API
+2025-05-16 19:45:53,126 - INFO - helper.fetch - Fetching 2 videos using pexels API
+2025-05-16 19:45:53,146 - INFO - helper.fetch - Fetching 2 videos using pixabay API
+2025-05-16 19:45:53,168 - INFO - helper.fetch - Fetching 2 videos using pexels API
+2025-05-16 19:45:53,197 - INFO - helper.fetch - Fetching 2 videos using pixabay API
+2025-05-16 19:45:53,213 - INFO - helper.fetch - Fetching 2 videos using pexels API
+2025-05-16 19:45:53,772 - INFO - automation.voiceover - Speech synthesized for text [Exciting news for PS...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747404944\audio_section_1_1747404953.mp3]
+2025-05-16 19:45:53,824 - INFO - automation.voiceover - Speech synthesized for text [Starting now, you ca...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747404944\audio_section_2_1747404953.mp3]
+2025-05-16 19:45:53,871 - INFO - automation.voiceover - Speech synthesized for text [This means more play...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747404944\audio_section_4_1747404953.mp3]
+2025-05-16 19:45:53,878 - INFO - automation.voiceover - Speech synthesized for text [Check your library a...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747404944\audio_section_6_1747404953.mp3]
+2025-05-16 19:45:53,879 - INFO - automation.voiceover - Speech synthesized for text [Don’t miss out on th...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747404944\audio_section_5_1747404953.mp3]
+2025-05-16 19:45:54,070 - INFO - automation.voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747404944\audio_section_0_1747404953.mp3]
+2025-05-16 19:45:54,324 - INFO - automation.voiceover - Speech synthesized for text [No need for a PS Plu...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747404944\audio_section_3_1747404953.mp3]
+2025-05-16 19:45:54,336 - INFO - helper.audio - Generated 7 audio clips in 1.26 seconds
+2025-05-16 19:45:54,833 - INFO - helper.text - Generated 7 text clips in 1.76 seconds
+2025-05-16 19:45:54,837 - INFO - automation.parallel_tasks - Completed task: generate_text_clips
+2025-05-16 19:45:55,534 - INFO - helper.fetch - Fetched 1 videos for query 'PS5 next-gen upgrades'
+2025-05-16 19:46:00,298 - INFO - helper.fetch - Fetched 1 videos for query 'upgrade game library'
+2025-05-16 19:46:02,385 - INFO - helper.fetch - Fetched 1 videos for query 'free game upgrades'
+2025-05-16 19:46:02,519 - INFO - helper.fetch - Fetched 1 videos for query 'enhanced graphics gameplay'
+2025-05-16 19:46:02,669 - INFO - helper.fetch - Fetched 1 videos for query 'exciting gaming news'
+2025-05-16 19:46:03,910 - INFO - automation.parallel_tasks - Completed task: generate_audio
+2025-05-16 19:46:05,191 - INFO - helper.fetch - Fetched 1 videos for query 'elevate gaming experience'
+2025-05-16 19:46:07,480 - INFO - helper.fetch - Fetched 1 videos for query 'no PS Plus needed'
+2025-05-16 19:46:07,528 - INFO - helper.fetch - Fetched videos for 7 queries in 14.44 seconds
+2025-05-16 19:46:07,531 - INFO - automation.parallel_tasks - Completed task: fetch_videos
+2025-05-16 19:46:07,538 - INFO - automation.parallel_tasks - All tasks executed in 14.47 seconds
+2025-05-16 19:46:07,540 - INFO - automation.shorts_maker_V - Processing background videos
+2025-05-16 19:46:07,542 - INFO - helper.process - Processing 7 background clips in parallel
+2025-05-16 19:46:07,543 - INFO - helper.process - Using ThreadPoolExecutor with dill for background processing
+2025-05-16 19:46:08,540 - INFO - helper.process - Processed background clip 1/7
+2025-05-16 19:46:08,668 - INFO - helper.process - Processed background clip 2/7
+2025-05-16 19:46:08,687 - INFO - helper.process - Processed background clip 3/7
+2025-05-16 19:46:09,757 - INFO - helper.process - Processed background clip 4/7
+2025-05-16 19:46:12,355 - INFO - helper.process - Processed background clip 5/7
+2025-05-16 19:46:16,672 - INFO - helper.process - Processed background clip 6/7
+2025-05-16 19:46:17,319 - INFO - helper.process - Processed background clip 7/7
+2025-05-16 19:46:17,325 - INFO - helper.process - Processed 7 background clips in 9.78 seconds
+2025-05-16 19:46:20,191 - INFO - automation.shorts_maker_V - Rendering final video using optimized renderer
+2025-05-16 19:46:20,224 - INFO - automation.renderer - Using optimized FFmpeg-based renderer
+2025-05-16 19:46:22,280 - INFO - helper.memory - System resources detected: 8 CPU cores, 5.9GB RAM
+2025-05-16 19:46:22,496 - INFO - helper.memory - Optimized for video rendering: 1 workers with 4 FFmpeg threads each
+2025-05-16 19:46:22,714 - INFO - helper.memory - System resources detected: 8 CPU cores, 5.9GB RAM
+2025-05-16 19:46:22,931 - INFO - helper.memory - Optimized for video rendering: 1 workers with 4 FFmpeg threads each
+2025-05-16 19:46:22,932 - INFO - automation.renderer - Rendering 7 clips with 1 workers and 4 FFmpeg threads each
+2025-05-16 19:46:22,990 - INFO - automation.renderer - Using FFmpeg: ffmpeg version N-118586-g629e8a2425-20250301 Copyright (c) 2000-2025 the FFmpeg developers
+2025-05-16 19:46:22,992 - INFO - automation.renderer - Preparing clip 0: section_idx=0, Section 0: LazyCreator presents: PS5 Offe...
+2025-05-16 19:46:22,992 - INFO - automation.renderer - Preparing clip 1: section_idx=1, Section 1: Exciting news for PS5 gamers!
+2025-05-16 19:46:22,993 - INFO - automation.renderer - Preparing clip 2: section_idx=2, Section 2: Starting now, you can upgrade ...
+2025-05-16 19:46:22,993 - INFO - automation.renderer - Preparing clip 3: section_idx=3, Section 3: No need for a PS Plus subscrip...
+2025-05-16 19:46:22,994 - INFO - automation.renderer - Preparing clip 4: section_idx=4, Section 4: This means more players can en...
+2025-05-16 19:46:22,995 - INFO - automation.renderer - Preparing clip 5: section_idx=5, Section 5: Don’t miss out on this opportu...
+2025-05-16 19:46:22,997 - INFO - automation.renderer - Preparing clip 6: section_idx=6, Section 6: Check your library and start u...
+2025-05-16 19:46:23,014 - INFO - automation.parallel_renderer - Rendering Section 0: LazyCreator presents: PS5 Offe...: duration=2.42s, size=(1080, 1920), section_idx=0
+2025-05-16 19:47:54,696 - INFO - automation.parallel_renderer - Successfully rendered Section 0: LazyCreator presents: PS5 Offe... to clip_000_faf53e50.mp4
+2025-05-16 19:47:54,716 - INFO - automation.parallel_renderer - Rendering Section 1: Exciting news for PS5 gamers!: duration=4.03s, size=(1080, 1920), section_idx=1
+2025-05-16 19:49:31,457 - INFO - automation.parallel_renderer - Successfully rendered Section 1: Exciting news for PS5 gamers! to clip_001_47e2c0bd.mp4
+2025-05-16 19:49:31,476 - INFO - automation.parallel_renderer - Rendering Section 2: Starting now, you can upgrade ...: duration=4.03s, size=(1080, 1920), section_idx=2
+2025-05-16 19:51:31,063 - INFO - automation.parallel_renderer - Successfully rendered Section 2: Starting now, you can upgrade ... to clip_002_c6ab71fc.mp4
+2025-05-16 19:51:31,094 - INFO - automation.parallel_renderer - Rendering Section 3: No need for a PS Plus subscrip...: duration=4.03s, size=(1080, 1920), section_idx=3
+2025-05-16 19:53:34,834 - INFO - automation.parallel_renderer - Successfully rendered Section 3: No need for a PS Plus subscrip... to clip_003_38284e9e.mp4
+2025-05-16 19:53:34,846 - INFO - automation.parallel_renderer - Rendering Section 4: This means more players can en...: duration=4.03s, size=(1080, 1920), section_idx=4
+2025-05-16 19:55:14,102 - INFO - automation.parallel_renderer - Successfully rendered Section 4: This means more players can en... to clip_004_e4f0a3d3.mp4
+2025-05-16 19:55:14,117 - INFO - automation.parallel_renderer - Rendering Section 5: Don’t miss out on this opportu...: duration=4.03s, size=(1080, 1920), section_idx=5
+2025-05-16 19:58:06,233 - INFO - automation.parallel_renderer - Successfully rendered Section 5: Don’t miss out on this opportu... to clip_005_f734d1a2.mp4
+2025-05-16 19:58:06,249 - INFO - automation.parallel_renderer - Rendering Section 6: Check your library and start u...: duration=4.03s, size=(1080, 1920), section_idx=6
+2025-05-16 20:00:40,824 - INFO - automation.parallel_renderer - Successfully rendered Section 6: Check your library and start u... to clip_006_0d4ebd83.mp4
+2025-05-16 20:00:41,001 - INFO - automation.renderer - Successfully rendered 7/7 clips
+2025-05-16 20:00:41,004 - INFO - automation.parallel_renderer - Concatenating clips in the following order:
+2025-05-16 20:00:41,005 - INFO - automation.parallel_renderer -   0: clip_000_faf53e50.mp4
+2025-05-16 20:00:41,006 - INFO - automation.parallel_renderer -   1: clip_001_47e2c0bd.mp4
+2025-05-16 20:00:41,006 - INFO - automation.parallel_renderer -   2: clip_002_c6ab71fc.mp4
+2025-05-16 20:00:41,006 - INFO - automation.parallel_renderer -   3: clip_003_38284e9e.mp4
+2025-05-16 20:00:41,006 - INFO - automation.parallel_renderer -   4: clip_004_e4f0a3d3.mp4
+2025-05-16 20:00:41,007 - INFO - automation.parallel_renderer -   5: clip_005_f734d1a2.mp4
+2025-05-16 20:00:41,007 - INFO - automation.parallel_renderer -   6: clip_006_0d4ebd83.mp4
+2025-05-16 20:00:41,336 - INFO - automation.parallel_renderer - Concatenated 7 clips to ai_shorts_output\yt_shorts_LazyCreator_presents_PS5_Offer_20250516_194544.mp4
+2025-05-16 20:00:41,352 - INFO - automation.renderer - Total rendering time: 858.86 seconds
+2025-05-16 20:00:41,356 - INFO - automation.shorts_maker_V - Successfully rendered video to ai_shorts_output\yt_shorts_LazyCreator_presents_PS5_Offer_20250516_194544.mp4
+2025-05-16 20:00:41,460 - INFO - helper.minor_helper - Completed YouTube short creation in 888.39 seconds
+2025-05-16 20:00:41,463 - INFO - __main__ - Generating thumbnail for the short
+2025-05-16 20:00:41,492 - INFO - automation.thumbnail - STARTING generate_thumbnail at 20:00:41.491
+2025-05-16 20:00:41,494 - INFO - automation.thumbnail - Using thumbnail prompt: A PS5 console with vibrant next-gen game graphics displayed on a screen, surrounded by excited gamers celebrating the new free upgrade feature.
+2025-05-16 20:00:41,496 - INFO - automation.thumbnail - STARTING generate_image_huggingface at 20:00:41.496
+2025-05-16 20:00:41,501 - INFO - automation.thumbnail - Hugging Face prompt: A PS5 console with vibrant next-gen game graphics displayed on a screen, su...
+2025-05-16 20:00:41,941 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
+2025-05-16 20:00:57,691 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
+2025-05-16 20:01:27,692 - ERROR - automation.thumbnail - Failed to generate image with Hugging Face API after multiple attempts
+2025-05-16 20:01:27,694 - INFO - automation.thumbnail - COMPLETED generate_image_huggingface in 46.20 seconds
+2025-05-16 20:01:27,694 - INFO - automation.thumbnail - Falling back to Unsplash for thumbnail image
+2025-05-16 20:01:27,695 - INFO - automation.thumbnail - STARTING fetch_image_unsplash at 20:01:27.695
+2025-05-16 20:01:27,696 - INFO - automation.thumbnail - Searching Unsplash with query: A PS5 console with vibrant next-gen game graphics displayed on a screen, surrounded by excited gamers celebrating the new free upgrade feature.
+2025-05-16 20:01:28,596 - INFO - automation.thumbnail - Unsplash image downloaded to D:\youtube-shorts-automation\automation\temp\thumbnail_1747405841\thumbnail_unsplash_1747405887_3694.jpg
+2025-05-16 20:01:28,597 - INFO - automation.thumbnail - Image attribution: Photo by Jonathan Petersson on Unsplash
+2025-05-16 20:01:28,598 - INFO - automation.thumbnail - COMPLETED fetch_image_unsplash in 0.90 seconds
+2025-05-16 20:01:28,599 - INFO - automation.thumbnail - STARTING create_thumbnail at 20:01:28.599
+2025-05-16 20:01:28,599 - INFO - automation.thumbnail - Creating thumbnail for title: 'LazyCreator presents: PS5 Offers Free Next-Gen Upgrades – No PS Plus Required!'
+2025-05-16 20:01:28,600 - INFO - automation.thumbnail - Using base image: D:\youtube-shorts-automation\automation\temp\thumbnail_1747405841\thumbnail_unsplash_1747405887_3694.jpg
+2025-05-16 20:01:28,600 - INFO - automation.thumbnail - Output path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_194544.jpg
+2025-05-16 20:01:28,763 - INFO - automation.thumbnail - Base image size: (1080, 718)
+2025-05-16 20:01:28,808 - INFO - automation.thumbnail - resized image to YouTube thumbnail dimensions: (1080, 1920)
+2025-05-16 20:01:28,838 - INFO - automation.thumbnail - Added gradient overlay to thumbnail
+2025-05-16 20:01:28,838 - INFO - automation.thumbnail - Selected font size: 50 based on title length: 78
+2025-05-16 20:01:28,848 - INFO - automation.thumbnail - Loaded custom font from: D:\youtube-shorts-automation\packages\fonts\default_font.ttf
+2025-05-16 20:01:28,849 - INFO - automation.thumbnail - Wrapped text: 'LazyCreator presents: PS5
+Offers Free Next-Gen Upgrades
+– No PS Plus Required!'
+2025-05-16 20:01:28,853 - INFO - automation.thumbnail - Text position calculated: x=174, y=1705, width=732, height=165
+2025-05-16 20:01:28,908 - INFO - automation.thumbnail - Added text shadow/outline for visibility
+2025-05-16 20:01:28,912 - INFO - automation.thumbnail - Added main title text
+2025-05-16 20:01:28,914 - INFO - automation.thumbnail - SHORTS label dimensions: width=113, height=21
+2025-05-16 20:01:28,915 - INFO - automation.thumbnail - SHORTS label position: x=927, y=20, height=31
+2025-05-16 20:01:28,916 - INFO - automation.thumbnail - Added rectangle background for SHORTS label
+2025-05-16 20:01:28,917 - INFO - automation.thumbnail - SHORTS text position: (937, 25), y_offset=5
+2025-05-16 20:01:28,918 - INFO - automation.thumbnail - Added SHORTS text label
+2025-05-16 20:01:28,942 - INFO - automation.thumbnail - Thumbnail created and saved to ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_194544.jpg
+2025-05-16 20:01:28,946 - INFO - automation.thumbnail - COMPLETED create_thumbnail in 0.35 seconds
+2025-05-16 20:01:28,947 - INFO - automation.thumbnail - Successfully generated thumbnail at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_194544.jpg
+2025-05-16 20:01:28,947 - INFO - automation.thumbnail - COMPLETED generate_thumbnail in 47.46 seconds
+2025-05-16 20:01:28,948 - INFO - __main__ - Thumbnail generated at: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_194544.jpg
+2025-05-16 20:01:28,949 - INFO - automation.thumbnail - Cleaning up thumbnail temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1747405841
+2025-05-16 20:01:28,951 - INFO - helper.minor_helper - Cleaning specific temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1747405841
+2025-05-16 20:01:28,953 - INFO - helper.minor_helper - Successfully removed directory tree: D:\youtube-shorts-automation\automation\temp\thumbnail_1747405841
+2025-05-16 20:01:28,953 - INFO - __main__ - Uploading to YouTube
+2025-05-16 20:01:29,277 - INFO - googleapiclient.discovery_cache - file_cache is only supported with oauth2client<4.0.0
+2025-05-16 20:01:29,682 - INFO - automation.youtube_upload - Uploading video: PS5 Offers Free Next-Gen Upgrades – No PS Plus Required!
+2025-05-16 20:01:34,564 - INFO - automation.youtube_upload - ✅ Video upload successful! Video ID: hfo4dOt1nT0
+2025-05-16 20:01:34,565 - INFO - automation.youtube_upload - Uploading thumbnail for video ID: hfo4dOt1nT0
+2025-05-16 20:01:38,631 - INFO - automation.youtube_upload - ✅ Thumbnail upload successful!
+2025-05-16 20:01:38,632 - INFO - __main__ - Process completed successfully!
+2025-05-16 20:01:38,633 - INFO - __main__ - Video path: ai_shorts_output\yt_shorts_LazyCreator_presents_PS5_Offer_20250516_194544.mp4
+2025-05-16 20:01:38,633 - INFO - __main__ - Thumbnail path: ai_shorts_output\thumbnails\thumbnail_LazyCreator_presents_20250516_194544.jpg
+2025-05-16 20:01:38,633 - INFO - __main__ - Running global cleanup of temporary files
+2025-05-16 20:01:38,633 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
+2025-05-16 20:01:38,634 - INFO - __main__ - Performing final cleanup of all temporary files
+2025-05-16 20:01:38,635 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
+2025-05-16 20:01:38,636 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\audio_clips
+2025-05-16 20:01:38,637 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\generated_images
+2025-05-16 20:01:38,638 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\shorts_v_1747404442
+2025-05-16 20:01:38,645 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\shorts_v_1747404944
+2025-05-16 20:01:38,651 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\video_downloads

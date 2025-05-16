@@ -93,10 +93,13 @@ class SystemResources:
         # Calculate memory-based worker limit
         available_memory_gb = self.memory_info['available_gb'] - reserved_memory_gb
         memory_based_limit = max(1, int(available_memory_gb / memory_per_worker_gb))
+        logger.info(f"Memory-based worker limit: {memory_based_limit}")
 
         # Calculate CPU-based worker limit
         available_cpu_cores = self.cpu_info['logical_cores'] - reserved_cpu_cores
         cpu_based_limit = max(1, int(available_cpu_cores / cpu_per_worker))
+        logger.info(f"CPU-based worker limit: {cpu_based_limit}")
+
 
         # Calculate IO-based adjustments (reduce workers on high IO load or low disk space)
         io_adjustment = 1.0
@@ -106,12 +109,12 @@ class SystemResources:
         # Take the minimum of memory and CPU constraints
         worker_count = min(memory_based_limit, cpu_based_limit)
         worker_count = max(1, int(worker_count * io_adjustment))  # Apply IO adjustment
+        logger.info(f"Optimized worker count: {worker_count}")
 
         # Task-specific optimizations
         if task_type == 'video_rendering':
             # For video rendering, configure FFmpeg thread allocation
             ffmpeg_threads = max(1, min(4, int(available_cpu_cores / worker_count)))
-
             logger.info(f"Optimized for video rendering: {worker_count} workers with {ffmpeg_threads} FFmpeg threads each")
 
             return {

@@ -147,7 +147,7 @@ def render_clip_with_ffmpeg(
     # Get section index from clip if available
     section_idx = getattr(clip, '_section_idx', idx)
     debug_info = getattr(clip, '_debug_info', f"Clip {idx}")
-    
+
     output_path = os.path.join(temp_dir, f"clip_{section_idx:03d}_{uuid.uuid4().hex[:8]}.mp4")
     temp_files = []  # List of temporary files to clean up
 
@@ -219,7 +219,7 @@ def concatenate_clips_with_ffmpeg(
 
     # Sort clips by index to ensure correct ordering
     sorted_paths = sorted(rendered_paths, key=lambda x: x[0])
-    
+
     # Log the ordering of clips for debugging
     logger.info("Concatenating clips in the following order:")
     for idx, path in sorted_paths:
@@ -261,13 +261,13 @@ def concatenate_clips_with_ffmpeg(
                     clips.append(clip)
                 except Exception as clip_error:
                     logger.error(f"Failed to load clip {idx} at path {path}: {clip_error}")
-            
+
             if not clips:
                 raise ValueError("No clips could be loaded for concatenation")
-                
+
             final_clip = concatenate_videoclips(clips)
             logger.info(f"Final concatenated clip duration: {final_clip.duration:.2f}s")
-            
+
             final_clip.write_videofile(
                 output_file,
                 fps=30,
@@ -321,10 +321,8 @@ def render_clips_parallel(
 
     start_time = time.time()
 
-    # Get system resource configuration
-    if resource_config is None:
-        # Use memory settings from memory.py (now defaults to 1.0GB per worker)
-        resource_config = optimize_workers_for_rendering(memory_per_task_gb=1.0)
+    # Use memory settings from memory.py (now defaults to 1.0GB per worker)
+    resource_config = optimize_workers_for_rendering(memory_per_task_gb=1.0)
 
     num_workers = resource_config.get('worker_count', 2)
     ffmpeg_threads = resource_config.get('ffmpeg_threads', 2)
@@ -332,12 +330,10 @@ def render_clips_parallel(
     logger.info(f"Rendering {len(clips)} clips with {num_workers} workers and {ffmpeg_threads} FFmpeg threads each")
     logger.info(f"Using FFmpeg: {ffmpeg_version()}")
 
-    # Create temporary directory if needed
-    if temp_dir is None:
-        # Use the TEMP_DIR environment variable
-        temp_dir = os.path.join(TEMP_DIR, f"ffmpeg_render_{int(time.time())}")
-        os.makedirs(temp_dir, exist_ok=True)
-        logger.debug(f"Created temporary directory: {temp_dir}")
+    # Use the TEMP_DIR environment variable
+    temp_dir = os.path.join(TEMP_DIR, f"ffmpeg_render_{int(time.time())}")
+    os.makedirs(temp_dir, exist_ok=True)
+    logger.debug(f"Created temporary directory: {temp_dir}")
 
     # Log clip information for debugging order issues
     for i, clip in enumerate(clips):
@@ -430,12 +426,10 @@ def render_clips_sequential(
 
     logger.info("Using sequential rendering")
 
-    # Create a temporary directory if needed
-    if temp_dir is None:
-        # Use the TEMP_DIR environment variable
-        temp_dir = os.path.join(TEMP_DIR, f"sequential_render_{int(time.time())}")
-        os.makedirs(temp_dir, exist_ok=True)
-        logger.debug(f"Created temporary directory: {temp_dir}")
+    # Use the TEMP_DIR environment variable
+    temp_dir = os.path.join(TEMP_DIR, f"sequential_render_{int(time.time())}")
+    os.makedirs(temp_dir, exist_ok=True)
+    logger.debug(f"Created temporary directory: {temp_dir}")
 
     # Log clip information for debugging
     for i, clip in enumerate(clips):

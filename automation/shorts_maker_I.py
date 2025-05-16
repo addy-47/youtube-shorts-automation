@@ -337,11 +337,11 @@ class YTShortsCreator_I:
 
             # Use our unified renderer
             logger.info("Rendering final video using optimized renderer")
-            
+
             # Ensure rendering temp directory exists
             render_temp_dir = os.path.join(self.temp_dir, "render")
             os.makedirs(render_temp_dir, exist_ok=True)
-            
+
             # Use the unified rendering interface
             output_path = render_video(
                 clips=section_clips,
@@ -350,13 +350,13 @@ class YTShortsCreator_I:
                 temp_dir=render_temp_dir,
                 preset="ultrafast",
                 parallel=True,
-                memory_per_worker_gb=2.0,
+                memory_per_worker_gb=1.0,
                 options={
                     'clean_temp': True,
                     'section_info': section_info
                 }
             )
-            
+
             logger.info(f"Successfully rendered video to {output_path}")
 
             # Add watermark as a post-process if requested
@@ -390,7 +390,7 @@ class YTShortsCreator_I:
                 except Exception as watermark_error:
                     logger.error(f"Error adding watermark: {watermark_error}")
                     logger.error(f"Detailed watermark error: {traceback.format_exc()}")
-            
+
             return output_path
 
         except Exception as e:

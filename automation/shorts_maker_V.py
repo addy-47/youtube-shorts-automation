@@ -273,7 +273,7 @@ class YTShortsCreator_V:
                 temp_dir=render_temp_dir,
                 preset="ultrafast",
                 parallel=True,
-                memory_per_worker_gb=2.0,
+                memory_per_worker_gb=1.0,
                 options={
                     'clean_temp': True,
                     'section_info': section_info
