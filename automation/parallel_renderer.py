@@ -10,15 +10,20 @@ import traceback
 from typing import List, Dict, Tuple, Any, Optional, Union
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
+from dotenv import load_dotenv
 # MoviePy imports
 from moviepy import VideoFileClip, AudioFileClip, CompositeVideoClip, concatenate_videoclips
+
+# Load environment variables
+load_dotenv()
+TEMP_DIR = os.getenv("TEMP_DIR", tempfile.gettempdir())
 
 # Import our memory helper
 try:
     from helper.memory import optimize_workers_for_rendering
 except ImportError:
     # Fallback if helper module is not available
-    def optimize_workers_for_rendering(memory_per_task_gb=2.0):
+    def optimize_workers_for_rendering(memory_per_task_gb=1.0):
         """Fallback function if memory helper is not available."""
         import multiprocessing
         cpu_count = multiprocessing.cpu_count()
@@ -67,7 +72,9 @@ def extract_clip_info(clip) -> Dict[str, Any]:
         'has_audio': hasattr(clip, 'audio') and clip.audio is not None,
         'is_file': False,
         'filepath': None,
-        'type': type(clip).__name__
+        'type': type(clip).__name__,
+        'section_idx': getattr(clip, '_section_idx', None),
+        'debug_info': getattr(clip, '_debug_info', None)
     }
 
     # Check if this is a file-based clip
@@ -137,19 +144,23 @@ def render_clip_with_ffmpeg(
     Returns:
         Tuple of (clip index, output file path or None if failed)
     """
-    output_path = os.path.join(temp_dir, f"clip_{idx}_{uuid.uuid4().hex[:8]}.mp4")
+    # Get section index from clip if available
+    section_idx = getattr(clip, '_section_idx', idx)
+    debug_info = getattr(clip, '_debug_info', f"Clip {idx}")
+    
+    output_path = os.path.join(temp_dir, f"clip_{section_idx:03d}_{uuid.uuid4().hex[:8]}.mp4")
     temp_files = []  # List of temporary files to clean up
 
     try:
         # Extract clip information
         clip_info = extract_clip_info(clip)
-        logger.debug(f"Rendering clip {idx}: duration={clip_info['duration']:.2f}s, "
-                    f"size={clip_info['size']}, has_audio={clip_info['has_audio']}")
+        logger.info(f"Rendering {debug_info}: duration={clip_info['duration']:.2f}s, "
+                   f"size={clip_info['size']}, section_idx={section_idx}")
 
         # Handle different types of clips
         if isinstance(clip, str) and os.path.exists(clip):
             # This is already a file path, just return it
-            return idx, clip
+            return section_idx, clip
 
         # Use MoviePy to render the clip
         clip.write_videofile(
@@ -165,14 +176,15 @@ def render_clip_with_ffmpeg(
         )
 
         if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
-            return idx, output_path
+            logger.info(f"Successfully rendered {debug_info} to {os.path.basename(output_path)}")
+            return section_idx, output_path
         else:
             raise ValueError(f"Output file {output_path} was not created or is empty")
 
     except Exception as e:
-        logger.error(f"Error rendering clip {idx}: {e}")
-        logger.error(traceback.format_exc())
-        return idx, None
+        logger.error(f"Error rendering {debug_info}: {e}")
+        logger.debug(traceback.format_exc())
+        return section_idx, None
     finally:
         # Clean up any temporary files
         clean_temp_files(temp_files)
@@ -205,13 +217,21 @@ def concatenate_clips_with_ffmpeg(
     if not rendered_paths:
         raise ValueError("No paths to concatenate")
 
+    # Sort clips by index to ensure correct ordering
+    sorted_paths = sorted(rendered_paths, key=lambda x: x[0])
+    
+    # Log the ordering of clips for debugging
+    logger.info("Concatenating clips in the following order:")
+    for idx, path in sorted_paths:
+        logger.info(f"  {idx}: {os.path.basename(path)}")
+
     # Create a temporary directory for the concat list
-    temp_dir = os.path.dirname(rendered_paths[0][1])
+    temp_dir = os.path.dirname(sorted_paths[0][1])
     concat_list_path = os.path.join(temp_dir, f"concat_list_{uuid.uuid4().hex[:8]}.txt")
 
     # Create the concat list file
     with open(concat_list_path, "w") as f:
-        for _, path in sorted(rendered_paths, key=lambda x: x[0]):
+        for _, path in sorted_paths:
             f.write(f"file '{os.path.abspath(path)}'\n")
 
     # Create the FFmpeg command for concatenation
@@ -233,8 +253,21 @@ def concatenate_clips_with_ffmpeg(
         # Fallback to standard MoviePy concatenation
         try:
             logger.info("Falling back to MoviePy concatenation")
-            clips = [VideoFileClip(path) for _, path in sorted(rendered_paths, key=lambda x: x[0])]
+            clips = []
+            for idx, path in sorted_paths:
+                try:
+                    clip = VideoFileClip(path)
+                    logger.info(f"Loaded clip {idx}: {os.path.basename(path)}, duration={clip.duration:.2f}s")
+                    clips.append(clip)
+                except Exception as clip_error:
+                    logger.error(f"Failed to load clip {idx} at path {path}: {clip_error}")
+            
+            if not clips:
+                raise ValueError("No clips could be loaded for concatenation")
+                
             final_clip = concatenate_videoclips(clips)
+            logger.info(f"Final concatenated clip duration: {final_clip.duration:.2f}s")
+            
             final_clip.write_videofile(
                 output_file,
                 fps=30,
@@ -290,20 +323,27 @@ def render_clips_parallel(
 
     # Get system resource configuration
     if resource_config is None:
-        # Estimate memory requirements (very rough estimate)
-        estimated_memory_gb = 2.0  # Base memory per worker
-        resource_config = optimize_workers_for_rendering(memory_per_task_gb=estimated_memory_gb)
+        # Use memory settings from memory.py (now defaults to 1.0GB per worker)
+        resource_config = optimize_workers_for_rendering(memory_per_task_gb=1.0)
 
-    num_workers = resource_config.get('worker_count', 4)
+    num_workers = resource_config.get('worker_count', 2)
     ffmpeg_threads = resource_config.get('ffmpeg_threads', 2)
 
     logger.info(f"Rendering {len(clips)} clips with {num_workers} workers and {ffmpeg_threads} FFmpeg threads each")
     logger.info(f"Using FFmpeg: {ffmpeg_version()}")
 
     # Create temporary directory if needed
-    if temp_dir is not None:
-        temp_dir = tempfile.mkdtemp(prefix="ffmpeg_render_")
+    if temp_dir is None:
+        # Use the TEMP_DIR environment variable
+        temp_dir = os.path.join(TEMP_DIR, f"ffmpeg_render_{int(time.time())}")
+        os.makedirs(temp_dir, exist_ok=True)
         logger.debug(f"Created temporary directory: {temp_dir}")
+
+    # Log clip information for debugging order issues
+    for i, clip in enumerate(clips):
+        section_idx = getattr(clip, '_section_idx', i)
+        debug_info = getattr(clip, '_debug_info', f"Clip {i}")
+        logger.info(f"Preparing clip {i}: section_idx={section_idx}, {debug_info}")
 
     # Create output directory if needed
     os.makedirs(os.path.dirname(output_file) or '.', exist_ok=True)
@@ -332,7 +372,7 @@ def render_clips_parallel(
                     logger.error(f"Failed to render clip {idx}")
             except Exception as e:
                 logger.error(f"Error processing render result: {e}")
-                logger.error(traceback.format_exc())
+                logger.debug(traceback.format_exc())
 
     if not rendered_paths:
         raise ValueError("No clips were successfully rendered")
@@ -343,7 +383,7 @@ def render_clips_parallel(
     output_path = concatenate_clips_with_ffmpeg(rendered_paths, output_file, preset)
 
     # Clean up temporary files if requested
-    if clean_temp and temp_dir and os.path.exists(temp_dir) and temp_dir.startswith(tempfile.gettempdir()):
+    if clean_temp and temp_dir:
         try:
             # Clean up individual clip files
             for _, path in rendered_paths:
@@ -353,6 +393,7 @@ def render_clips_parallel(
             # Remove the temporary directory
             if os.path.exists(temp_dir):
                 shutil.rmtree(temp_dir, ignore_errors=True)
+                logger.debug(f"Cleaned up temporary directory: {temp_dir}")
         except Exception as e:
             logger.warning(f"Failed to clean up temporary files: {e}")
 
@@ -390,9 +431,17 @@ def render_clips_sequential(
     logger.info("Using sequential rendering")
 
     # Create a temporary directory if needed
-    if temp_dir is not None:
-        temp_dir = tempfile.mkdtemp(prefix="sequential_render_")
+    if temp_dir is None:
+        # Use the TEMP_DIR environment variable
+        temp_dir = os.path.join(TEMP_DIR, f"sequential_render_{int(time.time())}")
+        os.makedirs(temp_dir, exist_ok=True)
         logger.debug(f"Created temporary directory: {temp_dir}")
+
+    # Log clip information for debugging
+    for i, clip in enumerate(clips):
+        section_idx = getattr(clip, '_section_idx', i)
+        debug_info = getattr(clip, '_debug_info', f"Clip {i}")
+        logger.info(f"Preparing clip {i}: section_idx={section_idx}, {debug_info}")
 
     # Render clips sequentially
     rendered_paths = []
