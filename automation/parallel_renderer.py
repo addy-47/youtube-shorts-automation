@@ -201,7 +201,8 @@ def render_clip_with_ffmpeg(
 def concatenate_clips_with_ffmpeg(
     rendered_paths: List[Tuple[int, str]],
     output_file: str,
-    preset: str = "veryfast"
+    preset: str = "veryfast",
+    crossfade_duration: float = 0.5  # Added crossfade duration parameter
 ) -> str:
     """
     Concatenate rendered clips using FFmpeg.
@@ -210,6 +211,7 @@ def concatenate_clips_with_ffmpeg(
         rendered_paths: List of (clip index, file path) tuples
         output_file: Output file path
         preset: FFmpeg preset
+        crossfade_duration: Duration of crossfade transition in seconds
 
     Returns:
         Output file path
@@ -219,74 +221,95 @@ def concatenate_clips_with_ffmpeg(
 
     # Sort clips by index to ensure correct ordering
     sorted_paths = sorted(rendered_paths, key=lambda x: x[0])
-
+    
     # Log the ordering of clips for debugging
     logger.info("Concatenating clips in the following order:")
     for idx, path in sorted_paths:
         logger.info(f"  {idx}: {os.path.basename(path)}")
 
-    # Create a temporary directory for the concat list
-    temp_dir = os.path.dirname(sorted_paths[0][1])
-    concat_list_path = os.path.join(temp_dir, f"concat_list_{uuid.uuid4().hex[:8]}.txt")
+    # If we only have one clip, just copy it to the output
+    if len(sorted_paths) == 1:
+        _, path = sorted_paths[0]
+        shutil.copy(path, output_file)
+        return output_file
 
-    # Create the concat list file
-    with open(concat_list_path, "w") as f:
-        for _, path in sorted_paths:
-            f.write(f"file '{os.path.abspath(path)}'\n")
-
-    # Create the FFmpeg command for concatenation
-    ffmpeg_cmd = [
-        "ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", concat_list_path,
-        "-c", "copy",  # Use stream copy for faster concatenation
-        "-movflags", "+faststart",  # Optimize for web streaming
-        output_file
-    ]
-
+    # For multiple clips, use MoviePy for crossfade transitions
     try:
+        logger.info(f"Using MoviePy to concatenate clips with {crossfade_duration:.1f}s crossfades")
+        clips = []
+        
+        # Load all clips
+        for idx, path in sorted_paths:
+            try:
+                clip = VideoFileClip(path)
+                logger.info(f"Loaded clip {idx}: {os.path.basename(path)}, duration={clip.duration:.2f}s")
+                clips.append(clip)
+            except Exception as clip_error:
+                logger.error(f"Failed to load clip {idx} at path {path}: {clip_error}")
+        
+        if not clips:
+            raise ValueError("No clips could be loaded for concatenation")
+        
+        # Create concatenated clip with crossfades
+        if len(clips) > 1 and crossfade_duration > 0:
+            final_clip = concatenate_videoclips(
+                clips, 
+                method="compose",
+                transition=lambda clip1, clip2: clip1.crossfadeout(crossfade_duration) 
+            )
+            logger.info(f"Created concatenated clip with crossfades, duration: {final_clip.duration:.2f}s")
+        else:
+            # Simple concatenation if no crossfade
+            final_clip = concatenate_videoclips(clips)
+            logger.info(f"Created concatenated clip without transitions, duration: {final_clip.duration:.2f}s")
+        
+        # Write final clip
+        final_clip.write_videofile(
+            output_file,
+            fps=30,
+            codec="libx264",
+            audio_codec="aac",
+            preset=preset,
+            threads=4
+        )
+
+        # Close clips to free memory
+        for clip in clips:
+            if hasattr(clip, 'close'):
+                clip.close()
+        if hasattr(final_clip, 'close'):
+            final_clip.close()
+
+        return output_file
+        
+    except Exception as e:
+        logger.error(f"MoviePy concatenation failed: {e}")
+        logger.error(traceback.format_exc())
+        
+        # Fallback to simple FFmpeg concatenation without transitions
+        logger.info("Falling back to simple FFmpeg concatenation without transitions")
+        
+        # Create a temporary directory for the concat list
+        temp_dir = os.path.dirname(sorted_paths[0][1])
+        concat_list_path = os.path.join(temp_dir, f"concat_list_{uuid.uuid4().hex[:8]}.txt")
+
+        # Create the concat list file
+        with open(concat_list_path, "w") as f:
+            for _, path in sorted_paths:
+                f.write(f"file '{os.path.abspath(path)}'\n")
+
+        # Create the FFmpeg command for concatenation
+        ffmpeg_cmd = [
+            "ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", concat_list_path,
+            "-c", "copy",  # Use stream copy for faster concatenation
+            "-movflags", "+faststart",  # Optimize for web streaming
+            output_file
+        ]
+
         # Run the FFmpeg command
         subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        logger.info(f"Concatenated {len(rendered_paths)} clips to {output_file}")
+        logger.info(f"Concatenated {len(rendered_paths)} clips to {output_file} without transitions")
         return output_file
-    except Exception as e:
-        logger.error(f"FFmpeg concatenation failed: {e}")
-
-        # Fallback to standard MoviePy concatenation
-        try:
-            logger.info("Falling back to MoviePy concatenation")
-            clips = []
-            for idx, path in sorted_paths:
-                try:
-                    clip = VideoFileClip(path)
-                    logger.info(f"Loaded clip {idx}: {os.path.basename(path)}, duration={clip.duration:.2f}s")
-                    clips.append(clip)
-                except Exception as clip_error:
-                    logger.error(f"Failed to load clip {idx} at path {path}: {clip_error}")
-
-            if not clips:
-                raise ValueError("No clips could be loaded for concatenation")
-
-            final_clip = concatenate_videoclips(clips)
-            logger.info(f"Final concatenated clip duration: {final_clip.duration:.2f}s")
-
-            final_clip.write_videofile(
-                output_file,
-                fps=30,
-                codec="libx264",
-                audio_codec="aac",
-                preset="ultrafast"
-            )
-
-            # Close clips to free memory
-            for clip in clips:
-                if hasattr(clip, 'close'):
-                    clip.close()
-            if hasattr(final_clip, 'close'):
-                final_clip.close()
-
-            return output_file
-        except Exception as e:
-            logger.error(f"MoviePy concatenation also failed: {e}")
-            raise ValueError("Failed to concatenate clips")
 
 # ==================== MAIN RENDERING FUNCTION ====================
 
@@ -298,7 +321,8 @@ def render_clips_parallel(
     temp_dir: str = None,
     preset: str = "veryfast",
     resource_config: Dict[str, Any] = None,
-    clean_temp: bool = True
+    clean_temp: bool = True,
+    crossfade_duration: float = 0.5
 ) -> str:
     """
     Render clips in parallel using threads and FFmpeg.
@@ -312,6 +336,7 @@ def render_clips_parallel(
         preset: FFmpeg preset
         resource_config: System resource configuration (if None, will be determined automatically)
         clean_temp: Whether to clean up temporary files
+        crossfade_duration: Duration of crossfade transitions between clips in seconds
 
     Returns:
         Output file path
@@ -322,7 +347,8 @@ def render_clips_parallel(
     start_time = time.time()
 
     # Use memory settings from memory.py (now defaults to 1.0GB per worker)
-    resource_config = optimize_workers_for_rendering(memory_per_task_gb=1.0)
+    if resource_config is None:
+        resource_config = optimize_workers_for_rendering(memory_per_task_gb=1.0)
 
     num_workers = resource_config.get('worker_count', 2)
     ffmpeg_threads = resource_config.get('ffmpeg_threads', 2)
@@ -331,9 +357,10 @@ def render_clips_parallel(
     logger.info(f"Using FFmpeg: {ffmpeg_version()}")
 
     # Use the TEMP_DIR environment variable
-    temp_dir = os.path.join(TEMP_DIR, f"ffmpeg_render_{int(time.time())}")
-    os.makedirs(temp_dir, exist_ok=True)
-    logger.debug(f"Created temporary directory: {temp_dir}")
+    if temp_dir is None:
+        temp_dir = os.path.join(TEMP_DIR, f"ffmpeg_render_{int(time.time())}")
+        os.makedirs(temp_dir, exist_ok=True)
+        logger.debug(f"Created temporary directory: {temp_dir}")
 
     # Log clip information for debugging order issues
     for i, clip in enumerate(clips):
@@ -375,8 +402,13 @@ def render_clips_parallel(
 
     logger.info(f"Successfully rendered {len(rendered_paths)}/{len(clips)} clips")
 
-    # Concatenate the rendered clips
-    output_path = concatenate_clips_with_ffmpeg(rendered_paths, output_file, preset)
+    # Concatenate the rendered clips with crossfades
+    output_path = concatenate_clips_with_ffmpeg(
+        rendered_paths, 
+        output_file, 
+        preset=preset,
+        crossfade_duration=crossfade_duration
+    )
 
     # Clean up temporary files if requested
     if clean_temp and temp_dir:
@@ -405,7 +437,8 @@ def render_clips_sequential(
     fps: int = 30,
     logger=None,
     temp_dir: str = None,
-    preset: str = "veryfast"
+    preset: str = "veryfast",
+    crossfade_duration: float = 0.5
 ) -> str:
     """
     Simple fallback function that renders clips sequentially.
@@ -417,6 +450,7 @@ def render_clips_sequential(
         logger: Logger
         temp_dir: Temporary directory
         preset: FFmpeg preset
+        crossfade_duration: Duration of crossfade transitions between clips in seconds
 
     Returns:
         Output file path
@@ -427,9 +461,10 @@ def render_clips_sequential(
     logger.info("Using sequential rendering")
 
     # Use the TEMP_DIR environment variable
-    temp_dir = os.path.join(TEMP_DIR, f"sequential_render_{int(time.time())}")
-    os.makedirs(temp_dir, exist_ok=True)
-    logger.debug(f"Created temporary directory: {temp_dir}")
+    if temp_dir is None:
+        temp_dir = os.path.join(TEMP_DIR, f"sequential_render_{int(time.time())}")
+        os.makedirs(temp_dir, exist_ok=True)
+        logger.debug(f"Created temporary directory: {temp_dir}")
 
     # Log clip information for debugging
     for i, clip in enumerate(clips):
@@ -454,5 +489,10 @@ def render_clips_sequential(
     if not rendered_paths:
         raise ValueError("No clips were successfully rendered")
 
-    # Concatenate the rendered clips
-    return concatenate_clips_with_ffmpeg(rendered_paths, output_file, preset)
+    # Concatenate the rendered clips with crossfades
+    return concatenate_clips_with_ffmpeg(
+        rendered_paths, 
+        output_file, 
+        preset=preset,
+        crossfade_duration=crossfade_duration
+    )

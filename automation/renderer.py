@@ -22,6 +22,7 @@ def render_video(
     preset: str = "veryfast",
     parallel: bool = True,
     memory_per_worker_gb: float = 1.0,
+    crossfade_duration: float = 0.5,
     options: Optional[Dict[str, Any]] = None
 ) -> str:
     """
@@ -36,6 +37,7 @@ def render_video(
         preset: FFmpeg preset (slower = better quality, but longer rendering time)
         parallel: Whether to use parallel rendering
         memory_per_worker_gb: Estimated memory usage per worker in GB
+        crossfade_duration: Duration of crossfade transitions between clips in seconds
         options: Additional rendering options
 
     Returns:
@@ -49,15 +51,32 @@ def render_video(
 
     # Default values for options
     options = options or {}
+    
+    # Allow overriding crossfade duration via options
+    if 'crossfade_duration' in options:
+        crossfade_duration = options['crossfade_duration']
+    
+    # Log clip metadata for debugging
+    logger.info(f"Rendering {len(clips)} clips with {fps} fps")
+    for i, clip in enumerate(clips):
+        section_idx = getattr(clip, '_section_idx', i)
+        debug_info = getattr(clip, '_debug_info', f"Clip {i}")
+        duration = getattr(clip, 'duration', 0)
+        logger.debug(f"Clip {i}: section_idx={section_idx}, duration={duration:.2f}s, info={debug_info}")
 
     # Log the rendering approach
-    if OPTIMIZED_RENDERER_AVAILABLE:
-        logger.info("Using optimized FFmpeg-based renderer")
+    if OPTIMIZED_RENDERER_AVAILABLE and parallel:
+        logger.info(f"Using optimized parallel FFmpeg-based renderer")
 
         # Get optimal resource configuration
         resource_config = optimize_workers_for_rendering(
             memory_per_task_gb=memory_per_worker_gb
         )
+        
+        # Log resource configuration
+        logger.info(f"Resource config: {resource_config.get('worker_count', 1)} workers, "
+                    f"{resource_config.get('ffmpeg_threads', 2)} threads per worker")
+        
         # Use parallel rendering
         return render_clips_parallel(
             clips=clips,
@@ -67,15 +86,19 @@ def render_video(
             temp_dir=temp_dir,
             preset=preset,
             resource_config=resource_config,
-            clean_temp=options.get('clean_temp', True)
+            clean_temp=options.get('clean_temp', True),
+            crossfade_duration=crossfade_duration
         )
     else:
         # Use sequential rendering
+        logger.info(f"Using sequential rendering" + 
+                   (" (parallel rendering disabled)" if not parallel else ""))
         return render_clips_sequential(
             clips=clips,
             output_file=output_file,
             fps=fps,
             logger=logger,
             temp_dir=temp_dir,
-            preset=preset
+            preset=preset,
+            crossfade_duration=crossfade_duration
         )

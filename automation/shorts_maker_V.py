@@ -171,15 +171,38 @@ class YTShortsCreator_V:
 
             def generate_text_clips_task():
                 logger.info("Generating text clips in parallel")
-                if add_captions:
-                    return self.text_helper.generate_word_by_word_clips_parallel(
-                        script_sections=script_sections
-                    )
-                else:
-                    return self.text_helper.generate_text_clips_parallel(
-                        script_sections=script_sections,
-                        with_pill=True
-                    )
+                # Separate intro, middle, and outro sections for different text rendering styles
+                intro_sections = [script_sections[0]] if len(script_sections) > 0 else []
+                middle_sections = script_sections[1:-1] if len(script_sections) > 2 else []
+                outro_sections = [script_sections[-1]] if len(script_sections) > 1 else []
+                
+                # Generate standard text clips for intro and outro (with pill backgrounds)
+                intro_clips = self.text_helper.generate_text_clips_parallel(
+                    script_sections=intro_sections,
+                    with_pill=True,
+                    font_size=65,  # Slightly larger font for intro/outro
+                    animation="fade"
+                ) if intro_sections else []
+                
+                # Generate word-by-word clips for middle sections
+                middle_clips = self.text_helper.generate_word_by_word_clips_parallel(
+                    script_sections=middle_sections,
+                    font_size=60
+                ) if middle_sections and add_captions else self.text_helper.generate_text_clips_parallel(
+                    script_sections=middle_sections,
+                    with_pill=True
+                )
+                
+                # Generate standard text clips for outro
+                outro_clips = self.text_helper.generate_text_clips_parallel(
+                    script_sections=outro_sections,
+                    with_pill=True,
+                    font_size=65,  # Slightly larger font for intro/outro
+                    animation="fade_out"  # Fade out for outro
+                ) if outro_sections else []
+                
+                # Combine all clips in the correct order
+                return intro_clips + middle_clips + outro_clips
 
             # Add tasks to executor
             parallel_executor.add_task("fetch_videos", fetch_videos_task)
