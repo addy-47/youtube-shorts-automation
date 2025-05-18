@@ -330,16 +330,83 @@ class YTShortsCreator_I:
             section_clips = []
             section_info = {}  # For better logging in parallel renderer
 
+            # First, check audio durations to ensure they match expected section durations
+            for i, audio_section in enumerate(audio_data):
+                expected_duration = script_sections[i].get('duration', 5)
+                if audio_section and 'path' in audio_section:
+                    try:
+                        audio_clip = AudioFileClip(audio_section['path'])
+                        actual_duration = audio_clip.duration
+                        audio_clip.close()
+                        
+                        # Log any significant mismatches for debugging
+                        if abs(actual_duration - expected_duration) > 0.5:
+                            logger.warning(f"Section {i} audio duration mismatch: expected={expected_duration:.2f}s, actual={actual_duration:.2f}s")
+                    except Exception as e:
+                        logger.error(f"Error checking audio duration for section {i}: {e}")
+
+            # Now process each section with corrected audio sync
             for i, (bg_clip, audio, text_clip) in enumerate(zip(background_clips, audio_data, text_clips)):
+                # Ensure section duration matches script section duration
+                section_duration = script_sections[i].get('duration', 5)
+                bg_clip = bg_clip.with_duration(section_duration)
+                
                 # Add text clip to background if available
                 if text_clip:
+                    # Make sure text clip has the proper duration
+                    text_clip = text_clip.with_duration(section_duration)
                     composite = CompositeVideoClip([bg_clip, text_clip])
+                    # Set duration after creation
+                    composite = composite.with_duration(section_duration)
                 else:
                     composite = bg_clip
-
-                # Add audio
-                if audio:
-                    composite = composite.with_audio(AudioFileClip(audio['path']))
+                
+                # Add audio with proper synchronization
+                if audio and 'path' in audio:
+                    try:
+                        # Load audio and set its duration to match the section
+                        audio_clip = AudioFileClip(audio['path'])
+                        
+                        # Check if audio is valid and has duration
+                        if audio_clip.duration <= 0:
+                            logger.warning(f"Section {i} has invalid audio duration: {audio_clip.duration}")
+                            # Create empty audio with correct duration
+                            empty_audio = AudioFileClip(audio['path'])._spawn([], duration=section_duration)
+                            composite = composite.with_audio(empty_audio)
+                        else:
+                            # Adjust audio duration if needed
+                            if abs(audio_clip.duration - section_duration) > 0.5:
+                                logger.info(f"Adjusting audio duration for section {i} from {audio_clip.duration:.2f}s to {section_duration:.2f}s")
+                                
+                                if audio_clip.duration < section_duration:
+                                    # Extend audio by looping if too short
+                                    repeats = int(section_duration / audio_clip.duration) + 1
+                                    audio_clips = [audio_clip] * repeats
+                                    extended_audio = concatenate_audioclips(audio_clips)
+                                    audio_clip = extended_audio.with_duration(section_duration)
+                                else:
+                                    # Trim if too long
+                                    audio_clip = audio_clip.with_duration(section_duration)
+                            
+                            # Set start to ensure perfect sync from beginning
+                            composite = composite.with_audio(audio_clip.with_start(0))
+                    except Exception as e:
+                        logger.error(f"Error adding audio to section {i}: {e}")
+                        # Create silent audio as fallback
+                        try:
+                            silent_audio = AudioFileClip(audio['path'])._spawn([], duration=section_duration)
+                            composite = composite.with_audio(silent_audio)
+                        except:
+                            logger.error(f"Could not create silent audio for section {i}")
+                else:
+                    # No audio provided, create silent audio
+                    logger.warning(f"No audio data for section {i}, creating silent audio")
+                    try:
+                        silent_audio = AudioFileClip.__new__(AudioFileClip)
+                        silent_audio.duration = section_duration
+                        composite = composite.with_audio(silent_audio)
+                    except Exception as e:
+                        logger.error(f"Could not create silent audio: {e}")
 
                 # Add debugging info to the clip
                 section_text = script_sections[i].get('text', '')[:30] + '...' if len(script_sections[i].get('text', '')) > 30 else script_sections[i].get('text', '')
@@ -350,7 +417,7 @@ class YTShortsCreator_I:
                 section_info[i] = {
                     'section_idx': i,
                     'section_text': section_text,
-                    'duration': script_sections[i].get('duration', 5)
+                    'duration': section_duration
                 }
 
                 section_clips.append(composite)
@@ -376,6 +443,17 @@ class YTShortsCreator_I:
                     'section_info': section_info
                 }
             )
+
+            # Validate output path exists
+            if not output_path or not os.path.exists(output_path):
+                logger.error(f"Failed to render final video - output file not found: {output_path}")
+                if output_filename and os.path.exists(output_filename):
+                    # Use original output filename if render_video fails
+                    logger.info(f"Using fallback output file: {output_filename}")
+                    output_path = output_filename
+                else:
+                    logger.error("No valid output file available")
+                    return None
 
             logger.info(f"Successfully rendered video to {output_path}")
 

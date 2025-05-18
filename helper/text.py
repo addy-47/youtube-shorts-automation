@@ -88,16 +88,33 @@ class TextHelper:
           Image: PIL Image with the pill-shaped background
       """
       width, height = size
+      
+      # Ensure minimum dimensions to prevent drawing errors
+      if width <= 0 or height <= 0:
+          logger.warning(f"Invalid pill dimensions: {width}x{height}, using minimum size")
+          width = max(width, 10)
+          height = max(height, 10)
+      
+      # Ensure radius isn't too large for the image dimensions
+      radius = min(radius, width // 2, height // 2)
+      
       img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
       draw = ImageDraw.Draw(img)
 
-      # Draw the rounded rectangle
-      draw.rectangle([(radius, 0), (width - radius, height)], fill=color)
-      draw.rectangle([(0, radius), (width, height - radius)], fill=color)
-      draw.ellipse([(0, 0), (radius * 2, radius * 2)], fill=color)
-      draw.ellipse([(width - radius * 2, 0), (width, radius * 2)], fill=color)
-      draw.ellipse([(0, height - radius * 2), (radius * 2, height)], fill=color)
-      draw.ellipse([(width - radius * 2, height - radius * 2), (width, height)], fill=color)
+      # Draw the rounded rectangle only if dimensions are valid
+      if width > 2*radius and height > 2*radius:
+          # Draw center rectangle
+          draw.rectangle([(radius, 0), (width - radius, height)], fill=color)
+          # Draw horizontal rectangles
+          draw.rectangle([(0, radius), (width, height - radius)], fill=color)
+          # Draw corner circles
+          draw.ellipse([(0, 0), (radius * 2, radius * 2)], fill=color)
+          draw.ellipse([(width - radius * 2, 0), (width, radius * 2)], fill=color)
+          draw.ellipse([(0, height - radius * 2), (radius * 2, height)], fill=color)
+          draw.ellipse([(width - radius * 2, height - radius * 2), (width, height)], fill=color)
+      else:
+          # Fallback to simple rectangle if dimensions are too small for rounded corners
+          draw.rectangle([(0, 0), (width, height)], fill=color)
 
       return img
 
