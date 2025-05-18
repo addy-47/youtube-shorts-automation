@@ -359,44 +359,58 @@ class TextHelper:
           word_time = min_word_time + (effective_duration - min_word_time * len(words)) * char_ratio
           word_durations.append(word_time)
 
-      def make_frame_with_pill(word=word, font_size=font_size, font_path=font_path,
-                                  text_color=text_color, pill_color=pill_color):
-              # Load font
+      def make_frame_with_pill(word, font_size=font_size, font_path=font_path,
+                              text_color=text_color, pill_color=pill_color):
+          # Load font
+          try:
+              font = ImageFont.truetype(font_path, font_size)
+          except Exception:
+              # Fallback to default font
+              font = ImageFont.load_default()
+
+          # Get text size using modern methods compatible with newer Pillow versions
+          img = Image.new('RGBA', (1, 1), (0, 0, 0, 0))
+          draw = ImageDraw.Draw(img)
+
+          # Try different methods to get text dimensions based on Pillow version
+          try:
+              # Modern method (Pillow >= 8.0.0)
+              bbox = draw.textbbox((0, 0), word, font=font)
+              text_width = bbox[2] - bbox[0]
+              text_height = bbox[3] - bbox[1]
+          except AttributeError:
               try:
-                  font = ImageFont.truetype(font_path, font_size)
-              except Exception:
-                  # Fallback to default font
-                  font = ImageFont.load_default()
+                  # Alternative method (Pillow >= 7.0.0)
+                  text_width, text_height = draw.getsize(word, font=font)
+              except AttributeError:
+                  # Last resort fallback for very old versions
+                  text_width = len(word) * font_size * 0.6
+                  text_height = font_size * 1.2
 
-              # Get text size
-              img = Image.new('RGBA', (1, 1), (0, 0, 0, 0))
-              draw = ImageDraw.Draw(img)
-              text_width, text_height = draw.textsize(word, font=font)
+          # Add padding
+          padding_w = int(text_width * 0.2)
+          padding_h = int(text_height * 0.3)
+          width = text_width + padding_w * 2
+          height = text_height + padding_h * 2
 
-              # Add padding
-              padding_w = int(text_width * 0.2)
-              padding_h = int(text_height * 0.3)
-              width = text_width + padding_w * 2
-              height = text_height + padding_h * 2
+          # Create pill background
+          radius = height // 3
+          pill_img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+          draw = ImageDraw.Draw(pill_img)
 
-              # Create pill background
-              radius = height // 3
-              pill_img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
-              draw = ImageDraw.Draw(pill_img)
+          # Draw the rounded rectangle
+          draw.rectangle([(radius, 0), (width - radius, height)], fill=pill_color)
+          draw.rectangle([(0, radius), (width, height - radius)], fill=pill_color)
+          draw.ellipse([(0, 0), (radius * 2, radius * 2)], fill=pill_color)
+          draw.ellipse([(width - radius * 2, 0), (width, radius * 2)], fill=pill_color)
+          draw.ellipse([(0, height - radius * 2), (radius * 2, height)], fill=pill_color)
+          draw.ellipse([(width - radius * 2, height - radius * 2), (width, height)], fill=pill_color)
 
-              # Draw the rounded rectangle
-              draw.rectangle([(radius, 0), (width - radius, height)], fill=pill_color)
-              draw.rectangle([(0, radius), (width, height - radius)], fill=pill_color)
-              draw.ellipse([(0, 0), (radius * 2, radius * 2)], fill=pill_color)
-              draw.ellipse([(width - radius * 2, 0), (width, radius * 2)], fill=pill_color)
-              draw.ellipse([(0, height - radius * 2), (radius * 2, height)], fill=pill_color)
-              draw.ellipse([(width - radius * 2, height - radius * 2), (width, height)], fill=pill_color)
+          # Draw text on the pill
+          draw.text((padding_w, padding_h), word, font=font, fill=text_color)
 
-              # Draw text on the pill
-              draw.text((padding_w, padding_h), word, font=font, fill=text_color)
-
-              # Convert PIL Image to numpy array for MoviePy
-              return np.array(pill_img)
+          # Convert PIL Image to numpy array for MoviePy
+          return np.array(pill_img)
 
       # Create a video clip for each word with its own pill background
       word_clips = []

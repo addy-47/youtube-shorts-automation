@@ -7,7 +7,7 @@ import os
 import logging
 import tempfile
 from typing import List, Dict, Any, Optional, Union
-from automation.parallel_renderer import render_clips_parallel, render_clips_sequential
+from automation.parallel_renderer import render_clips_parallel, render_clips_sequential, DEFAULT_CROSSFADE_DURATION
 from helper.memory import optimize_workers_for_rendering
 
 OPTIMIZED_RENDERER_AVAILABLE = True
@@ -19,10 +19,10 @@ def render_video(
     output_file: str,
     fps: int = 30,
     temp_dir: Optional[str] = None,
-    preset: str = "veryfast",
+    preset: str = "ultrafast",
     parallel: bool = True,
     memory_per_worker_gb: float = 1.0,
-    crossfade_duration: float = 0.5,
+    crossfade_duration: float = DEFAULT_CROSSFADE_DURATION,
     options: Optional[Dict[str, Any]] = None
 ) -> str:
     """
@@ -51,11 +51,11 @@ def render_video(
 
     # Default values for options
     options = options or {}
-    
+
     # Allow overriding crossfade duration via options
     if 'crossfade_duration' in options:
         crossfade_duration = options['crossfade_duration']
-    
+
     # Log clip metadata for debugging
     logger.info(f"Rendering {len(clips)} clips with {fps} fps")
     for i, clip in enumerate(clips):
@@ -72,11 +72,11 @@ def render_video(
         resource_config = optimize_workers_for_rendering(
             memory_per_task_gb=memory_per_worker_gb
         )
-        
+
         # Log resource configuration
         logger.info(f"Resource config: {resource_config.get('worker_count', 1)} workers, "
                     f"{resource_config.get('ffmpeg_threads', 2)} threads per worker")
-        
+
         # Use parallel rendering
         return render_clips_parallel(
             clips=clips,
@@ -91,7 +91,7 @@ def render_video(
         )
     else:
         # Use sequential rendering
-        logger.info(f"Using sequential rendering" + 
+        logger.info(f"Using sequential rendering" +
                    (" (parallel rendering disabled)" if not parallel else ""))
         return render_clips_sequential(
             clips=clips,

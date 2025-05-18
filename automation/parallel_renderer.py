@@ -13,10 +13,14 @@ from tqdm import tqdm
 from dotenv import load_dotenv
 # MoviePy imports
 from moviepy import VideoFileClip, AudioFileClip, CompositeVideoClip, concatenate_videoclips
+from moviepy.video.fx import __all__ as vfx
 
 # Load environment variables
 load_dotenv()
 TEMP_DIR = os.getenv("TEMP_DIR", tempfile.gettempdir())
+
+# Default crossfade duration
+DEFAULT_CROSSFADE_DURATION = 1.0  # Increased to 1 second
 
 # Import our memory helper
 try:
@@ -127,7 +131,7 @@ def render_clip_with_ffmpeg(
     clip,
     temp_dir: str,
     fps: int = 30,
-    preset: str = "veryfast",
+    preset: str = "ultrafast",
     threads: int = 2
 ) -> Tuple[int, Optional[str]]:
     """
@@ -201,8 +205,8 @@ def render_clip_with_ffmpeg(
 def concatenate_clips_with_ffmpeg(
     rendered_paths: List[Tuple[int, str]],
     output_file: str,
-    preset: str = "veryfast",
-    crossfade_duration: float = 0.5  # Added crossfade duration parameter
+    preset: str = "ultrafast",
+    crossfade_duration: float = DEFAULT_CROSSFADE_DURATION
 ) -> str:
     """
     Concatenate rendered clips using FFmpeg.
@@ -221,7 +225,7 @@ def concatenate_clips_with_ffmpeg(
 
     # Sort clips by index to ensure correct ordering
     sorted_paths = sorted(rendered_paths, key=lambda x: x[0])
-    
+
     # Log the ordering of clips for debugging
     logger.info("Concatenating clips in the following order:")
     for idx, path in sorted_paths:
@@ -233,11 +237,11 @@ def concatenate_clips_with_ffmpeg(
         shutil.copy(path, output_file)
         return output_file
 
-    # For multiple clips, use MoviePy for crossfade transitions
+    # For multiple clips, try a simplified approach using MoviePy
     try:
         logger.info(f"Using MoviePy to concatenate clips with {crossfade_duration:.1f}s crossfades")
         clips = []
-        
+
         # Load all clips
         for idx, path in sorted_paths:
             try:
@@ -246,23 +250,42 @@ def concatenate_clips_with_ffmpeg(
                 clips.append(clip)
             except Exception as clip_error:
                 logger.error(f"Failed to load clip {idx} at path {path}: {clip_error}")
-        
+
         if not clips:
             raise ValueError("No clips could be loaded for concatenation")
-        
-        # Create concatenated clip with crossfades
+
+        # Create a simple concatenation with crossfades
         if len(clips) > 1 and crossfade_duration > 0:
-            final_clip = concatenate_videoclips(
-                clips, 
-                method="compose",
-                transition=lambda clip1, clip2: clip1.crossfadeout(crossfade_duration) 
-            )
-            logger.info(f"Created concatenated clip with crossfades, duration: {final_clip.duration:.2f}s")
+            try:
+                # Method 1: Use the special syntax with negative times
+                logger.info("Using negative concatenation method with crossfades")
+                final_clip = concatenate_videoclips(
+                    clips,
+                    method="compose",
+                    padding=-crossfade_duration
+                )
+                logger.info(f"Created concatenated clip with crossfades, duration: {final_clip.duration:.2f}s")
+            except Exception as e:
+                logger.warning(f"First crossfade method failed: {e}, trying alternate method")
+
+                # Method 2: Manual crossfades
+                logger.info("Using manual crossfade method")
+                base_clips = []
+                for i, clip in enumerate(clips):
+                    # Add fade in/out to every clip
+                    if i > 0:  # Not the first clip
+                        clip = clip.with_effects([vfx.fadein(crossfade_duration)])
+                    if i < len(clips) - 1:  # Not the last clip
+                        clip = clip.with_effects([vfx.fadeout(crossfade_duration)])
+                    base_clips.append(clip)
+
+                final_clip = concatenate_videoclips(base_clips, method="compose")
+                logger.info(f"Created concatenated clip with manual fades, duration: {final_clip.duration:.2f}s")
         else:
             # Simple concatenation if no crossfade
             final_clip = concatenate_videoclips(clips)
             logger.info(f"Created concatenated clip without transitions, duration: {final_clip.duration:.2f}s")
-        
+
         # Write final clip
         final_clip.write_videofile(
             output_file,
@@ -275,20 +298,18 @@ def concatenate_clips_with_ffmpeg(
 
         # Close clips to free memory
         for clip in clips:
-            if hasattr(clip, 'close'):
-                clip.close()
-        if hasattr(final_clip, 'close'):
-            final_clip.close()
+            clip.close()
+        final_clip.close()
 
         return output_file
-        
+
     except Exception as e:
         logger.error(f"MoviePy concatenation failed: {e}")
         logger.error(traceback.format_exc())
-        
+
         # Fallback to simple FFmpeg concatenation without transitions
         logger.info("Falling back to simple FFmpeg concatenation without transitions")
-        
+
         # Create a temporary directory for the concat list
         temp_dir = os.path.dirname(sorted_paths[0][1])
         concat_list_path = os.path.join(temp_dir, f"concat_list_{uuid.uuid4().hex[:8]}.txt")
@@ -319,7 +340,7 @@ def render_clips_parallel(
     fps: int = 30,
     logger=None,
     temp_dir: str = None,
-    preset: str = "veryfast",
+    preset: str = "ultrafast",
     resource_config: Dict[str, Any] = None,
     clean_temp: bool = True,
     crossfade_duration: float = 0.5
@@ -404,8 +425,8 @@ def render_clips_parallel(
 
     # Concatenate the rendered clips with crossfades
     output_path = concatenate_clips_with_ffmpeg(
-        rendered_paths, 
-        output_file, 
+        rendered_paths,
+        output_file,
         preset=preset,
         crossfade_duration=crossfade_duration
     )
@@ -437,7 +458,7 @@ def render_clips_sequential(
     fps: int = 30,
     logger=None,
     temp_dir: str = None,
-    preset: str = "veryfast",
+    preset: str = "ultrafast",
     crossfade_duration: float = 0.5
 ) -> str:
     """
@@ -491,8 +512,8 @@ def render_clips_sequential(
 
     # Concatenate the rendered clips with crossfades
     return concatenate_clips_with_ffmpeg(
-        rendered_paths, 
-        output_file, 
+        rendered_paths,
+        output_file,
         preset=preset,
         crossfade_duration=crossfade_duration
     )

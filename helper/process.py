@@ -5,7 +5,8 @@ import logging
 import numpy as np
 import concurrent.futures
 import os
-from moviepy  import VideoClip, concatenate_videoclips, ColorClip, CompositeVideoClip,VideoFileClip
+from moviepy import VideoClip, concatenate_videoclips, ColorClip, CompositeVideoClip, VideoFileClip
+from moviepy.video.fx import __all__ as vfx
 from helper.blur import custom_blur, custom_edge_blur
 from helper.minor_helper import measure_time
 from functools import partial
@@ -36,23 +37,43 @@ def _process_background_clip(clip, target_duration, blur_background=False, edge_
         VideoClip: Processed clip with matching duration
     """
     resolution = (1080, 1920) # Assuming a standard resolution for YouTube Shorts
-    # Handle videos shorter than needed duration with proper looping
+
+    # Handle videos shorter than needed duration
     if clip.duration < target_duration:
-        # Create enough loops to cover the needed duration
-        loops_needed = int(np.ceil(target_duration / clip.duration))
-        looped_clips = []
+        # Decide on strategy based on how much shorter the clip is
+        duration_ratio = target_duration / clip.duration
 
-        for loop in range(loops_needed):
-            if loop == loops_needed - 1:
-                # For the last segment, only take what we need
-                remaining_needed = target_duration - (loop * clip.duration)
-                if remaining_needed > 0:
-                    segment = clip.subclipped(0, min(remaining_needed, clip.duration))
-                    looped_clips.append(segment)
-            else:
-                looped_clips.append(clip.copy())
+        # If clip is very short compared to target, use loop approach
+        if duration_ratio > 2.5:
+            # Create enough loops to cover the needed duration
+            loops_needed = int(np.ceil(target_duration / clip.duration))
+            looped_clips = []
 
-        clip = concatenate_videoclips(looped_clips)
+            for loop in range(loops_needed):
+                if loop == loops_needed - 1:
+                    # For the last segment, only take what we need
+                    remaining_needed = target_duration - (loop * clip.duration)
+                    if remaining_needed > 0:
+                        segment = clip.subclipped(0, min(remaining_needed, clip.duration))
+                        looped_clips.append(segment)
+                else:
+                    # For forward loops, play forward
+                    if loop % 2 == 0:
+                        looped_clips.append(clip.copy())
+                    # For backward loops, play in reverse for more natural looping
+                    else:
+                        reversed_clip = clip.copy().fx(vfx.time_mirror)
+                        looped_clips.append(reversed_clip)
+
+            clip = concatenate_videoclips(looped_clips)
+        else:
+            # For clips that are only slightly shorter, use slow motion
+            # Calculate the slow-down factor needed
+            slow_factor = duration_ratio
+            # Use time interpolation to slow down the clip
+            clip = clip.fx(vfx.speedx, 1/slow_factor)
+            # Ensure we get exactly the duration we need
+            clip = clip.with_duration(target_duration)
     else:
         # If longer than needed, take a random segment
         if clip.duration > target_duration + 1:
