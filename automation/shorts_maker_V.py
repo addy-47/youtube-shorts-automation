@@ -253,16 +253,48 @@ class YTShortsCreator_V:
             section_clips = []
             section_info = {}  # For better logging in parallel renderer
 
+            # First, check audio durations to ensure they match expected section durations
+            for i, audio_section in enumerate(audio_data):
+                expected_duration = script_sections[i].get('duration', 5)
+                if audio_section and 'path' in audio_section:
+                    try:
+                        audio_clip = AudioFileClip(audio_section['path'])
+                        actual_duration = audio_clip.duration
+                        audio_clip.close()
+                        
+                        # Log any significant mismatches for debugging
+                        if abs(actual_duration - expected_duration) > 0.5:
+                            logger.warning(f"Section {i} audio duration mismatch: expected={expected_duration:.2f}s, actual={actual_duration:.2f}s")
+                    except Exception as e:
+                        logger.error(f"Error checking audio duration for section {i}: {e}")
+
+            # Now process each section with corrected audio sync
             for i, (bg_clip, audio, text_clip) in enumerate(zip(background_clips, audio_data, text_clips)):
+                # Ensure section duration matches script section duration
+                section_duration = script_sections[i].get('duration', 5)
+                bg_clip = bg_clip.with_duration(section_duration)
+                
                 # Add text clip to background if available
                 if text_clip:
-                    composite = CompositeVideoClip([bg_clip, text_clip])
+                    # Make sure text clip has the proper duration
+                    text_clip = text_clip.with_duration(section_duration)
+                    composite = CompositeVideoClip([bg_clip, text_clip], duration=section_duration)
                 else:
                     composite = bg_clip
-
-                # Add audio
-                if audio:
-                    composite = composite.with_audio(AudioFileClip(audio['path']))
+                
+                # Add audio with proper synchronization
+                if audio and 'path' in audio:
+                    try:
+                        # Load audio and set its duration to match the section
+                        audio_clip = AudioFileClip(audio['path'])
+                        # Only trim if audio is longer than section
+                        if audio_clip.duration > section_duration:
+                            audio_clip = audio_clip.with_duration(section_duration)
+                        
+                        # Set start to ensure perfect sync from beginning
+                        composite = composite.with_audio(audio_clip.with_start(0))
+                    except Exception as e:
+                        logger.error(f"Error adding audio to section {i}: {e}")
 
                 # Add debugging info to the clip
                 section_text = script_sections[i].get('text', '')[:30] + '...' if len(script_sections[i].get('text', '')) > 30 else script_sections[i].get('text', '')
@@ -273,7 +305,7 @@ class YTShortsCreator_V:
                 section_info[i] = {
                     'section_idx': i,
                     'section_text': section_text,
-                    'duration': script_sections[i].get('duration', 5)
+                    'duration': section_duration
                 }
 
                 section_clips.append(composite)

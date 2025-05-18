@@ -374,40 +374,46 @@ class TextHelper:
 
           # Try different methods to get text dimensions based on Pillow version
           try:
-              # Modern method (Pillow >= 8.0.0)
+              # Use bbox for Pillow >= 8.0.0 (compatible with Python 3.13)
               bbox = draw.textbbox((0, 0), word, font=font)
               text_width = bbox[2] - bbox[0]
               text_height = bbox[3] - bbox[1]
           except AttributeError:
-              try:
-                  # Alternative method (Pillow >= 7.0.0)
-                  text_width, text_height = draw.getsize(word, font=font)
-              except AttributeError:
-                  # Last resort fallback for very old versions
-                  text_width = len(word) * font_size * 0.6
-                  text_height = font_size * 1.2
+              # Fallback calculation for older versions
+              text_width = len(word) * font_size * 0.6
+              text_height = font_size * 1.2
 
-          # Add padding
-          padding_w = int(text_width * 0.2)
-          padding_h = int(text_height * 0.3)
+          # Add more padding for better visual appearance
+          padding_w = int(text_width * 0.3)
+          padding_h = int(text_height * 0.4)
           width = text_width + padding_w * 2
           height = text_height + padding_h * 2
 
-          # Create pill background
-          radius = height // 3
+          # Create pill background with a better-looking radius
+          radius = min(height // 2, 30)  # Limit radius for better appearance, but no more than half height
           pill_img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
           draw = ImageDraw.Draw(pill_img)
 
-          # Draw the rounded rectangle
-          draw.rectangle([(radius, 0), (width - radius, height)], fill=pill_color)
-          draw.rectangle([(0, radius), (width, height - radius)], fill=pill_color)
-          draw.ellipse([(0, 0), (radius * 2, radius * 2)], fill=pill_color)
-          draw.ellipse([(width - radius * 2, 0), (width, radius * 2)], fill=pill_color)
-          draw.ellipse([(0, height - radius * 2), (radius * 2, height)], fill=pill_color)
-          draw.ellipse([(width - radius * 2, height - radius * 2), (width, height)], fill=pill_color)
+          # Draw the rounded rectangle (pill) with proper rounding
+          # Left and right semi-circles
+          draw.ellipse([(0, 0), (2 * radius, height)], fill=pill_color)
+          draw.ellipse([(width - 2 * radius, 0), (width, height)], fill=pill_color)
+          
+          # Center rectangle
+          if width > 2 * radius:
+              draw.rectangle([(radius, 0), (width - radius, height)], fill=pill_color)
 
-          # Draw text on the pill
-          draw.text((padding_w, padding_h), word, font=font, fill=text_color)
+          # Draw text in the center of the pill - properly positioned
+          text_x = (width - text_width) // 2  # Center horizontally
+          text_y = (height - text_height) // 2  # Center vertically
+          
+          # Use newer Pillow method for drawing text if available
+          try:
+              # For Pillow >= 8.0.0
+              draw.text((text_x, text_y), word, font=font, fill=text_color)
+          except TypeError:
+              # Fallback for older Pillow versions
+              draw.text((padding_w, padding_h), word, font=font, fill=text_color)
 
           # Convert PIL Image to numpy array for MoviePy
           return np.array(pill_img)
@@ -436,16 +442,31 @@ class TextHelper:
 
       # Calculate center position for the clip in the frame
       def get_position(t):
-          return position
+          """
+          Function to position the word-by-word clip centrally in the frame.
+          This ensures the text stays perfectly centered regardless of word length.
+          """
+          # Center the text but add a slight offset for better visual appearance
+          # Default position is center, but use the user's position if provided
+          if position == ('center', 'center'):
+              # For center position, ensure perfect centering
+              return ('center', 'center')
+          elif isinstance(position, tuple) and len(position) == 2:
+              # Use the user's custom position
+              return position
+          else:
+              # Default fallback to center
+              return ('center', 'center')
 
-      # Apply center positioning
-      combined_clip = combined_clip.with_position(get_position)
+      # Apply center positioning with a transparent background of the full resolution size
+      word_clip_width, word_clip_height = combined_clip.size
+      bg = ColorClip(size=self.resolution, color=(0, 0, 0, 0)).with_duration(duration)
 
-      # Create a transparent background
-      bg = ColorClip(size=self.resolution, color=(0,0,0,0)).with_duration(duration)
-
-      # Overlay text on background
-      final_clip = CompositeVideoClip([bg, combined_clip], size=self.resolution)
+      # Create final clip with proper full-frame compositing to prevent cutoff
+      final_clip = CompositeVideoClip(
+          [bg, combined_clip.with_position(get_position)], 
+          size=self.resolution
+      )
 
       return final_clip
 

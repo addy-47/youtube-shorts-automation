@@ -166,18 +166,36 @@ def render_clip_with_ffmpeg(
             # This is already a file path, just return it
             return section_idx, clip
 
-        # Use MoviePy to render the clip
-        clip.write_videofile(
-            output_path,
-            fps=fps,
-            codec="libx264",
-            audio_codec="aac" if clip_info['has_audio'] else None,
-            preset=preset,
-            threads=threads,
-            ffmpeg_params=['-bufsize', '24M', '-maxrate', '8M', '-b:a', '192k',
-                          '-ar', '48000', '-pix_fmt', 'yuv420p'],
-            logger=None
-        )
+        # Use MoviePy to render the clip with enhanced buffer settings to prevent frame read errors
+        max_retries = 2
+        retry_count = 0
+        
+        while retry_count <= max_retries:
+            try:
+                clip.write_videofile(
+                    output_path,
+                    fps=fps,
+                    codec="libx264",
+                    audio_codec="aac" if clip_info['has_audio'] else None,
+                    preset=preset,
+                    threads=threads,
+                    ffmpeg_params=[
+                        '-bufsize', '50M',  # Increased buffer size
+                        '-maxrate', '10M',  # Increased max rate
+                        '-b:a', '192k',
+                        '-ar', '48000',
+                        '-pix_fmt', 'yuv420p',
+                        '-max_muxing_queue_size', '9999'  # Handle muxing queue size issues
+                    ],
+                    logger=None
+                )
+                break  # If successful, exit the retry loop
+            except Exception as e:
+                retry_count += 1
+                if retry_count > max_retries:
+                    raise  # Re-raise the exception if we've exhausted retries
+                logger.warning(f"Retry {retry_count}/{max_retries} for rendering {debug_info}: {e}")
+                time.sleep(1)  # Brief pause before retrying
 
         if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
             logger.info(f"Successfully rendered {debug_info} to {os.path.basename(output_path)}")
@@ -223,7 +241,7 @@ def concatenate_clips_with_ffmpeg(
     if not rendered_paths:
         raise ValueError("No paths to concatenate")
 
-    # Sort clips by index to ensure correct ordering
+    # Sort clips strictly by section_idx to ensure correct ordering
     sorted_paths = sorted(rendered_paths, key=lambda x: x[0])
 
     # Log the ordering of clips for debugging
@@ -241,18 +259,31 @@ def concatenate_clips_with_ffmpeg(
     try:
         logger.info(f"Using MoviePy to concatenate clips with {crossfade_duration:.1f}s crossfades")
         clips = []
+        clip_indices = []  # Store indices to verify order
 
         # Load all clips
         for idx, path in sorted_paths:
             try:
                 clip = VideoFileClip(path)
+                # Store section index as attribute for debugging
+                clip._section_idx = idx
                 logger.info(f"Loaded clip {idx}: {os.path.basename(path)}, duration={clip.duration:.2f}s")
                 clips.append(clip)
+                clip_indices.append(idx)
             except Exception as clip_error:
                 logger.error(f"Failed to load clip {idx} at path {path}: {clip_error}")
 
         if not clips:
             raise ValueError("No clips could be loaded for concatenation")
+
+        # Double-check clip ordering one more time
+        if clip_indices != sorted(clip_indices):
+            logger.warning(f"Clip order issue detected. Expected: {sorted(clip_indices)}, Got: {clip_indices}")
+            # Re-sort clips by their stored section index
+            clips_with_idx = [(getattr(clip, '_section_idx', i), clip) for i, clip in enumerate(clips)]
+            clips_with_idx.sort(key=lambda x: x[0])
+            clips = [clip for _, clip in clips_with_idx]
+            logger.info(f"Re-sorted clips for proper ordering")
 
         # Create a simple concatenation with crossfades
         if len(clips) > 1 and crossfade_duration > 0:
