@@ -378,6 +378,7 @@ class TextHelper:
 
       def make_frame_with_pill(word, font_size=font_size, font_path=font_path,
                               text_color=text_color, pill_color=pill_color):
+          """Create a properly shaped pill with centered text for word-by-word animation."""
           # Load font
           try:
               font = ImageFont.truetype(font_path, font_size)
@@ -385,54 +386,51 @@ class TextHelper:
               # Fallback to default font
               font = ImageFont.load_default()
 
-          # Get text size using modern methods compatible with newer Pillow versions
+          # Create a temporary image to measure text
           img = Image.new('RGBA', (1, 1), (0, 0, 0, 0))
           draw = ImageDraw.Draw(img)
 
-          # Try different methods to get text dimensions based on Pillow version
+          # Get text dimensions - compatible with Pillow in Python 3.13
           try:
-              # Use bbox for Pillow >= 8.0.0 (compatible with Python 3.13)
+              # Modern method (Pillow >= 8.0.0)
               bbox = draw.textbbox((0, 0), word, font=font)
               text_width = bbox[2] - bbox[0]
               text_height = bbox[3] - bbox[1]
           except AttributeError:
-              # Fallback calculation for older versions
+              # Fallback for older versions
               text_width = len(word) * font_size * 0.6
               text_height = font_size * 1.2
 
-          # Add more padding for better visual appearance
-          padding_w = int(text_width * 0.3)
-          padding_h = int(text_height * 0.4)
+          # Add generous padding for better visual appearance
+          padding_w = int(text_width * 0.4)  # Increased horizontal padding
+          padding_h = int(text_height * 0.5)  # Increased vertical padding
           width = text_width + padding_w * 2
           height = text_height + padding_h * 2
 
-          # Create pill background with a better-looking radius
-          radius = min(height // 2, 30)  # Limit radius for better appearance, but no more than half height
+          # Create the pill image with proper dimensions
           pill_img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
           draw = ImageDraw.Draw(pill_img)
 
-          # Draw the rounded rectangle (pill) with proper rounding
-          # Left and right semi-circles
-          draw.ellipse([(0, 0), (2 * radius, height)], fill=pill_color)
-          draw.ellipse([(width - 2 * radius, 0), (width, height)], fill=pill_color)
-          
-          # Center rectangle
-          if width > 2 * radius:
+          # Calculate proper radius for the pill (half of height)
+          radius = height // 2
+
+          # Draw a proper pill shape
+          # 1. Draw the middle rectangle
+          if width > height:  # Only if wider than tall
               draw.rectangle([(radius, 0), (width - radius, height)], fill=pill_color)
+              
+          # 2. Draw the rounded ends (half-circles)
+          draw.ellipse([(0, 0), (height, height)], fill=pill_color)  # Left circle
+          draw.ellipse([(width - height, 0), (width, height)], fill=pill_color)  # Right circle
 
-          # Draw text in the center of the pill - properly positioned
-          text_x = (width - text_width) // 2  # Center horizontally
-          text_y = (height - text_height) // 2  # Center vertically
-          
-          # Use newer Pillow method for drawing text if available
-          try:
-              # For Pillow >= 8.0.0
-              draw.text((text_x, text_y), word, font=font, fill=text_color)
-          except TypeError:
-              # Fallback for older Pillow versions
-              draw.text((padding_w, padding_h), word, font=font, fill=text_color)
+          # Calculate exact center position for text
+          text_x = (width - text_width) // 2
+          text_y = (height - text_height) // 2
 
-          # Convert PIL Image to numpy array for MoviePy
+          # Draw text centered in the pill
+          draw.text((text_x, text_y), word, font=font, fill=text_color)
+
+          # Convert to numpy array for MoviePy
           return np.array(pill_img)
 
       # Create a video clip for each word with its own pill background
@@ -440,48 +438,32 @@ class TextHelper:
       current_time = 0
 
       for i, word in enumerate(words):
-          # Make a function to generate frames for this specific word
-          make_frame = lambda t, word=word: make_frame_with_pill(word)
-
           # Create a clip for this word
+          make_frame = lambda t, word=word: make_frame_with_pill(word)
           clip = VideoClip(make_frame, duration=word_durations[i])
-
-          # Set start time
           clip = clip.with_start(current_time)
-
-          # Update current time for next word
           current_time += word_durations[i] + transition_duration
-
           word_clips.append(clip)
 
       # Combine all word clips
       combined_clip = CompositeVideoClip(word_clips)
 
-      # Calculate center position for the clip in the frame
+      # Set position for the entire word-by-word animation
       def get_position(t):
-          """
-          Function to position the word-by-word clip centrally in the frame.
-          This ensures the text stays perfectly centered regardless of word length.
-          """
-          # Center the text but add a slight offset for better visual appearance
-          # Default position is center, but use the user's position if provided
+          """Ensure proper positioning of the word-by-word animation in the frame."""
           if position == ('center', 'center'):
-              # For center position, ensure perfect centering
               return ('center', 'center')
           elif isinstance(position, tuple) and len(position) == 2:
-              # Use the user's custom position
               return position
           else:
-              # Default fallback to center
               return ('center', 'center')
 
-      # Apply center positioning with a transparent background of the full resolution size
-      word_clip_width, word_clip_height = combined_clip.size
+      # Create background and final composite
       bg = ColorClip(size=self.resolution, color=(0, 0, 0, 0)).with_duration(duration)
-
-      # Create final clip with proper full-frame compositing to prevent cutoff
+      
+      # Ensure the clip is properly centered in the frame
       final_clip = CompositeVideoClip(
-          [bg, combined_clip.with_position(get_position)], 
+          [bg, combined_clip.with_position(get_position)],
           size=self.resolution
       )
 

@@ -253,7 +253,8 @@ class YTShortsCreator_V:
             section_clips = []
             section_info = {}  # For better logging in parallel renderer
 
-            # First, check audio durations to ensure they match expected section durations
+            # First, check audio durations to use them as source of truth
+            audio_durations = {}
             for i, audio_section in enumerate(audio_data):
                 expected_duration = script_sections[i].get('duration', 5)
                 if audio_section and 'path' in audio_section:
@@ -262,21 +263,29 @@ class YTShortsCreator_V:
                         actual_duration = audio_clip.duration
                         audio_clip.close()
                         
-                        # Log any significant mismatches for debugging
+                        # Store actual audio duration for this section
+                        audio_durations[i] = actual_duration
+                        
+                        # Log mismatches for debugging
                         if abs(actual_duration - expected_duration) > 0.5:
-                            logger.warning(f"Section {i} audio duration mismatch: expected={expected_duration:.2f}s, actual={actual_duration:.2f}s")
+                            logger.info(f"Section {i} audio duration ({actual_duration:.2f}s) will be used instead of script duration ({expected_duration:.2f}s)")
                     except Exception as e:
                         logger.error(f"Error checking audio duration for section {i}: {e}")
+                        audio_durations[i] = expected_duration
+                else:
+                    audio_durations[i] = expected_duration
 
-            # Now process each section with corrected audio sync
+            # Now process each section using audio duration as the source of truth
             for i, (bg_clip, audio, text_clip) in enumerate(zip(background_clips, audio_data, text_clips)):
-                # Ensure section duration matches script section duration
-                section_duration = script_sections[i].get('duration', 5)
+                # Use the audio duration as the source of truth for section duration
+                section_duration = audio_durations.get(i, script_sections[i].get('duration', 5))
+                
+                # Adjust background to match audio duration
                 bg_clip = bg_clip.with_duration(section_duration)
                 
                 # Add text clip to background if available
                 if text_clip:
-                    # Make sure text clip has the proper duration
+                    # Make text clip match audio duration
                     text_clip = text_clip.with_duration(section_duration)
                     composite = CompositeVideoClip([bg_clip, text_clip])
                     # Set duration after creation
@@ -284,40 +293,19 @@ class YTShortsCreator_V:
                 else:
                     composite = bg_clip
                 
-                # Add audio with proper synchronization
+                # Add audio without duration adjustment
                 if audio and 'path' in audio:
                     try:
-                        # Load audio and set its duration to match the section
+                        # Load audio without modifying its duration
                         audio_clip = AudioFileClip(audio['path'])
-                        
-                        # Check if audio is valid and has duration
-                        if audio_clip.duration <= 0:
-                            logger.warning(f"Section {i} has invalid audio duration: {audio_clip.duration}")
-                            # Create empty audio with correct duration
-                            empty_audio = AudioFileClip(audio['path'])._spawn([], duration=section_duration)
-                            composite = composite.with_audio(empty_audio)
-                        else:
-                            # Adjust audio duration if needed
-                            if abs(audio_clip.duration - section_duration) > 0.5:
-                                logger.info(f"Adjusting audio duration for section {i} from {audio_clip.duration:.2f}s to {section_duration:.2f}s")
-                                
-                                if audio_clip.duration < section_duration:
-                                    # Extend audio by looping if too short
-                                    repeats = int(section_duration / audio_clip.duration) + 1
-                                    audio_clips = [audio_clip] * repeats
-                                    extended_audio = concatenate_audioclips(audio_clips)
-                                    audio_clip = extended_audio.with_duration(section_duration)
-                                else:
-                                    # Trim if too long
-                                    audio_clip = audio_clip.with_duration(section_duration)
-                            
-                            # Set start to ensure perfect sync from beginning
-                            composite = composite.with_audio(audio_clip.with_start(0))
+                        # Apply audio as is, retaining its original length
+                        composite = composite.with_audio(audio_clip)
                     except Exception as e:
                         logger.error(f"Error adding audio to section {i}: {e}")
                         # Create silent audio as fallback
                         try:
-                            silent_audio = AudioFileClip(audio['path'])._spawn([], duration=section_duration)
+                            silent_audio = AudioFileClip.__new__(AudioFileClip)
+                            silent_audio.duration = section_duration
                             composite = composite.with_audio(silent_audio)
                         except:
                             logger.error(f"Could not create silent audio for section {i}")

@@ -1,0 +1,296 @@
+2025-05-18 16:47:46,989 - INFO - __main__ - Manually selected video-based creator (YTShortsCreator_V)
+2025-05-18 16:47:47,419 - INFO - helper.audio - Google Cloud TTS initialized successfully
+2025-05-18 16:47:47,422 - INFO - automation.shorts_maker_V - Google Cloud TTS initialized successfully
+2025-05-18 16:47:50,448 - INFO - __main__ - Generating comprehensive content for : Sierra made the games of my childhood. Are they still fun to play? - Ars Technica
+2025-05-18 16:47:56,735 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 16:47:56,748 - INFO - automation.content_generator - Successfully generated comprehensive content package:
+2025-05-18 16:47:56,748 - INFO - automation.content_generator - Title: Sierra Games: Are They Still Fun to Play in 2025?
+2025-05-18 16:47:56,749 - INFO - automation.content_generator - Script length: 74 words
+2025-05-18 16:47:56,749 - INFO - automation.content_generator - Thumbnail HF prompt: An eye-catching collage of iconic Sierra game char...
+2025-05-18 16:47:56,749 - INFO - automation.content_generator - Thumbnail Unsplash query: retro gaming nostalgia
+2025-05-18 16:47:56,749 - INFO - __main__ - Content package generated successfully:
+2025-05-18 16:47:56,749 - INFO - __main__ - Title: LazyCreator presents: Sierra Games: Are They Still Fun to Play in 2025?
+2025-05-18 16:47:56,749 - INFO - __main__ - Description length: 134 characters
+2025-05-18 16:47:56,749 - INFO - __main__ - Raw script generated successfully
+2025-05-18 16:47:56,750 - INFO - helper.minor_helper - Parsed script into 9 sentences
+2025-05-18 16:47:56,750 - INFO - helper.minor_helper - Added sentence 0 to cards: 'Remember the thrill of Sierra ...' (duration: 5s)
+2025-05-18 16:47:56,750 - INFO - helper.minor_helper - Added sentence 1 to cards: 'From King's Quest to Space Que...' (duration: 5s)
+2025-05-18 16:47:56,750 - INFO - helper.minor_helper - Added sentence 2 to cards: 'But are they still fun today?...' (duration: 3s)
+2025-05-18 16:47:56,751 - INFO - helper.minor_helper - Added sentence 3 to cards: 'Many gamers are rediscovering ...' (duration: 5s)
+2025-05-18 16:47:56,751 - INFO - helper.minor_helper - Added sentence 4 to cards: 'The nostalgia hits hard, but t...' (duration: 5s)
+2025-05-18 16:47:56,751 - INFO - helper.minor_helper - Added sentence 5 to cards: 'If you loved these games, it's...' (duration: 5s)
+2025-05-18 16:47:56,751 - INFO - helper.minor_helper - Added sentence 6 to cards: 'Dive back into those pixelated...' (duration: 5s)
+2025-05-18 16:47:56,752 - INFO - helper.minor_helper - Added sentence 7 to cards: 'Have you tried them lately?...' (duration: 3s)
+2025-05-18 16:47:56,752 - INFO - helper.minor_helper - Added sentence 8 to cards: 'Let us know your thoughts in t...' (duration: 5s)
+2025-05-18 16:47:56,753 - INFO - helper.minor_helper - Created 9 script cards
+2025-05-18 16:47:56,753 - INFO - __main__ - Script parsed into 9 sections
+2025-05-18 16:47:56,753 - INFO - __main__ - Section 1: Remember the thrill of Sierra ... (duration: 5s)
+2025-05-18 16:47:56,754 - INFO - __main__ - Section 2: From King's Quest to Space Que... (duration: 5s)
+2025-05-18 16:47:56,754 - INFO - __main__ - Section 3: But are they still fun today?... (duration: 3s)
+2025-05-18 16:47:56,754 - INFO - __main__ - Section 4: Many gamers are rediscovering ... (duration: 5s)
+2025-05-18 16:47:56,755 - INFO - __main__ - Section 5: The nostalgia hits hard, but t... (duration: 5s)
+2025-05-18 16:47:56,755 - INFO - __main__ - Section 6: If you loved these games, it's... (duration: 5s)
+2025-05-18 16:47:56,756 - INFO - __main__ - Section 7: Dive back into those pixelated... (duration: 5s)
+2025-05-18 16:47:56,756 - INFO - __main__ - Section 8: Have you tried them lately?... (duration: 3s)
+2025-05-18 16:47:56,756 - INFO - __main__ - Section 9: Let us know your thoughts in t... (duration: 5s)
+2025-05-18 16:47:56,757 - INFO - __main__ - Added intro card with title: 'LazyCreator presents: Sierra Games: Are They Still Fun to Play in 2025?'
+2025-05-18 16:47:56,757 - INFO - __main__ - === FINAL SCRIPT CARDS ORDER ===
+2025-05-18 16:47:56,758 - INFO - __main__ - Section 0: 'LazyCreator presents: Sierra G...' (duration: 3s)
+2025-05-18 16:47:56,758 - INFO - __main__ - Section 1: 'Remember the thrill of Sierra ...' (duration: 5s)
+2025-05-18 16:47:56,758 - INFO - __main__ - Section 2: 'From King's Quest to Space Que...' (duration: 5s)
+2025-05-18 16:47:56,758 - INFO - __main__ - Section 3: 'But are they still fun today?...' (duration: 3s)
+2025-05-18 16:47:56,759 - INFO - __main__ - Section 4: 'Many gamers are rediscovering ...' (duration: 5s)
+2025-05-18 16:47:56,759 - INFO - __main__ - Section 5: 'The nostalgia hits hard, but t...' (duration: 5s)
+2025-05-18 16:47:56,760 - INFO - __main__ - Section 6: 'If you loved these games, it's...' (duration: 5s)
+2025-05-18 16:47:56,760 - INFO - __main__ - Section 7: 'Dive back into those pixelated...' (duration: 5s)
+2025-05-18 16:47:56,760 - INFO - __main__ - Section 8: 'Have you tried them lately?...' (duration: 3s)
+2025-05-18 16:47:56,761 - INFO - __main__ - Section 9: 'Let us know your thoughts in t...' (duration: 5s)
+2025-05-18 16:47:56,761 - INFO - __main__ - === END SCRIPT CARDS ORDER ===
+2025-05-18 16:47:56,761 - INFO - __main__ - Generating video search queries for each section using AI...
+2025-05-18 16:47:59,738 - INFO - httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-05-18 16:47:59,740 - INFO - automation.content_generator - Successfully generated batch video queries for 10 sections.
+2025-05-18 16:47:59,740 - INFO - __main__ - Section queries: 1: Sierra games nostalgia, 2: Sierra games thrill, 3: King's Quest gameplay, 4: classic games fun, 5: rediscovering classic games, 6: nostalgia gaming experience, 7: revisiting classic games, 8: pixelated game worlds, 9: gaming experiences, 10: comment section interaction
+2025-05-18 16:47:59,740 - INFO - __main__ - Creating YouTube Short
+2025-05-18 16:47:59,741 - INFO - helper.minor_helper - Starting YouTube short creation
+2025-05-18 16:47:59,741 - INFO - automation.shorts_maker_V - Scaling durations by factor 0.57 to fit max duration of 25s
+2025-05-18 16:47:59,741 - INFO - automation.shorts_maker_V - Starting parallel execution of major steps
+2025-05-18 16:47:59,741 - INFO - automation.parallel_tasks - Starting task: generate_text_clips
+2025-05-18 16:47:59,742 - INFO - automation.shorts_maker_V - Generating text clips in parallel
+2025-05-18 16:47:59,742 - INFO - automation.parallel_tasks - Starting task: generate_audio
+2025-05-18 16:47:59,743 - INFO - helper.text - Generating 1 text clips in parallel
+2025-05-18 16:47:59,744 - INFO - helper.text - Using ThreadPoolExecutor with dill for text generation
+2025-05-18 16:47:59,745 - INFO - automation.shorts_maker_V - Generating audio clips in parallel
+2025-05-18 16:47:59,745 - INFO - automation.parallel_tasks - Starting task: fetch_videos
+2025-05-18 16:47:59,746 - INFO - helper.audio - Generating 10 audio clips in parallel
+2025-05-18 16:47:59,752 - INFO - automation.shorts_maker_V - Fetching background videos in parallel
+2025-05-18 16:47:59,753 - INFO - helper.fetch - Fetching videos for 10 queries in parallel
+2025-05-18 16:47:59,763 - INFO - helper.fetch - Fetching 2 videos using pixabay API
+2025-05-18 16:47:59,768 - INFO - helper.fetch - Fetching 2 videos using pixabay API
+2025-05-18 16:47:59,776 - INFO - helper.fetch - Fetching 2 videos using pixabay API
+2025-05-18 16:47:59,781 - INFO - helper.fetch - Fetching 2 videos using pexels API
+2025-05-18 16:47:59,784 - INFO - helper.fetch - Fetching 2 videos using pexels API
+2025-05-18 16:47:59,787 - INFO - helper.fetch - Fetching 2 videos using pixabay API
+2025-05-18 16:47:59,793 - INFO - helper.fetch - Fetching 2 videos using pixabay API
+2025-05-18 16:47:59,803 - INFO - helper.fetch - Fetching 2 videos using pexels API
+2025-05-18 16:47:59,812 - INFO - helper.fetch - Fetching 2 videos using pixabay API
+2025-05-18 16:47:59,819 - INFO - helper.fetch - Fetching 2 videos using pexels API
+2025-05-18 16:48:00,157 - INFO - helper.text - Generated 1 text clips in 0.41 seconds
+2025-05-18 16:48:00,158 - INFO - helper.text - Generating 8 word-by-word text clips in parallel
+2025-05-18 16:48:00,181 - INFO - automation.voiceover - Speech synthesized for text [But are they still f...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066\audio_section_3_1747567079.mp3]
+2025-05-18 16:48:00,209 - INFO - automation.voiceover - Speech synthesized for text [If you loved these g...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066\audio_section_6_1747567079.mp3]
+2025-05-18 16:48:00,270 - INFO - automation.voiceover - Speech synthesized for text [Dive back into those...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066\audio_section_7_1747567079.mp3]
+2025-05-18 16:48:00,323 - INFO - automation.voiceover - Speech synthesized for text [From King's Quest to...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066\audio_section_2_1747567079.mp3]
+2025-05-18 16:48:00,402 - INFO - automation.voiceover - Speech synthesized for text [Remember the thrill ...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066\audio_section_1_1747567079.mp3]
+2025-05-18 16:48:00,522 - INFO - automation.voiceover - Speech synthesized for text [The nostalgia hits h...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066\audio_section_5_1747567079.mp3]
+2025-05-18 16:48:00,797 - INFO - automation.voiceover - Speech synthesized for text [Let us know your tho...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066\audio_section_9_1747567079.mp3]
+2025-05-18 16:48:00,798 - INFO - automation.voiceover - Speech synthesized for text [Many gamers are redi...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066\audio_section_4_1747567079.mp3]
+2025-05-18 16:48:00,798 - INFO - automation.voiceover - Speech synthesized for text [LazyCreator presents...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066\audio_section_0_1747567079.mp3]
+2025-05-18 16:48:01,219 - INFO - automation.voiceover - Speech synthesized for text [Have you tried them ...] and saved to [D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066\audio_section_8_1747567079.mp3]
+2025-05-18 16:48:01,391 - INFO - helper.audio - Generated 10 audio clips in 1.64 seconds
+2025-05-18 16:48:01,889 - INFO - helper.text - Generated 8 word-by-word text clips in 1.73 seconds
+2025-05-18 16:48:01,891 - INFO - helper.text - Generating 1 text clips in parallel
+2025-05-18 16:48:01,892 - INFO - helper.text - Using ThreadPoolExecutor with dill for text generation
+2025-05-18 16:48:02,585 - INFO - helper.text - Generated 1 text clips in 0.69 seconds
+2025-05-18 16:48:02,595 - INFO - automation.parallel_tasks - Completed task: generate_text_clips
+2025-05-18 16:48:04,567 - INFO - helper.fetch - Fetched 1 videos for query 'comment section interaction'
+2025-05-18 16:48:06,393 - INFO - helper.fetch - Fetched 1 videos for query 'classic games fun'
+2025-05-18 16:48:07,928 - INFO - helper.fetch - Fetched 1 videos for query 'rediscovering classic games'
+2025-05-18 16:48:08,715 - INFO - automation.parallel_tasks - Completed task: generate_audio
+2025-05-18 16:48:09,014 - INFO - helper.fetch - Fetched 1 videos for query 'pixelated game worlds'
+2025-05-18 16:48:09,198 - INFO - helper.fetch - Fetched 1 videos for query 'nostalgia gaming experience'
+2025-05-18 16:48:19,976 - INFO - helper.fetch - Fetched 1 videos for query 'Sierra games thrill'
+2025-05-18 16:48:20,946 - INFO - helper.fetch - Fetched 1 videos for query 'Sierra games nostalgia'
+2025-05-18 16:48:21,146 - INFO - helper.fetch - Fetched 1 videos for query 'revisiting classic games'
+2025-05-18 16:48:21,787 - INFO - helper.fetch - Fetched 1 videos for query 'gaming experiences'
+2025-05-18 16:48:27,788 - INFO - helper.fetch - Fetched 1 videos for query 'King's Quest gameplay'
+2025-05-18 16:48:27,819 - INFO - helper.fetch - Fetched videos for 10 queries in 28.07 seconds
+2025-05-18 16:48:27,823 - INFO - automation.parallel_tasks - Completed task: fetch_videos
+2025-05-18 16:48:27,834 - INFO - automation.parallel_tasks - All tasks executed in 28.09 seconds
+2025-05-18 16:48:27,839 - INFO - automation.shorts_maker_V - Processing background videos
+2025-05-18 16:48:27,844 - INFO - helper.process - Processing 10 background clips in parallel
+2025-05-18 16:48:27,847 - INFO - helper.process - Using ThreadPoolExecutor with dill for background processing
+2025-05-18 16:48:32,044 - INFO - helper.process - Processed background clip 1/10
+2025-05-18 16:48:35,036 - INFO - helper.process - Processed background clip 2/10
+2025-05-18 16:48:39,657 - INFO - helper.process - Processed background clip 3/10
+2025-05-18 16:48:40,436 - INFO - helper.process - Processed background clip 4/10
+2025-05-18 16:49:35,531 - INFO - helper.process - Processed background clip 5/10
+2025-05-18 16:49:36,842 - INFO - helper.process - Processed background clip 6/10
+2025-05-18 16:49:37,275 - INFO - helper.process - Processed background clip 7/10
+2025-05-18 16:49:37,535 - INFO - helper.process - Processed background clip 8/10
+2025-05-18 16:49:38,616 - INFO - helper.process - Processed background clip 9/10
+2025-05-18 16:49:51,850 - INFO - helper.process - Processed background clip 10/10
+2025-05-18 16:49:51,990 - INFO - helper.process - Processed 10 background clips in 84.15 seconds
+2025-05-18 16:49:52,706 - WARNING - automation.shorts_maker_V - Section 0 audio duration mismatch: expected=1.70s, actual=4.82s
+2025-05-18 16:49:53,010 - WARNING - automation.shorts_maker_V - Section 1 audio duration mismatch: expected=2.84s, actual=1.99s
+2025-05-18 16:49:53,350 - WARNING - automation.shorts_maker_V - Section 2 audio duration mismatch: expected=2.84s, actual=3.41s
+2025-05-18 16:49:54,255 - WARNING - automation.shorts_maker_V - Section 4 audio duration mismatch: expected=2.84s, actual=3.79s
+2025-05-18 16:49:57,665 - WARNING - automation.shorts_maker_V - Section 7 audio duration mismatch: expected=2.84s, actual=3.43s
+2025-05-18 16:49:58,197 - WARNING - automation.shorts_maker_V - Section 9 audio duration mismatch: expected=2.84s, actual=1.82s
+2025-05-18 16:50:00,821 - INFO - automation.shorts_maker_V - Adjusting audio duration for section 0 from 4.82s to 1.70s
+2025-05-18 16:50:04,957 - INFO - automation.shorts_maker_V - Adjusting audio duration for section 1 from 1.99s to 2.84s
+2025-05-18 16:50:06,267 - INFO - automation.shorts_maker_V - Adjusting audio duration for section 2 from 3.41s to 2.84s
+2025-05-18 16:50:12,259 - INFO - automation.shorts_maker_V - Adjusting audio duration for section 4 from 3.79s to 2.84s
+2025-05-18 16:50:14,861 - INFO - automation.shorts_maker_V - Adjusting audio duration for section 7 from 3.43s to 2.84s
+2025-05-18 16:50:15,499 - INFO - automation.shorts_maker_V - Adjusting audio duration for section 9 from 1.82s to 2.84s
+2025-05-18 16:50:15,505 - INFO - automation.shorts_maker_V - Rendering final video using optimized renderer
+2025-05-18 16:50:15,519 - INFO - automation.renderer - Rendering 10 clips with 30 fps
+2025-05-18 16:50:15,521 - INFO - automation.renderer - Using optimized parallel FFmpeg-based renderer
+2025-05-18 16:50:16,783 - INFO - helper.memory - System resources detected: 8 CPU cores, 5.9GB RAM
+2025-05-18 16:50:17,007 - INFO - helper.memory - Memory-based worker limit: 1
+2025-05-18 16:50:17,007 - INFO - helper.memory - CPU-based worker limit: 7
+2025-05-18 16:50:17,008 - INFO - helper.memory - Optimized worker count: 4
+2025-05-18 16:50:17,008 - INFO - helper.memory - Optimized for video rendering: 4 workers with 1 FFmpeg threads each
+2025-05-18 16:50:17,008 - INFO - automation.renderer - Resource config: 4 workers, 1 threads per worker
+2025-05-18 16:50:17,010 - INFO - automation.renderer - Rendering 10 clips with 4 workers and 1 FFmpeg threads each
+2025-05-18 16:50:17,074 - INFO - automation.renderer - Using FFmpeg: ffmpeg version N-118586-g629e8a2425-20250301 Copyright (c) 2000-2025 the FFmpeg developers
+2025-05-18 16:50:17,075 - INFO - automation.renderer - Preparing clip 0: section_idx=0, Section 0: LazyCreator presents: Sierra G...
+2025-05-18 16:50:17,076 - INFO - automation.renderer - Preparing clip 1: section_idx=1, Section 1: Remember the thrill of Sierra ...
+2025-05-18 16:50:17,076 - INFO - automation.renderer - Preparing clip 2: section_idx=2, Section 2: From King's Quest to Space Que...
+2025-05-18 16:50:17,076 - INFO - automation.renderer - Preparing clip 3: section_idx=3, Section 3: But are they still fun today?
+2025-05-18 16:50:17,077 - INFO - automation.renderer - Preparing clip 4: section_idx=4, Section 4: Many gamers are rediscovering ...
+2025-05-18 16:50:17,077 - INFO - automation.renderer - Preparing clip 5: section_idx=5, Section 5: The nostalgia hits hard, but t...
+2025-05-18 16:50:17,077 - INFO - automation.renderer - Preparing clip 6: section_idx=6, Section 6: If you loved these games, it's...
+2025-05-18 16:50:17,078 - INFO - automation.renderer - Preparing clip 7: section_idx=7, Section 7: Dive back into those pixelated...
+2025-05-18 16:50:17,078 - INFO - automation.renderer - Preparing clip 8: section_idx=8, Section 8: Have you tried them lately?
+2025-05-18 16:50:17,078 - INFO - automation.renderer - Preparing clip 9: section_idx=9, Section 9: Let us know your thoughts in t...
+2025-05-18 16:50:17,092 - INFO - automation.parallel_renderer - Rendering Section 0: LazyCreator presents: Sierra G...: duration=1.70s, size=(1080, 1920), section_idx=0
+2025-05-18 16:50:17,093 - INFO - automation.parallel_renderer - Rendering Section 1: Remember the thrill of Sierra ...: duration=2.84s, size=(1080, 1920), section_idx=1
+2025-05-18 16:50:17,100 - INFO - automation.parallel_renderer - Rendering Section 2: From King's Quest to Space Que...: duration=2.84s, size=(1080, 1920), section_idx=2
+2025-05-18 16:50:17,103 - INFO - automation.parallel_renderer - Rendering Section 3: But are they still fun today?: duration=1.70s, size=(1080, 1920), section_idx=3
+2025-05-18 16:52:48,180 - INFO - automation.parallel_renderer - Successfully rendered Section 3: But are they still fun today? to clip_003_ef6b3dc0.mp4
+2025-05-18 16:52:48,275 - INFO - automation.parallel_renderer - Rendering Section 4: Many gamers are rediscovering ...: duration=2.84s, size=(1080, 1920), section_idx=4
+2025-05-18 16:53:21,189 - INFO - automation.parallel_renderer - Successfully rendered Section 1: Remember the thrill of Sierra ... to clip_001_b71681b6.mp4
+2025-05-18 16:53:21,350 - INFO - automation.parallel_renderer - Rendering Section 5: The nostalgia hits hard, but t...: duration=2.84s, size=(1080, 1920), section_idx=5
+2025-05-18 16:54:09,405 - INFO - automation.parallel_renderer - Successfully rendered Section 2: From King's Quest to Space Que... to clip_002_b288c2fd.mp4
+2025-05-18 16:54:09,484 - INFO - automation.parallel_renderer - Rendering Section 6: If you loved these games, it's...: duration=2.84s, size=(1080, 1920), section_idx=6
+2025-05-18 16:54:36,130 - INFO - automation.parallel_renderer - Successfully rendered Section 0: LazyCreator presents: Sierra G... to clip_000_4da8879a.mp4
+2025-05-18 16:54:36,270 - INFO - automation.parallel_renderer - Rendering Section 7: Dive back into those pixelated...: duration=2.84s, size=(1080, 1920), section_idx=7
+2025-05-18 16:56:29,096 - INFO - automation.parallel_renderer - Successfully rendered Section 6: If you loved these games, it's... to clip_006_84d31fd6.mp4
+2025-05-18 16:56:29,180 - INFO - automation.parallel_renderer - Rendering Section 8: Have you tried them lately?: duration=1.70s, size=(1080, 1920), section_idx=8
+2025-05-18 16:57:21,370 - INFO - automation.parallel_renderer - Successfully rendered Section 4: Many gamers are rediscovering ... to clip_004_a057f6d8.mp4
+2025-05-18 16:57:22,050 - INFO - automation.parallel_renderer - Rendering Section 9: Let us know your thoughts in t...: duration=2.84s, size=(1080, 1920), section_idx=9
+2025-05-18 16:57:58,681 - INFO - automation.parallel_renderer - Successfully rendered Section 8: Have you tried them lately? to clip_008_e91d018a.mp4
+2025-05-18 16:57:58,808 - INFO - automation.parallel_renderer - Successfully rendered Section 5: The nostalgia hits hard, but t... to clip_005_ae829d8e.mp4
+2025-05-18 16:58:56,342 - INFO - automation.parallel_renderer - Successfully rendered Section 7: Dive back into those pixelated... to clip_007_ac2213ff.mp4
+2025-05-18 17:00:12,832 - INFO - automation.parallel_renderer - Successfully rendered Section 9: Let us know your thoughts in t... to clip_009_1045f547.mp4
+2025-05-18 17:00:13,101 - INFO - automation.renderer - Successfully rendered 10/10 clips
+2025-05-18 17:00:13,105 - INFO - automation.parallel_renderer - Concatenating clips in the following order:
+2025-05-18 17:00:13,106 - INFO - automation.parallel_renderer -   0: clip_000_4da8879a.mp4
+2025-05-18 17:00:13,106 - INFO - automation.parallel_renderer -   1: clip_001_b71681b6.mp4
+2025-05-18 17:00:13,107 - INFO - automation.parallel_renderer -   2: clip_002_b288c2fd.mp4
+2025-05-18 17:00:13,107 - INFO - automation.parallel_renderer -   3: clip_003_ef6b3dc0.mp4
+2025-05-18 17:00:13,110 - INFO - automation.parallel_renderer -   4: clip_004_a057f6d8.mp4
+2025-05-18 17:00:13,113 - INFO - automation.parallel_renderer -   5: clip_005_ae829d8e.mp4
+2025-05-18 17:00:13,113 - INFO - automation.parallel_renderer -   6: clip_006_84d31fd6.mp4
+2025-05-18 17:00:13,113 - INFO - automation.parallel_renderer -   7: clip_007_ac2213ff.mp4
+2025-05-18 17:00:13,114 - INFO - automation.parallel_renderer -   8: clip_008_e91d018a.mp4
+2025-05-18 17:00:13,114 - INFO - automation.parallel_renderer -   9: clip_009_1045f547.mp4
+2025-05-18 17:00:13,115 - INFO - automation.parallel_renderer - Using MoviePy to concatenate clips with 1.0s crossfades
+2025-05-18 17:00:13,832 - INFO - automation.parallel_renderer - Loaded clip 0: clip_000_4da8879a.mp4, duration=1.70s
+2025-05-18 17:00:14,496 - INFO - automation.parallel_renderer - Loaded clip 1: clip_001_b71681b6.mp4, duration=2.84s
+2025-05-18 17:00:15,120 - INFO - automation.parallel_renderer - Loaded clip 2: clip_002_b288c2fd.mp4, duration=2.84s
+2025-05-18 17:00:15,948 - INFO - automation.parallel_renderer - Loaded clip 3: clip_003_ef6b3dc0.mp4, duration=1.70s
+2025-05-18 17:00:17,257 - INFO - automation.parallel_renderer - Loaded clip 4: clip_004_a057f6d8.mp4, duration=2.84s
+2025-05-18 17:00:19,314 - INFO - automation.parallel_renderer - Loaded clip 5: clip_005_ae829d8e.mp4, duration=2.95s
+2025-05-18 17:00:21,940 - INFO - automation.parallel_renderer - Loaded clip 6: clip_006_84d31fd6.mp4, duration=2.88s
+2025-05-18 17:00:23,260 - INFO - automation.parallel_renderer - Loaded clip 7: clip_007_ac2213ff.mp4, duration=2.84s
+2025-05-18 17:00:29,190 - ERROR - automation.parallel_renderer - Failed to load clip 8 at path D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066\render\clip_008_e91d018a.mp4: 'duration'
+2025-05-18 17:00:44,654 - INFO - automation.parallel_renderer - Loaded clip 9: clip_009_1045f547.mp4, duration=0.00s
+2025-05-18 17:00:44,658 - INFO - automation.parallel_renderer - Using negative concatenation method with crossfades
+2025-05-18 17:00:45,002 - INFO - automation.parallel_renderer - Created concatenated clip with crossfades, duration: 12.59s
+2025-05-18 17:00:46,934 - ERROR - automation.parallel_renderer - MoviePy concatenation failed: [Errno 32] Broken pipe
+
+MoviePy error: FFMPEG encountered the following error while writing file yt_shorts_LazyCreator_presents_Sierra_Ga_20250518_164747TEMP_MPY_wvf_snd.mp4:
+
+ 
+2025-05-18 17:00:48,452 - ERROR - automation.parallel_renderer - Traceback (most recent call last):
+  File "D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\audio\io\ffmpeg_audiowriter.py", line 111, in write_frames
+    self.proc.stdin.write(frames_array.tobytes())
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\youtube-shorts-automation\automation\parallel_renderer.py", line 321, in concatenate_clips_with_ffmpeg
+    final_clip.write_videofile(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        output_file,
+        ^^^^^^^^^^^^
+    ...<4 lines>...
+        threads=4
+        ^^^^^^^^^
+    )
+    ^
+  File "<decorator-gen-68>", line 2, in write_videofile
+  File "D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\decorators.py", line 53, in requires_duration
+    return func(clip, *args, **kwargs)
+  File "<decorator-gen-67>", line 2, in write_videofile
+  File "D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\decorators.py", line 143, in use_clip_fps_by_default
+    return func(clip, *new_args, **new_kwargs)
+  File "<decorator-gen-66>", line 2, in write_videofile
+  File "D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\decorators.py", line 24, in convert_masks_to_RGB
+    return func(clip, *args, **kwargs)
+  File "<decorator-gen-65>", line 2, in write_videofile
+  File "D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\decorators.py", line 94, in wrapper
+    return func(*new_args, **new_kwargs)
+  File "D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\video\VideoClip.py", line 379, in write_videofile
+    self.audio.write_audiofile(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        audiofile,
+        ^^^^^^^^^^
+    ...<6 lines>...
+        logger=logger,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "<decorator-gen-46>", line 2, in write_audiofile
+  File "D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\decorators.py", line 53, in requires_duration
+    return func(clip, *args, **kwargs)
+  File "<decorator-gen-45>", line 2, in write_audiofile
+  File "D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\decorators.py", line 94, in wrapper
+    return func(*new_args, **new_kwargs)
+  File "D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\audio\AudioClip.py", line 258, in write_audiofile
+    return ffmpeg_audiowrite(
+        self,
+    ...<8 lines>...
+        logger=logger,
+    )
+  File "<decorator-gen-10>", line 2, in ffmpeg_audiowrite
+  File "D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\decorators.py", line 53, in requires_duration
+    return func(clip, *args, **kwargs)
+  File "D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\audio\io\ffmpeg_audiowriter.py", line 223, in ffmpeg_audiowrite
+    writer.write_frames(chunk)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "D:\youtube-shorts-automation\venv\Lib\site-packages\moviepy\audio\io\ffmpeg_audiowriter.py", line 159, in write_frames
+    raise IOError(error)
+OSError: [Errno 32] Broken pipe
+
+MoviePy error: FFMPEG encountered the following error while writing file yt_shorts_LazyCreator_presents_Sierra_Ga_20250518_164747TEMP_MPY_wvf_snd.mp4:
+
+ 
+
+2025-05-18 17:00:48,457 - INFO - automation.parallel_renderer - Falling back to simple FFmpeg concatenation without transitions
+2025-05-18 17:00:49,624 - INFO - automation.parallel_renderer - Concatenated 10 clips to ai_shorts_output\yt_shorts_LazyCreator_presents_Sierra_Ga_20250518_164747.mp4 without transitions
+2025-05-18 17:00:49,677 - WARNING - automation.renderer - Failed to clean up temporary files: [WinError 32] The process cannot access the file because it is being used by another process: 'D:\\youtube-shorts-automation\\automation\\temp\\shorts_v_1747567066\\render\\clip_003_ef6b3dc0.mp4'
+2025-05-18 17:00:49,678 - INFO - automation.renderer - Total rendering time: 632.67 seconds
+2025-05-18 17:00:49,693 - INFO - automation.shorts_maker_V - Successfully rendered video to ai_shorts_output\yt_shorts_LazyCreator_presents_Sierra_Ga_20250518_164747.mp4
+2025-05-18 17:00:50,143 - INFO - helper.minor_helper - Completed YouTube short creation in 770.40 seconds
+2025-05-18 17:00:50,147 - INFO - __main__ - Generating thumbnail for the short
+2025-05-18 17:00:50,229 - INFO - automation.thumbnail - STARTING generate_thumbnail at 17:00:50.222
+2025-05-18 17:00:50,234 - INFO - automation.thumbnail - Using thumbnail prompt: An eye-catching collage of iconic Sierra game characters like King Graham and Roger Wilco, set against a vibrant retro gaming background, with bold text that reads 'Sierra Games Today?'
+2025-05-18 17:00:50,241 - INFO - automation.thumbnail - STARTING generate_image_huggingface at 17:00:50.240
+2025-05-18 17:00:50,251 - INFO - automation.thumbnail - Hugging Face prompt: An eye-catching collage of iconic Sierra game characters like King Graham a...
+2025-05-18 17:00:51,292 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
+2025-05-18 17:01:07,050 - ERROR - automation.thumbnail - Error from Hugging Face API: 404
+2025-05-18 17:01:23,831 - INFO - __main__ - Running global cleanup of temporary files
+2025-05-18 17:01:23,834 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
+2025-05-18 17:01:23,836 - INFO - __main__ - Performing final cleanup of all temporary files
+2025-05-18 17:01:23,836 - INFO - helper.minor_helper - Cleaning up temporary directories in D:\youtube-shorts-automation\automation\temp
+2025-05-18 17:01:23,837 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\audio_clips
+2025-05-18 17:01:23,839 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\generated_images
+2025-05-18 17:01:23,842 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066
+2025-05-18 17:01:23,844 - WARNING - helper.minor_helper - Failed to remove directory D:\youtube-shorts-automation\automation\temp\shorts_v_1747567066: [WinError 32] The process cannot access the file because it is being used by another process: 'D:\\youtube-shorts-automation\\automation\\temp\\shorts_v_1747567066\\render\\clip_000_4da8879a.mp4'
+2025-05-18 17:01:23,845 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\thumbnail_1747567850
+2025-05-18 17:01:23,846 - INFO - helper.minor_helper - Removing temporary directory: D:\youtube-shorts-automation\automation\temp\video_downloads
+2025-05-18 17:01:23,849 - WARNING - helper.minor_helper - Failed to remove directory D:\youtube-shorts-automation\automation\temp\video_downloads: [WinError 32] The process cannot access the file because it is being used by another process: 'D:\\youtube-shorts-automation\\automation\\temp\\video_downloads\\pexels_30301787.mp4'
