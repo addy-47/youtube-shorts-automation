@@ -180,7 +180,7 @@ def _try_direct_crossfade(
         final_clip = concatenate_videoclips(
             clips,
             method="crossfade",
-            crossfade_duration=actual_crossfade
+            transition_duration=actual_crossfade
         )
         
         _write_final_clip(final_clip, output_file, preset)

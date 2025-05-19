@@ -109,7 +109,7 @@ class SystemResources:
         # Take the minimum of memory and CPU constraints
         worker_count = min(memory_based_limit, cpu_based_limit)
         worker_count = max(1, int(worker_count * io_adjustment))  # Apply IO adjustment
-        worker_count = 4 #experiment with 3 workers
+        worker_count = 3 #experiment with 3 workers
         logger.info(f"Optimized worker count: {worker_count}")
 
         # Task-specific optimizations

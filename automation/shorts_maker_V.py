@@ -183,13 +183,18 @@ class YTShortsCreator_V:
                     font_size=65,  # Slightly larger font for intro/outro
                     animation="fade"
                 ) if intro_sections else []
+                
+                # Add section indices to intro clips for proper ordering
+                for i, clip in enumerate(intro_clips):
+                    clip._section_idx = 0  # Intro is always first section
+                    clip._debug_info = f"Intro clip {i}"
 
                 # Generate word-by-word clips for middle sections
                 middle_clips = self.text_helper.generate_word_by_word_clips_parallel(
                     script_sections=middle_sections,
                     font_size=60
                 ) if middle_sections else []
-
+                
                 # Generate standard text clips for outro
                 outro_clips = self.text_helper.generate_text_clips_parallel(
                     script_sections=outro_sections,
@@ -197,9 +202,26 @@ class YTShortsCreator_V:
                     font_size=65,  # Slightly larger font for intro/outro
                     animation="fade_out"  # Fade out for outro
                 ) if outro_sections else []
+                
+                # Add section indices to outro clips
+                outro_idx = len(script_sections) - 1 if script_sections else 0
+                for i, clip in enumerate(outro_clips):
+                    clip._section_idx = outro_idx
+                    clip._debug_info = f"Outro clip {i}"
 
                 # Combine all clips in the correct order
-                return intro_clips + middle_clips + outro_clips
+                all_clips = intro_clips + middle_clips + outro_clips
+                
+                # Ensure we have the correct number of clips
+                if len(all_clips) != len(script_sections):
+                    logger.warning(f"Text clip count mismatch: got {len(all_clips)}, expected {len(script_sections)}")
+                    # Fill in missing clips with None
+                    if len(all_clips) < len(script_sections):
+                        all_clips.extend([None] * (len(script_sections) - len(all_clips)))
+                    else:
+                        all_clips = all_clips[:len(script_sections)]
+                
+                return all_clips
 
             # Add tasks to executor
             parallel_executor.add_task("fetch_videos", fetch_videos_task)

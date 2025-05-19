@@ -74,7 +74,7 @@ class TextHelper:
           "zoom_out": lambda clip, duration: clip.resized(lambda t: 1 - t * (0.5 / duration)),
       }
 
-  @measure_time
+ @measure_time
   def _create_pill_image(self, size, color=(0, 0, 0, 160), radius=30):
       """
       Create a pill-shaped background image with rounded corners.
@@ -88,33 +88,16 @@ class TextHelper:
           Image: PIL Image with the pill-shaped background
       """
       width, height = size
-      
-      # Ensure minimum dimensions to prevent drawing errors
-      if width <= 0 or height <= 0:
-          logger.warning(f"Invalid pill dimensions: {width}x{height}, using minimum size")
-          width = max(width, 10)
-          height = max(height, 10)
-      
-      # Ensure radius isn't too large for the image dimensions
-      radius = min(radius, width // 2, height // 2)
-      
       img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
       draw = ImageDraw.Draw(img)
 
-      # Draw the rounded rectangle only if dimensions are valid
-      if width > 2*radius and height > 2*radius:
-          # Draw center rectangle
-          draw.rectangle([(radius, 0), (width - radius, height)], fill=color)
-          # Draw horizontal rectangles
-          draw.rectangle([(0, radius), (width, height - radius)], fill=color)
-          # Draw corner circles
-          draw.ellipse([(0, 0), (radius * 2, radius * 2)], fill=color)
-          draw.ellipse([(width - radius * 2, 0), (width, radius * 2)], fill=color)
-          draw.ellipse([(0, height - radius * 2), (radius * 2, height)], fill=color)
-          draw.ellipse([(width - radius * 2, height - radius * 2), (width, height)], fill=color)
-      else:
-          # Fallback to simple rectangle if dimensions are too small for rounded corners
-          draw.rectangle([(0, 0), (width, height)], fill=color)
+      # Draw the rounded rectangle
+      draw.rectangle([(radius, 0), (width - radius, height)], fill=color)
+      draw.rectangle([(0, radius), (width, height - radius)], fill=color)
+      draw.ellipse([(0, 0), (radius * 2, radius * 2)], fill=color)
+      draw.ellipse([(width - radius * 2, 0), (width, radius * 2)], fill=color)
+      draw.ellipse([(0, height - radius * 2), (radius * 2, height)], fill=color)
+      draw.ellipse([(width - radius * 2, height - radius * 2), (width, height)], fill=color)
 
       return img
 
@@ -364,109 +347,115 @@ class TextHelper:
       words = text.split()
       char_counts = [len(word) for word in words]
       total_chars = sum(char_counts)
-      transition_duration = 0.02  # Faster transitions for better sync
+      
+      # Calculate timing
+      transition_duration = 0.15  # Smooth transition between words
       total_transition_time = transition_duration * (len(words) - 1)
-      speech_duration = duration * 0.98  # Use more of the time for speech
+      speech_duration = duration * 0.98  # Use most of the time for speech
       effective_duration = speech_duration - total_transition_time
 
+      # Distribute time based on word length
       word_durations = []
-      min_word_time = 0.2  # Slightly faster minimum word display time
+      min_word_time = 0.3  # Minimum time to display each word
       for word in words:
           char_ratio = len(word) / max(1, total_chars)
           word_time = min_word_time + (effective_duration - min_word_time * len(words)) * char_ratio
-          word_durations.append(word_time)
+          word_durations.append(max(min_word_time, word_time))
 
-      def make_frame_with_pill(word, font_size=font_size, font_path=font_path,
-                              text_color=text_color, pill_color=pill_color):
-          """Create a properly shaped pill with centered text for word-by-word animation."""
-          # Load font
-          try:
-              font = ImageFont.truetype(font_path, font_size)
-          except Exception:
-              # Fallback to default font
-              font = ImageFont.load_default()
+      # Adjust durations to match total duration
+      actual_sum = sum(word_durations) + total_transition_time
+      if abs(actual_sum - duration) > 0.01:
+          adjust_factor = (duration - total_transition_time) / sum(word_durations)
+          word_durations = [d * adjust_factor for d in word_durations]
 
-          # Create a temporary image to measure text
-          img = Image.new('RGBA', (1, 1), (0, 0, 0, 0))
-          draw = ImageDraw.Draw(img)
+      clips = []
+      for i, (word, word_duration) in enumerate(zip(words, word_durations)):
+          # Create a PIL image with the word and pill background
+          def create_word_pill():
+              # Load font
+              try:
+                  font = ImageFont.truetype(font_path, font_size)
+              except Exception as e:
+                  logger.warning(f"Failed to load font: {e}, using default")
+                  # Use default font if custom fails
+                  font = ImageFont.load_default()
 
-          # Get text dimensions - compatible with Pillow in Python 3.13
-          try:
-              # Modern method (Pillow >= 8.0.0)
-              bbox = draw.textbbox((0, 0), word, font=font)
-              text_width = bbox[2] - bbox[0]
-              text_height = bbox[3] - bbox[1]
-          except AttributeError:
-              # Fallback for older versions
-              text_width = len(word) * font_size * 0.6
-              text_height = font_size * 1.2
+              # Calculate text size
+              dummy_img = Image.new('RGBA', (1, 1))
+              dummy_draw = ImageDraw.Draw(dummy_img)
+              text_bbox = dummy_draw.textbbox((0, 0), word, font=font)
+              text_width = text_bbox[2] - text_bbox[0]
+              text_height = text_bbox[3] - text_bbox[1]
 
-          # Add generous padding for better visual appearance
-          padding_w = int(text_width * 0.4)  # Increased horizontal padding
-          padding_h = int(text_height * 0.5)  # Increased vertical padding
-          width = text_width + padding_w * 2
-          height = text_height + padding_h * 2
+              # Get font metrics for precise positioning
+              ascent, descent = font.getmetrics()
 
-          # Create the pill image with proper dimensions
-          pill_img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
-          draw = ImageDraw.Draw(pill_img)
+              # Add padding for the pill
+              padding_x = int(font_size * 0.7)  # Horizontal padding
+              padding_y = int(font_size * 0.35)  # Vertical padding
 
-          # Calculate proper radius for the pill (half of height)
-          radius = height // 2
+              # Calculate image dimensions
+              img_width = text_width + padding_x * 2
+              img_height = text_height + padding_y * 2
 
-          # Draw a proper pill shape
-          # 1. Draw the middle rectangle
-          if width > height:  # Only if wider than tall
-              draw.rectangle([(radius, 0), (width - radius, height)], fill=pill_color)
-              
-          # 2. Draw the rounded ends (half-circles)
-          draw.ellipse([(0, 0), (height, height)], fill=pill_color)  # Left circle
-          draw.ellipse([(width - height, 0), (width, height)], fill=pill_color)  # Right circle
+              # Create a transparent image
+              img = Image.new('RGBA', (img_width, img_height), (0, 0, 0, 0))
+              draw = ImageDraw.Draw(img)
 
-          # Calculate exact center position for text
-          text_x = (width - text_width) // 2
-          text_y = (height - text_height) // 2
+              # Create the pill shape with rounded corners
+              radius = min(img_height // 2, padding_y + padding_y // 2)  # Ensure radius isn't too large
 
-          # Draw text centered in the pill
-          draw.text((text_x, text_y), word, font=font, fill=text_color)
+              # Draw the pill shape
+              # Draw the center rectangle
+              draw.rectangle([(radius, 0), (img_width - radius, img_height)], fill=pill_color)
+              # Draw the left and right edges
+              draw.rectangle([(0, radius), (img_width, img_height - radius)], fill=pill_color)
+              # Draw the corner circles
+              draw.ellipse([(0, 0), (radius * 2, radius * 2)], fill=pill_color)
+              draw.ellipse([(img_width - radius * 2, 0), (img_width, radius * 2)], fill=pill_color)
+              draw.ellipse([(0, img_height - radius * 2), (radius * 2, img_height)], fill=pill_color)
+              draw.ellipse([(img_width - radius * 2, img_height - radius * 2), (img_width, img_height)], fill=pill_color)
 
-          # Convert to numpy array for MoviePy
-          return np.array(pill_img)
+              # Calculate text position for perfect centering
+              text_x = (img_width - text_width) // 2
+              vertical_offset = (descent - ascent) // 4  # Small adjustment for better vertical centering
+              text_y = (img_height - text_height) // 2 + vertical_offset
 
-      # Create a video clip for each word with its own pill background
-      word_clips = []
-      current_time = 0
+              # Draw the text
+              draw.text((text_x, text_y), word, font=font, fill=text_color)
 
-      for i, word in enumerate(words):
-          # Create a clip for this word
-          make_frame = lambda t, word=word: make_frame_with_pill(word)
-          clip = VideoClip(make_frame, duration=word_durations[i])
-          clip = clip.with_start(current_time)
-          current_time += word_durations[i] + transition_duration
-          word_clips.append(clip)
+              return img
 
-      # Combine all word clips
-      combined_clip = CompositeVideoClip(word_clips)
+          # Create the word pill image
+          word_image = create_word_pill()
+          
+          # Convert to clip with proper duration
+          word_clip = ImageClip(np.array(word_image), duration=word_duration)
+          
+          # Add to clips list
+          clips.append(word_clip)
 
-      # Set position for the entire word-by-word animation
-      def get_position(t):
-          """Ensure proper positioning of the word-by-word animation in the frame."""
-          if position == ('center', 'center'):
-              return ('center', 'center')
-          elif isinstance(position, tuple) and len(position) == 2:
-              return position
-          else:
-              return ('center', 'center')
+      # Create transitions between words
+      concatenated_clips = []
+      for i, clip in enumerate(clips):
+          if i < len(clips) - 1:  # Not the last clip
+              clip = clip.crossfadeout(transition_duration/2)
+          if i > 0:  # Not the first clip
+              clip = clip.crossfadein(transition_duration/2)
+          concatenated_clips.append(clip)
 
-      # Create background and final composite
-      bg = ColorClip(size=self.resolution, color=(0, 0, 0, 0)).with_duration(duration)
+      # Concatenate all the word clips
+      word_sequence = concatenate_videoclips(concatenated_clips, method="compose")
+
+      # Create a transparent background for the entire video
+      bg = ColorClip(size=self.resolution, color=(0,0,0,0)).with_duration(word_sequence.duration)
+
+      # Position the word sequence
+      positioned_sequence = word_sequence.with_position(position)
+
+      # Combine the background and positioned sequence
+      final_clip = CompositeVideoClip([bg, positioned_sequence], size=self.resolution)
       
-      # Ensure the clip is properly centered in the frame
-      final_clip = CompositeVideoClip(
-          [bg, combined_clip.with_position(get_position)],
-          size=self.resolution
-      )
-
       return final_clip
 
   # Also apply the same fix to word_by_word generation
@@ -501,7 +490,7 @@ class TextHelper:
           font_path (str): Path to font file
 
       Returns:
-          list: List of text clips
+          list: List of text clips in the same order as script_sections
       """
       start_time = time.time()
       logger.info(f"Generating {len(script_sections)} word-by-word text clips in parallel")
@@ -509,28 +498,39 @@ class TextHelper:
       if not max_workers:
           max_workers = min(len(script_sections), os.cpu_count())
 
+      # Store results with their section index to ensure correct ordering
+      results_with_index = []
+      
       # Use ThreadPoolExecutor for simpler serialization
       with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-          futures = []
-          for section in script_sections:
-              futures.append(
-                  executor.submit(
-                      self._process_word_by_word_section,
-                      section,
-                      font_size=font_size,
-                      font_path=font_path
-                  )
-              )
+          futures = {}
+          # Submit tasks with section index
+          for i, section in enumerate(script_sections):
+              futures[executor.submit(
+                  self._process_word_by_word_section,
+                  section,
+                  font_size=font_size,
+                  font_path=font_path
+              )] = i
 
-          # Collect results
-          text_clips = []
+          # Collect results with their indices
           for future in concurrent.futures.as_completed(futures):
+              section_idx = futures[future]
               try:
                   clip = future.result()
                   if clip is not None:
-                      text_clips.append(clip)
+                      # Store section index with the clip for proper ordering
+                      clip._section_idx = section_idx
+                      clip._debug_info = f"Word-by-word clip {section_idx}"
+                      results_with_index.append((section_idx, clip))
               except Exception as e:
-                  logger.error(f"Error in parallel word-by-word clip generation: {e}")
+                  logger.error(f"Error in parallel word-by-word clip generation for section {section_idx}: {e}")
+
+      # Sort the results by section index
+      results_with_index.sort(key=lambda x: x[0])
+      
+      # Extract just the clips in correct order
+      text_clips = [clip for _, clip in results_with_index]
 
       total_time = time.time() - start_time
       logger.info(f"Generated {len(text_clips)} word-by-word text clips in {total_time:.2f} seconds")
