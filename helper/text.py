@@ -491,9 +491,9 @@ class TextHelper:
               for i, clip in enumerate(clips):
                   # Apply appropriate effects based on position
                   if i > 0:  # Not the first clip
-                      clip = clip.crossfadein(transition_duration/2)
+                      clip = clip.with_effects((CrossFadeIn(transition_duration/2)))
                   if i < len(clips) - 1:  # Not the last clip
-                      clip = clip.crossfadeout(transition_duration/2)
+                      clip = clip.with_effects((CrossFadeOut(transition_duration/2)))
                   concatenated_clips.append(clip)
               
               word_sequence = concatenate_videoclips(concatenated_clips, method="compose")

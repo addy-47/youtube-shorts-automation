@@ -170,34 +170,17 @@ class YTShortsCreator_V:
                 )
 
             def generate_text_clips_task():
-                logger.info("Generating text clips in parallel")
-                # Separate intro, middle, and outro sections for different text rendering styles
-                intro_sections = [script_sections[0]] if len(script_sections) > 0 else []
+                logger.info("Generating text clips in parallel for middle and outro sections")
+                # Separate middle and outro sections for different text rendering styles
                 middle_sections = script_sections[1:-1] if len(script_sections) > 2 else []
                 outro_sections = [script_sections[-1]] if len(script_sections) > 1 else []
                 
                 # Add section indices for proper ordering
-                if intro_sections:
-                    intro_sections[0]['section_idx'] = 0
-                
                 for i, section in enumerate(middle_sections):
                     section['section_idx'] = i + 1
                 
                 if outro_sections:
                     outro_sections[0]['section_idx'] = len(script_sections) - 1
-
-                # Generate standard text clips for intro and outro (with pill backgrounds)
-                intro_clips = self.text_helper.generate_text_clips_parallel(
-                    script_sections=intro_sections,
-                    with_pill=True,
-                    font_size=65,  # Slightly larger font for intro/outro
-                    animation="fade"
-                ) if intro_sections else []
-                
-                # Add section indices to intro clips for proper ordering
-                for i, clip in enumerate(intro_clips):
-                    clip._section_idx = 0  # Intro is always first section
-                    clip._debug_info = f"Intro clip {i}"
 
                 # Generate word-by-word clips for middle sections
                 middle_clips = self.text_helper.generate_word_by_word_clips_parallel(
@@ -219,8 +202,12 @@ class YTShortsCreator_V:
                     clip._section_idx = outro_idx
                     clip._debug_info = f"Outro clip {i}"
 
-                # Combine all clips in the correct order
-                all_clips = intro_clips + middle_clips + outro_clips
+                # Combine middle and outro clips
+                all_clips = middle_clips + outro_clips
+                
+                # Create a placeholder for intro clip (we'll generate it later with proper duration)
+                if len(script_sections) > 0:
+                    all_clips = [None] + all_clips
                 
                 # Ensure we have the correct number of clips
                 if len(all_clips) != len(script_sections):
@@ -250,6 +237,54 @@ class YTShortsCreator_V:
             if not videos_by_query:
                 logger.error("No background videos fetched")
                 return None
+
+            # First, check audio durations to use them as source of truth
+            audio_durations = {}
+            for i, audio_section in enumerate(audio_data):
+                expected_duration = script_sections[i].get('duration', 5)
+                if audio_section and 'path' in audio_section:
+                    try:
+                        audio_clip = AudioFileClip(audio_section['path'])
+                        actual_duration = audio_clip.duration
+                        audio_clip.close()
+                        
+                        # Store actual audio duration for this section
+                        audio_durations[i] = actual_duration
+                        
+                        # Log mismatches for debugging
+                        if abs(actual_duration - expected_duration) > 0.5:
+                            logger.info(f"Section {i} audio duration ({actual_duration:.2f}s) will be used instead of script duration ({expected_duration:.2f}s)")
+                    except Exception as e:
+                        logger.error(f"Error checking audio duration for section {i}: {e}")
+                        audio_durations[i] = expected_duration
+                else:
+                    audio_durations[i] = expected_duration
+            
+            # Now generate the intro text clip with the correct audio duration
+            if len(script_sections) > 0:
+                logger.info("Generating intro text clip with correct audio duration")
+                intro_section = script_sections[0].copy()
+                # Use the actual audio duration for the intro section
+                intro_section['duration'] = audio_durations.get(0, intro_section.get('duration', 5))
+                intro_section['section_idx'] = 0
+                
+                # Generate the intro text clip with proper duration
+                intro_clips = self.text_helper.generate_text_clips_parallel(
+                    script_sections=[intro_section],
+                    with_pill=True,
+                    font_size=65,
+                    animation="fade"
+                )
+                
+                # Add section indices to intro clips
+                for i, clip in enumerate(intro_clips):
+                    clip._section_idx = 0
+                    clip._debug_info = f"Intro clip {i}"
+                    
+                # Replace the placeholder with actual intro clip
+                if intro_clips and len(text_clips) > 0:
+                    text_clips[0] = intro_clips[0]
+                    logger.info(f"Created intro text clip with duration: {intro_clips[0].duration:.2f}s")
 
             # 5. Process background videos
             logger.info("Processing background videos")
@@ -284,28 +319,6 @@ class YTShortsCreator_V:
             # Create section clips (background + audio + text)
             section_clips = []
             section_info = {}  # For better logging in parallel renderer
-
-            # First, check audio durations to use them as source of truth
-            audio_durations = {}
-            for i, audio_section in enumerate(audio_data):
-                expected_duration = script_sections[i].get('duration', 5)
-                if audio_section and 'path' in audio_section:
-                    try:
-                        audio_clip = AudioFileClip(audio_section['path'])
-                        actual_duration = audio_clip.duration
-                        audio_clip.close()
-                        
-                        # Store actual audio duration for this section
-                        audio_durations[i] = actual_duration
-                        
-                        # Log mismatches for debugging
-                        if abs(actual_duration - expected_duration) > 0.5:
-                            logger.info(f"Section {i} audio duration ({actual_duration:.2f}s) will be used instead of script duration ({expected_duration:.2f}s)")
-                    except Exception as e:
-                        logger.error(f"Error checking audio duration for section {i}: {e}")
-                        audio_durations[i] = expected_duration
-                else:
-                    audio_durations[i] = expected_duration
 
             # Now process each section using audio duration as the source of truth
             for i, (bg_clip, audio, text_clip) in enumerate(zip(background_clips, audio_data, text_clips)):
