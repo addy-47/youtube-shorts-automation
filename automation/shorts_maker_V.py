@@ -175,6 +175,16 @@ class YTShortsCreator_V:
                 intro_sections = [script_sections[0]] if len(script_sections) > 0 else []
                 middle_sections = script_sections[1:-1] if len(script_sections) > 2 else []
                 outro_sections = [script_sections[-1]] if len(script_sections) > 1 else []
+                
+                # Add section indices for proper ordering
+                if intro_sections:
+                    intro_sections[0]['section_idx'] = 0
+                
+                for i, section in enumerate(middle_sections):
+                    section['section_idx'] = i + 1
+                
+                if outro_sections:
+                    outro_sections[0]['section_idx'] = len(script_sections) - 1
 
                 # Generate standard text clips for intro and outro (with pill backgrounds)
                 intro_clips = self.text_helper.generate_text_clips_parallel(

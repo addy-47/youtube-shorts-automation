@@ -127,6 +127,8 @@ class TextHelper:
       Returns:
           TextClip: MoviePy text clip with effects
       """
+      logger.info(f"Creating text clip: '{text[:30]}...' with duration {duration:.2f}s")
+      
       if not font_path:
           font_path = self.body_font_path
 
@@ -200,6 +202,10 @@ class TextHelper:
       # Create transparent background for the text
       bg = ColorClip(size=self.resolution, color=(0,0,0,0)).with_duration(duration)
       final_clip = CompositeVideoClip([bg, text_composite], size=self.resolution)
+      
+      # Ensure the duration is correct after composition
+      final_clip = final_clip.with_duration(duration)
+      logger.info(f"Created text clip with final duration: {final_clip.duration:.2f}s")
 
       return final_clip
 
@@ -208,10 +214,13 @@ class TextHelper:
       try:
           text = section.get('text', '')
           duration = section.get('duration', 5)
+          section_idx = section.get('section_idx', -1)
           section_position = section.get('position', position)
           section_font_size = section.get('font_size', font_size)
 
-          return self._create_text_clip(
+          logger.info(f"Processing text section {section_idx}: '{text[:30]}...' duration={duration:.2f}s")
+
+          result = self._create_text_clip(
               text=text,
               duration=duration,
               font_size=section_font_size,
@@ -220,8 +229,16 @@ class TextHelper:
               animation=animation,
               with_pill=with_pill
           )
+          
+          # Add section index for proper ordering
+          if result:
+              result._section_idx = section_idx
+              result._debug_info = f"Text section {section_idx}"
+              logger.info(f"Created text clip for section {section_idx} with duration {result.duration:.2f}s")
+          
+          return result
       except Exception as e:
-          logger.error(f"Error creating text clip: {e}")
+          logger.error(f"Error creating text clip for section {section.get('section_idx', -1)}: {e}")
           return None
 
   @measure_time
@@ -341,33 +358,60 @@ class TextHelper:
       Returns:
           VideoClip: Word-by-word animation clip
       """
+      logger.info(f"Creating word-by-word clip: '{text[:30]}...' with duration {duration:.2f}s")
+      
       if not font_path:
           font_path = self.body_font_path
 
+      # Handle empty text case
+      if not text.strip():
+          logger.warning("Empty text provided for word-by-word clip, creating empty clip")
+          bg = ColorClip(size=self.resolution, color=(0,0,0,0)).with_duration(duration)
+          return bg
+
       # Split text into words and calculate durations
       words = text.split()
+      word_count = len(words)
       char_counts = [len(word) for word in words]
       total_chars = sum(char_counts)
-
-      # Calculate timing
-      transition_duration = 0.15  # Smooth transition between words
-      total_transition_time = transition_duration * (len(words) - 1)
-      speech_duration = duration * 0.98  # Use most of the time for speech
-      effective_duration = speech_duration - total_transition_time
-
-      # Distribute time based on word length
-      word_durations = []
-      min_word_time = 0.3  # Minimum time to display each word
-      for word in words:
-          char_ratio = len(word) / max(1, total_chars)
-          word_time = min_word_time + (effective_duration - min_word_time * len(words)) * char_ratio
-          word_durations.append(max(min_word_time, word_time))
-
-      # Adjust durations to match total duration
-      actual_sum = sum(word_durations) + total_transition_time
-      if abs(actual_sum - duration) > 0.01:
-          adjust_factor = (duration - total_transition_time) / sum(word_durations)
-          word_durations = [d * adjust_factor for d in word_durations]
+      
+      # Calculate timing - adjust for longer words to display longer
+      # Minimum word display time increased for better readability
+      min_word_time = 0.4  # Minimum time to display each word
+      
+      # Calculate base duration per character, ensuring minimum display times
+      if total_chars > 0:
+          # Reserve 15% of duration for transitions
+          effective_duration = duration * 0.85
+          # Calculate base time per character
+          time_per_char = effective_duration / total_chars
+          
+          # Calculate initial word durations based on character count
+          word_durations = []
+          for word in words:
+              # Base duration on word length, but ensure minimum display time
+              word_time = max(min_word_time, len(word) * time_per_char)
+              word_durations.append(word_time)
+      else:
+          # Fallback for empty text
+          word_durations = [duration]
+      
+      # Calculate transition time based on remaining duration
+      total_word_duration = sum(word_durations)
+      remaining_time = duration - total_word_duration
+      
+      # Ensure positive transition time
+      transition_duration = max(0.15, remaining_time / max(1, word_count - 1)) if word_count > 1 else 0
+      
+      # Adjust word durations to ensure we fill exactly the requested duration
+      adjusted_total = sum(word_durations) + transition_duration * max(0, word_count - 1)
+      if abs(adjusted_total - duration) > 0.01 and word_count > 0:
+          adjustment_factor = (duration - transition_duration * max(0, word_count - 1)) / sum(word_durations)
+          word_durations = [d * adjustment_factor for d in word_durations]
+      
+      logger.info(f"Word-by-word timing: {word_count} words, transition: {transition_duration:.2f}s")
+      for i, (word, word_duration) in enumerate(zip(words, word_durations)):
+          logger.info(f"  Word {i+1}: '{word}' - {word_duration:.2f}s")
 
       clips = []
       for i, (word, word_duration) in enumerate(zip(words, word_durations)):
@@ -436,15 +480,37 @@ class TextHelper:
           # Add to clips list
           clips.append(word_clip)
 
-      # Create transitions between words
-      concatenated_clips = []
-      for i, clip in enumerate(clips):
-          if i < len(clips) - 1:  # Not the last clip
-              clip = clip.with_effects([FadeIn(transition_duration)])
-          concatenated_clips.append(clip)
-
-      # Concatenate all the word clips
-      word_sequence = concatenate_videoclips(concatenated_clips, method="compose")
+      # Handle single word case
+      if len(clips) == 1:
+          word_sequence = clips[0]
+      else:
+          # Create transitions between words
+          try:
+              # Method 1: Use concatenate_videoclips with crossfadein
+              concatenated_clips = []
+              for i, clip in enumerate(clips):
+                  # Apply appropriate effects based on position
+                  if i > 0:  # Not the first clip
+                      clip = clip.crossfadein(transition_duration/2)
+                  if i < len(clips) - 1:  # Not the last clip
+                      clip = clip.crossfadeout(transition_duration/2)
+                  concatenated_clips.append(clip)
+              
+              word_sequence = concatenate_videoclips(concatenated_clips, method="compose")
+              logger.info(f"Successfully created word sequence with crossfades, duration: {word_sequence.duration:.2f}s")
+          except Exception as e:
+              # Fallback Method: Use simple fade in/out effects
+              logger.warning(f"Crossfade failed: {e}. Using fallback fade method.")
+              concatenated_clips = []
+              for i, clip in enumerate(clips):
+                  if i > 0:  # Not the first clip
+                      clip = clip.with_effects([FadeIn(transition_duration/2)])
+                  if i < len(clips) - 1:  # Not the last clip
+                      clip = clip.with_effects([FadeOut(transition_duration/2)])
+                  concatenated_clips.append(clip)
+                  
+              word_sequence = concatenate_videoclips(concatenated_clips, method="compose")
+              logger.info(f"Created word sequence with fade effects, duration: {word_sequence.duration:.2f}s")
 
       # Create a transparent background for the entire video
       bg = ColorClip(size=self.resolution, color=(0,0,0,0)).with_duration(word_sequence.duration)
@@ -454,7 +520,12 @@ class TextHelper:
 
       # Combine the background and positioned sequence
       final_clip = CompositeVideoClip([bg, positioned_sequence], size=self.resolution)
-
+      
+      # Ensure the clip has exactly the requested duration
+      final_clip = final_clip.with_duration(duration)
+      
+      logger.info(f"Created word-by-word clip with final duration: {final_clip.duration:.2f}s")
+      
       return final_clip
 
   # Also apply the same fix to word_by_word generation
@@ -462,18 +533,29 @@ class TextHelper:
       try:
           text = section.get('text', '')
           duration = section.get('duration', 5)
+          section_idx = section.get('section_idx', -1)
           position = section.get('position', ('center', 'center'))
           section_font_size = section.get('font_size', font_size)
+          
+          logger.info(f"Processing word-by-word section {section_idx}: '{text[:30]}...' duration={duration:.2f}s")
 
-          return self._create_word_by_word_clip(
+          result = self._create_word_by_word_clip(
               text=text,
               duration=duration,
               font_size=section_font_size,
               font_path=font_path,
               position=position
           )
+          
+          # Add section index for proper ordering
+          if result:
+              result._section_idx = section_idx
+              result._debug_info = f"Word-by-word section {section_idx}"
+              logger.info(f"Created word-by-word clip for section {section_idx} with duration {result.duration:.2f}s")
+          
+          return result
       except Exception as e:
-          logger.error(f"Error creating word-by-word clip: {e}")
+          logger.error(f"Error creating word-by-word clip for section {section.get('section_idx', -1)}: {e}")
           return None
 
   @measure_time
