@@ -6,6 +6,7 @@ import logging
 from moviepy import *
 from moviepy.video.fx import FadeIn
 from moviepy.video.fx import FadeOut
+from moviepy.video.fx import CrossFadeOut,CrossFadeIn
 from PIL import Image, ImageDraw, ImageFont
 from helper.minor_helper import measure_time
 from functools import partial
@@ -74,7 +75,7 @@ class TextHelper:
           "zoom_out": lambda clip, duration: clip.resized(lambda t: 1 - t * (0.5 / duration)),
       }
 
- @measure_time
+  @measure_time
   def _create_pill_image(self, size, color=(0, 0, 0, 160), radius=30):
       """
       Create a pill-shaped background image with rounded corners.
@@ -347,7 +348,7 @@ class TextHelper:
       words = text.split()
       char_counts = [len(word) for word in words]
       total_chars = sum(char_counts)
-      
+
       # Calculate timing
       transition_duration = 0.15  # Smooth transition between words
       total_transition_time = transition_duration * (len(words) - 1)
@@ -428,10 +429,10 @@ class TextHelper:
 
           # Create the word pill image
           word_image = create_word_pill()
-          
+
           # Convert to clip with proper duration
           word_clip = ImageClip(np.array(word_image), duration=word_duration)
-          
+
           # Add to clips list
           clips.append(word_clip)
 
@@ -439,9 +440,7 @@ class TextHelper:
       concatenated_clips = []
       for i, clip in enumerate(clips):
           if i < len(clips) - 1:  # Not the last clip
-              clip = clip.crossfadeout(transition_duration/2)
-          if i > 0:  # Not the first clip
-              clip = clip.crossfadein(transition_duration/2)
+              clip = clip.with_effects([FadeIn(transition_duration)])
           concatenated_clips.append(clip)
 
       # Concatenate all the word clips
@@ -455,7 +454,7 @@ class TextHelper:
 
       # Combine the background and positioned sequence
       final_clip = CompositeVideoClip([bg, positioned_sequence], size=self.resolution)
-      
+
       return final_clip
 
   # Also apply the same fix to word_by_word generation
@@ -500,7 +499,7 @@ class TextHelper:
 
       # Store results with their section index to ensure correct ordering
       results_with_index = []
-      
+
       # Use ThreadPoolExecutor for simpler serialization
       with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
           futures = {}
@@ -528,7 +527,7 @@ class TextHelper:
 
       # Sort the results by section index
       results_with_index.sort(key=lambda x: x[0])
-      
+
       # Extract just the clips in correct order
       text_clips = [clip for _, clip in results_with_index]
 
