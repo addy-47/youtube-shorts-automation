@@ -28,37 +28,53 @@ This project automates the creation of YouTube Shorts videos using AI-generated 
 
 ```
 youtube-shorts-automation/
-├── .env                       # Environment variables
-├── main.py                    # Main script
-├── parallel_renderer.py       # Parallel video rendering
-├── script_generator.py        # Script generation logic
-├── shorts_maker_I.py         # Image-based shorts creator
-├── shorts_maker_V.py         # Video-based shorts creator
-├── thumbnail.py              # Thumbnail generation
-├── voiceover.py              # Text-to-speech base class
-├── voiceover_azure.py        # Azure TTS implementation
-├── youtube_auth.py           # YouTube authentication
-├── youtube_upload.py         # YouTube upload logic
-├── ai_shorts_output/         # Output directory for generated videos
-├── ffmpeg/                   # Directory for ffmpeg binaries
-├── fonts/                    # Directory for font files
-└── logs/                     # Directory for log files
+├── automation/               # Core automation modules
+│   ├── shorts_maker_I.py    # Image-based shorts creator
+│   ├── shorts_maker_V.py    # Video-based shorts creator
+│   ├── parallel_renderer.py # Parallel video rendering
+│   ├── parallel_tasks.py    # Parallel task management
+│   ├── thumbnail.py         # Thumbnail generation
+│   ├── voiceover.py         # Text-to-speech base class
+│   ├── voiceover_azure.py   # Azure TTS implementation
+│   ├── youtube_auth.py      # YouTube authentication
+│   ├── youtube_upload.py    # YouTube upload logic
+│   ├── content_generator.py # Content generation logic
+│   └── schedule.py          # Scheduling functionality
+├── helper/                  # Helper utilities
+│   ├── image.py            # Image processing utilities
+│   ├── fetch.py            # Content fetching utilities
+│   ├── crossfade.py        # Transition effects
+│   ├── text.py             # Text processing utilities
+│   ├── audio.py            # Audio processing utilities
+│   ├── memory.py           # Memory management
+│   ├── process.py          # Process management
+│   ├── minor_helper.py     # Miscellaneous utilities
+│   └── blur.py             # Blur effects
+├── .env                    # Environment variables
+├── main.py                 # Main script
+├── ai_shorts_output/       # Output directory for generated videos
+├── ffmpeg/                 # Directory for ffmpeg binaries
+├── fonts/                  # Directory for font files
+└── logs/                   # Directory for log files
 ```
 
 ## Setup
 
 1. **Clone the repository:**
+
    ```sh
    git clone https://github.com/yourusername/youtube-shorts-automation.git
    cd youtube-shorts-automation
    ```
 
 2. **Install dependencies:**
+
    ```sh
    pip install -r requirements.txt
    ```
 
 3. **Set up API credentials:**
+
    - Create a `client_secret.json` file for YouTube API credentials
    - Create a `google_credentials.json` file for Google Cloud API credentials
    - Set up Hugging Face API token for AI image generation
@@ -66,6 +82,7 @@ youtube-shorts-automation/
 
 4. **Set up environment variables:**
    Create a `.env` file in the root directory and add the following variables:
+
    ```env
    # API Keys
    HUGGINGFACE_API_KEY=your_huggingface_key
@@ -83,8 +100,9 @@ youtube-shorts-automation/
    YOUTUBE_TOPIC=Artificial Intelligence
    HF_MODEL=stabilityai/stable-diffusion-2-1
 
-   # Optional Features
+   # Parallel Processing
    ENABLE_PARALLEL_RENDERING=true
+   MAX_PARALLEL_TASKS=4
    ENABLE_GPU_ACCELERATION=true
    ```
 
@@ -96,11 +114,13 @@ youtube-shorts-automation/
 ## Usage
 
 1. **Basic usage:**
+
    ```sh
    python main.py
    ```
 
 2. **With specific options:**
+
    ```sh
    python main.py --style "digital art" --voice-style "enthusiastic" --add-watermark
    ```
@@ -112,23 +132,43 @@ youtube-shorts-automation/
 
 ## Advanced Features
 
+### Parallel Processing System
+
+- **parallel_renderer.py**: Handles parallel video rendering with GPU acceleration
+- **parallel_tasks.py**: Manages concurrent task execution and resource allocation
+- Features:
+  - Multi-process video rendering for faster output
+  - Smart clip pre-rendering for complex compositions
+  - Hardware acceleration support
+  - Memory-efficient processing of large videos
+  - Automatic task distribution and load balancing
+  - Progress tracking and error recovery
+
 ### Image-based Shorts (shorts_maker_I.py)
+
 - Uses AI-generated images for visually appealing content
 - Automatic style selection and prompt enhancement
 - Smart fallback to video mode if image generation fails
 - Zoom and transition effects for still images
 
 ### Video-based Shorts (shorts_maker_V.py)
+
 - Smart video background selection and processing
 - Multiple transition effects between scenes
 - Word-by-word text animation
 - Background blur and edge blur effects
 
-### Parallel Processing (parallel_renderer.py)
-- Multi-process video rendering for faster output
-- Smart clip pre-rendering for complex compositions
-- Hardware acceleration support
-- Memory-efficient processing of large videos
+### Helper Utilities
+
+- **image.py**: Advanced image processing and manipulation
+- **fetch.py**: Efficient content fetching with caching
+- **crossfade.py**: Customizable transition effects
+- **text.py**: Text processing and animation utilities
+- **audio.py**: Audio processing and enhancement
+- **memory.py**: Memory management and optimization
+- **process.py**: Process management and monitoring
+- **minor_helper.py**: Miscellaneous utility functions
+- **blur.py**: Advanced blur effects and filters
 
 ## Contributing
 
