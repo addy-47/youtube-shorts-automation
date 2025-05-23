@@ -5,12 +5,46 @@ import uuid
 import shutil
 import subprocess
 import traceback
+import re
 from typing import List, Tuple, Dict, Any, Optional
 
 # MoviePy imports
 from moviepy import VideoFileClip, concatenate_videoclips
 
 logger = logging.getLogger(__name__)
+
+def extract_section_index(filepath: str) -> Optional[int]:
+    """
+    Extract section index from a filepath.
+    
+    Args:
+        filepath: Path to the rendered clip file
+        
+    Returns:
+        int: Extracted section index or None if couldn't extract
+    """
+    try:
+        # Try the new naming pattern first (clip_idx123_...)
+        match = re.search(r'clip_idx(\d+)_', os.path.basename(filepath))
+        if match:
+            return int(match.group(1))
+        
+        # Try the pattern with prerender prefix (prerender_5_...)
+        match = re.search(r'prerender_(\d+)_', os.path.basename(filepath))
+        if match:
+            return int(match.group(1))
+            
+        # Try to extract from simple clip pattern (clip_005_...)
+        match = re.search(r'clip_(\d+)_', os.path.basename(filepath))
+        if match:
+            return int(match.group(1))
+            
+        # If all else fails
+        logger.warning(f"Could not extract index from rendered path: {filepath}")
+        return None
+    except Exception as e:
+        logger.warning(f"Error extracting index from {filepath}: {e}")
+        return None
 
 def concatenate_with_crossfade(
     clip_paths: List[Tuple[int, str]],
@@ -70,7 +104,7 @@ def concatenate_with_crossfade(
     return output_file
 
 def _validate_clip_files(clip_paths: List[Tuple[int, str]]) -> List[Tuple[int, str]]:
-    """Validate clip files and return only valid ones."""
+    """Validate clip files and return only valid ones with correct indices."""
     valid_paths = []
     for idx, path in clip_paths:
         if not os.path.exists(path):
@@ -81,8 +115,16 @@ def _validate_clip_files(clip_paths: List[Tuple[int, str]]) -> List[Tuple[int, s
             logger.error(f"Clip file is empty: {path}")
             continue
             
+        # Check if we need to fix the index from the filename
+        extracted_idx = extract_section_index(path)
+        if extracted_idx is not None and extracted_idx != idx:
+            logger.info(f"Correcting index from {idx} to {extracted_idx} for file: {os.path.basename(path)}")
+            idx = extracted_idx
+            
         valid_paths.append((idx, path))
     
+    # Make sure paths are sorted by their index
+    valid_paths.sort(key=lambda x: x[0])
     return valid_paths
 
 def _try_moviepy_concatenation(

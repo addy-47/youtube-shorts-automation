@@ -189,7 +189,8 @@ def render_clip_with_ffmpeg(
     section_idx = getattr(clip, '_section_idx', idx)
     debug_info = getattr(clip, '_debug_info', f"Clip {idx}")
 
-    output_path = os.path.join(temp_dir, f"clip_{section_idx:03d}_{uuid.uuid4().hex[:8]}.mp4")
+    # Use a consistent naming pattern that's easier to extract: section_idx is encoded in the filename
+    output_path = os.path.join(temp_dir, f"clip_idx{section_idx:03d}_{uuid.uuid4().hex[:8]}.mp4")
     temp_files = []  # List of temporary files to clean up
 
     try:
@@ -200,7 +201,7 @@ def render_clip_with_ffmpeg(
 
         # Handle different types of clips
         if isinstance(clip, str) and os.path.exists(clip):
-            # This is already a file path, just return it
+            # This is already a file path, just return it with its index
             return section_idx, clip
 
         # Use MoviePy to render the clip with enhanced buffer settings to prevent frame read errors
@@ -247,7 +248,7 @@ def render_clip_with_ffmpeg(
     finally:
         # Clean up any temporary files
         clean_temp_files(temp_files)
-
+        
         # Close MoviePy clip to free memory
         try:
             if hasattr(clip, 'close'):

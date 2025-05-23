@@ -96,7 +96,8 @@ class YTShortsCreator_V:
     @measure_time
     def create_youtube_short(self, title, script_sections, background_query="abstract background",
                             output_filename=None, add_captions=False, style="video", voice_style=None, max_duration=25,
-                            background_queries=None, blur_background=False, edge_blur=False, add_watermark_text=None):
+                            background_queries=None, blur_background=False, edge_blur=False, add_watermark_text=None,
+                            existing_audio_data=None):
         """
         Create a YouTube Short with the given script sections.
 
@@ -113,6 +114,7 @@ class YTShortsCreator_V:
             blur_background (bool): Whether to apply blur effect to background videos
             edge_blur (bool): Whether to apply edge blur to background videos
             add_watermark_text (str): Text to use as watermark (None for no watermark)
+            existing_audio_data (list): Optional pre-generated audio data (from shorts_maker_I fallback)
 
         Returns:
             str: Output file path
@@ -150,7 +152,7 @@ class YTShortsCreator_V:
             # Create a parallel task executor to run major steps concurrently
             parallel_executor = ParallelTaskExecutor()
 
-            # 2, 3, 4: Run background fetching, audio generation, and text clips generation in parallel
+            # 2, 3: Run background fetching and (if needed) audio generation in parallel
             logger.info("Starting parallel execution of major steps")
 
             # Define task functions
@@ -163,67 +165,20 @@ class YTShortsCreator_V:
                 )
 
             def generate_audio_task():
+                # Skip audio generation if we already have audio data
+                if existing_audio_data:
+                    logger.info("Using existing audio data (from fallback)")
+                    return existing_audio_data
+                
                 logger.info("Generating audio clips in parallel")
                 return self.audio_helper.process_audio_for_script(
                     script_sections=script_sections,
                     voice_style=voice_style
                 )
 
-            def generate_text_clips_task():
-                logger.info("Generating text clips in parallel for middle and outro sections")
-                # Separate middle and outro sections for different text rendering styles
-                middle_sections = script_sections[1:-1] if len(script_sections) > 2 else []
-                outro_sections = [script_sections[-1]] if len(script_sections) > 1 else []
-                
-                # Add section indices for proper ordering
-                for i, section in enumerate(middle_sections):
-                    section['section_idx'] = i + 1
-                
-                if outro_sections:
-                    outro_sections[0]['section_idx'] = len(script_sections) - 1
-
-                # Generate word-by-word clips for middle sections
-                middle_clips = self.text_helper.generate_word_by_word_clips_parallel(
-                    script_sections=middle_sections,
-                    font_size=60
-                ) if middle_sections else []
-                
-                # Generate standard text clips for outro
-                outro_clips = self.text_helper.generate_text_clips_parallel(
-                    script_sections=outro_sections,
-                    with_pill=True,
-                    font_size=65,  # Slightly larger font for intro/outro
-                    animation="fade_out"  # Fade out for outro
-                ) if outro_sections else []
-                
-                # Add section indices to outro clips
-                outro_idx = len(script_sections) - 1 if script_sections else 0
-                for i, clip in enumerate(outro_clips):
-                    clip._section_idx = outro_idx
-                    clip._debug_info = f"Outro clip {i}"
-
-                # Combine middle and outro clips
-                all_clips = middle_clips + outro_clips
-                
-                # Create a placeholder for intro clip (we'll generate it later with proper duration)
-                if len(script_sections) > 0:
-                    all_clips = [None] + all_clips
-                
-                # Ensure we have the correct number of clips
-                if len(all_clips) != len(script_sections):
-                    logger.warning(f"Text clip count mismatch: got {len(all_clips)}, expected {len(script_sections)}")
-                    # Fill in missing clips with None
-                    if len(all_clips) < len(script_sections):
-                        all_clips.extend([None] * (len(script_sections) - len(all_clips)))
-                    else:
-                        all_clips = all_clips[:len(script_sections)]
-                
-                return all_clips
-
             # Add tasks to executor
             parallel_executor.add_task("fetch_videos", fetch_videos_task)
             parallel_executor.add_task("generate_audio", generate_audio_task)
-            parallel_executor.add_task("generate_text_clips", generate_text_clips_task)
 
             # Execute all tasks in parallel and wait for results
             results = parallel_executor.execute()
@@ -231,7 +186,6 @@ class YTShortsCreator_V:
             # Extract results
             videos_by_query = results.get("fetch_videos", {})
             audio_data = results.get("generate_audio", [])
-            text_clips = results.get("generate_text_clips", [])
 
             # Check if we have necessary components before continuing
             if not videos_by_query:
@@ -251,6 +205,9 @@ class YTShortsCreator_V:
                         # Store actual audio duration for this section
                         audio_durations[i] = actual_duration
                         
+                        # Update the script section duration to match audio
+                        script_sections[i]['duration'] = actual_duration
+                        
                         # Log mismatches for debugging
                         if abs(actual_duration - expected_duration) > 0.5:
                             logger.info(f"Section {i} audio duration ({actual_duration:.2f}s) will be used instead of script duration ({expected_duration:.2f}s)")
@@ -260,32 +217,81 @@ class YTShortsCreator_V:
                 else:
                     audio_durations[i] = expected_duration
             
-            # Now generate the intro text clip with the correct audio duration
-            if len(script_sections) > 0:
-                logger.info("Generating intro text clip with correct audio duration")
-                intro_section = script_sections[0].copy()
-                # Use the actual audio duration for the intro section
-                intro_section['duration'] = audio_durations.get(0, intro_section.get('duration', 5))
-                intro_section['section_idx'] = 0
-                
-                # Generate the intro text clip with proper duration
+            # Now generate all text clips with the correct audio durations
+            logger.info("Generating all text clips using accurate audio durations")
+            
+            # Separate script sections for different text rendering styles
+            intro_sections = [script_sections[0]] if len(script_sections) > 0 else []
+            middle_sections = script_sections[1:-1] if len(script_sections) > 2 else []
+            outro_sections = [script_sections[-1]] if len(script_sections) > 1 else []
+            
+            # Generate standard text clips for intro with correct duration
+            intro_clips = []
+            if intro_sections:
+                logger.info(f"Generating intro text clip with duration: {intro_sections[0]['duration']:.2f}s")
                 intro_clips = self.text_helper.generate_text_clips_parallel(
-                    script_sections=[intro_section],
+                    script_sections=intro_sections,
                     with_pill=True,
-                    font_size=65,
+                    font_size=65,  # Slightly larger font for intro/outro
                     animation="fade"
                 )
-                
-                # Add section indices to intro clips
+                # Add section indices to intro clips for proper ordering
                 for i, clip in enumerate(intro_clips):
-                    clip._section_idx = 0
+                    clip._section_idx = 0  # Intro is always first section
                     clip._debug_info = f"Intro clip {i}"
-                    
-                # Replace the placeholder with actual intro clip
-                if intro_clips and len(text_clips) > 0:
-                    text_clips[0] = intro_clips[0]
-                    logger.info(f"Created intro text clip with duration: {intro_clips[0].duration:.2f}s")
-
+                    # Verify duration
+                    logger.info(f"Created intro clip with duration: {clip.duration:.2f}s (target: {intro_sections[0]['duration']:.2f}s)")
+            
+            # Generate word-by-word clips for middle sections with correct durations
+            middle_clips = []
+            if middle_sections:
+                logger.info(f"Generating {len(middle_sections)} word-by-word middle clips with accurate durations")
+                middle_clips = self.text_helper.generate_word_by_word_clips_parallel(
+                    script_sections=middle_sections,
+                    font_size=60
+                )
+                for i, clip in enumerate(middle_clips):
+                    section_idx = clip._section_idx if hasattr(clip, '_section_idx') else i + 1
+                    logger.info(f"Created middle clip {i} for section {section_idx} with duration: {clip.duration:.2f}s (target: {middle_sections[i]['duration']:.2f}s)")
+            
+            # Generate standard text clips for outro with correct duration
+            outro_clips = []
+            if outro_sections:
+                logger.info(f"Generating outro text clip with duration: {outro_sections[0]['duration']:.2f}s")
+                outro_clips = self.text_helper.generate_text_clips_parallel(
+                    script_sections=outro_sections,
+                    with_pill=True,
+                    font_size=65,
+                    animation="fade_out"  # Fade out for outro
+                )
+                # Add section indices to outro clips
+                outro_idx = len(script_sections) - 1 if script_sections else 0
+                for i, clip in enumerate(outro_clips):
+                    clip._section_idx = outro_idx
+                    clip._debug_info = f"Outro clip {i}"
+                    # Verify duration
+                    logger.info(f"Created outro clip with duration: {clip.duration:.2f}s (target: {outro_sections[0]['duration']:.2f}s)")
+            
+            # Combine all clips in the correct order
+            text_clips = intro_clips + middle_clips + outro_clips
+            
+            # Double-check we have the right number of clips and with correct indices
+            if len(text_clips) != len(script_sections):
+                logger.warning(f"Text clip count mismatch: got {len(text_clips)}, expected {len(script_sections)}")
+                # Fill in missing clips with None
+                if len(text_clips) < len(script_sections):
+                    text_clips.extend([None] * (len(script_sections) - len(text_clips)))
+                else:
+                    text_clips = text_clips[:len(script_sections)]
+            
+            # Final verification of clip durations against audio durations
+            for i, clip in enumerate(text_clips):
+                if clip:
+                    target_duration = audio_durations.get(i, script_sections[i].get('duration', 5))
+                    if abs(clip.duration - target_duration) > 0.5:
+                        logger.warning(f"Text clip {i} duration mismatch: {clip.duration:.2f}s vs audio {target_duration:.2f}s - fixing...")
+                        text_clips[i] = clip.with_duration(target_duration)
+            
             # 5. Process background videos
             logger.info("Processing background videos")
             video_paths = []

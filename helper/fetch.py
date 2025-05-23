@@ -348,3 +348,77 @@ def _fetch_from_pexels(query, count=5, min_duration=15):
     except Exception as e:
         logger.error(f"Error fetching videos from Pexels: {e}")
         return []
+
+@measure_time
+def fetch_image_unsplash(self, query, file_path=None):
+    """
+    Fetch an image from Unsplash API based on query
+
+    Args:
+        query (str): Search query for Unsplash
+        file_path (str): Path to save the image, if None a path will be generated
+
+    Returns:
+        str: Path to the downloaded image or None if failed
+    """
+    if not file_path:
+        file_path = os.path.join(self.temp_dir, f"thumbnail_unsplash_{int(time.time())}_{random.randint(1000, 9999)}.jpg")
+
+    # Check if Unsplash API key is available
+    if not self.unsplash_api_key:
+        logger.error("No Unsplash API key provided.")
+        return None
+
+    try:
+        # Clean query for Unsplash search
+        clean_query = query.replace("eye-catching", "").replace("thumbnail", "").replace("YouTube Shorts", "")
+        # Remove any double spaces
+        while "  " in clean_query:
+            clean_query = clean_query.replace("  ", " ")
+        clean_query = clean_query.strip(" ,")
+
+        logger.info(f"Searching Unsplash with query: {clean_query}")
+
+        # Make request to Unsplash API
+        params = {
+            "query": clean_query,
+            "orientation": "landscape",
+            "per_page": 30,
+            "client_id": self.unsplash_api_key
+        }
+
+        response = requests.get(self.unsplash_api_url, params=params, timeout=10)
+
+        if response.status_code == 200:
+            data = response.json()
+
+            # Check if we have results
+            if data["results"] and len(data["results"]) > 0:
+                # Pick a random image from top results for variety
+                max_index = min(10, len(data["results"]))
+                image_data = random.choice(data["results"][:max_index])
+                image_url = image_data["urls"]["regular"]
+
+                # Download the image
+                img_response = requests.get(image_url, timeout=10)
+                if img_response.status_code == 200:
+                    with open(file_path, "wb") as f:
+                        f.write(img_response.content)
+                    logger.info(f"Unsplash image downloaded to {file_path}")
+
+                    # Add attribution as required by Unsplash API guidelines
+                    attribution = f"Photo by {image_data['user']['name']} on Unsplash"
+                    logger.info(f"Image attribution: {attribution}")
+
+                    return file_path
+                else:
+                    logger.error(f"Failed to download image from Unsplash: {img_response.status_code}")
+            else:
+                logger.error("No results found on Unsplash")
+        else:
+            logger.error(f"Unsplash API error: {response.status_code} - {response.text}")
+
+    except Exception as e:
+        logger.error(f"Error fetching image from Unsplash: {e}")
+
+    return None
