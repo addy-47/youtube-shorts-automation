@@ -247,9 +247,29 @@ class YTShortsCreator_I:
             images_by_query = results.get("generate_images")
             audio_data = results.get("generate_audio")
 
-            # Check for successful image generation - if we have no images, switch to video mode
+            # Check if we have enough images or need to fallback to video mode
+            should_fallback = False
+            
+            # Case 1: No images generated at all
             if not images_by_query or all(len(images) == 0 for images in images_by_query.values()):
                 logger.warning("⚠️ FALLBACK: All image generation methods failed")
+                should_fallback = True
+            
+            # Case 2: Count how many sections have corresponding images
+            else:
+                # Count how many sections will have a valid image
+                sections_with_images = 0
+                for i, query in enumerate(background_queries):
+                    if query in images_by_query and images_by_query[query]:
+                        sections_with_images += 1
+                
+                # If we have less than 70% of required images, fallback to video mode
+                if sections_with_images < 0.7 * len(script_sections):
+                    logger.warning(f"⚠️ FALLBACK: Only {sections_with_images}/{len(script_sections)} sections have images ({int(sections_with_images/len(script_sections)*100)}%)")
+                    should_fallback = True
+            
+            # If fallback is triggered, switch to video mode
+            if should_fallback:
                 logger.warning("⚠️ SWITCHING to shorts_maker_V to create video with stock videos instead of AI images")
                 
                 # We've already generated audio, so pass it to shorts_maker_V to avoid regenerating
@@ -411,7 +431,43 @@ class YTShortsCreator_I:
             # Make sure we have all the components
             if not background_clips:
                 logger.error("No background clips generated")
-                return None
+                # Fallback to video mode if no background clips were generated
+                logger.warning("⚠️ FALLBACK: No background clips were generated")
+                return self.v_creator.create_youtube_short(
+                    title=title,
+                    script_sections=script_sections,
+                    background_query=background_query,
+                    output_filename=output_filename,
+                    add_captions=add_captions,
+                    style="video",
+                    voice_style=voice_style,
+                    max_duration=max_duration,
+                    background_queries=background_queries,
+                    blur_background=blur_background,
+                    edge_blur=edge_blur,
+                    add_watermark_text=add_watermark_text,
+                    existing_audio_data=audio_data
+                )
+            
+            # Also fallback if we have too few background clips compared to script sections
+            if len(background_clips) < len(script_sections) * 0.7:
+                logger.error(f"Too few background clips generated: {len(background_clips)}/{len(script_sections)}")
+                logger.warning(f"⚠️ FALLBACK: Only {len(background_clips)}/{len(script_sections)} background clips were generated")
+                return self.v_creator.create_youtube_short(
+                    title=title,
+                    script_sections=script_sections,
+                    background_query=background_query,
+                    output_filename=output_filename,
+                    add_captions=add_captions,
+                    style="video",
+                    voice_style=voice_style,
+                    max_duration=max_duration,
+                    background_queries=background_queries,
+                    blur_background=blur_background,
+                    edge_blur=edge_blur,
+                    add_watermark_text=add_watermark_text,
+                    existing_audio_data=audio_data
+                )
 
             if not audio_data:
                 logger.error("No audio generated")
