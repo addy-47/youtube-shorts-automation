@@ -23,8 +23,6 @@ hf_api_url = f"https://api-inference.huggingface.co/models/{hf_model}" if hf_mod
 
 # Backup/fallback models if primary fails
 hf_fallback_models = [
-    "runwayml/stable-diffusion-v1-5",
-    "CompVis/stable-diffusion-v1-4",
     "stabilityai/stable-diffusion-xl-base-1.0"
 ]
 
@@ -122,7 +120,12 @@ def generate_images_parallel(prompts, style="photorealistic", max_workers=None):
                 image_paths.append(None)
 
     total_time = time.time() - start_time
-    logger.info(f"Generated {len([p for p in image_paths if p])}/{len(prompts)} images in {total_time:.2f} seconds")
+    success_count = len([p for p in image_paths if p])
+    logger.info(f"Generated {success_count}/{len(prompts)} images in {total_time:.2f} seconds")
+    
+    # Log warning if some images failed but not all
+    if 0 < success_count < len(prompts):
+        logger.warning(f"Some image generation requests failed ({len(prompts) - success_count}/{len(prompts)})")
 
     return image_paths
 
@@ -171,9 +174,9 @@ def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None, 
   logger.info(f"Enhanced prompt: {enhanced_prompt[:50]}...")
 
   retry_count = 0
-  max_retries = 3
+  max_retries = 2
   success = False
-  initial_wait_time = 20  # Starting wait time in seconds
+  initial_wait_time = 5  # Starting wait time in seconds (reduced from 20)
 
   # Check if Hugging Face API key is available
   if not huggingface_api_key:
@@ -208,6 +211,12 @@ def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None, 
               logger.info(f"Image saved to {file_path}")
               success = True
           else:
+              # Handle 404 errors (model not found) immediately without retrying
+              if response.status_code == 404:
+                  logger.error(f"Model not found (404): {model or hf_model}")
+                  # Don't retry for 404 errors, move to next fallback immediately
+                  break
+                  
               # If model is loading, wait and retry
               try:
                   if "application/json" in response.headers.get("Content-Type", ""):
@@ -229,7 +238,8 @@ def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None, 
                           logger.info(f"Service unavailable (503). Waiting {wait_time} seconds before retry...")
                           time.sleep(wait_time)
                       else:
-                          time.sleep(initial_wait_time)  # Wait before retrying
+                          # For other errors, wait less time
+                          time.sleep(initial_wait_time)
               except ValueError:
                   # Non-JSON response
                   logger.error(f"Could not parse response: {response.status_code}")
@@ -238,7 +248,7 @@ def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None, 
               # Check if we should fall back before trying more retries
               if response.status_code == 503 and retry_count >= 1:
                   logger.warning(f"Multiple 503 errors from Hugging Face API using model {model or hf_model}")
-                  return None
+                  break
 
               retry_count += 1
       except requests.exceptions.RequestException as e:
@@ -366,6 +376,24 @@ def _fetch_image_from_pexels(query, file_path=None):
     return None
 
 @measure_time
+def create_clip(args):
+    """
+    Helper function to create an image clip (moved outside create_image_clips_parallel to fix serialization issues)
+    
+    Args:
+        args (tuple): Tuple containing (image_path, duration, text)
+        
+    Returns:
+        VideoClip: Created image clip
+    """
+    image_path, duration, text = args
+    try:
+        return _create_still_image_clip(image_path, duration, text, with_zoom=True)
+    except Exception as e:
+        logger.error(f"Error creating image clip: {e}")
+        return None
+
+@measure_time
 def create_image_clips_parallel(image_paths, durations, texts=None, with_zoom=True, max_workers=None):
     """
     Create still image clips in parallel
@@ -398,20 +426,13 @@ def create_image_clips_parallel(image_paths, durations, texts=None, with_zoom=Tr
     if len(texts) != len(image_paths):
         texts = [None] * len(image_paths)
 
-    def create_clip(args):
-        image_path, duration, text = args
-        try:
-            return _create_still_image_clip(image_path, duration, text, with_zoom=with_zoom)
-        except Exception as e:
-            logger.error(f"Error creating image clip: {e}")
-            return None
-
     if not max_workers:
         max_workers = min(len(image_paths), os.cpu_count())
 
-    # Image clip creation is CPU bound, so use ProcessPoolExecutor
+    # Image clip creation is CPU bound, but use ThreadPoolExecutor instead of ProcessPoolExecutor
+    # to avoid serialization issues
     clips = []
-    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(create_clip, (img, dur, txt))
                   for img, dur, txt in zip(image_paths, durations, texts)]
 
