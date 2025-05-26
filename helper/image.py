@@ -70,26 +70,26 @@ def generate_images_parallel(prompts, style="photorealistic", max_workers=None):
             image_path = _generate_image_from_prompt(prompt, style)
             if image_path:
                 return image_path
-                
+
             # If HF fails, try with fallback models
             for fallback_model in hf_fallback_models:
                 logger.info(f"Trying fallback model: {fallback_model}")
                 image_path = _generate_image_from_prompt(prompt, style, model=fallback_model)
                 if image_path:
                     return image_path
-                
+
             # If all HF models fail, try Unsplash
             logger.info(f"Trying Unsplash for: {prompt[:30]}...")
             image_path = _fetch_image_from_unsplash(prompt)
             if image_path:
                 return image_path
-                
+
             # If Unsplash fails, try Pexels
             logger.info(f"Trying Pexels for: {prompt[:30]}...")
             image_path = _fetch_image_from_pexels(prompt)
             if image_path:
                 return image_path
-                
+
             # If all services fail
             logger.error(f"All image generation methods failed for prompt: {prompt[:50]}...")
             return None
@@ -122,7 +122,7 @@ def generate_images_parallel(prompts, style="photorealistic", max_workers=None):
     total_time = time.time() - start_time
     success_count = len([p for p in image_paths if p])
     logger.info(f"Generated {success_count}/{len(prompts)} images in {total_time:.2f} seconds")
-    
+
     # Log warning if some images failed but not all
     if 0 < success_count < len(prompts):
         logger.warning(f"Some image generation requests failed ({len(prompts) - success_count}/{len(prompts)})")
@@ -182,13 +182,13 @@ def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None, 
   if not huggingface_api_key:
       logger.error("No Hugging Face API key provided. Will fall back to other methods.")
       return None
-      
+
   # Determine which model/API URL to use
   if model:
       api_url = f"https://api-inference.huggingface.co/models/{model}"
   else:
       api_url = hf_api_url
-      
+
   # Verify that we have a valid URL
   if not api_url or not api_url.startswith("https://"):
       logger.error(f"Invalid HF API URL: {api_url}")
@@ -216,7 +216,7 @@ def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None, 
                   logger.error(f"Model not found (404): {model or hf_model}")
                   # Don't retry for 404 errors, move to next fallback immediately
                   break
-                  
+
               # If model is loading, wait and retry
               try:
                   if "application/json" in response.headers.get("Content-Type", ""):
@@ -271,21 +271,21 @@ def _generate_image_from_prompt(prompt, style="photorealistic", file_path=None, 
 def _fetch_image_from_unsplash(query, file_path=None):
     """
     Fetch an image from Unsplash based on query
-    
+
     Args:
         query (str): Search query
         file_path (str): Path to save the image, if None a path will be generated
-        
+
     Returns:
         str: Path to the fetched image or None if failed
     """
     if not file_path:
         file_path = os.path.join(temp_dir, f"unsplash_{int(time.time())}_{random.randint(1000, 9999)}.jpg")
-    
+
     if not unsplash_api_key:
         logger.warning("No Unsplash API key provided")
         return None
-    
+
     try:
         # Prepare Unsplash API request
         url = "https://api.unsplash.com/search/photos"
@@ -295,15 +295,15 @@ def _fetch_image_from_unsplash(query, file_path=None):
             "orientation": "portrait",  # For YouTube shorts
             "client_id": unsplash_api_key
         }
-        
+
         # Make request
         response = requests.get(url, params=params)
-        
+
         if response.status_code == 200:
             data = response.json()
             if data["results"]:
                 image_url = data["results"][0]["urls"]["regular"]
-                
+
                 # Download image
                 img_response = requests.get(image_url)
                 if img_response.status_code == 200:
@@ -315,31 +315,31 @@ def _fetch_image_from_unsplash(query, file_path=None):
                 logger.warning(f"No results found on Unsplash for query: {query}")
         else:
             logger.error(f"Unsplash API error: {response.status_code} - {response.text}")
-    
+
     except Exception as e:
         logger.error(f"Error fetching image from Unsplash: {e}")
-    
+
     return None
 
 @measure_time
 def _fetch_image_from_pexels(query, file_path=None):
     """
     Fetch an image from Pexels based on query
-    
+
     Args:
         query (str): Search query
         file_path (str): Path to save the image, if None a path will be generated
-        
+
     Returns:
         str: Path to the fetched image or None if failed
     """
     if not file_path:
         file_path = os.path.join(temp_dir, f"pexels_{int(time.time())}_{random.randint(1000, 9999)}.jpg")
-    
+
     if not pexels_api_key:
         logger.warning("No Pexels API key provided")
         return None
-    
+
     try:
         # Prepare Pexels API request
         url = "https://api.pexels.com/v1/search"
@@ -349,15 +349,15 @@ def _fetch_image_from_pexels(query, file_path=None):
             "per_page": 1,
             "orientation": "portrait"  # For YouTube shorts
         }
-        
+
         # Make request
         response = requests.get(url, headers=headers, params=params)
-        
+
         if response.status_code == 200:
             data = response.json()
             if data.get("photos"):
                 image_url = data["photos"][0]["src"]["large"]
-                
+
                 # Download image
                 img_response = requests.get(image_url)
                 if img_response.status_code == 200:
@@ -369,20 +369,20 @@ def _fetch_image_from_pexels(query, file_path=None):
                 logger.warning(f"No results found on Pexels for query: {query}")
         else:
             logger.error(f"Pexels API error: {response.status_code} - {response.text}")
-    
+
     except Exception as e:
         logger.error(f"Error fetching image from Pexels: {e}")
-    
+
     return None
 
 @measure_time
 def create_clip(args):
     """
     Helper function to create an image clip (moved outside create_image_clips_parallel to fix serialization issues)
-    
+
     Args:
         args (tuple): Tuple containing (image_path, duration, text)
-        
+
     Returns:
         VideoClip: Created image clip
     """
@@ -481,7 +481,7 @@ def _create_still_image_clip(image_path, duration, text=None, text_position=('ce
       new_width = resolution[0]
       new_height = int(new_width / img_ratio)
 
-  image = image.resized(newsize=(new_width, new_height))
+  image = image.resized(new_size=(new_width, new_height))
 
   # Center crop if needed
   if new_width > resolution[0] or new_height > resolution[1]:
