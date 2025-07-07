@@ -12,7 +12,11 @@ load_dotenv()
 CREDENTIALS_DIR = os.path.join(os.path.dirname(__file__), "credentials")
 os.makedirs(CREDENTIALS_DIR, exist_ok=True)
 
-CLIENT_SECRETS_FILE = os.path.join(CREDENTIALS_DIR, os.getenv("YOUTUBE_CLIENT_SECRETS", "client_secret.json"))
+from helper.secrets import Secrets
+
+secrets = Secrets()
+youtube_creds_path = secrets.write_temp_credentials(CREDENTIALS_DIR)
+CLIENT_SECRETS_FILE = youtube_creds_path or os.path.join(CREDENTIALS_DIR, "client_secret.json")
 TOKEN_FILE = os.path.join(CREDENTIALS_DIR, "token.pickle")
 
 SCOPES = [

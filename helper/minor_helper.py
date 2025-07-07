@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Get temp directory from environment variable or use default
-TEMP_DIR = os.getenv("TEMP_DIR", "D:\\youtube-shorts-automation\\temp")
+TEMP_DIR = os.getenv("TEMP_DIR", os.path.join(os.path.dirname(os.path.dirname(__file__)), "temp"))
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

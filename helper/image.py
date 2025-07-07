@@ -17,13 +17,14 @@ load_dotenv()
 huggingface_api_key = os.getenv("HUGGINGFACE_API_KEY")
 
 # Primary Hugging Face model
-hf_model = os.getenv("HF_MODEL", "stabilityai/stable-diffusion-2-1")
+hf_model = os.getenv("HF_MODEL", "stabilityai/stable-diffusion-xl-base-1.0")
 # Default HF API URL construction - ensure we have a valid URL
 hf_api_url = f"https://api-inference.huggingface.co/models/{hf_model}" if hf_model else None
 
 # Backup/fallback models if primary fails
 hf_fallback_models = [
-    "stabilityai/stable-diffusion-xl-base-1.0"
+    "playgroundai/playground-v2.5-1024px-aesthetic",
+    "stabilityai/stable-diffusion-2-1"
 ]
 
 # Other API keys
@@ -43,7 +44,7 @@ logger = logging.getLogger(__name__)
 resolution = (1080, 1920)  # Assuming a standard resolution for YouTube Shorts
 
 # Get temp directory from environment variable or use default
-TEMP_DIR = os.getenv("TEMP_DIR", "D:\\youtube-shorts-automation\\temp")
+TEMP_DIR = os.getenv("TEMP_DIR", os.path.join(os.path.dirname(os.path.dirname(__file__)), "temp"))
 # Create images subdirectory
 temp_dir = os.path.join(TEMP_DIR, "generated_images")
 os.makedirs(temp_dir, exist_ok=True)  # Create temp directory if it doesn't exist
@@ -513,7 +514,7 @@ def _create_still_image_clip(image_path, duration, text=None, text_position=('ce
           text=text,
           font_size=font_size,
           color='white',
-          font=r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf",
+          font=r"/home/addy/projects/youtube-shorts-automation/packages/fonts/default_font.ttf",
           stroke_color='black',
           stroke_width=1,
           method='caption',
@@ -525,7 +526,7 @@ def _create_still_image_clip(image_path, duration, text=None, text_position=('ce
           text=text,
           font_size=font_size,
           color='black',
-          font=r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf",
+          font=r"/home/addy/projects/youtube-shorts-automation/packages/fonts/default_font.ttf",
           method='caption',
           size=(resolution[0] - 100, None)
       ).with_position((2, 2), relative=True).with_opacity(0.6).with_duration(duration)

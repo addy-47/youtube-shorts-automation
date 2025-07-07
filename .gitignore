@@ -5,7 +5,7 @@ credentials/
 .env
 
 # Virtual environment
-venv/
+.venv/
 
 # Python cache files
 __pycache__/
@@ -22,3 +22,5 @@ ffmpeg/
 
 # IDE files
 .vscode/
+
+lazycreator-1.json

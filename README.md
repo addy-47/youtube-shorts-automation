@@ -75,8 +75,18 @@ youtube-shorts-automation/
 
 3. **Set up API credentials:**
 
-   - Create a `client_secret.json` file for YouTube API credentials
-   - Create a `google_credentials.json` file for Google Cloud API credentials
+   - **Google Cloud:**
+     - Create a Google Cloud Project.
+     - Enable the "Secret Manager API" and "YouTube Data API v3".
+     - Create a service account with at least the "Secret Manager Secret Accessor" role.
+     - Download the JSON key for this service account. This will be your "master" credential file.
+     - Store your other secrets (like your YouTube OAuth `client_secret.json` content and other API keys) in Google Secret Manager within your project. The application expects secrets named `youtube-client-secrets` and `google-credentials`.
+   - **OAuth Consent Screen (For YouTube Upload):**
+     - In the Google Cloud Console, go to "APIs & Services" -> "OAuth consent screen".
+     - Set the User Type to "External".
+     - Fill in the required app information (app name, user support email, developer contact).
+     - On the "Scopes" page, you don't need to add scopes manually; the app will request them.
+     - On the "Test users" page, click "+ ADD USERS" and add the Google account email you will use to authorize the YouTube uploads. **This is a critical step to avoid `access_denied` errors while the app is in "Testing" mode.**
    - Set up Hugging Face API token for AI image generation
    - Set up Pexels and Pixabay API keys for video backgrounds
 
@@ -84,6 +94,14 @@ youtube-shorts-automation/
    Create a `.env` file in the root directory and add the following variables:
 
    ```env
+   # Google Cloud Platform
+   GCP_PROJECT_ID=your-gcp-project-id
+   # --- IMPORTANT ---
+   # Use an ABSOLUTE path to your master service account JSON key file.
+   # Example for Linux/macOS: /home/user/keys/my-gcp-key.json
+   # Example for Windows: C:\Users\user\keys\my-gcp-key.json
+   GOOGLE_APPLICATION_CREDENTIALS=/path/to/your/master-gcp-service-account-key.json
+
    # API Keys
    HUGGINGFACE_API_KEY=your_huggingface_key
    NEWS_API_KEY=your_news_api_key
@@ -98,7 +116,7 @@ youtube-shorts-automation/
    # Video Settings
    ENABLE_YOUTUBE_UPLOAD=false
    YOUTUBE_TOPIC=Artificial Intelligence
-   HF_MODEL=stabilityai/stable-diffusion-2-1
+   HF_MODEL=stabilityai/stable-diffusion-xl-base-1.0
 
    # Parallel Processing
    ENABLE_PARALLEL_RENDERING=true

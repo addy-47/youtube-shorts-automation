@@ -62,8 +62,8 @@ class TextHelper:
       # Font settings
       self.fonts_dir = os.path.join(os.path.dirname(__file__), 'fonts')
       os.makedirs(self.fonts_dir, exist_ok=True)
-      self.title_font_path = r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf"
-      self.body_font_path = r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf"
+      self.title_font_path = r"/home/addy/projects/youtube-shorts-automation/packages/fonts/default_font.ttf"
+      self.body_font_path = r"/home/addy/projects/youtube-shorts-automation/packages/fonts/default_font.ttf"
 
       # Define transitions with proper effects
       self.transitions = {

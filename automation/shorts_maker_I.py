@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()  # Load environment variables from .env file
 
 # Get temp directory from environment variable or use default
-TEMP_DIR = os.getenv("TEMP_DIR", "D:\\youtube-shorts-automation\\temp")
+TEMP_DIR = os.getenv("TEMP_DIR", os.path.join(os.path.dirname(os.path.dirname(__file__)), "temp"))
 # Ensure temp directory exists
 os.makedirs(TEMP_DIR, exist_ok=True)
 
@@ -70,8 +70,8 @@ class YTShortsCreator_I:
         # Font settings
         self.fonts_dir = os.path.join(os.path.dirname(__file__), 'fonts')
         os.makedirs(self.fonts_dir, exist_ok=True)
-        self.title_font_path = r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf"
-        self.body_font_path = r"D:\youtube-shorts-automation\packages\fonts\default_font.ttf"
+        self.title_font_path = r"/home/addy/projects/youtube-shorts-automation/packages/fonts/default_font.ttf"
+        self.body_font_path = r"/home/addy/projects/youtube-shorts-automation/packages/fonts/default_font.ttf"
 
         # Initialize TTS (Text-to-Speech)
         self.azure_tts = None

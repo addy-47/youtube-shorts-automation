@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 # Get temp directory from environment variable or use default
-TEMP_DIR = os.getenv("TEMP_DIR", "D:\\youtube-shorts-automation\\temp")
+TEMP_DIR = os.getenv("TEMP_DIR", os.path.join(os.path.dirname(os.path.dirname(__file__)), "temp"))
 # Create audio subdirectory
 audio_temp_dir = os.path.join(TEMP_DIR, "audio_clips")
 os.makedirs(audio_temp_dir, exist_ok=True)  # Create temp directory if it doesn't exist

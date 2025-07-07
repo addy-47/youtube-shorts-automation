@@ -20,20 +20,15 @@ class GoogleVoiceover:
             output_dir (str): Directory to save audio files.
         """
         import os
-        import json
         from google.cloud import texttospeech
 
-        self.api_key = os.getenv("GOOGLE_API_KEY")
-        # Set the environment variable for Google Cloud credentials
-        credentials_path = os.getenv("GOOGLE_CREDENTIALS_JSON")
-        if credentials_path and os.path.exists(credentials_path):
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+        # The client will automatically use GOOGLE_APPLICATION_CREDENTIALS from the environment
+        try:
             self.client = texttospeech.TextToSpeechClient()
-        elif self.api_key:
-            # If using API key authentication
-            self.client = texttospeech.TextToSpeechClient.from_service_account_json(self.api_key)
-        else:
-            raise ValueError("Google Cloud credentials not found. Set GOOGLE_CREDENTIALS_JSON or GOOGLE_API_KEY environment variables.")
+        except Exception as e:
+            logger.error(f"Failed to initialize Google TextToSpeechClient: {e}")
+            logger.error("Please ensure the GOOGLE_APPLICATION_CREDENTIALS environment variable is set correctly.")
+            raise ValueError("Google Cloud TTS client could not be initialized.") from e
 
         # Parse the voice into language and name components
         parts = voice.split("-")
