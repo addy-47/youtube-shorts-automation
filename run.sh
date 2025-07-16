@@ -3,7 +3,7 @@
 echo "Starting YouTube Shorts Automation..."
 
 # Activate the Python virtual environment
-source ./venv/bin/activate
+source ./.venv/bin/activate
 
 # Set PYTHONPATH to the project directory for local imports
 export PYTHONPATH="$(pwd)"
