@@ -1,22 +1,25 @@
 #!/bin/bash
 
-echo "Starting YouTube Shorts Automation..."
+echo "[$(date)] Starting YouTube Shorts Automation..." >> /home/addy/projects/youtube-shorts-automation/cron.log
 
-# Activate the Python virtual environment
-source ./.venv/bin/activate
+cd /home/addy/projects/youtube-shorts-automation || exit 1
 
-# Set PYTHONPATH to the project directory for local imports
-export PYTHONPATH="$(pwd)"
+# Activate the Python virtual environment using absolute path
+source /home/addy/projects/youtube-shorts-automation/.venv/bin/activate
 
-# Change to the project directory (already here, but for clarity)
-cd "$(pwd)"
+# Set PYTHONPATH
+export PYTHONPATH="/home/addy/projects/youtube-shorts-automation"
 
-# Checkout the master branch (only use stable version of the code)
-git add .
-git commit -m "Automated commit before running script"
-git checkout master
+# Git operations
+/usr/bin/git add .
+/usr/bin/git commit -m "Automated commit before running script"
+/usr/bin/git checkout master
 
-# Run the main Python script
-python main.py
+# Use full path for switch-addy, or wrap it in a full command (see tip below)
+source /home/addy/.bashrc
+switch-addy
 
-echo "Script execution completed."
+# Run main.py using full python path
+/home/addy/projects/youtube-shorts-automation/.venv/bin/python /home/addy/projects/youtube-shorts-automation/main.py
+
+echo "[$(date)] Script execution completed." >> /home/addy/projects/youtube-shorts-automation/cron.log
