@@ -24,3 +24,4 @@ ffmpeg/
 .vscode/
 
 lazycreator-1.json
+cron.log
