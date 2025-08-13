@@ -1,7 +1,14 @@
 #!/bin/bash
-export PATH="/usr/local/bin:/usr/bin:/bin:/home/addy/.local/bin:$PATH"
-export HOME="/home/addy"
-LOG_FILE="/home/addy/projects/youtube-shorts-automation/cron.log"
+source /home/addy/.bashrc
+
+LOG_DIR="/home/addy/projects/youtube-shorts-automation/logs"
+LOG_FILE="$LOG_DIR/cron_$(date +%Y-%m-%d).log"
+
+# Create logs directory if it doesn't exist
+mkdir -p "$LOG_DIR"
+
+# Delete log files older than 7 days
+find "$LOG_DIR" -name "cron_*.log" -mtime +7 -delete
 
 echo "----------------------------------------" >> "$LOG_FILE"
 echo "[$(date)] Starting YouTube Shorts Automation..." >> "$LOG_FILE"

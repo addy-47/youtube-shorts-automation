@@ -54,13 +54,13 @@ def authenticate_youtube():
                 # Prompt user for re-authentication if no valid refresh token
                 print("🔑 Token expired or invalid. Re-authenticating...")
                 flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_FILE, SCOPES)
-                credentials = flow.run_local_server(port=0)
+                credentials = flow.run_local_server(port=8080)
         except Exception as e:
             print(f"❌ Error during token refresh or authentication: {e}")
             if os.path.exists(CLIENT_SECRETS_FILE):
                 print("⚠️ Re-authenticating...")
                 flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_FILE, SCOPES)
-                credentials = flow.run_local_server(port=0)
+                credentials = flow.run_local_server(port=8080)
             else:
                 raise FileNotFoundError(f"Client secrets file not found at: {CLIENT_SECRETS_FILE}")
 
